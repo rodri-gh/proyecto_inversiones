@@ -25,7 +25,7 @@ router.get('/', function (req, res) {
     });
 
 });
-
+// actualizar ajustes
 router.put('/:id', function (req, res, next) {
     const { comision_fija_ganancia_inversionista, comision_porcentual_ganancia_inversionista, comision_fija_retiro_admin, comision_porcentual_retiro_admin, tiempo_minimo_inversion, tiempo_maximo_inversion, sancion_porcentual_retraso } = req.body;
 
