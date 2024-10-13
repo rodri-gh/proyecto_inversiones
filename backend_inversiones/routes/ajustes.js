@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var conexion = require('../database');
 
-
+// obtener ajustes
 router.get('/', function (req, res) {
 
     var query = 'SELECT * FROM ajustes;';
