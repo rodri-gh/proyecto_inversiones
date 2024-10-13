@@ -11,12 +11,12 @@ router.get('/', function (req, res, next) {
       console.log(error);
       res.status(500).json({
         error: error,
-        message: 'Error en la consulta',
+        message: 'Error in the query',
       });
     } else {
       res.status(200).json({
         data: results,
-        message: 'Listando contacto',
+        message: 'Listing contacts',
       });
 
     }
@@ -32,13 +32,13 @@ router.post('/', function (req, res, next) {
       console.log(error);
       res.status(500).json({
         error: error,
-        message: 'Error en la consulta',
+        message: 'Error in the query',
       });
     } else {
       console.log(results);
       res.status(200).json({
         data: results,
-        message: 'Datos enviados',
+        message: 'Contact created',
       });
     }
   });
@@ -53,13 +53,13 @@ router.put('/:id', function (req, res, next) {
       console.log(error);
       res.status(500).json({
         error: error,
-        message: 'Error en la consulta',
+        message: 'Error in the query',
       });
     } else {
       console.log(results);
       res.status(200).json({
         data: results,
-        message: 'Respuesta enviada',
+        message: 'Answer updated',
       });
     }
   });
@@ -75,13 +75,13 @@ router.delete('/:id', function (req, res, next) {
       console.log(error);
       res.status(500).json({
         error: error,
-        message: 'Error en la consulta',
+        message: 'Error in the query',
       });
     } else {
       console.log(req.params.id);
       res.status(200).json({
         data: req.params.id,
-        message: 'Contacto eliminado',
+        message: 'Contact deleted',
       });
     }
   });
@@ -96,13 +96,13 @@ router.put('/state/:id', function (req, res, next) {
       console.log(error);
       res.status(500).json({
         error: error,
-        message: 'Error en la consulta',
+        message: 'Error in the query',
       });
     } else {
       console.log(results);
       res.status(200).json({
         data: results,
-        message: 'Estado actualizado',
+        message: 'Contact updated',
       });
     }
   });
