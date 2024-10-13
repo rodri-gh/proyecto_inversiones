@@ -1,4 +1,2 @@
 backend_inversiones/node_modules
-backend_inversiones/public/images/posts/*
-!backend_inversiones/public/images/posts/.gitignore
 frontend_inversiones/node_modules
