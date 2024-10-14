@@ -7,6 +7,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var contactRouter = require('./routes/contact');
 var postsRouter = require('./routes/posts');
+var mineralsRouter = require('./routes/minerals');
 
 var app = express();
 
@@ -20,4 +21,5 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/posts', postsRouter); 
 app.use('/contact', contactRouter);
+app.use('/minerals', mineralsRouter);
 module.exports = app;
