@@ -11,7 +11,7 @@ if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Obtener la ruta del directorio donde se guardan las imagenes
+//dasdasd
 
 // Configuración de Multer
 const storage = multer.diskStorage({
