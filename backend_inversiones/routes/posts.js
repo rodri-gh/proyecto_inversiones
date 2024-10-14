@@ -48,7 +48,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/', upload.single('imagen_portada'), function (req, res, next) {
-  const { autor_id, categoria_id, titulo, resumen, contenido} = req.body;
+  const { autor_id, categoria_id, titulo, resumen, contenido } = req.body;
 
   const fechaHoraFinal = new Date();
 
