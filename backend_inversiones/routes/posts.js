@@ -86,7 +86,6 @@ router.put('/:id', upload.single('imagen_portada'), function (req, res, next) {
   const postId = req.params.id;
   const { autor_id, categoria_id, titulo, resumen, contenido, fecha_hora } = req.body;
 
-
   const query = `SELECT imagen_portada FROM posts WHERE id = "${postId}";`;
   conexion.query(query, function (error, results, fields) {
     if (error) {
@@ -205,10 +204,10 @@ router.put('/state/:id', function (req, res, next) {
         message: 'Error in the query',
       });
     } else {
-
+      console.log(results);
       res.status(200).json({
-
-        message: 'Post state updated',
+        data: results,
+        message: 'Post updated',
       });
     }
   });
