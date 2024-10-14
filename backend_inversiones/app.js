@@ -20,5 +20,5 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/contact', contactRouter);
 app.use('/posts', postsRouter);
-app.use('/uploads', express.static('uploads'));
+//app.use('/uploads', express.static('uploads'));
 module.exports = app;
