@@ -48,7 +48,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/', upload.single('imagen_portada'), function (req, res, next) {
-  const { autor_id, categoria_id, titulo, resumen, contenido,} = req.body;
+  const { autor_id, categoria_id, titulo, resumen, contenido} = req.body;
 
   const fechaHoraFinal = new Date();
 
@@ -86,7 +86,6 @@ router.put('/:id', upload.single('imagen_portada'), function (req, res, next) {
   const postId = req.params.id;
   const { autor_id, categoria_id, titulo, resumen, contenido, fecha_hora } = req.body;
 
-  
   const query = `SELECT imagen_portada FROM posts WHERE id = "${postId}";`;
   conexion.query(query, function (error, results, fields) {
     if (error) {
