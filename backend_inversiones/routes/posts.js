@@ -5,7 +5,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Asegurar que el directorio 'uploads' existe
+// Asegurar que el directorio donde se guardaran las imagenes existe
 const uploadDir = 'public/images/posts';
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -48,10 +48,9 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/', upload.single('imagen_portada'), function (req, res, next) {
-  const { autor_id, categoria_id, titulo, resumen, contenido, fecha_hora } = req.body;
+  const { autor_id, categoria_id, titulo, resumen, contenido } = req.body;
 
-  // Usar la fecha_hora proporcionada o la actual si no se proporciona
-  const fechaHoraFinal = fecha_hora ? new Date(fecha_hora) : new Date();
+  const fechaHoraFinal = new Date();
 
   // Formatear la fecha para MySQL
   const fechaFormateada = fechaHoraFinal.toISOString().slice(0, 19).replace('T', ' ');
@@ -87,7 +86,7 @@ router.put('/:id', upload.single('imagen_portada'), function (req, res, next) {
   const postId = req.params.id;
   const { autor_id, categoria_id, titulo, resumen, contenido, fecha_hora } = req.body;
 
-  // Obtener la información actual del post
+  
   const query = `SELECT imagen_portada FROM posts WHERE id = "${postId}";`;
   conexion.query(query, function (error, results, fields) {
     if (error) {
@@ -101,7 +100,7 @@ router.put('/:id', upload.single('imagen_portada'), function (req, res, next) {
     const currentPost = results[0];
 
     // Preparar los datos para la actualización
-    const fechaHoraFinal = fecha_hora ? new Date(fecha_hora) : new Date();
+    const fechaHoraFinal = new Date();
     const fechaFormateada = fechaHoraFinal.toISOString().slice(0, 19).replace('T', ' ');
 
     let imagen_portada = currentPost.imagen_portada;
@@ -118,7 +117,6 @@ router.put('/:id', upload.single('imagen_portada'), function (req, res, next) {
       }
     }
 
-    // Actualizar el post en la base de datos
     const query = `
       UPDATE posts 
       SET autor_id = "${autor_id}" , categoria_id = "${categoria_id}", titulo = "${titulo}", resumen = "${resumen}", 
