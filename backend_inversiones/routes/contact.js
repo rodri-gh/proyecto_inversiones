@@ -101,8 +101,7 @@ router.put('/state/:id', function (req, res, next) {
     } else {
       console.log(results);
       res.status(200).json({
-        data: results,
-        message: 'Contact updated',
+        message: 'Contact state updated',
       });
     }
   });
