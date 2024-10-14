@@ -8,6 +8,8 @@ var usersRouter = require('./routes/users');
 var settingsRouter = require('./routes/settings');
 var investmentsRouter = require('./routes/investments');
 var linksRouter = require('./routes/links');
+var contactRouter = require('./routes/contact');
+var postsRouter = require('./routes/posts');
 
 var app = express();
 
@@ -22,5 +24,8 @@ app.use('/users', usersRouter);
 app.use('/settings', settingsRouter);
 app.use('/investments', investmentsRouter);
 app.use('/links', linksRouter);
+
+app.use('/contact', contactRouter);
+app.use('/posts', postsRouter);
 
 module.exports = app;
