@@ -24,7 +24,6 @@ app.use('/users', usersRouter);
 app.use('/settings', settingsRouter);
 app.use('/investments', investmentsRouter);
 app.use('/links', linksRouter);
-
 app.use('/contact', contactRouter);
 app.use('/posts', postsRouter);
 
