@@ -11,7 +11,6 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-
 // Configuración de Multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -22,11 +21,7 @@ const storage = multer.diskStorage({
   }
 });
 
-
 const upload = multer({ storage: storage });
-
-
-
 
 router.get('/', function (req, res, next) {
   const query = 'SELECT * FROM posts';
@@ -38,11 +33,17 @@ router.get('/', function (req, res, next) {
         message: 'Error in the query',
       });
     } else {
+      console.log(results);
+      // para mostrar imagenes de la base de datos
+      results.forEach(element => {
+        if (element.imagen_portada) {
+          element.imagen_portada = `http://localhost:3000/images/posts/${element.imagen_portada}`;
+        }
+      })
       res.status(200).json({
         data: results,
         message: 'Listing posts',
       });
-
     }
   });
 });
@@ -52,19 +53,14 @@ router.post('/', upload.single('imagen_portada'), function (req, res, next) {
 
   const fechaHoraFinal = new Date();
 
-  // Formatear la fecha para MySQL
   const fechaFormateada = fechaHoraFinal.toISOString().slice(0, 19).replace('T', ' ');
 
-  // Obtener la ruta del archivo cargado
-  const imagen_portada = req.file ? `/${uploadDir}/${req.file.filename}` : null;
+  const imagen_portada = req.file ? `${req.file.filename}` : null;
 
   const query = `
     INSERT INTO posts (autor_id, categoria_id, titulo, resumen, imagen_portada, fecha_hora, contenido) 
     VALUES ("${autor_id}", "${categoria_id}", "${titulo}", "${resumen}", "${imagen_portada}", "${fechaFormateada}", "${contenido}");
   `;
-
-
-
 
   conexion.query(query, function (error, results, fields) {
     if (error) {
@@ -82,9 +78,10 @@ router.post('/', upload.single('imagen_portada'), function (req, res, next) {
     }
   });
 });
+
 router.put('/:id', upload.single('imagen_portada'), function (req, res, next) {
   const postId = req.params.id;
-  const { autor_id, categoria_id, titulo, resumen, contenido, fecha_hora } = req.body;
+  const { autor_id, categoria_id, titulo, resumen, contenido } = req.body;
 
   const query = `SELECT imagen_portada FROM posts WHERE id = "${postId}";`;
   conexion.query(query, function (error, results, fields) {
@@ -105,11 +102,11 @@ router.put('/:id', upload.single('imagen_portada'), function (req, res, next) {
     let imagen_portada = currentPost.imagen_portada;
     if (req.file) {
       // Si se subió una nueva imagen, actualizar la ruta
-      imagen_portada = `/${uploadDir}/${req.file.filename}`;
+      imagen_portada = `${req.file.filename}`;
 
       // Eliminar la imagen antigua si existe
       if (currentPost.imagen_portada) {
-        const oldImagePath = path.join(__dirname, '..', currentPost.imagen_portada);
+        const oldImagePath = path.join(__dirname, '../public/images/posts', currentPost.imagen_portada);
         fs.unlink(oldImagePath, (err) => {
           console.error('Error deleting old image:', err);
         });
@@ -138,80 +135,23 @@ router.put('/:id', upload.single('imagen_portada'), function (req, res, next) {
     });
   });
 });
-router.delete('/:id', function (req, res, next) {
+
+router.patch('/:id', function (req, res, next) {
   const postId = req.params.id;
-
-  const query = `SELECT imagen_portada FROM posts WHERE id = "${postId}";`;
-
-  // Obtener la información del post para verificar si tiene una imagen asociada
+  // Cambiar el campo de eliminado del post de 1 a 0 o de 0 a 1
+  const query = `UPDATE posts SET eliminado = CASE WHEN eliminado = '1' THEN '0' ELSE '1' END WHERE id = "${postId}";`;
   conexion.query(query, function (error, results, fields) {
     if (error) {
       console.error(error);
       return res.status(500).json({
         error: error,
-        message: 'Error retrieving post information',
+        message: 'Error deleting post',
       });
     }
-
-    // Verificar si se encontró el post
-    if (results.length === 0) {
-      return res.status(404).json({
-        message: 'Post not found',
-      });
-    }
-
-    const currentPost = results[0];
-    const imagen_portada = currentPost.imagen_portada;
-
-    // Eliminar la imagen si existe
-    if (imagen_portada) {
-      const imagePath = path.join(__dirname, '..', imagen_portada);
-      fs.unlink(imagePath, (err) => {
-        if (err) {
-          console.error('Error deleting image:', err);
-        }
-      });
-    }
-
-    // Eliminar el post de la base de datos
-    const query2 = `DELETE FROM posts WHERE id = "${postId}";`;
-    conexion.query(query2, function (error, results, fields) {
-      if (error) {
-        console.error(error);
-        return res.status(500).json({
-          error: error,
-          message: 'Error deleting post',
-        });
-      }
-
-      res.status(200).json({
-        message: 'Post deleted',
-      });
+    res.status(200).json({
+      message: 'Post deleted',
     });
   });
 });
-
-router.put('/state/:id', function (req, res, next) {
-  const { id } = req.params;
-
-  const query = `UPDATE posts SET estado = !estado WHERE id=${id};`;
-
-  conexion.query(query, function (error, results, fields) {
-    if (error) {
-      console.log(error);
-      res.status(500).json({
-        error: error,
-        message: 'Error in the query',
-      });
-    } else {
-      console.log(results);
-      res.status(200).json({
-        data: results,
-        message: 'Post updated',
-      });
-    }
-  });
-});
-
 
 module.exports = router;
