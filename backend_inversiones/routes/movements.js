@@ -60,14 +60,15 @@ router.put('/:id', (req, res) => {
 });
 
 // DELETE - Eliminar un movimiento
-router.delete('/:id', (req, res) => {
-  conexion.query('DELETE FROM movimientos WHERE id = ?', [req.params.id], (error, results) => {
+router.patch('/:id', (req, res) => { 
+  const query = 'UPDATE movimientos SET eliminado = CASE WHEN eliminado = 1 THEN 0 ELSE 1 END WHERE id = ?';
+  conexion.query(query, [req.params.id], (error, results) => {
     if (error) {
-      res.status(500).json({ mensaje: 'Error al eliminar el movimiento', error });
+      res.status(500).json({ mensaje: 'Error al actualizar el estado del movimiento', error });
     } else if (results.affectedRows === 0) {
       res.status(404).json({ mensaje: 'Movimiento no encontrado' });
     } else {
-      res.json({ mensaje: 'Movimiento eliminado exitosamente' });
+      res.json({ mensaje: 'Estado del movimiento actualizado exitosamente' });
     }
   });
 });
