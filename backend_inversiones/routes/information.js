@@ -11,8 +11,6 @@ if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-//dasdasd
-
 // Configuración de Multer
 const storage = multer.diskStorage({
 destination: function (req, file, cb) {
@@ -22,7 +20,6 @@ filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname))
     },
 });
-
 
 const upload = multer({ storage: storage });
 
@@ -34,7 +31,7 @@ router.get('/', function(req, res, next) {
             console.log(error);
             res.status(500).send({
                 error: error,
-                message: "Error al realizar la peticion"
+                message: "Error in the query"
             });
         }else{
             console.log(result);
@@ -46,7 +43,7 @@ router.get('/', function(req, res, next) {
             })
             res.status(200).send({
                 data: result,
-                message: "Peticion exitosa"
+                message: "Successful petition"
             })
         }
     }); 
@@ -65,13 +62,13 @@ router.post('/', upload.single('imagen'), function(req, res, next) {
             console.log(error);
             res.status(500).send({
                 error: error,
-                message: "Error al realizar la peticion"
+                message: "Error in the query"
             });
         }else{
             console.log(result);
             res.status(200).send({
                 data: result,
-                message: "Registro exitoso"
+                message: "Successful registration"
             })
         }
     });
@@ -83,25 +80,25 @@ router.put('/:id', upload.single('imagen'), function(req, res, next) {
 
     const query = `SELECT imagen FROM informacion WHERE id = ${informationId}`;
     connection.query(query, function (error, result, fields) {
-        if (error){
+    if (error){
             console.log(error);
             return res.status(500).json({
                 error:error,
                 message: "Error retrieving information"
             });
-    }
-
-    const currentInformation = result[0];
+    }else{
+        const currentInformation = result[0];
 
     let imagen = currentInformation.imagen;
     if (req.file) {
         // Si se subio una nueva imagen, actualizar la ruta
-        imagen = `/${uploadDir}/${req.file.filename}`;
+        imagen = `${req.file.filename}`;
 
         // Eliminar la imagen antigua si existe
         if (currentInformation.imagen) {
-            const oldImagePath = path.join(_dirname, '..', currentInformation.imagen);
-            fs.unlinkSync(oldImagePath, (err) => {
+            //const oldImagePath = path.join(__dirname, '..', currentInformation.imagen);
+            const oldImagePath = 'public/images/information/' + currentInformation.imagen;
+            fs.unlink(oldImagePath, (err) => {
                 console.log('Error deleting old image: ', err);
             });
         }
@@ -123,14 +120,15 @@ router.put('/:id', upload.single('imagen'), function(req, res, next) {
                 console.log(error);
                 return res.status(500).json({
                     error: error,
-                    message: "Error al realizar la peticion"
+                    message: "Error in the query"
                 });
             }
 
             res.status(200).json({
-                message: "Informacion actualizada exitosamente",
+                message: "Successfully updated information",
             });
         });
+    }
     });
 });
 
@@ -161,7 +159,7 @@ router.delete('/:id', function(req, res, next) {
 
     //Eliminar la imagen si existe
     if (imagen) {
-        const imagePath = path.join(_dirname, '..', imagen);
+        const imagePath = path.join(__dirname, '..', imagen);
         fs.unlink(imagePath, (err) => {
             if (err) {
                 console.log('Error deleting image: ', err);
@@ -176,16 +174,28 @@ router.delete('/:id', function(req, res, next) {
                 console.log(error);
                 return res.status(500).json({
                     error: error,
-                    message: "Error al realizar la peticion"
+                    message: "Error in the query"
                 });
             }
 
             res.status(200).json({
-                message: "Informacion eliminada exitosamente",
+                message: "Information successfully deleted",
             });
         });
     });
 });
 
+router.patch('/:id', (req, res) => {
+    const query = `UPDATE informacion SET eliminado = CASE WHEN eliminado = '1' THEN '0' ELSE '1' END WHERE id = ?`;
+    connection.query(query, [req.params.id], (error, results) => {
+        if (error) {
+            res.status(500).json({ mensaje: 'Error updating motion status', error });
+        }else if (results.affectedRows === 0) {
+            res.status(404).json({ mensaje: 'Movement not found' });
+        } else {
+            res.status(200).json({ mensaje: 'Movement successfully updated' });
+        }
+    })
+})
 
 module.exports = router;
