@@ -2,6 +2,7 @@
 import { RouterView } from "vue-router";
 </script>
 
+
 <template>
   <div>
     <header>
@@ -19,9 +20,8 @@ import { RouterView } from "vue-router";
   </header>
   
   <RouterView />
-  </div>
-
-
+</div>
+  
 </template>
 
 <style scoped>
