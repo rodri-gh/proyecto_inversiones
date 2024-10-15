@@ -2,9 +2,10 @@
 import { RouterView } from "vue-router";
 </script>
 
+
 <template>
-<<<<<<< HEAD
-  <header>
+  <div>
+    <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
@@ -19,14 +20,8 @@ import { RouterView } from "vue-router";
   </header>
 
   <RouterView />
-=======
-  <div>
-    <header></header>
-    <main class="container">
-      <RouterView />
-    </main>
-  </div>
->>>>>>> 08e0e1d3f43528f819f388fe2fec0af27dd3d8a1
+</div>
+  
 </template>
 
 <style scoped>
