@@ -5,6 +5,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var movementsRouter = require('./routes/movements');
 
 var settingsRouter = require('./routes/settings');
 var investmentsRouter = require('./routes/investments');
@@ -30,6 +31,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+app.use('/movements', movementsRouter);
+
+
 app.use('/settings', settingsRouter);
 app.use('/investments', investmentsRouter);
 app.use('/links', linksRouter);
@@ -43,6 +47,7 @@ app.use('/withdrawalRequests', withdrawalRequestsRouter);
 
 app.use('/posts', postsRouter); 
 app.use('/contact', contactRouter);
+
 
 
 module.exports = app;
