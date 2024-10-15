@@ -129,58 +129,84 @@ router.put('/:id', upload.single('imagen'), function (req, res, next) {
     });
 });
 
-router.delete('/:id', function (req, res, next) {
-    const id = req.params.id;
+router.patch('/:id', function (req, res, fields) {
 
-    const query = `SELECT imagen FROM categorias_minerales WHERE id = ${id}`;
+    const categoryId = req.params.id;
 
-    //Obtener la informacion del information para verificar si tiene una imagen asociada
-    connection.query(query, function (error, result, fields) {
+    const query = 'UPDATE categorias_minerales SET eliminado = CASE WHEN eliminado = "1" THEN "0" ELSE "1" END WHERE id = ?';
+
+    connection.query(query, [categoryId], function (error, results, fields) {
         if (error) {
-            console.log(error);
             return res.status(500).json({
                 error: error,
-                message: "Error retrieving information"
+                message: 'ERROR AL ELIMINAR CATEGORIAS MINERALES'
             });
-        }
-
-        // verificar si se encontro information
-        if (result.length === 0) {
+        } else if(results.affectedRows === 0){
             return res.status(404).json({
-                message: "Information not found"
+                message: 'CATEGORIAS MINERALES NO ENCONTRADA'
             });
-        }
-
-        const currentInformation = result[0];
-        const imagen = currentInformation.imagen;
-
-        //Eliminar la imagen si existe
-        if (imagen) {
-            const imagePath = path.join(__dirname, '..', imagen);
-            fs.unlink(imagePath, (err) => {
-                if (err) {
-                    console.log('Error deleting image: ', err);
-                }
-            });
-        }
-
-        //eliminar la informacion de la base de datos
-        var query2 = `DELETE FROM categorias_minerales WHERE id = ${id}`;
-        connection.query(query2, function (error, result, fields) {
-            if (error) {
-                console.log(error);
-                return res.status(500).json({
-                    error: error,
-                    message: "Error in the query"
-                });
-            }
-
+        } else {
             res.status(200).json({
-                message: "Information successfully deleted",
+                message: 'CATEGORIA MINERALES ELIMINADA CON EXITO'
             });
-        });
+        }
     });
+
+    
 });
+
+// router.delete('/:id', function (req, res, next) {
+//     const id = req.params.id;
+
+//     const query = `SELECT imagen FROM categorias_minerales WHERE id = ${id}`;
+
+//     //Obtener la informacion del information para verificar si tiene una imagen asociada
+//     connection.query(query, function (error, result, fields) {
+//         if (error) {
+//             console.log(error);
+//             return res.status(500).json({
+//                 error: error,
+//                 message: "Error retrieving information"
+//             });
+//         }
+
+//         // verificar si se encontro information
+//         if (result.length === 0) {
+//             return res.status(404).json({
+//                 message: "Information not found"
+//             });
+//         }
+
+//         const currentInformation = result[0];
+//         const imagen = currentInformation.imagen;
+
+//         //Eliminar la imagen si existe
+//         if (imagen) {
+//             const imagePath = path.join(__dirname, '..', imagen);
+//             fs.unlink(imagePath, (err) => {
+//                 if (err) {
+//                     console.log('Error deleting image: ', err);
+//                 }
+//             });
+//         }
+
+//         //eliminar la informacion de la base de datos
+//         var query2 = `DELETE FROM categorias_minerales WHERE id = ${id}`;
+//         connection.query(query2, function (error, result, fields) {
+//             if (error) {
+//                 console.log(error);
+//                 return res.status(500).json({
+//                     error: error,
+//                     message: "Error in the query"
+//                 });
+//             }
+
+//             res.status(200).json({
+//                 message: "Information successfully deleted",
+//             });
+//         });
+//     });
+// });
 
 
 module.exports = router;
