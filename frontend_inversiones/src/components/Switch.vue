@@ -52,12 +52,12 @@ defineProps({
   border-width: 0;
 }
 .switch {
-  --switch-container-width: 50px;
-  --switch-size: calc(var(--switch-container-width) / 2);
+  --switch-container-width: 34px;
+  --switch-size: 20px;
   --light-gray: #e2e8f0;
   --gray: #cbd5e0;
   --dark-gray: #a0aec0;
-  --teal: #4fd1c5;
+  --teal: #9627bb;
   --dark-teal: #319795;
   /* Vertically center the inner circle */
   display: flex;
@@ -77,13 +77,13 @@ defineProps({
   position: absolute;
   /* Move a little bit the inner circle to the right */
   left: 1px;
-  height: calc(var(--switch-size) - 4px);
-  width: calc(var(--switch-size) - 4px);
+  height: calc(var(--switch-size) - 0px);
+  width: calc(var(--switch-size) - 0px);
   /* Make the inner circle fully rounded */
   border-radius: 9999px;
   background-color: white;
   border: 2px solid var(--light-gray);
-  transition: transform 0.375s ease-in-out;
+  transition: transform 0.15s ease-in-out;
 }
 .input:checked + .switch {
   background-color: var(--teal);
@@ -99,7 +99,7 @@ defineProps({
   border-color: var(--gray);
 }
 .input:focus:checked + .switch::before {
-  border-color: var(--dark-teal);
+  border-color: none;
 }
 .input:disabled + .switch {
   background-color: var(--gray);
