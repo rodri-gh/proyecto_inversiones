@@ -62,23 +62,39 @@ router.put('/:id', function (req, res, next) {
     });
 });
 
-router.delete('/:id', function (req, res, next) {
+router.patch('/:id', function (req, res, fields) {
     const categoryId = req.params.id;
 
-    const query = 'DELETE FROM categorias_posts WHERE id = ?;';
+    //si eliminado es un ENUM
+    const query = `UPDATE categorias_posts SET eliminado = CASE 
+                    WHEN eliminado = '1' THEN '0' 
+                    ELSE '1' 
+                    END WHERE id = ?;`;
 
     connection.query(query, [categoryId], function (error, results, fields) {
         if (error) {
             return res.status(500).json({
                 error: error,
-                message: 'ERROR AL ELIMINAR CATEGORIA POST',
+                message: 'ERROR TO DELETE CATEGORIA POST',
+            });
+        } else if (results.affectedRows === 0) {
+            return res.status(404).json({
+                message: 'CATEGORIA POST NOT FIND',
+            });
+        } else {
+            res.status(200).json({
+                message: 'CATEGORIA POST DELETE SUCCESSFULLY',
             });
         }
-
-        res.status(200).json({
-            message: 'CATEGORIA POST ELIMINADA CON EXITO',
-        });
     });
 });
 
+
 module.exports = router;
+
+
+
+
+
+
+router.delete ('patch/:id')

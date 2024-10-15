@@ -26,11 +26,11 @@ router.get('/', function (req, res, next) {
 
 
 router.post('/', function (req, res, next) {
-    const { pregunta, respuesta, estado } = req.body;
+    const { pregunta, respuesta, eliminado } = req.body;
 
-    const query = 'INSERT INTO faq (pregunta, respuesta, estado) VALUES (?, ?, ?);';
+    const query = 'INSERT INTO faq (pregunta, respuesta, eliminado) VALUES (?, ?, ?);';
 
-    connection.query(query, [pregunta, respuesta, estado], function (error, results, fields) {
+    connection.query(query, [pregunta, respuesta, eliminado], function (error, results, fields) {
         if (error) {
             return res.status(500).json({
                 error: error,
@@ -45,12 +45,12 @@ router.post('/', function (req, res, next) {
 });
 
 router.put('/:id', function (req, res, next) {
-    const { pregunta, respuesta, estado } = req.body;
+    const { pregunta, respuesta, eliminado } = req.body;
     const postId = req.params.id;
 
-    const query = 'UPDATE faq SET pregunta = ?, respuesta = ?, estado = ? WHERE id = ?;';
+    const query = 'UPDATE faq SET pregunta = ?, respuesta = ?, eliminado = ? WHERE id = ?;';
 
-    connection.query(query, [pregunta, respuesta, estado, postId], function (error, results, fields) {
+    connection.query(query, [pregunta, respuesta, eliminado, postId], function (error, results, fields) {
         if (error) {
             return res.status(500).json({
                 error: error,
@@ -65,57 +65,24 @@ router.put('/:id', function (req, res, next) {
 });
 
 
+router.patch('/:id', function (req, res, next) {
+    //const postId = req.params.id; // Obtener el ID del post
+    const query = "UPDATE faq SET eliminado = CASE WHEN  eliminado = '1' THEN '0' ELSE '1' END WHERE id = ?;";
 
-router.delete('/:id', function (req, res, next) {
-    const postId = req.params.id; // Obtener el ID del post
-
-    // const query = `SELECT imagen_portada FROM posts WHERE id = "${postId}";`;
-
-    // // Obtener la información del post
-    // connection.query(query, function (error, results, fields) {
-    //     if (error) {
-    //         return res.status(500).json({
-    //             error: error,
-    //             message: 'ERROR AL RECUPERAR LA INFORMACION',
-    //         });
-    //     }
-
-    //     // Verificar si el post existe
-    //     if (results.length === 0) {
-    //         return res.status(404).json({
-    //             message: 'FAQ NO ENCONTRADO',
-    //         });
-    //     }
-
-    //     const currentPost = results[0];
-    //     const imagen_portada = currentPost.imagen_portada;
-
-    //     // Eliminar la imagen si existe
-    //     if (imagen_portada) {
-    //         const imagePath = path.join(__dirname, '..', imagen_portada);
-    //         fs.unlink(imagePath, (err) => {
-    //             if (err) {
-    //                 console.error('ERROR AL ELIMINAR FAQ:', err);
-    //             }
-    //         });
-    //     }
-
-        // Eliminar el post de la base de datos
-        const query2 = `DELETE FROM posts WHERE id = "${postId}";`;
-        connection.query(query2, function (error, results, fields) {
-            if (error) {
-                return res.status(500).json({
-                    error: error,
-                    message: 'ERROR AL ELIMINAR FAQ',
-                });
-            }
-
-            res.status(200).json({
-                message: 'FAQ ELIMINADO OCN EXITO',
+    connection.query(query, [req.params.id], function (error, results) {
+        if (error) {
+            return res.status(500).json({
+                error: error,
+                message: 'ERROR TO CREATE FAQ',
             });
+        }
+
+        res.status(201).json({
+            message: 'FAQ DELETE SUCCESFULLY',
         });
     });
-//});
 
+
+});
 
 module.exports = router;
