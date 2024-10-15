@@ -2,8 +2,6 @@ var express = require('express');
 var router = express.Router();
 const conexion = require('../database');
 
-
-
 router.get('/', function (req, res, next) {
   const query = 'SELECT * FROM contacto';
   conexion.query(query, function (error, results, fields) {
@@ -43,6 +41,7 @@ router.post('/', function (req, res, next) {
     }
   });
 });
+
 router.put('/:id', function (req, res, next) {
   const { nombre, apellido, email, telefono, comentarios, respuesta } = req.body;
   const { id } = req.params;
@@ -65,10 +64,10 @@ router.put('/:id', function (req, res, next) {
   });
 
 });
-router.delete('/:id', function (req, res, next) {
+router.patch('/:id', function (req, res, next) {
   const { id } = req.params;
 
-  const query = `DELETE FROM contacto WHERE id=${id};`;
+  const query = `UPDATE contacto SET eliminado = CASE WHEN eliminado = '1' THEN '0'ELSE '1'END WHERE id = "${id}" ;`;
 
   conexion.query(query, function (error, results, fields) {
     if (error) {
@@ -86,26 +85,5 @@ router.delete('/:id', function (req, res, next) {
     }
   });
 });
-router.put('/state/:id', function (req, res, next) {
-  const { id } = req.params;
-
-  const query = `UPDATE contacto SET estado = !estado WHERE id=${id};`;
-
-  conexion.query(query, function (error, results, fields) {
-    if (error) {
-      console.log(error);
-      res.status(500).json({
-        error: error,
-        message: 'Error in the query',
-      });
-    } else {
-      console.log(results);
-      res.status(200).json({
-        message: 'Contact state updated',
-      });
-    }
-  });
-});
-
 
 module.exports = router;
