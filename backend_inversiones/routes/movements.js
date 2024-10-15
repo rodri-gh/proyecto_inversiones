@@ -5,9 +5,9 @@ var conexion = require('../database');
 
 // CREATE - Crear un nuevo movimiento
 router.post('/', async (req, res) => {
-  const { tipo, monto, descripcion, fecha_solicitud, fecha_desembolso } = req.body;
-  const query = 'INSERT INTO movimientos (tipo, monto, descripcion, fecha_solicitud, fecha_desembolso) VALUES (?, ?, ?, ?, ?)';
-  const values = [tipo, monto, descripcion, fecha_solicitud, fecha_desembolso];
+  const { tipo, monto, descripcion, fecha_solicitud, fecha_desembolso, eliminado } = req.body;
+  const query = 'INSERT INTO movimientos (tipo, monto, descripcion, fecha_solicitud, fecha_desembolso, eliminado) VALUES (?, ?, ?, ?, ?, ?)';
+  const values = [tipo, monto, descripcion, fecha_solicitud, fecha_desembolso, eliminado];
 
   conexion.query(query, values, (error, results) => {
     if (error) {
@@ -44,9 +44,9 @@ router.get('/:id', (req, res) => {
 
 // UPDATE - Actualizar un movimiento existente
 router.put('/:id', (req, res) => {
-  const { tipo, monto, descripcion, fecha_solicitud, fecha_desembolso } = req.body;
-  const query = 'UPDATE movimientos SET tipo = ?, monto = ?, descripcion = ?, fecha_solicitud = ?, fecha_desembolso = ? WHERE id = ?';
-  const values = [tipo, monto, descripcion, fecha_solicitud, fecha_desembolso, req.params.id];
+  const { tipo, monto, descripcion, fecha_solicitud, fecha_desembolso, eliminado } = req.body;
+  const query = 'UPDATE movimientos SET tipo = ?, monto = ?, descripcion = ?, fecha_solicitud = ?, fecha_desembolso = ?, eliminado = ? WHERE id = ?';
+  const values = [tipo, monto, descripcion, fecha_solicitud, fecha_desembolso, eliminado, req.params.id];
 
   conexion.query(query, values, (error, results) => {
     if (error) {
@@ -61,7 +61,7 @@ router.put('/:id', (req, res) => {
 
 // DELETE - Eliminar un movimiento
 router.patch('/:id', (req, res) => { 
-  const query = 'UPDATE movimientos SET eliminado = CASE WHEN eliminado = 1 THEN 0 ELSE 1 END WHERE id = ?';
+  const query = `UPDATE movimientos SET eliminado = CASE WHEN eliminado = '1' THEN '0' ELSE '1' END WHERE id = ?`;
   conexion.query(query, [req.params.id], (error, results) => {
     if (error) {
       res.status(500).json({ mensaje: 'Error al actualizar el estado del movimiento', error });
