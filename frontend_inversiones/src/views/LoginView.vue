@@ -71,7 +71,7 @@ import Switch from "@/components/Switch.vue";
 }
 
 .card {
-  margin-top: 18% !important;
+  margin-top: 12% !important;
 }
 /* .px-5 {
   padding-left: 8rem !important;
