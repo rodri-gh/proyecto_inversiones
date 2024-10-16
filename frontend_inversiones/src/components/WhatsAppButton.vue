@@ -4,7 +4,7 @@
 <template>
     <div class="whatsapp-container">
         <a
-        href="https://wa.me/59168836532?text=Hola%2C%20estoy%20interesado%20en%20tu%20producto"
+        href="https://wa.me/59171462777?text=Hola%2C%20estoy%20interesado%20en%20tu%20producto"
         class="whatsapp-float"
         target="_blank"
         rel="noopener noreferrer"
