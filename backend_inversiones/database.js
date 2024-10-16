@@ -9,6 +9,6 @@ var connection = mysql.createConnection({
 });
 
 
-//hola
-// 2 comentario
+
+
 module.exports = connection;
