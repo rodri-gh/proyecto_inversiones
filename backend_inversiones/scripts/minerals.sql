@@ -22,16 +22,18 @@ USE `minerals`;
 -- Volcando estructura para tabla minerals.contracts
 CREATE TABLE IF NOT EXISTS `contracts` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `project_id` bigint(20) DEFAULT NULL,
-  `user_id` bigint(20) DEFAULT NULL,
+  `project_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `investment_id` bigint(20) NOT NULL DEFAULT 0,
   `contract_code` varchar(20) NOT NULL,
   `contract_date` date NOT NULL,
-  `investment_amount` decimal(10,2) NOT NULL,
   `contract_file_path` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `contract_code` (`contract_code`),
   KEY `project_user` (`project_id`),
   KEY `user_id` (`user_id`),
+  KEY `contract_id` (`investment_id`) USING BTREE,
+  CONSTRAINT `investment` FOREIGN KEY (`investment_id`) REFERENCES `investments` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `project_id_fk_` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -45,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `investments` (
   `user_id` bigint(20) DEFAULT NULL,
   `amount` decimal(10,2) NOT NULL,
   `investment_date` timestamp NULL DEFAULT current_timestamp(),
+  `profit_percentage` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `project_id_inv` (`project_id`),
   KEY `user_id_inv` (`user_id`),
@@ -58,34 +61,41 @@ CREATE TABLE IF NOT EXISTS `investments` (
 CREATE TABLE IF NOT EXISTS `minerals` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
+  `price` decimal(20,6) NOT NULL,
+  `description` varchar(200) DEFAULT NULL,
+  `image` text DEFAULT NULL,
   `deleted` tinyint(4) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla minerals.minerals: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla minerals.minerals: ~1 rows (aproximadamente)
+INSERT INTO `minerals` (`id`, `name`, `price`, `description`, `image`, `deleted`) VALUES
+	(1, 'zinc editado', 0.000000, NULL, NULL, 1);
 
--- Volcando estructura para tabla minerals.prices
-CREATE TABLE IF NOT EXISTS `prices` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `project_id` bigint(20) DEFAULT NULL,
-  `pre_purchase_price` decimal(10,2) DEFAULT NULL,
-  `purchase_price` decimal(10,2) DEFAULT NULL,
-  `mill_exit_price` decimal(10,2) DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `project_id_pri` (`project_id`),
-  CONSTRAINT `project_id_pri` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`)
+-- Volcando estructura para tabla minerals.operating_expenses
+CREATE TABLE IF NOT EXISTS `operating_expenses` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `description` varchar(200) NOT NULL,
+  `expenses` double(20,2) NOT NULL,
+  `project_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `project_id` (`project_id`),
+  CONSTRAINT `project_id_fk_5` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla minerals.prices: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla minerals.operating_expenses: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla minerals.projects
 CREATE TABLE IF NOT EXISTS `projects` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `description` text DEFAULT NULL,
+  `investment_goal` bigint(20) NOT NULL,
   `status` enum('open','in_transit','closed') NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `profit_percentage` decimal(10,2) DEFAULT NULL,
   `deleted` tinyint(4) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -109,33 +119,21 @@ CREATE TABLE IF NOT EXISTS `project_minerals` (
 
 -- Volcando estructura para tabla minerals.project_timeline
 CREATE TABLE IF NOT EXISTS `project_timeline` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `project_id` bigint(20) DEFAULT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `project_id` bigint(20) NOT NULL,
   `phase` varchar(50) NOT NULL,
-  `start_date` date DEFAULT NULL,
-  `end_date` date DEFAULT NULL,
-  `status` varchar(50) DEFAULT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `description` varchar(200) NOT NULL,
+  `price_mineral_1` decimal(10,2) NOT NULL,
+  `price_mineral_2` decimal(10,2) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `project_id_fk` (`project_id`),
   CONSTRAINT `project_id_fk` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcando datos para la tabla minerals.project_timeline: ~0 rows (aproximadamente)
-
--- Volcando estructura para tabla minerals.project_updates
-CREATE TABLE IF NOT EXISTS `project_updates` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `project_id` bigint(20) DEFAULT NULL,
-  `update_type` varchar(50) NOT NULL,
-  `description` text DEFAULT NULL,
-  `update_date` timestamp NULL DEFAULT current_timestamp(),
-  `deleted` tinyint(4) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `project_id_up` (`project_id`),
-  CONSTRAINT `project_id_up` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- Volcando datos para la tabla minerals.project_updates: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla minerals.users
 CREATE TABLE IF NOT EXISTS `users` (
