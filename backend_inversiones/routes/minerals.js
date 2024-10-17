@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.get('/', function (req, res, next) {
-  const query = 'SELECT * FROM minerals WHERE deleted = 1;';
+  const query = 'SELECT * FROM minerals;';
   conexion.query(query, function (error, results, fields) {
     if (error) {
       console.log(error);
