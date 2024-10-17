@@ -27,6 +27,12 @@
               </tr>
             </thead>
             <tbody>
+              <tr v-if="minerals.length == 0">
+                <td colspan="6" class="text-center">
+                  No hay minerales registrados
+                </td>
+              </tr>
+
               <tr v-for="mineral in minerals" :key="mineral.id">
                 <td>{{ mineral.name }}</td>
                 <td>{{ mineral.price }}</td>
@@ -139,6 +145,7 @@
                 ref="image"
                 id="image"
                 @change="previewImage()"
+                accept="image/*"
               />
             </div>
             <div v-if="previewUrl" class="mt-3">
@@ -155,7 +162,7 @@
               Cancelar
             </button>
             <button
-              v-if="seleccionado && seleccionado.id == null"
+              v-if="selectedMineral && selectedMineral.id == null"
               type="button"
               class="btn btn-primary"
               @click="createMineral()"
@@ -163,6 +170,7 @@
               Guardar
             </button>
             <button
+              v-else
               type="button"
               class="btn btn-primary"
               @click="updateMineral()"
@@ -301,7 +309,7 @@ const reset = () => {
   name.value = "";
   price.value = "";
   description.value = "";
-  image.value = null;
+  image.value.value = null;
   previewUrl.value = null;
   selectedMineral.value = {};
 };
