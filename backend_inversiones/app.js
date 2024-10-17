@@ -9,8 +9,6 @@ const mineralsRouter = require('./routes/minerals');
 const projectTimelineRouter = require('./routes/projectTimeline');
 var projectsRouter = require('./routes/projects');
 
-const mineralsRouter = require('./routes/minerals');
-
 var investmentsRouter = require('./routes/investments');
 
 
@@ -28,8 +26,6 @@ app.use('/users', usersRouter);
 app.use('/minerals', mineralsRouter);
 app.use('/projectTimeline', projectTimelineRouter);
 app.use('/projects', projectsRouter);
-
-app.use('/minerals', mineralsRouter);
 
 app.use('/investments', investmentsRouter);
 
