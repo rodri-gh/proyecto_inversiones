@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var connection = require('../database');
+const conexion = require('../database');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -8,205 +8,144 @@ const fs = require('fs');
 // Asegurar que el directorio donde se guardaran las imagenes existe
 const uploadDir = 'public/images/minerals';
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 // Configuración de Multer
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir)
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname))
-    },
+  destination: function (req, file, cb) {
+    cb(null, uploadDir)
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname))
+  }
 });
-
 
 const upload = multer({ storage: storage });
 
 router.get('/', function (req, res, next) {
-    var query = `SELECT * FROM categorias_minerales`;
-
-    connection.query(query, function (error, result, fields) {
-        if (error) {
-            console.log(error);
-            res.status(500).send({
-                error: error,
-                message: "Error in the query"
-            });
-        } else {
-            console.log(result);
-            // para mostrar imagenes de la base de datos
-            result.forEach(element => {
-                if (element.imagen) {
-                    element.imagen = `http://localhost:3000/images/minerals/${element.imagen}`;
-                }
-            })
-            res.status(200).send({
-                data: result,
-                message: "Successful petition"
-            })
+  const query = 'SELECT * FROM minerals WHERE deleted = 1;';
+  conexion.query(query, function (error, results, fields) {
+    if (error) {
+      console.log(error);
+      res.status(500).json({
+        error: error,
+        message: 'Error in the query',
+      });
+    } else {
+      console.log(results);
+      // para mostrar imagenes de la base de datos
+      results.forEach(element => {
+        if (element.image) {
+          element.image = `http://localhost:3000/images/minerals/${element.image}`;
         }
-    });
+      })
+      res.status(200).json({
+        data: results,
+        message: 'Listing minerals',
+      });
+    }
+  });
 });
 
-router.post('/', upload.single('imagen'), function (req, res, next) {
-    const { nombre } = req.body;
+router.post('/', upload.single('image'), function (req, res, next) {
+  const { name, price, description } = req.body;
 
-    // Obtener la ruta de la imagen subida, quitar el directorio y dejar solo el nombre de la imagen, para ahorrar memoria
-    const imagen = req.file ? `${req.file.filename}` : null;
 
-    var query = `INSERT INTO categorias_minerales (nombre, imagen) VALUES ('${nombre}', '${imagen}');`;
 
-    connection.query(query, function (error, result, fields) {
-        if (error) {
-            console.log(error);
-            res.status(500).send({
-                error: error,
-                message: "Error in the query"
-            });
-        } else {
-            console.log(result);
-            res.status(200).send({
-                data: result,
-                message: "Successful registration"
-            })
-        }
-    });
+  const image = req.file ? `${req.file.filename}` : null;
+
+  const query = `
+    INSERT INTO minerals (name,price,description,image) 
+    VALUES ("${name}","${price}","${description}","${image}");
+  `;
+
+  conexion.query(query, function (error, results, fields) {
+    if (error) {
+      console.log(error);
+      res.status(500).json({
+        error: error,
+        message: 'Error in the query',
+      });
+    } else {
+      console.log(results);
+      res.status(200).json({
+        data: results,
+        message: 'Mineral created',
+      });
+    }
+  });
 });
 
-router.put('/:id', upload.single('imagen'), function (req, res, next) {
-    const id = req.params.id;
-    const { nombre } = req.body;
+router.put('/:id', upload.single('image'), function (req, res, next) {
+  const mineralId = req.params.id;
+  const { name, description, price } = req.body;
 
-    const query = `SELECT imagen FROM categorias_minerales WHERE id = ${id}`;
-    connection.query(query, function (error, result, fields) {
-        if (error) {
-            console.log(error);
-            return res.status(500).json({
-                error: error,
-                message: "Error retrieving information"
-            });
-        } else {
-            const currentInformation = result[0];
+  const query = `SELECT image FROM minerals WHERE id = "${mineralId}";`;
+  conexion.query(query, function (error, results, fields) {
+    if (error) {
+      console.error(error);
+      return res.status(500).json({
+        error: error,
+        message: 'Error retrieving minerals information',
+      });
+    }
 
-        let imagen = currentInformation.imagen;
-        if (req.file) {
-            // Si se subio una nueva imagen, actualizar la ruta
-            imagen = `${req.file.filename}`;
-
-            // Eliminar la imagen antigua si existe
-            if (currentInformation.imagen) {
-                //const oldImagePath = path.join(__dirname, '..', currentInformation.imagen);
-                const oldImagePath = "public/images/minerals/" + currentInformation.imagen;
-                fs.unlink(oldImagePath, (err) => {
-                    console.log('Error deleting old image: ', err);
-                });
-            }
-        }
+    const currentMineral = results[0];
 
 
-        var query = `UPDATE categorias_minerales SET
-                nombre = '${nombre}',
-                imagen = '${imagen}'
-                WHERE id = ${id}`;
-        connection.query(query, function (error, result, fields) {
-            if (error) {
-                console.log(error);
-                return res.status(500).json({
-                    error: error,
-                    message: "Error in the query"
-                });
-            }
+    let image = currentMineral.image;
+    if (req.file) {
+      // Si se subió una nueva imagen, actualizar la ruta
+      image = `${req.file.filename}`;
 
-            res.status(200).json({
-                message: "Successfully updated information",
-            });
+      // Eliminar la imagen antigua si existe
+      if (currentMineral.image) {
+        const oldImagePath = path.join(__dirname, '../public/images/minerals', currentMineral.image);
+        fs.unlink(oldImagePath, (err) => {
+          console.error('Error deleting old image:', err);
         });
-        }
+      }
+    }
 
-        
+    const query = `
+      UPDATE minerals 
+      SET name = "${name}", description = "${description}", price = "${price}", image = "${image}"
+      WHERE id = "${mineralId}";
+    `;
+
+    conexion.query(query, (error, results) => {
+      if (error) {
+        console.error(error);
+        return res.status(500).json({
+          error: error,
+          message: 'Error updating mineral',
+        });
+      }
+
+      res.status(200).json({
+        message: 'Mineral updated',
+      });
     });
+  });
 });
 
-router.patch('/:id', function (req, res, fields) {
+router.patch('/:id', function (req, res, next) {
+  const mineralId = req.params.id;
 
-    const categoryId = req.params.id;
-
-    const query = 'UPDATE categorias_minerales SET eliminado = CASE WHEN eliminado = "1" THEN "0" ELSE "1" END WHERE id = ?';
-
-    connection.query(query, [categoryId], function (error, results, fields) {
-        if (error) {
-            return res.status(500).json({
-                error: error,
-                message: 'ERROR AL ELIMINAR CATEGORIAS MINERALES'
-            });
-        } else if(results.affectedRows === 0){
-            return res.status(404).json({
-                message: 'CATEGORIAS MINERALES NO ENCONTRADA'
-            });
-        } else {
-            res.status(200).json({
-                message: 'CATEGORIA MINERALES ELIMINADA CON EXITO'
-            });
-        }
+  const query = `UPDATE minerals SET deleted = !deleted WHERE id = "${mineralId}";`;
+  conexion.query(query, function (error, results, fields) {
+    if (error) {
+      console.error(error);
+      return res.status(500).json({
+        error: error,
+        message: 'Error deleting mineral',
+      });
+    }
+    res.status(200).json({
+      message: 'Mineral deleted',
     });
-
-    
+  });
 });
-
-// router.delete('/:id', function (req, res, next) {
-//     const id = req.params.id;
-
-//     const query = `SELECT imagen FROM categorias_minerales WHERE id = ${id}`;
-
-//     //Obtener la informacion del information para verificar si tiene una imagen asociada
-//     connection.query(query, function (error, result, fields) {
-//         if (error) {
-//             console.log(error);
-//             return res.status(500).json({
-//                 error: error,
-//                 message: "Error retrieving information"
-//             });
-//         }
-
-//         // verificar si se encontro information
-//         if (result.length === 0) {
-//             return res.status(404).json({
-//                 message: "Information not found"
-//             });
-//         }
-
-//         const currentInformation = result[0];
-//         const imagen = currentInformation.imagen;
-
-//         //Eliminar la imagen si existe
-//         if (imagen) {
-//             const imagePath = path.join(__dirname, '..', imagen);
-//             fs.unlink(imagePath, (err) => {
-//                 if (err) {
-//                     console.log('Error deleting image: ', err);
-//                 }
-//             });
-//         }
-
-//         //eliminar la informacion de la base de datos
-//         var query2 = `DELETE FROM categorias_minerales WHERE id = ${id}`;
-//         connection.query(query2, function (error, result, fields) {
-//             if (error) {
-//                 console.log(error);
-//                 return res.status(500).json({
-//                     error: error,
-//                     message: "Error in the query"
-//                 });
-//             }
-
-//             res.status(200).json({
-//                 message: "Information successfully deleted",
-//             });
-//         });
-//     });
-// });
-
 
 module.exports = router;

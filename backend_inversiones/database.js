@@ -5,10 +5,10 @@ var connection = mysql.createConnection({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_DATABASE || 'proyecto_inversiones'
+  database: process.env.DB_DATABASE || 'minerals'
 });
 
 
-//hola
-// 2 comentario
+
+
 module.exports = connection;
