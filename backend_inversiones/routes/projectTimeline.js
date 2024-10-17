@@ -4,7 +4,7 @@ var conexion = require('../database');
 
 router.get('/', function (req, res) {
 
-    var query = 'SELECT * FROM prices;';
+    var query = 'SELECT * FROM project_timeline;';
 
     conexion.query(query, function (error, results) {
         if (error) {
@@ -17,17 +17,17 @@ router.get('/', function (req, res) {
             console.log(results);
             res.status(200).send({
                 data: results,
-                message: 'Prices view'
+                message: 'Project timeline view'
             });
         }
     });
 });
 
 router.post('/', function (req, res, next) {
-    const { project_id, pre_purchase_price, purchase_price, mill_exit_price } = req.body;
+    const { project_id, phase, start_date, end_date, status, description, price_mineral_1, price_mineral_2 } = req.body;
 
-    var query = `INSERT INTO prices (project_id, pre_purchase_price, purchase_price, mill_exit_price)
- VALUES (' ${project_id}', '${pre_purchase_price}', '${purchase_price}', '${mill_exit_price}');`;
+    var query = `INSERT INTO project_timeline (project_id, phase, start_date, end_date, status, description, price_mineral_1, price_mineral_2)
+ VALUES (' ${project_id}', '${phase}', '${start_date}', '${end_date}', '${status}', '${description}', '${price_mineral_1}', '${price_mineral_2}');`;
 
     conexion.query(query, function (error, results, fields) {
         if (error) {
@@ -40,7 +40,7 @@ router.post('/', function (req, res, next) {
             console.log(results.insertId);
             res.status(200).send({
                 data: results.insertId,
-                message: 'Price registered correctly'
+                message: 'Project timeline registered correctly'
             });
         }
     });
@@ -48,9 +48,10 @@ router.post('/', function (req, res, next) {
 });
 
 router.put('/:id', function (req, res, next) {
-    const { project_id, pre_purchase_price, purchase_price, mill_exit_price } = req.body;
+    const { project_id, phase, start_date, end_date, status, description, price_mineral_1, price_mineral_2 } = req.body;
 
-    var query = `UPDATE prices SET project_id="${project_id}", pre_purchase_price="${pre_purchase_price}", purchase_price="${purchase_price}", mill_exit_price="${mill_exit_price}" WHERE id = ${req.params.id};`;
+    var query = `UPDATE project_timeline SET project_id="${project_id}", phase="${phase}", start_date="${start_date}", end_date="${end_date}", status="${status}", description="${description}", price_mineral_1="${price_mineral_1}", price_mineral_2="${price_mineral_2}" 
+                WHERE id = ${req.params.id} ;`;
 
     conexion.query(query, function (error, results, fields) {
         if (error) {
@@ -63,7 +64,7 @@ router.put('/:id', function (req, res, next) {
             console.log(results);
             res.status(200).send({
                 data: results.insertId,
-                message: 'The price was updated successfully'
+                message: 'The project timeline was updated successfully'
             });
         }
     });
