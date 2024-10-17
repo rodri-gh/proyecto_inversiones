@@ -10,6 +10,7 @@ const projectTimelineRouter = require('./routes/projectTimeline');
 var projectsRouter = require('./routes/projects');
 
 var investmentsRouter = require('./routes/investments');
+var project_mineralsRouter = require('./routes/project_minerals');
 
 
 
@@ -28,6 +29,7 @@ app.use('/projectTimeline', projectTimelineRouter);
 app.use('/projects', projectsRouter);
 
 app.use('/investments', investmentsRouter);
+app.use('/project_minerals', project_mineralsRouter);
 
 
 
