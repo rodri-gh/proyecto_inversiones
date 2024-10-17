@@ -23,11 +23,11 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-    const {name, description, status} = req.body;
+    const {name, description, investment_goal, profit_percentage, status} = req.body;
 
     const proyectStatus = status || 'open';
 
-    const query = `INSERT INTO projects (name, description, status, created_at) VALUES ('${name}', '${description}', '${proyectStatus}', CURRENT_TIMESTAMP())`;
+    const query = `INSERT INTO projects (name, description, investment_goal, status, created_at, profit_percentage) VALUES ('${name}', '${description}', '${investment_goal}', '${proyectStatus}', CURRENT_TIMESTAMP(), '${profit_percentage}');`;
     connection.query(query, function(error, results) {
         if (error){
             console.log(error);
@@ -47,7 +47,7 @@ router.post('/', function(req, res, next) {
 
 router.put('/:id', function(req, res, next) {
     const {id} = req.params;
-    const {name, description, status} = req.body;
+    const {name, description, investment_goal, profit_percentage, status} = req.body;
 
     // Valores permitidos para el campo 'status'
     const validStatuses = ['open', 'in_transit', 'closed'];
@@ -59,7 +59,7 @@ router.put('/:id', function(req, res, next) {
         });
     }
 
-    const query = `UPDATE projects SET name = '${name}', description = '${description}', status = '${status}' WHERE id = ${id};`;
+    const query = `UPDATE projects SET name = '${name}', description = '${description}', investment_goal = '${investment_goal}', profit_percentage = '${profit_percentage}' ,status = '${status}' WHERE id = ${id};`;
     connection.query(query, function(error, results) {
         if (error){
             console.log(error);
