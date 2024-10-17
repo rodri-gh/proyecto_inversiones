@@ -68,24 +68,4 @@ router.put('/:id', function (req, res, next) {
         }
     });
 });
-
-router.patch('/:id', function (req, res, next) {
-
-    var query = `UPDATE prices SET deleted = !deleted WHERE id = ${req.params.id};`;
-
-    conexion.query(query, function (error, results, fields) {
-        if (error) {
-            console.log(error);
-            res.status(500).send({
-                error: error,
-                message: 'Error when making the request'
-            });
-        } else {
-            res.status(200).send({
-                data: results,
-                message: 'The price was updated successfully'
-            });
-        }
-    });
-});
 module.exports = router;
