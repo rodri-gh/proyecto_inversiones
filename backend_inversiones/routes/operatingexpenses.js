@@ -4,9 +4,9 @@ var connection = require('../database');
 
 
 router.get('/', function (req, res) {
-    const query = `SELECT * FROM operating_expenses;`;
+  const query = `SELECT * FROM operating_expenses;`;
 
-router.get('/', (req, res) => {
+  router.get('/', (req, res) => {
     const query = `
       SELECT oe.id, oe.name, oe.description, oe.expenses, p.name AS project_name 
       FROM operating_expenses oe
@@ -14,77 +14,78 @@ router.get('/', (req, res) => {
 
 
     connection.query(query, function (error, results) {
-        if (error) {
-            return res.status(500).json({
-                error: error,
-                message: 'Error en la consulta'
-            });
-        }
-
-        res.status(200).json({
-            data: results,
-            message: 'List of operating_expenses'
+      if (error) {
+        return res.status(500).json({
+          error: error,
+          message: 'Error en la consulta'
         });
+      }
+
+      res.status(200).json({
+        data: results,
+        message: 'List of operating_expenses'
+      });
     });
+  });
 });
 
 
 router.post('/', (req, res) => {
-    const { name, description, expenses, project_id } = req.body;
+  const { name, description, expenses, project_id } = req.body;
 
-    const query = 'INSERT INTO operating_expenses (name, description, expenses, project_id) VALUES (?, ?, ?, ?);';
+  const query = 'INSERT INTO operating_expenses (name, description, expenses, project_id) VALUES (?, ?, ?, ?);';
 
-    connection.query(query, [name, description, expenses, project_id], function (error, results) {
-        if (error) {
-            return res.status(400).json({
-                error: error,
-                message: 'Project ID error post',
-            });
-        }
+  connection.query(query, [name, description, expenses, project_id], function (error, results) {
+    if (error) {
+      return res.status(400).json({
+        error: error,
+        message: 'Project ID error post',
+      });
+    }
 
-        res.status(201).json({
-            message: 'POST succesfully'
-        })
-    });
+    res.status(201).json({
+      message: 'POST succesfully'
+    })
+  });
 });
 
 
 router.put('/:id', (req, res) => {
-    const { name, description, expenses, project_id } = req.body;
-    const id = req.params.id;
+  const { name, description, expenses, project_id } = req.body;
+  const id = req.params.id;
 
-    const query = 'UPDATE operating_expenses SET name = ?, description = ?, expenses = ?, project_id = ? WHERE id = ?';
+  const query = 'UPDATE operating_expenses SET name = ?, description = ?, expenses = ?, project_id = ? WHERE id = ?';
 
-    connection.query(query, [name, description, expenses, project_id, id], function (error, results) {
-        if (error) {
-            return res.status(500).json({
-                message: 'Project ID ERROR'
-            });
-        }
+  connection.query(query, [name, description, expenses, project_id, id], function (error, results) {
+    if (error) {
+      return res.status(500).json({
+        message: 'Project ID ERROR'
+      });
+    }
 
-        res.status(200).json({
-            error: error,
-            message: 'Succesfully PUT'
-        });
+    res.status(200).json({
+      error: error,
+      message: 'Succesfully PUT'
     });
+  });
 });
 
 
 router.delete('/:id', function (req, res) {
-    const query = 'DELETE FROM operating_expenses WHERE id = ?;';
+  const query = 'DELETE FROM operating_expenses WHERE id = ?;';
 
 
-    connection.query(query, [req.params.id], function (error, results) {
-        if (error) {
-            res.status(500).json({
-                error: error,
-                message: 'Error DELETE'
-            });
-        }
-        res.status(200).json({
-            message: 'Succesfully DELETE'
-        });
+  connection.query(query, [req.params.id], function (error, results) {
+    if (error) {
+      res.status(500).json({
+        error: error,
+        message: 'Error DELETE'
+      });
+    }
+    res.status(200).json({
+      message: 'Succesfully DELETE'
     });
+  });
 });
 
 
