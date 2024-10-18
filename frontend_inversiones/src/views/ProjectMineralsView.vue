@@ -1,4 +1,4 @@
-  <template>
+<template>
   <div class="container col-md-8 mt-5">
     <div class="card shadow border-0">
       <div class="card-body">
@@ -203,7 +203,7 @@
   </div>
 </template>
 
-  <script setup>
+<script setup>
 import { ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
 import axios from "axios";
@@ -322,5 +322,4 @@ const reset = () => {
 };
 </script>
 
-  <style  scoped>
-</style>
+<style scoped></style>
