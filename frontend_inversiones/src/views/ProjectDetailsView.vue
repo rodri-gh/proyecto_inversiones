@@ -19,6 +19,11 @@
       contratos, inversiones, todo lo que tiene que ver con proyectos desde la
       vista del admin
     </h1>
+
+    <div>
+      <h3>Linea de tiempo</h3>
+      <TimeLine :idProject="idProject" />
+    </div>
   </div>
 </template>
 
@@ -26,9 +31,10 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import axios from "axios";
+import TimeLine from "@/components/TimeLine.vue";
 
 const route = useRoute();
-const idProject = route.params.id;
+const idProject = ref(route.params.id);
 
 const project = ref({});
 const urlProject = "http://localhost:3000/projects/";
@@ -40,7 +46,7 @@ onMounted(() => {
 
 const getProject = async () => {
   try {
-    const { data } = await axios.get(urlProject + idProject);
+    const { data } = await axios.get(urlProject + idProject.value);
     project.value = data.data;
     console.log(project.value);
   } catch (error) {
