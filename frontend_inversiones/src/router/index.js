@@ -3,6 +3,10 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import Contacto from '@/views/Contacto.vue'
 
+import MineralsView from '@/views/MineralsView.vue'
+import ProjectsView from '@/views/ProjectsView.vue'
+import ProjectDetailsView from '@/views/ProjectDetailsView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -17,9 +21,19 @@ const router = createRouter({
       component: LoginView
     },
     {
-      path: '/contacto',
-      name: 'contacto',
-      component: Contacto
+      path: '/minerals',
+      name: 'minerals',
+      component: MineralsView
+    },
+    {
+      path: '/projects',
+      name: 'projects',
+      component: ProjectsView
+    },
+    {
+      path: '/projects/:id',
+      name: 'project-details',
+      component: ProjectDetailsView
     }
   ]
 })
