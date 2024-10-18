@@ -12,6 +12,7 @@
     <p>
       <strong>Porcentaje de ganancia:</strong> {{ project.profit_percentage }}
     </p>
+    <p><strong>Fecha de creacion:</strong> {{ project.created_at }}</p>
     <h1>
       Esto no es un diseño, pero ya aqui pueden usar el id de proyecto para
       crear gastos operativos, asignar minerales al proyecto, etc, clientes,

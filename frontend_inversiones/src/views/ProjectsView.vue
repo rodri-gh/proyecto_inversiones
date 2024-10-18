@@ -20,10 +20,9 @@
               <tr>
                 <th scope="col">Nombre</th>
                 <th scope="col">Descripcion</th>
-                <th scope="col">Meta de Recaudacion</th>
+
                 <th scope="col">Estado del Proyecto</th>
-                <th scope="col">Fecha de creacion</th>
-                <th scope="col">Porcentaje de ganancia</th>
+
                 <th scope="col">Estado</th>
                 <th scope="col">Acciones</th>
               </tr>
@@ -38,12 +37,11 @@
               <tr v-for="project in projects" :key="project.id">
                 <td>{{ project.name }}</td>
                 <td>{{ project.description }}</td>
-                <td>{{ project.investment_goal }}</td>
+
                 <td v-if="project.status == 'open'">Abierto</td>
                 <td v-else-if="project.status == 'in_transit'">En curso</td>
                 <td v-else>Cerrado</td>
-                <td>{{ project.created_at }}</td>
-                <td>{{ project.profit_percentage }}</td>
+
                 <td>
                   <span v-if="project.deleted == 1" class="badge bg-success"
                     >Activo</span
