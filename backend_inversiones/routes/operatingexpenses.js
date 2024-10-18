@@ -61,25 +61,25 @@ router.put('/operating_expenses/:id', (req, res) => {
 
 
 
-router.patch('/operating_expenses/:id', (req, res) => {
-    const { name, description, expenses, project_id } = req.body;
-    const id = req.params.id;
+// router.patch('/operating_expenses/:id', (req, res) => {
+//     const { name, description, expenses, project_id } = req.body;
+//     const id = req.params.id;
 
-    const query = 'UPDATE operating_expenses SET name = COALESCE(?, name), description = COALESCE(?, description), expenses = COALESCE(?, expenses), project_id = COALESCE(?, project_id) WHERE id = ?';
+//     const query = 'UPDATE operating_expenses SET name = COALESCE(?, name), description = COALESCE(?, description), expenses = COALESCE(?, expenses), project_id = COALESCE(?, project_id) WHERE id = ?';
 
-    connection.query('SELECT id FROM projects WHERE id = ?', [project_id], function (err, projectResults) {
-        if (err || projectResults.length === 0) {
-            return res.status(400).json({ message: 'Project ID no existe' });
-        }
+//     connection.query('SELECT id FROM projects WHERE id = ?', [project_id], function (err, projectResults) {
+//         if (err || projectResults.length === 0) {
+//             return res.status(400).json({ message: 'Project ID no existe' });
+//         }
 
-        connection.query(query, [name, description, expenses, project_id, id], function (error, results) {
-            if (error) {
-                return res.status(500).json({ error: error, message: 'Error en la consulta' });
-            }
-            res.status(200).json({ message: 'Registro actualizado parcialmente' });
-        });
-    });
-});
+//         connection.query(query, [name, description, expenses, project_id, id], function (error, results) {
+//             if (error) {
+//                 return res.status(500).json({ error: error, message: 'Error en la consulta' });
+//             }
+//             res.status(200).json({ message: 'Registro actualizado parcialmente' });
+//         });
+//     });
+// });
 
 
 
