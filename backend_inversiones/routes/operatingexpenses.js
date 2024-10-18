@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
-router.get('/operating_expenses', (req, res) => {
+router.get('/', (req, res) => {
     const query = `
       SELECT oe.id, oe.name, oe.description, oe.expenses, p.name AS project_name 
       FROM operating_expenses oe
@@ -17,7 +17,7 @@ router.get('/operating_expenses', (req, res) => {
 });
 
 
-router.post('/operating_expenses', (req, res) => {
+router.post('/', (req, res) => {
     const { name, description, expenses, project_id } = req.body;
 
     const query = 'INSERT INTO operating_expenses (name, description, expenses, project_id) VALUES (?, ?, ?, ?);';
@@ -37,7 +37,7 @@ router.post('/operating_expenses', (req, res) => {
 });
 
 
-router.put('/operating_expenses/:id', (req, res) => {
+router.put('/:id', (req, res) => {
     const { name, description, expenses, project_id } = req.body;
     const id = req.params.id;
 
@@ -83,7 +83,7 @@ router.put('/operating_expenses/:id', (req, res) => {
 
 
 
-app.patch('/operating_expenses/:id', (req, res) => {
+router.patch('/:id', (req, res) => {
     const id = req.params.id;
     const { name, description, expenses, project_id } = req.body;
     let updateFields = [];
