@@ -9,7 +9,11 @@ var usersRouter = require('./routes/users');
 const mineralsRouter = require('./routes/minerals');
 const projectTimelineRouter = require('./routes/projectTimeline');
 var projectsRouter = require('./routes/projects');
+
+var contractsRouter = require('./routes/contracts');
+
 var operatingexpensesRouter = require('./routes/operatingexpenses')
+
 
 var investmentsRouter = require('./routes/investments');
 var project_mineralsRouter = require('./routes/project_minerals');
@@ -31,7 +35,11 @@ app.use('/users', usersRouter);
 app.use('/minerals', mineralsRouter);
 app.use('/projectTimeline', projectTimelineRouter);
 app.use('/projects', projectsRouter);
+
+app.use('/contracts', contractsRouter);
+
 app.use('/operatingexpenses', operatingexpensesRouter);
+
 
 app.use('/investments', investmentsRouter);
 app.use('/project_minerals', project_mineralsRouter);
