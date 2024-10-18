@@ -2,8 +2,16 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
+
 router.get('/', function (req, res) {
     const query = `SELECT * FROM operating_expenses;`;
+
+router.get('/', (req, res) => {
+    const query = `
+      SELECT oe.id, oe.name, oe.description, oe.expenses, p.name AS project_name 
+      FROM operating_expenses oe
+      JOIN projects p ON oe.project_id = p.id;`;
+
 
     connection.query(query, function (error, results) {
         if (error) {
@@ -64,6 +72,7 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', function (req, res) {
     const query = 'DELETE FROM operating_expenses WHERE id = ?;';
+
 
     connection.query(query, [req.params.id], function (error, results) {
         if (error) {
