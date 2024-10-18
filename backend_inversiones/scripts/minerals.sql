@@ -1,5 +1,33 @@
-CREATE DATABASE IF NOT EXISTS `minerals`
+CREATE DATABASE IF NOT EXISTS `minerals`;
 USE `minerals`;
+
+CREATE TABLE IF NOT EXISTS `projects` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` text COLLATE utf8mb4_general_ci,
+  `investment_goal` bigint NOT NULL,
+  `status` enum('open','in_transit','closed') COLLATE utf8mb4_general_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `profit_percentage` decimal(10,2) DEFAULT NULL,
+  `deleted` tinyint NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `phone` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `role` enum('super_user','admin','client') COLLATE utf8mb4_general_ci NOT NULL,
+  `two_factor_enabled` tinyint(1) DEFAULT '0',
+  `name` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
+  `last_name` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
+  `deleted` tinyint NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `phone` (`phone`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 CREATE TABLE IF NOT EXISTS `account` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -12,6 +40,20 @@ CREATE TABLE IF NOT EXISTS `account` (
   CONSTRAINT `FK_account_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+CREATE TABLE IF NOT EXISTS `investments` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `project_id` bigint DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `investment_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `profit_percentage` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `project_id_inv` (`project_id`),
+  KEY `user_id_inv` (`user_id`),
+  CONSTRAINT `project_id_inv` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
+  CONSTRAINT `user_id_inv` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE IF NOT EXISTS `contracts` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -32,19 +74,6 @@ CREATE TABLE IF NOT EXISTS `contracts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-CREATE TABLE IF NOT EXISTS `investments` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `project_id` bigint DEFAULT NULL,
-  `user_id` bigint DEFAULT NULL,
-  `amount` decimal(10,2) NOT NULL,
-  `investment_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `profit_percentage` decimal(10,2) DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `project_id_inv` (`project_id`),
-  KEY `user_id_inv` (`user_id`),
-  CONSTRAINT `project_id_inv` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
-  CONSTRAINT `user_id_inv` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 CREATE TABLE IF NOT EXISTS `minerals` (
@@ -69,19 +98,6 @@ CREATE TABLE IF NOT EXISTS `operating_expenses` (
   PRIMARY KEY (`id`),
   KEY `project_id` (`project_id`),
   CONSTRAINT `project_id_fk_5` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-
-CREATE TABLE IF NOT EXISTS `projects` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `description` text COLLATE utf8mb4_general_ci,
-  `investment_goal` bigint NOT NULL,
-  `status` enum('open','in_transit','closed') COLLATE utf8mb4_general_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `profit_percentage` decimal(10,2) DEFAULT NULL,
-  `deleted` tinyint NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
@@ -114,20 +130,6 @@ CREATE TABLE IF NOT EXISTS `project_timeline` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `phone` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `role` enum('super_user','admin','client') COLLATE utf8mb4_general_ci NOT NULL,
-  `two_factor_enabled` tinyint(1) DEFAULT '0',
-  `name` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
-  `last_name` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
-  `deleted` tinyint NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `phone` (`phone`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 INSERT INTO `users` (`id`, `email`, `phone`, `role`, `two_factor_enabled`, `name`, `last_name`, `deleted`) VALUES
 	(1, 'admin@gmail.com', '77777777', 'super_user', 0, 'admin', 'admin', 1);
@@ -141,10 +143,11 @@ INSERT INTO `minerals` (`id`, `name`, `price`, `description`, `image`, `deleted`
 	(3, 'Plomo', 95.690000, 'Descripción del plomo', '1729202497906.jpeg', 1),
 	(4, 'Cobre', 25.630000, 'Descripción del cobre', '1729202520309.jpeg', 0);
 
-INSERT INTO `operating_expenses` (`id`, `name`, `description`, `expenses`, `project_id`, `deleted`) VALUES
-	(1, 'gatos 1', 'dsada', 58.00, 1, 1),
-	(2, 'gatos 2', 'dsada', 90.00, 1, 1);
 
 INSERT INTO `projects` (`id`, `name`, `description`, `investment_goal`, `status`, `created_at`, `profit_percentage`, `deleted`) VALUES
 	(1, 'Hiram Craft', 'Mollit quae ut autem', 80, 'closed', '2024-10-18 14:31:58', 50.00, 0),
 	(2, 'Chester Scott', 'Est autem et except', 97, 'open', '2024-10-18 15:22:37', 85.00, 1);
+
+INSERT INTO `operating_expenses` (`id`, `name`, `description`, `expenses`, `project_id`, `deleted`) VALUES
+	(1, 'gatos 1', 'dsada', 58.00, 1, 1),
+	(2, 'gatos 2', 'dsada', 90.00, 1, 1);
