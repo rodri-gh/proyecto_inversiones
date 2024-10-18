@@ -1,7 +1,6 @@
-CREATE DATABASE IF NOT EXISTS `minerals` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE IF NOT EXISTS `minerals`
 USE `minerals`;
 
--- Dumping structure for table minerals.account
 CREATE TABLE IF NOT EXISTS `account` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL DEFAULT '0',
@@ -13,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `account` (
   CONSTRAINT `FK_account_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping structure for table minerals.contracts
+
 CREATE TABLE IF NOT EXISTS `contracts` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `project_id` bigint NOT NULL,
@@ -32,9 +31,7 @@ CREATE TABLE IF NOT EXISTS `contracts` (
   CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table minerals.contracts: ~0 rows (approximately)
 
--- Dumping structure for table minerals.investments
 CREATE TABLE IF NOT EXISTS `investments` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `project_id` bigint DEFAULT NULL,
@@ -49,9 +46,7 @@ CREATE TABLE IF NOT EXISTS `investments` (
   CONSTRAINT `user_id_inv` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table minerals.investments: ~0 rows (approximately)
 
--- Dumping structure for table minerals.minerals
 CREATE TABLE IF NOT EXISTS `minerals` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
@@ -63,14 +58,7 @@ CREATE TABLE IF NOT EXISTS `minerals` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla minerals.minerals: ~4 rows (aproximadamente)
-INSERT INTO `minerals` (`id`, `name`, `price`, `description`, `image`, `deleted`) VALUES
-	(1, 'Zinc', 10.500000, 'descripcion del zinc', '1729202313914.jpg', 1),
-	(2, 'Plata', 25.690000, 'Descripcion de la plata', '1729202372093.jpg', 1),
-	(3, 'Plomo', 95.690000, 'Descripción del plomo', '1729202497906.jpeg', 1),
-	(4, 'Cobre', 25.630000, 'Descripción del cobre', '1729202520309.jpeg', 0);
 
--- Dumping structure for table minerals.operating_expenses
 CREATE TABLE IF NOT EXISTS `operating_expenses` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
@@ -83,12 +71,7 @@ CREATE TABLE IF NOT EXISTS `operating_expenses` (
   CONSTRAINT `project_id_fk_5` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla minerals.operating_expenses: ~2 rows (aproximadamente)
-INSERT INTO `operating_expenses` (`id`, `name`, `description`, `expenses`, `project_id`, `deleted`) VALUES
-	(1, 'gatos 1', 'dsada', 58.00, 1, 1),
-	(2, 'gatos 2', 'dsada', 90.00, 1, 1);
 
--- Dumping structure for table minerals.projects
 CREATE TABLE IF NOT EXISTS `projects` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
@@ -101,12 +84,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla minerals.projects: ~2 rows (aproximadamente)
-INSERT INTO `projects` (`id`, `name`, `description`, `investment_goal`, `status`, `created_at`, `profit_percentage`, `deleted`) VALUES
-	(1, 'Hiram Craft', 'Mollit quae ut autem', 80, 'closed', '2024-10-18 14:31:58', 50.00, 0),
-	(2, 'Chester Scott', 'Est autem et except', 97, 'open', '2024-10-18 15:22:37', 85.00, 1);
 
--- Volcando estructura para tabla minerals.project_minerals
 CREATE TABLE IF NOT EXISTS `project_minerals` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `project_id` bigint(20) NOT NULL,
@@ -119,9 +97,7 @@ CREATE TABLE IF NOT EXISTS `project_minerals` (
   CONSTRAINT `mineral_id` FOREIGN KEY (`mineral_id`) REFERENCES `minerals` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla minerals.project_minerals: ~0 rows (aproximadamente)
 
--- Volcando estructura para tabla minerals.project_timeline
 CREATE TABLE IF NOT EXISTS `project_timeline` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `project_id` bigint(20) NOT NULL,
@@ -137,9 +113,7 @@ CREATE TABLE IF NOT EXISTS `project_timeline` (
   CONSTRAINT `project_id_fk` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table minerals.project_timeline: ~0 rows (approximately)
 
--- Dumping structure for table minerals.users
 CREATE TABLE IF NOT EXISTS `users` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
@@ -160,3 +134,17 @@ INSERT INTO `users` (`id`, `email`, `phone`, `role`, `two_factor_enabled`, `name
 
 INSERT INTO `account` (`id`, `user_id`, `username`, `password`) VALUES
 	(1, 1, 'admin', '$2b$10$ZWFoRCMtOqf8t2e9hZ/dke5KDqNnnYiJYeXCRaDB6CqKqmZdqrzUi');
+
+INSERT INTO `minerals` (`id`, `name`, `price`, `description`, `image`, `deleted`) VALUES
+	(1, 'Zinc', 10.500000, 'descripcion del zinc', '1729202313914.jpg', 1),
+	(2, 'Plata', 25.690000, 'Descripcion de la plata', '1729202372093.jpg', 1),
+	(3, 'Plomo', 95.690000, 'Descripción del plomo', '1729202497906.jpeg', 1),
+	(4, 'Cobre', 25.630000, 'Descripción del cobre', '1729202520309.jpeg', 0);
+
+INSERT INTO `operating_expenses` (`id`, `name`, `description`, `expenses`, `project_id`, `deleted`) VALUES
+	(1, 'gatos 1', 'dsada', 58.00, 1, 1),
+	(2, 'gatos 2', 'dsada', 90.00, 1, 1);
+
+INSERT INTO `projects` (`id`, `name`, `description`, `investment_goal`, `status`, `created_at`, `profit_percentage`, `deleted`) VALUES
+	(1, 'Hiram Craft', 'Mollit quae ut autem', 80, 'closed', '2024-10-18 14:31:58', 50.00, 0),
+	(2, 'Chester Scott', 'Est autem et except', 97, 'open', '2024-10-18 15:22:37', 85.00, 1);
