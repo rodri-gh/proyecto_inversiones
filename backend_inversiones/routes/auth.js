@@ -21,7 +21,8 @@ router.post('/login', async (req, res, next) => {
         }
         const checkPassword = await compare(password, results[0].password)
         if (checkPassword) {
-            const accessToken = generateAccessToken({ username: username})
+            const userId = results[0].id;
+            const accessToken = generateAccessToken({ username: username, user_id: userId })
             res.header('authorization', accessToken).json({
                 data: results[0],
                 message: 'Authenticated user',
@@ -40,7 +41,7 @@ router.post('/login', async (req, res, next) => {
 });
 
 const generateAccessToken = (user) => {
-    return jwt.sign(user, process.env.SECRET, { expiresIn: '5m' })
+    return jwt.sign(user, process.env.SECRET, { expiresIn: '1h' })
 }
 
 const validateToken = (req, res, next) => {
