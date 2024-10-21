@@ -8,7 +8,4 @@ var connection = mysql.createConnection({
   database: process.env.DB_DATABASE || 'minerals'
 });
 
-
-
-
 module.exports = connection;
