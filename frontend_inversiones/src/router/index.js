@@ -5,6 +5,8 @@ import LoginView from '@/views/LoginView.vue'
 import MineralsView from '@/views/MineralsView.vue'
 import ProjectsView from '@/views/ProjectsView.vue'
 import ProjectDetailsView from '@/views/ProjectDetailsView.vue'
+import CategoryPostView from '@/views/CategoryPostView.vue'
+import PostView from '@/views/PostView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +35,16 @@ const router = createRouter({
       path: '/projects/:id',
       name: 'project-details',
       component: ProjectDetailsView
+    },
+    {
+      path: '/category-posts',
+      name: 'category-posts',
+      component: CategoryPostView
+    },
+    {
+      path: '/posts',
+      name: 'posts',
+      component: PostView
     }
 
   ]
