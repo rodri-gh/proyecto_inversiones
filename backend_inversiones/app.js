@@ -16,6 +16,8 @@ var investmentsRouter = require('./routes/investments');
 var project_mineralsRouter = require('./routes/project_minerals');
 // aqui el enrutador de contactos 
 var contactsRouter = require('./routes/contacts');
+// aqui el enrutador de movientos 
+var movementsRouter = require('./routes/movements');
 
 var categoryPostsRouter = require('./routes/categoryPosts');
 var postRouter = require('./routes/posts');
@@ -42,8 +44,13 @@ app.use('/operatingexpenses', operatingexpensesRouter);
 app.use('/investments', investmentsRouter);
 app.use('/project_minerals', project_mineralsRouter);
 app.use('/contacts', contactsRouter);
+<<<<<<< HEAD
 app.use('/categoryPosts', categoryPostsRouter);
 app.use('/posts', postRouter);
+=======
+app.use('/movements', movementsRouter);
+
+>>>>>>> 171426f (Crud de movimientos)
 
 
 module.exports = app;
