@@ -163,7 +163,7 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const baseURL = "http://localhost:3000/users/";
+const baseURL = "http://localhost:3000/user/";
 
 const users = ref([]);
 
@@ -226,7 +226,7 @@ const createUser = async () => {
     const { data } = await axios.post(baseURL, datos);
     Swal.fire({
       title: 'Hola ' + data.user.username + '!!',
-      text: 'Te damos la bienvenida!',
+      text: 'Le damos la bienvenida!',
       icon: 'success',
       showConfirmButton: false,
       timer: 1000
