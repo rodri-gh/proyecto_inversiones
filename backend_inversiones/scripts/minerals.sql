@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `contacts` (
   `status` TINYINT(1) NOT NULL DEFAULT 0,
   `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_date` DATETIME NULL ON UPDATE CURRENT_TIMESTAMP, 
-  PRIMARY KEY (`contacto_id`),
+  PRIMARY KEY (`contact_id`),
   KEY `user_id_fk` (`user_id`), 
   CONSTRAINT `FK_contacts_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
