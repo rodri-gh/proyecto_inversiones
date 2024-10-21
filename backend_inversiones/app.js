@@ -14,6 +14,8 @@ var contractsRouter = require('./routes/contracts');
 var operatingexpensesRouter = require('./routes/operatingexpenses');
 var investmentsRouter = require('./routes/investments');
 var project_mineralsRouter = require('./routes/project_minerals');
+// aqui el enrutador de contactos 
+var contactsRouter = require('./routes/contacts');
 
 
 var app = express();
@@ -36,6 +38,7 @@ app.use('/contracts', contractsRouter);
 app.use('/operatingexpenses', operatingexpensesRouter);
 app.use('/investments', investmentsRouter);
 app.use('/project_minerals', project_mineralsRouter);
+app.use('/contacts', contactsRouter);
 
 
 module.exports = app;
