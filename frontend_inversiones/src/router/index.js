@@ -3,6 +3,10 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import UsersView from '@/views/UsersView.vue'
 
+import MineralsView from '@/views/MineralsView.vue'
+import ProjectsView from '@/views/ProjectsView.vue'
+import ProjectDetailsView from '@/views/ProjectDetailsView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
