@@ -129,25 +129,87 @@ CREATE TABLE IF NOT EXISTS `project_timeline` (
   CONSTRAINT `project_id_fk` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `movements` (
+  `movement_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL,
+  `description` TEXT NOT NULL,
+  `type` ENUM('income', 'expense') NOT NULL,
+  `amount` DECIMAL(10,2) NOT NULL,
+  `request_date` DATETIME NOT NULL,
+  `disbursement_date` DATETIME DEFAULT NULL,
+  `state` TINYINT(1) NOT NULL, 
+  PRIMARY KEY (`movement_id`), 
+  KEY `user_id_fk` (`user_id`),
+  CONSTRAINT `FK_movements_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `contacts` (
+  `contact_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT DEFAULT NULL, 
+  `name` VARCHAR(100) NOT NULL, 
+  `lastname` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(150) NOT NULL, 
+  `phone` VARCHAR(20) DEFAULT NULL,
+  `comments` TEXT NOT NULL,
+  `answer` TEXT DEFAULT NULL,
+  `status` TINYINT(1) NOT NULL DEFAULT 0,
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_date` DATETIME NULL ON UPDATE CURRENT_TIMESTAMP, 
+  PRIMARY KEY (`contacto_id`),
+  KEY `user_id_fk` (`user_id`), 
+  CONSTRAINT `FK_contacts_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `users` (`id`, `email`, `phone`, `role`, `two_factor_enabled`, `name`, `last_name`, `deleted`) VALUES
-	(1, 'admin@gmail.com', '77777777', 'super_user', 0, 'admin', 'admin', 1);
+CREATE TABLE IF NOT EXISTS `faq` (
+  `faq_id` INT NOT NULL AUTO_INCREMENT,
+  `ask` TEXT NOT NULL, 
+  `answer` TEXT NOT NULL,
+  `status` TINYINT NOT NULL DEFAULT 1,
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_date` DATETIME NULL ON UPDATE CURRENT_TIMESTAMP, 
+  PRIMARY KEY (`faq_id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `account` (`id`, `user_id`, `username`, `password`) VALUES
-	(1, 1, 'admin', '$2b$10$ZWFoRCMtOqf8t2e9hZ/dke5KDqNnnYiJYeXCRaDB6CqKqmZdqrzUi');
+CREATE TABLE IF NOT EXISTS `category_posts` (
+  `category_post_id` INT NOT NULL AUTO_INCREMENT, 
+  `name` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`category_post_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `minerals` (`id`, `name`, `price`, `description`, `image`, `deleted`) VALUES
-	(1, 'Zinc', 10.500000, 'descripcion del zinc', '1729202313914.jpg', 1),
-	(2, 'Plata', 25.690000, 'Descripcion de la plata', '1729202372093.jpg', 1),
-	(3, 'Plomo', 95.690000, 'Descripción del plomo', '1729202497906.jpeg', 1),
-	(4, 'Cobre', 25.630000, 'Descripción del cobre', '1729202520309.jpeg', 0);
+CREATE TABLE IF NOT EXISTS `posts` (
+  `post_id` INT NOT NULL AUTO_INCREMENT,
+  `category_post_id` INT NOT NULL,
+  `user_id` BIGINT NOT NULL, 
+  `title` VARCHAR(255) NOT NULL,
+  `summary` TEXT NOT NULL, 
+  `cover_image` VARCHAR(255) DEFAULT NULL,
+  `content` TEXT NOT NULL,
+  `status` TINYINT NOT NULL DEFAULT 1,
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  `updated_date` DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`post_id`),
+  KEY `category_post_id` (`category_post_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `fk_category_post` FOREIGN KEY (`category_post_id`) REFERENCES `category_posts` (`category_post_id`),
+  CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
-INSERT INTO `projects` (`id`, `name`, `description`, `investment_goal`, `status`, `created_at`, `profit_percentage`, `deleted`) VALUES
-	(1, 'Hiram Craft', 'Mollit quae ut autem', 80, 'closed', '2024-10-18 14:31:58', 50.00, 0),
-	(2, 'Chester Scott', 'Est autem et except', 97, 'open', '2024-10-18 15:22:37', 85.00, 1);
-
-INSERT INTO `operating_expenses` (`id`, `name`, `description`, `expenses`, `project_id`, `deleted`) VALUES
-	(1, 'gatos 1', 'dsada', 58.00, 1, 1),
-	(2, 'gatos 2', 'dsada', 90.00, 1, 1);
+CREATE TABLE IF NOT EXISTS `withdrawal_requests` (
+  `withdrawal_requests_id` INT NOT NULL AUTO_INCREMENT, 
+  `investment_id` BIGINT NOT NULL, 
+  `user_id` BIGINT NOT NULL, 
+  -- `type` ENUM('ganancias', 'type2', 'type3') NOT NULL,  el ipo de solicitud (ajustar los valores según lo que nesesitemos)
+  `request_amount` DECIMAL(10,2) NOT NULL,
+  `commission_apply` DECIMAL(10,2) NOT NULL, 
+  `receive_amount` DECIMAL(10,2) NOT NULL,
+  `request_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  `approval_date` DATETIME DEFAULT NULL, 
+  `photo_document` VARCHAR(255) DEFAULT NULL,
+  `selfie_photo` VARCHAR(255) DEFAULT NULL, 
+  `status` ENUM('pending', 'approved', 'rejected') NOT NULL,
+  PRIMARY KEY (`withdrawal_requests_id`), 
+  KEY `investment_id` (`investment_id`),
+  KEY `user_id` (`user_id`), 
+  CONSTRAINT `fk_investment` FOREIGN KEY (`investment_id`) REFERENCES `investments` (`id`), 
+  CONSTRAINT `fk_user_withdrawal` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
