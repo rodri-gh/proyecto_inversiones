@@ -6,27 +6,20 @@ var connection = require('../database');
 router.get('/', function (req, res) {
   const query = `SELECT * FROM operating_expenses;`;
 
-  router.get('/', (req, res) => {
-    const query = `
-      SELECT oe.id, oe.name, oe.description, oe.expenses, p.name AS project_name 
-      FROM operating_expenses oe
-      JOIN projects p ON oe.project_id = p.id;`;
-
-
-    connection.query(query, function (error, results) {
-      if (error) {
-        return res.status(500).json({
-          error: error,
-          message: 'Error en la consulta'
-        });
-      }
-
-      res.status(200).json({
-        data: results,
-        message: 'List of operating_expenses'
+  connection.query(query, function (error, results) {
+    if (error) {
+      return res.status(500).json({
+        error: error,
+        message: 'Error en la consulta'
       });
+    }
+
+    res.status(200).json({
+      data: results,
+      message: 'List of operating_expenses'
     });
   });
+
 });
 
 
@@ -71,9 +64,9 @@ router.put('/:id', (req, res) => {
 });
 
 
-router.delete('/:id', function (req, res) {
-  const query = 'DELETE FROM operating_expenses WHERE id = ?;';
+router.patch('/:id', function (req, res) {
 
+  const query = 'UPDATE  operating_expenses SET deleted = !deleted WHERE id= ?;';
 
   connection.query(query, [req.params.id], function (error, results) {
     if (error) {
