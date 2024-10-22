@@ -8,6 +8,7 @@ import ProjectsView from '@/views/ProjectsView.vue'
 import ProjectDetailsView from '@/views/ProjectDetailsView.vue'
 import CategoryPostView from '@/views/CategoryPostView.vue'
 import PostView from '@/views/PostView.vue'
+import PostDeatilsView from '@/views/PostDeatilsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -53,6 +54,11 @@ const router = createRouter({
       path: '/posts',
       name: 'posts',
       component: PostView
+    },
+    {
+      path: '/posts/:id',
+      name: 'post-details',
+      component: PostDeatilsView
     }
   ]
 })

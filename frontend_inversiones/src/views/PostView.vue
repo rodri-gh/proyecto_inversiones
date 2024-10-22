@@ -51,17 +51,20 @@
                   <button
                     v-if="post.status == 1"
                     class="btn btn-danger btn-sm m-1"
-                    @click="deletepost(post.id)"
+                    @click="deletePost(post.id)"
                   >
                     <i class="fa fa-trash"></i>
                   </button>
                   <button
                     v-if="post.status == 0"
                     class="btn btn-success btn-sm m-1"
-                    @click="deletepost(post.id)"
+                    @click="deletePost(post.id)"
                   >
                     <i class="fa fa-check"></i>
                   </button>
+                  <RouterLink class="btn btn-info btn-sm m-1">
+                    <i class="fa fa-eye"></i>
+                  </RouterLink>
                 </td>
               </tr>
             </tbody>
@@ -97,6 +100,27 @@
             ></button>
           </div>
           <div class="modal-body">
+            <!--Seleccionar la categoria del post-->
+            <div class="mb-3">
+              <label for="category_post_id" class="form-label"
+                >Categoria del post</label
+              >
+              <select
+                class="form-select"
+                v-model="category_post_id"
+                id="category_post_id"
+              >
+                <option value="" selected>Selecciona una categoria</option>
+                <option
+                  v-for="categoryPost in categoryPosts"
+                  :key="categoryPost.category_post_id"
+                  :value="categoryPost.category_post_id"
+                >
+                  {{ categoryPost.name }}
+                </option>
+              </select>
+            </div>
+
             <div class="mb-3">
               <label for="title" class="form-label">Titulo</label>
               <input
@@ -174,7 +198,11 @@
 
   <script setup>
 import { ref, onMounted } from "vue";
+import { RouterLink } from "vue-router";
 import axios from "axios";
+const categoryURL = "http://localhost:3000/categoryPosts/";
+
+const categoryPosts = ref([]);
 
 const baseURL = "http://localhost:3000/posts/";
 
@@ -185,8 +213,11 @@ const summary = ref("");
 const content = ref("");
 const cover_image = ref(null);
 
-const user_id = ref(1);
-const category_post_id = ref(1);
+//obtener de localstorage el user_id del objeto user
+const user = JSON.parse(localStorage.getItem("user"));
+
+const user_id = user.user_id;
+const category_post_id = ref("");
 
 const previewUrl = ref(null);
 
@@ -194,6 +225,8 @@ const selectedPost = ref({});
 
 onMounted(() => {
   getPosts();
+  getCategoryPosts();
+  console.log("user_id", user_id);
 });
 
 const getPosts = async () => {
@@ -201,6 +234,16 @@ const getPosts = async () => {
     const { data } = await axios.get(baseURL);
     posts.value = data.data;
     console.log("Los posts:", posts.value);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getCategoryPosts = async () => {
+  try {
+    const { data } = await axios.get(categoryURL);
+    categoryPosts.value = data.data;
+    console.log("Las categorias:", categoryPosts.value);
   } catch (error) {
     console.log(error);
   }
@@ -223,7 +266,7 @@ const createPost = async () => {
   formData.append("summary", summary.value);
   formData.append("content", content.value);
   formData.append("cover_image", file);
-  formData.append("user_id", user_id.value);
+  formData.append("user_id", user_id);
   formData.append("category_post_id", category_post_id.value);
 
   try {
@@ -267,7 +310,7 @@ const updatePost = async () => {
   formData.append("summary", summary.value);
   formData.append("content", content.value);
   formData.append("cover_image", file);
-  formData.append("user_id", user_id.value);
+  formData.append("user_id", user_id);
   formData.append("category_post_id", category_post_id.value);
 
   try {
@@ -292,7 +335,7 @@ const updatePost = async () => {
   }
 };
 
-/* const deletepost = async (id) => {
+/* const deletePost = async (id) => {
   try {
     const { data } = await axios.patch(baseURL + id);
     console.log(data);
