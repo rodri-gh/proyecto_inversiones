@@ -2,15 +2,15 @@
   <div class="row col-md-5 col-sm-12 mx-auto card shadow border-0 py-5 px-5">
     <div class="card-body">
       <div class="mb-3 col-md-12">
-        <label for="email" class="form-label"
-          >E-mail <span class="text-danger">*</span>
+        <label for="username" class="form-label"
+          >Nombre de Usuario <span class="text-danger">*</span>
         </label>
         <input
           type="text"
           class="form-control"
-          name="email"
-          id="email"
-          placeholder="Ingresa tu correo"
+          v-model="username"
+          id="username"
+          placeholder="Ingresa tu nombre de usuario"
         />
       </div>
       <div class="mb-3 col-md-12">
@@ -20,7 +20,7 @@
         <input
           type="password"
           class="form-control"
-          name="password"
+          v-model="password"
           id="password"
           placeholder="Ingresa tu contraseña"
         />
@@ -32,21 +32,24 @@
           label="Recuérdame"
         />
       </div>
-
+      <!-- 
       <div class="mb-3 col-md-12 mt-4 text-center fw-bold">
         <a class="nav-link forgot" href="#">¿Olvidaste tu contraseña?</a>
-      </div>
+      </div> -->
       <div class="mb-3 col-md-12">
-        <button class="btn btn-primary sesion py w-100 fw-bolder">
+        <button
+          class="btn btn-primary sesion py w-100 fw-bolder"
+          @click="iniciarSesion()"
+        >
           Ingresar
         </button>
       </div>
-      <div class="mb-3 col-md-12">
+      <!--  <div class="mb-3 col-md-12">
         <button class="btn btn-outline-secondary w-100 google">
           Ingresar con Google
         </button>
-      </div>
-      <div
+      </div> -->
+      <!--  <div
         class="d-flex justify-content-center mb-3 col-md-12 mt-4 text-center"
       >
         <span class="mx-2"> ¿No tienes cuenta?</span>
@@ -54,13 +57,64 @@
         <a class="nav-link register-link fw-bolder" href="#">
           Regístrate gratis
         </a>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
 
 <script setup>
 import Switch from "@/components/Switch.vue";
+
+import { onMounted, ref } from "vue";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+const baseUrl = "http://localhost:3000/auth/login";
+
+const username = ref("");
+const password = ref("");
+
+onMounted(() => {
+  limpiar();
+});
+
+const iniciarSesion = async () => {
+  if (username.value == "" || password.value == "") {
+    Swal.fire({
+      icon: "warning",
+      title: "Error!",
+      text: "Ingrese sus credenciales",
+      timer: 1000,
+      showConfirmButton: false,
+    });
+    return;
+  }
+  const datos = {
+    username: username.value,
+    password: password.value,
+  };
+  try {
+    const { data } = await axios.post(baseUrl, datos);
+    console.log(data);
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+
+      localStorage.setItem("user", JSON.stringify(data.data));
+      router.push({ path: "/projects" });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const limpiar = () => {
+  localStorage.clear();
+  if (!localStorage.getItem("token")) {
+    router.push({ path: "/login" });
+  }
+};
 </script>
 
 <style scoped>

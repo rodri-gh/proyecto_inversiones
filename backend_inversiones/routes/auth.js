@@ -21,7 +21,11 @@ router.post('/login', async (req, res, next) => {
         }
         const checkPassword = await compare(password, results[0].password)
         if (checkPassword) {
+
             const accessToken = generateAccessToken({ username: username })
+
+            const userId = results[0].id;
+
             res.header('authorization', accessToken).json({
                 data: results[0],
                 message: 'Authenticated user',
