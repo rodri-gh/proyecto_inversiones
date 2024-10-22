@@ -47,6 +47,8 @@ app.use('/contacts', contactsRouter);
 app.use('/movements', movementsRouter);
 app.use('/categoryPosts', categoryPostsRouter);
 app.use('/posts', postRouter);
+app.use('/movements', movementsRouter);
+
 
 
 module.exports = app;
