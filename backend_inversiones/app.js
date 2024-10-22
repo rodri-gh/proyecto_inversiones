@@ -14,6 +14,7 @@ var contractsRouter = require('./routes/contracts');
 var operatingexpensesRouter = require('./routes/operatingexpenses');
 var investmentsRouter = require('./routes/investments');
 var project_mineralsRouter = require('./routes/project_minerals');
+var withdrawal_requestsRouter = require('./routes/withdrawal_requests');
 
 
 var app = express();
@@ -36,6 +37,7 @@ app.use('/contracts', contractsRouter);
 app.use('/operatingexpenses', operatingexpensesRouter);
 app.use('/investments', investmentsRouter);
 app.use('/project_minerals', project_mineralsRouter);
+app.use('/withdrawal_requests', withdrawal_requestsRouter);
 
 
 module.exports = app;
