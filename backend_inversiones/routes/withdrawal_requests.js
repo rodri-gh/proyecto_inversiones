@@ -168,17 +168,10 @@ router.put('/:id', upload.fields([{ name: 'photo_document' }, { name: 'selfie_ph
 
 router.patch('/status/:id', function (req, res, next) {
   const { id } = req.params;
+  const { status } = req.body;
+  const query = `UPDATE withdrawal_requests SET status = ? WHERE withdrawal_requests_id = "${id}";`;
 
-  const query = `
-    UPDATE withdrawal_requests 
-    SET status = CASE
-                    WHEN status = 'pending' THEN 'approved'
-                    WHEN status = 'approved' THEN 'rejected'
-                    ELSE 'pending'
-                END 
-    WHERE withdrawal_requests_id = ${id};`;
-
-  connection.query(query, function (error, results) {
+  connection.query(query, [status, id ], function (error, results) {
     if (error) {
       console.log(error);
       res.status(500).json({
@@ -197,7 +190,7 @@ router.patch('/status/:id', function (req, res, next) {
 
 router.patch('/:id', function (req, res, next) {
   const { id } = req.params;
-  const query = `UPDATE withdrawal_requests SET deleted = !deleted WHERE id = "${id}";`;
+  const query = `UPDATE withdrawal_requests SET deleted = 0 WHERE withdrawal_requests_id = "${id}";`;
   connection.query(query, function (error, results) {
     if (error) {
       res.status(500).json({
