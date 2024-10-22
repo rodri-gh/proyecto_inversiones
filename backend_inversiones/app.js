@@ -44,13 +44,10 @@ app.use('/operatingexpenses', operatingexpensesRouter);
 app.use('/investments', investmentsRouter);
 app.use('/project_minerals', project_mineralsRouter);
 app.use('/contacts', contactsRouter);
-<<<<<<< HEAD
 app.use('/categoryPosts', categoryPostsRouter);
 app.use('/posts', postRouter);
-=======
 app.use('/movements', movementsRouter);
 
->>>>>>> 171426f (Crud de movimientos)
 
 
 module.exports = app;
