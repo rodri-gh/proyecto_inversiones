@@ -1,2 +1,5 @@
 backend_inversiones/node_modules
+backend_inversiones/public/images
+backend_inversiones/package-lock.json
 frontend_inversiones/node_modules
+frontend_inversiones/package-lock.json
