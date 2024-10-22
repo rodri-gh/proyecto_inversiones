@@ -21,6 +21,7 @@ var movementsRouter = require('./routes/movements');
 
 var categoryPostsRouter = require('./routes/categoryPosts');
 var postRouter = require('./routes/posts');
+var faqRouter = require('./routes/faq');
 
 
 var app = express();
@@ -47,6 +48,7 @@ app.use('/contacts', contactsRouter);
 app.use('/movements', movementsRouter);
 app.use('/categoryPosts', categoryPostsRouter);
 app.use('/posts', postRouter);
+app.use('/faq', faqRouter);
 
 
 module.exports = app;
