@@ -43,6 +43,8 @@ const router = createRouter({
       name: 'users',
       component: UsersView
 
+    },
+    {
       path: '/category-posts',
       name: 'category-posts',
       component: CategoryPostView
@@ -51,9 +53,7 @@ const router = createRouter({
       path: '/posts',
       name: 'posts',
       component: PostView
-
     }
-
   ]
 })
 
