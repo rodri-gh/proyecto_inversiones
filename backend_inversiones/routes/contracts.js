@@ -130,45 +130,22 @@ router.put('/:id', upload.single('contract_file_path'), function (req, res, next
 });
 
 router.patch('/:id', function (req, res, next) {
-    const contractId = req.params.id;
-  
-    const query = `UPDATE contracts SET deleted = !deleted WHERE id = "${contractId}";`;
-    conexion.query(query, function (error, results, fields) {
-      if (error) {
-        console.error(error);
-        return res.status(500).json({
-          error: error,
-          message: 'Error deleting contract',
-        });
-      }
-      res.status(200).json({
-        message: 'Contract deleted',
+  const contractId = req.params.id;
+
+  const query = `UPDATE minerals SET deleted = !deleted WHERE id = "${contractId}";`;
+  conexion.query(query, function (error, results, fields) {
+    if (error) {
+      console.error(error);
+      return res.status(500).json({
+        error: error,
+        message: 'Error deleting contract',
       });
+    }
+    res.status(200).json({
+      message: 'Contract deleted',
     });
+  });
 });
-
-
-
-
-// router.delete('/:id', function(req, res, next) {
-//     const {id} = req.params;
-//     const query = `UPDATE contracts SET deleted = CASE
-//                     WHEN deleted = '1' THEN '0'
-//                     ELSE '1'
-//                     END WHERE id = ${id};`;
-//     connection.query(query, function(error, results) {
-//         if (error){
-//             res.status(500).json({
-//                 message: 'Error updating motion status',
-//                 error
-//             });
-//         }else if(results.affectedRows === 0) {
-//             res.status(404).json({ mensaje: 'Movement not found' });
-//         } else {
-//             res.status(200).json({ mensaje: 'Movement successfully updated' });
-//         }
-//     });
-// });
 
 
 
