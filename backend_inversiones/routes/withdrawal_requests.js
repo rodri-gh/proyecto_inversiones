@@ -165,7 +165,7 @@ router.put('/:id', upload.fields([{ name: 'photo_document' }, { name: 'selfie_ph
   });
 });
 
-
+//tareas de martes
 router.patch('/status/:id', function (req, res, next) {
   const { id } = req.params;
   const { status } = req.body;
