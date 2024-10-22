@@ -23,7 +23,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-if="users.length == 0">
+              <tr v-if="users.length === 0">
                 <td colspan="7" class="text-center">
                   No existen usuarios registrados
                 </td>
@@ -34,26 +34,21 @@
                 <td>{{ user.last_name }}</td>
                 <td>{{ user.username }}</td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.cellphone }}</td>
-                <!-- <td>
-                  <span v-if="user.status == 1" class="badge bg-success">Activo</span>
+                <td>{{ user.phone }}</td>
+                <td>
+                  <span v-if="user.deleted == 1" class="badge bg-success">Activo</span>
                   <span v-else class="badge bg-danger">Inactivo</span>
-                </td> -->
+                </td>
                 <td>
                   <button class="btn btn-warning btn-sm m-1" @click="selectUser(user)">
                     <i class="fa fa-edit"></i>
                   </button>
-                  <!-- <button
-                    v-if="user.status == 1" class="btn btn-danger btn-sm m-1"
-                    @click="statusUser(user.id)">
+                  <button v-if="user.deleted == 1" @click="deleteUser(user.id)" class="btn btn-danger btn-sm m-1">
                     <i class="fa fa-trash"></i>
                   </button>
-                  <button
-                    v-if="user.status == 0"
-                    class="btn btn-success btn-sm m-1"
-                    @click="statusUser(user.id)">
+                  <button v-if="user.deleted == 0" @click="deleteUser(user.id)" class="btn btn-primary btn-sm m-1">
                     <i class="fa fa-check"></i>
-                  </button> -->
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -69,7 +64,8 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="modalTitleId">Registro de Usuario</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" @click="reset()" class="btn-close" data-bs-dismiss="modal"
+              aria-label="Close"></button>
           </div>
           <div class="modal-body px-5">
             <div class="mb-3 col-md-12">
@@ -77,7 +73,7 @@
               <input type="text" class="form-control" v-model="name" id="name" placeholder="Ingrese su nombre" />
 
               <label for="lastname" class="form-label mt-3">Apellidos <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" v-model="lastname" id="lastname"
+              <input type="text" class="form-control" v-model="last_name" id="lastname"
                 placeholder="Ingrese su(s) apellido(s)" />
 
               <label for="username" class="form-label mt-3">Nombre de Ususario <span
@@ -88,9 +84,8 @@
               <label for="email" class="form-label mt-3">Correo <span class="text-danger">*</span></label>
               <input type="email" class="form-control" v-model="email" id="email" placeholder="Ingrese su correo" />
 
-              <label for="cellphone" class="form-label mt-3">Teléfono <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" v-model="cellphone" id="cellphone"
-                placeholder="Ingrese su teléfono" />
+              <label for="phone" class="form-label mt-3">Teléfono <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" v-model="phone" id="phone" placeholder="Ingrese su teléfono" />
 
               <label for="password" class="form-label mt-3">Contraseña <span class="text-danger">*</span></label>
               <input type="password" class="form-control" v-model="password" id="password"
@@ -99,62 +94,21 @@
                   class="text-danger">*</span></label>
               <input v-model="confirmPassword" type="password" class="form-control"
                 placeholder="Confirmar Contraseña" />
-              <div class="d-flex align-items-center gap-2">
-                <input type="checkbox" class="form-check-input mt-3" id="terminos" v-model="terminos">
-                <label for="terminos" class="form-check-label mt-3"> He leído y acepto los
-                  <a href="#">Términos y Condiciones </a> y la
-                  <a href="#">Política de Privacidad</a>
-                </label>
-              </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <button type="button" @click="reset()" class="btn btn-secondary" data-bs-dismiss="modal">
                 Cancelar
               </button>
-              <button type="button" class="btn btn-primary">
+              <button v-if="selectedUser && selectedUser.id == null" type="button" @click="createUser()"
+                class="btn btn-primary">
                 Guardar
               </button>
+              <button v-else @click="updateUser()" type="button" class="btn btn-primary">Actualizar</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- para la Modal -->
-    <!-- <div class="row col-md-5 col-sm-12 mx-auto card shadow border-0 py-5 px-5">
-      <div class="card-body">
-
-        <div class="mb-3 col-md-12">
-          <label for="password" class="form-label">Contraseña <span class="text-danger">*</span></label>
-          <input type="password" class="form-control" name="password" id="password"
-            placeholder="Ingresa tu contraseña" />
-        </div>
-        <div class="mb-3 col-md-12">
-          <Switch :checked="shouldReceiveNewsletter" @toggle="toggle" label="Recuérdame" />
-        </div>
-
-        <div class="mb-3 col-md-12 mt-4 text-center fw-bold">
-          <a class="nav-link forgot" href="#">¿Olvidaste tu contraseña?</a>
-        </div>
-        <div class="mb-3 col-md-12">
-          <button class="btn btn-primary sesion py w-100 fw-bolder">
-            Ingresar
-          </button>
-        </div>
-        <div class="mb-3 col-md-12">
-          <button class="btn btn-outline-secondary w-100 google">
-            Ingresar con Google
-          </button>
-        </div>
-        <div class="d-flex justify-content-center mb-3 col-md-12 mt-4 text-center">
-          <span class="mx-2"> ¿No tienes cuenta?</span>
-
-          <a class="nav-link register-link fw-bolder" href="#">
-            Regístrate gratis
-          </a>
-        </div>
-      </div>
-    </div> -->
-
   </div>
 </template>
 
@@ -171,22 +125,28 @@ const name = ref("");
 const last_name = ref("");
 const username = ref("");
 const email = ref("");
-const cellphone = ref("");
+const phone = ref("");
 const password = ref("");
 const confirmPassword = ref("");
-
-
-//const previewUrl = ref(null);
-
 const selectedUser = ref({});
 
-onMounted(() => {
+const token = localStorage.getItem("token") || "";
+
+const header = {
+  headers: {
+    authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+};
+
+onMounted(async () => {
   getUsers();
 });
 
 const getUsers = async () => {
   try {
-    const { data } = await axios.get(baseURL);
+    const { data } = await axios.get(baseURL, header);
     users.value = data.data;
     console.log(users.value);
   } catch (error) {
@@ -195,14 +155,40 @@ const getUsers = async () => {
 };
 
 const createUser = async () => {
+  if (!validateUserInput()) return;
 
-  if (name.value === "" || last_name.value === "" || username.value === "" || email.value === "" || cellphone.value === "" || password.value === "" || confirmPassword.value === "") {
+  const datos = {
+    name: name.value,
+    last_name: last_name.value,
+    username: username.value,
+    email: email.value,
+    phone: phone.value,
+    password: password.value,
+  }
+
+  try {
+    const { data } = await axios.post(baseURL, datos, header);
+    console.log(data);
+    getUsers();
+    reset();
+
+    var myModalEl = document.getElementById('modalUser');
+    var modal = bootstrap.Modal.getInstance(myModalEl)
+    modal.hide();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const validateUserInput = () => {
+
+  if (name.value === "" || last_name.value === "" || username.value === "" || email.value === "" || phone.value === "" || password.value === "" || confirmPassword.value === "") {
     Swal.fire({
       icon: 'error',
       title: 'Campos vacíos!',
       text: 'Todos los campos son obligatorios',
     })
-    return;
+    return false;
   }
   if (password.value !== confirmPassword.value) {
     Swal.fire({
@@ -212,34 +198,10 @@ const createUser = async () => {
     });
     password.value = "";
     confirmPassword.value = "";
-    return;
+    return false;
   }
-  const datos = {
-    name: name.value,
-    last_name: last_name.value,
-    username: username.value,
-    email: email.value,
-    cellphone: cellphone.value,
-    password: password.value
-  }
-  try {
-    const { data } = await axios.post(baseURL, datos);
-    Swal.fire({
-      title: 'Hola ' + data.user.username + '!!',
-      text: 'Le damos la bienvenida!',
-      icon: 'success',
-      showConfirmButton: false,
-      timer: 1000
-    });
-    console.log(data);
-    var myModalEl = document.getElementById("modalUser");
-    var modal = bootstrap.Modal.getInstance(myModalEl);
-    modal.hide();
-    getUsers();
-    reset();
-  } catch (error) {
-    console.log(error);
-  }
+
+  return true;
 };
 
 const selectUser = (user) => {
@@ -249,7 +211,7 @@ const selectUser = (user) => {
   last_name.value = user.last_name;
   username.value = user.username;
   email.value = user.email;
-  cellphone.value = user.cellphone;
+  phone.value = user.phone;
 
   var myModalEl = document.getElementById("modalUser");
   var modal = new bootstrap.Modal(myModalEl);
@@ -262,11 +224,12 @@ const updateUser = async () => {
     last_name: last_name.value,
     username: username.value,
     email: email.value,
-    cellphone: cellphone.value
+    phone: phone.value,
+    password: password.value,
   }
 
   try {
-    const { data } = await axios.put(baseURL + selectedUser.value.id, datos);
+    const { data } = await axios.put(baseURL + selectedUser.value.id, datos, header);
     console.log(data);
     var myModalEl = document.getElementById("modalUser");
     var modal = bootstrap.Modal.getInstance(myModalEl);
@@ -278,10 +241,9 @@ const updateUser = async () => {
     console.log(error);
   }
 };
-
 const deleteUser = async (id) => {
   try {
-    const { data } = await axios.patch(baseURL + id);
+    const { data } = await axios.delete(baseURL + id, header);
     console.log(data);
     getUsers();
   } catch (error) {
@@ -294,7 +256,7 @@ const reset = () => {
   last_name.value = "";
   username.value = "";
   email.value = "";
-  cellphone.value = "";
+  phone.value = "";
 };
 </script>
 
