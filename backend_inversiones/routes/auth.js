@@ -21,7 +21,11 @@ router.post('/login', async (req, res, next) => {
         }
         const checkPassword = await compare(password, results[0].password)
         if (checkPassword) {
-            const accessToken = generateAccessToken({ username: username})
+
+            const accessToken = generateAccessToken({ username: username })
+
+            const userId = results[0].id;
+
             res.header('authorization', accessToken).json({
                 data: results[0],
                 message: 'Authenticated user',
@@ -40,12 +44,12 @@ router.post('/login', async (req, res, next) => {
 });
 
 const generateAccessToken = (user) => {
-    return jwt.sign(user, process.env.SECRET, { expiresIn: '5m' })
+    return jwt.sign(user, process.env.SECRET, { expiresIn: '1h' })
 }
 
 const validateToken = (req, res, next) => {
     const accessToken = req.headers['authorization'];
-    
+
     if (!accessToken) {
         return res.status(403).send('Access denied: No token provided');
     }
@@ -62,6 +66,25 @@ const validateToken = (req, res, next) => {
         }
     });
 }
+
+router.get('/estado/:id', function (req, res, next) {
+
+    var query = `UPDATE users SET deleted = !deleted WHERE id = ${req.params.id};`;
+    conexion.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.status(500).send({
+                error: error,
+                message: 'Error when making the request'
+            });
+        } else {
+            res.status(200).send({
+                data: results,
+                message: 'The field was updated successfully'
+            });
+        }
+    });
+});
 
 module.exports = router
 module.exports.validateToken = validateToken;

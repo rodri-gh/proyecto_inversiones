@@ -195,26 +195,21 @@ router.patch('/status/:id', function (req, res, next) {
 });
 
 
-router.delete('/:id', function(req, res, next) {
+router.patch('/:id', function (req, res, next) {
   const { id } = req.params;
-  
-  const query = `DELETE FROM withdrawal_requests WHERE withdrawal_requests_id = ${id};`;
-  
-  connection.query(query, function(error, results) {
-      if (error){
-          console.log(error);
-          res.status(500).json({
-              error: error,
-              message: 'Error in the query'
-          });
-      }else{
-          res.status(200).json({
-              data: results,
-              message: 'Withdrawal request deleted successfully'
-          });
-      }
+  const query = `UPDATE withdrawal_requests SET deleted = !deleted WHERE id = "${id}";`;
+  connection.query(query, function (error, results) {
+    if (error) {
+      res.status(500).json({
+        message: 'Error updating withdrawal requests',
+        error
+      });
+    } else if (results.affectedRows === 0) {
+      res.status(404).json({ mensaje: 'Movement not found' });
+    } else {
+      res.status(200).json({ mensaje: 'Movement successfully updated' });
+    }
   });
 });
-
 
 module.exports = router;
