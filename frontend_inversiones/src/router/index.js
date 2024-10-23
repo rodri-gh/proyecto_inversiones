@@ -57,8 +57,8 @@ const router = createRouter({
       component: CategoryPostView
     },
     {
-      path: '/posts',
-      name: 'posts',
+      path: '/posts-admin',
+      name: 'posts-admin',
       component: PostView
     },
     {
