@@ -22,6 +22,31 @@ router.get('/', function(req, res, next) {
     });
 });
 
+router.get('/:id', function(req, res, next) {
+    const {id} = req.params;
+    const query = `SELECT investments.*, users.name AS user_name 
+                    FROM investments 
+                    INNER JOIN users 
+                    ON investments.user_id = users.id 
+                    WHERE project_id = ${id};`;
+
+    connection.query(query, function(error, results, fields) {
+        if (error){
+            console.log(error);
+            res.status(500).json({
+                error: error,
+                message: 'Error in the query'
+            });
+        }else{
+            console.log(results);
+            res.status(200).json({
+                data: results,
+                message: 'Details of investments'
+            });
+        }
+    });
+})
+
 router.post('/', function(req, res, next) {
     const {project_id, user_id, amount, profit_percentage}=req.body;
 
@@ -44,7 +69,7 @@ router.post('/', function(req, res, next) {
 });
 
 router.put('/:id', function(req, res, next) {
-    const {id} = req.params;
+    const {id} = req.params.id;
     const {project_id, user_id, amount, profit_percentage}=req.body;
 
     const query = `UPDATE investments SET project_id = '${project_id}', user_id = '${user_id}', amount = '${amount}', profit_percentage = '${profit_percentage}' WHERE id = ${id};`;

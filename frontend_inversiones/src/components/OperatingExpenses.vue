@@ -63,7 +63,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalTitleId">
-                            Operating Expenses
+                            Gastos operativos
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                             @click="reset()"></button>
@@ -86,12 +86,12 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="reset()">
-                            Cancel
+                            Cancelar
                         </button>
                         <button v-if="selectedOperatingExpense && selectedOperatingExpense.id == null" type="button"
-                            class="btn btn-primary" @click="createOperatingExpense()">Save</button>
+                            class="btn btn-primary" @click="createOperatingExpense()">Guardas</button>
                         <button v-else type="button" class="btn btn-primary"
-                            @click="updateOperatingExpense()">Update</button>
+                            @click="updateOperatingExpense()">Actualizar</button>
                     </div>
                 </div>
             </div>

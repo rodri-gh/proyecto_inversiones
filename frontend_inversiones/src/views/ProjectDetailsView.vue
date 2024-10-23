@@ -24,6 +24,10 @@
       <OperatingExpenses :idProject="idProject" />
     </div>
     <div>
+      <h3>Inversiones</h3>
+      <Investments :idProject="idProject" />
+    </div>
+    <div>
       <h3>Linea de tiempo</h3>
       <TimeLine :idProject="idProject" />
     </div>
@@ -36,6 +40,7 @@ import { useRoute } from "vue-router";
 import axios from "axios";
 import TimeLine from "@/components/TimeLine.vue";
 import OperatingExpenses from "@/components/OperatingExpenses.vue";
+import Investments from "@/components/Investments.vue";
 
 const route = useRoute();
 const idProject = ref(route.params.id);
@@ -43,12 +48,16 @@ const idProject = ref(route.params.id);
 const project = ref({});
 const urlProject = "http://localhost:3000/projects/";
 
+const investments = ref({});
+const urlInvestments = "http://localhost:3000/investments/";
+
 const operatingExpenses = ref({});
 const urlOperatingExpenses = "http://localhost:3000/operatingexpenses/";
 
 onMounted(() => {
   getProject();
   getOperatingExpenses();
+  getInvestments();
   console.log(idProject);
 });
 
@@ -67,6 +76,16 @@ const getOperatingExpenses = async () => {
     const { data } = await axios.get(urlOperatingExpenses + idProject.value);
     operatingExpenses.value = data.data;
     console.log(operatingExpenses.value);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const getInvestments = async () => {
+  try {
+    const { data } = await axios.get(urlInvestments + idProject.value);
+    investments.value = data.data;
+    console.log(investments.value);
   } catch (error) {
     console.error(error);
   }
