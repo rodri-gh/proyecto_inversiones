@@ -32,15 +32,22 @@ router.post('/', (req, res) => {
   
   // READ - Obtener un project_mineral específico por ID
   router.get('/:id', (req, res) => {
-    const query = 'SELECT * FROM project_minerals WHERE id = ? AND deleted = 0';
+    const { id } = req.params;
+
+    const query = `
+        SELECT project_minerals.*, minerals.name AS mineral_nombre 
+        FROM project_minerals 
+        LEFT JOIN minerals ON project_minerals.mineral_id = minerals.id 
+        WHERE project_minerals.project_id = ? AND project_minerals.deleted = 1
+    `;
     
-    connection.query(query, [req.params.id], (error, results) => {
+    connection.query(query, [id], (error, results) => {
       if (error) {
         res.status(500).json({ message: 'Error al obtener project_mineral', error });
       } else if (results.length === 0) {
-        res.status(404).json({ message: 'Project_mineral no encontrado' });
+        res.status(404).json({ message: 'No se encontraron minerales para el proyecto' });
       } else {
-        res.json(results[0]);
+        res.json(results);
       }
     });
   });
