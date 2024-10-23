@@ -4,6 +4,7 @@ const conexion = require('../database');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const mysql = require('mysql');
 
 // Asegurar que el directorio donde se guardaran las imagenes existe
 const uploadDir = 'public/images/posts';
@@ -53,9 +54,12 @@ router.post('/', upload.single('cover_image'), function (req, res, next) {
 
   const cover_image = req.file ? `${req.file.filename}` : null;
 
+
+  const contentHTML = mysql.escape(content);
+
   const query = `
     INSERT INTO posts (category_post_id, user_id, title, summary, cover_image, content) 
-    VALUES ("${category_post_id}", "${user_id}", "${title}", "${summary}", "${cover_image}", "${content}");
+    VALUES ("${category_post_id}", "${user_id}", "${title}", "${summary}", "${cover_image}", "${contentHTML}");
   `;
 
   conexion.query(query, function (error, results, fields) {
@@ -78,6 +82,7 @@ router.post('/', upload.single('cover_image'), function (req, res, next) {
 router.put('/:id', upload.single('cover_image'), function (req, res, next) {
   const postId = req.params.id;
   const { category_post_id, user_id, title, summary, content } = req.body;
+  const contentHTML = mysql.escape(content);
 
   const query = `SELECT cover_image FROM posts WHERE post_id = "${postId}";`;
   conexion.query(query, function (error, results, fields) {
@@ -107,7 +112,7 @@ router.put('/:id', upload.single('cover_image'), function (req, res, next) {
 
     const query = `
       UPDATE posts 
-      SET category_post_id = "${category_post_id}", user_id = "${user_id}", title = "${title}", summary = "${summary}", cover_image = "${cover_image}", content = "${content}"
+      SET category_post_id = "${category_post_id}", user_id = "${user_id}", title = "${title}", summary = "${summary}", cover_image = "${cover_image}", content = "${contentHTML}"
       WHERE post_id = "${postId}";
     `;
 
@@ -130,7 +135,7 @@ router.put('/:id', upload.single('cover_image'), function (req, res, next) {
 router.patch('/:id', function (req, res, next) {
   const postId = req.params.id;
   // Cambiar el campo de eliminado del post de 1 a 0 o de 0 a 1
-  const query = `UPDATE posts SET eliminado = CASE WHEN eliminado = '1' THEN '0' ELSE '1' END WHERE id = "${postId}";`;
+  const query = `UPDATE posts SET status = !status WHERE post_id = "${postId}";`;
   conexion.query(query, function (error, results, fields) {
     if (error) {
       console.error(error);

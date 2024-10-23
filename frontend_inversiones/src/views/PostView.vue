@@ -51,14 +51,14 @@
                   <button
                     v-if="post.status == 1"
                     class="btn btn-danger btn-sm m-1"
-                    @click="deletePost(post.id)"
+                    @click="deletePost(post.post_id)"
                   >
                     <i class="fa fa-trash"></i>
                   </button>
                   <button
                     v-if="post.status == 0"
                     class="btn btn-success btn-sm m-1"
-                    @click="deletePost(post.id)"
+                    @click="deletePost(post.post_id)"
                   >
                     <i class="fa fa-check"></i>
                   </button>
@@ -85,7 +85,7 @@
       aria-hidden="true"
     >
       <div
-        class="modal-dialog modal-dialog-scrollable modal-dialog-centered"
+        class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen"
         role="document"
       >
         <div class="modal-content">
@@ -101,34 +101,35 @@
           </div>
           <div class="modal-body">
             <!--Seleccionar la categoria del post-->
-            <div class="mb-3">
-              <label for="category_post_id" class="form-label"
-                >Categoria del post</label
-              >
-              <select
-                class="form-select"
-                v-model="category_post_id"
-                id="category_post_id"
-              >
-                <option value="" selected>Selecciona una categoria</option>
-                <option
-                  v-for="categoryPost in categoryPosts"
-                  :key="categoryPost.category_post_id"
-                  :value="categoryPost.category_post_id"
+            <div class="row">
+              <div class="mb-3 col-6">
+                <label for="title" class="form-label">Titulo</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="title"
+                  id="title"
+                />
+              </div>
+              <div class="mb-3 col-6">
+                <label for="category_post_id" class="form-label"
+                  >Categoria del post</label
                 >
-                  {{ categoryPost.name }}
-                </option>
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label for="title" class="form-label">Titulo</label>
-              <input
-                type="text"
-                class="form-control"
-                v-model="title"
-                id="title"
-              />
+                <select
+                  class="form-select"
+                  v-model="category_post_id"
+                  id="category_post_id"
+                >
+                  <option value="" selected>Selecciona una categoria</option>
+                  <option
+                    v-for="categoryPost in categoryPosts"
+                    :key="categoryPost.category_post_id"
+                    :value="categoryPost.category_post_id"
+                  >
+                    {{ categoryPost.name }}
+                  </option>
+                </select>
+              </div>
             </div>
 
             <div class="mb-3">
@@ -142,15 +143,11 @@
 
             <div class="mb-3">
               <label for="content" class="form-label">Contenido</label>
-              <textarea
-                class="form-control"
-                v-model="content"
-                id="content"
-              ></textarea>
+              <div id="editor"></div>
             </div>
 
             <div class="mb-3">
-              <label for="cover_image" class="form-label">cover_imagen</label>
+              <label for="cover_image" class="form-label">Portada</label>
               <input
                 type="file"
                 class="form-control"
@@ -160,7 +157,7 @@
                 accept="cover_image/*"
               />
             </div>
-            <div v-if="previewUrl" class="mt-3">
+            <div v-if="previewUrl" class="mt-3 text-center">
               <img :src="previewUrl" alt="Vista_previa" class="img-fluid" />
             </div>
           </div>
@@ -197,7 +194,9 @@
 </template>
 
   <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
 import { RouterLink } from "vue-router";
 import axios from "axios";
 const categoryURL = "http://localhost:3000/categoryPosts/";
@@ -212,6 +211,7 @@ const title = ref("");
 const summary = ref("");
 const content = ref("");
 const cover_image = ref(null);
+let quillEditor;
 
 //obtener de localstorage el user_id del objeto user
 const user = JSON.parse(localStorage.getItem("user"));
@@ -226,7 +226,22 @@ const selectedPost = ref({});
 onMounted(() => {
   getPosts();
   getCategoryPosts();
-  console.log("user_id", user_id);
+
+  quillEditor = new Quill("#editor", {
+    theme: "snow", // Estilo de tema
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, false] }],
+        ["bold", "italic", "underline"],
+        ["link", "blockquote", "code-block"],
+        [{ list: "ordered" }, { list: "bullet" }],
+      ],
+    },
+  });
+
+  if (content.value) {
+    quillEditor.root.innerHTML = content.value;
+  }
 });
 
 const getPosts = async () => {
@@ -260,6 +275,7 @@ const previewCover_image = () => {
 
 const createPost = async () => {
   const file = cover_image.value.files[0];
+  content.value = quillEditor.root.innerHTML;
 
   const formData = new FormData();
   formData.append("title", title.value);
@@ -294,7 +310,11 @@ const selectPost = (post) => {
 
   title.value = post.title;
   summary.value = post.summary;
-  content.value = post.content;
+  category_post_id.value = post.category_post_id;
+  nextTick(() => {
+    quillEditor.root.innerHTML = post.content;
+  });
+
   previewUrl.value = post.cover_image;
 
   var myModalEl = document.getElementById("modalPost");
@@ -304,6 +324,7 @@ const selectPost = (post) => {
 
 const updatePost = async () => {
   const file = cover_image.value.files[0];
+  content.value = quillEditor.root.innerHTML;
 
   const formData = new FormData();
   formData.append("title", title.value);
@@ -335,7 +356,7 @@ const updatePost = async () => {
   }
 };
 
-/* const deletePost = async (id) => {
+const deletePost = async (id) => {
   try {
     const { data } = await axios.patch(baseURL + id);
     console.log(data);
@@ -343,7 +364,7 @@ const updatePost = async () => {
   } catch (error) {
     console.log(error);
   }
-}; */
+};
 
 const reset = () => {
   title.value = "";
@@ -352,8 +373,15 @@ const reset = () => {
   cover_image.value.value = null;
   previewUrl.value = null;
   selectedPost.value = {};
+  quillEditor.root.innerHTML = "";
 };
 </script>
 
-  <style  scoped>
+<style  scoped>
+@import "quill/dist/quill.snow.css";
+
+#editor {
+  height: 300px;
+  margin-bottom: 20px;
+}
 </style>
