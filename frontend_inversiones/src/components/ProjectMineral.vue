@@ -170,7 +170,7 @@ const minerals = ref([]);
 const selectedMinerals = ref([]);
 const selectedMineral = ref("");
 const selectedProjectMineral = ref({});
-const isEditing = ref(false);
+const isEditing = ref(false); // Indica si se está editando o no
 
 onMounted(() => {
   getprojectMinerals();
@@ -195,7 +195,7 @@ const getMinerals = async () => {
   }
 };
 
-const availableMinerals = computed(() => {
+const availableMinerals = computed(() => { 
   // Filtrar minerales que ya están en el proyecto
   const existingMineralIds = projectMinerals.value.map(pm => pm.mineral_id);
   return minerals.value.filter(mineral => 
