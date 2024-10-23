@@ -27,6 +27,10 @@
       <h3>Linea de tiempo</h3>
       <TimeLine :idProject="idProject" />
     </div>
+    <div>
+      <h3>Minerales del proyecto</h3>
+      <ProjectMineral :idProjectMineral="idProject" />
+    </div>
   </div>
 </template>
 
@@ -35,7 +39,9 @@ import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import axios from "axios";
 import TimeLine from "@/components/TimeLine.vue";
+import ProjectMineral from "@/components/ProjectMineral.vue";
 import OperatingExpenses from "@/components/OperatingExpenses.vue";
+
 
 const route = useRoute();
 const idProject = ref(route.params.id);
