@@ -14,7 +14,7 @@
 
 <script setup>
 defineProps({
-  modelValue: { type: Number, required: true },
+  modelValue: { type: [String, Number], required: true },
   label: { type: String, required: true },
   id: { type: String, required: true },
   placeholder: { type: String, default: "" },
@@ -22,8 +22,11 @@ defineProps({
 });
 
 const emit = defineEmits(["update:modelValue"]);
-
 const updateValue = (event) => {
-  emit("update:modelValue", event.target.value);
+  const value =
+    event.target.type === "number"
+      ? Number(event.target.value) || ""
+      : event.target.value;
+  emit("update:modelValue", value);
 };
 </script>

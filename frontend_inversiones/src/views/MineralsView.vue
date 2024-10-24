@@ -19,12 +19,11 @@
         />
       </div>
     </div>
-
     <Modal
       modalId="modalMineral"
       title="Datos del Mineral"
       :showSaveButton="!selectedMineral?.id"
-      :showUpdateButton="selectedMineral?.id"
+      :showUpdateButton="Boolean(selectedMineral?.id)"
       @onClose="reset"
       @onSave="createMineral"
       @onUpdate="updateMineral"
@@ -76,6 +75,7 @@ import Modal from "@/components/base/Modal.vue";
 import Input from "@/components/base/Input.vue";
 import InputTextArea from "@/components/base/InputTextArea.vue";
 import InputFile from "@/components/base/InputFile.vue";
+import { openModal, closeModal } from "@/utils/modal";
 
 const headers = [
   "Nombre",
@@ -131,10 +131,8 @@ const createMineral = async () => {
         "Content-Type": "multipart/form-data",
       },
     });
-    var myModalEl = document.getElementById("modalMineral");
-    var modal = bootstrap.Modal.getInstance(myModalEl);
-    modal.hide();
 
+    closeModal("modalMineral");
     getMinerals();
     reset();
   } catch (error) {
@@ -149,9 +147,7 @@ const selectMineral = (mineral) => {
   description.value = mineral.description;
   previewUrl.value = mineral.image;
 
-  var myModalEl = document.getElementById("modalMineral");
-  var modal = new bootstrap.Modal(myModalEl);
-  modal.show();
+  openModal("modalMineral");
 };
 
 const updateMineral = async () => {
@@ -173,10 +169,8 @@ const updateMineral = async () => {
         },
       }
     );
-    var myModalEl = document.getElementById("modalMineral");
-    var modal = bootstrap.Modal.getInstance(myModalEl);
-    modal.hide();
 
+    closeModal("modalMineral");
     getMinerals();
     reset();
   } catch (error) {
