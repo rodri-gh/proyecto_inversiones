@@ -23,10 +23,6 @@ defineProps({
 
 const emit = defineEmits(["update:modelValue"]);
 const updateValue = (event) => {
-  const value =
-    event.target.type === "number"
-      ? Number(event.target.value) || ""
-      : event.target.value;
-  emit("update:modelValue", value);
+  emit("update:modelValue", event.target.value);
 };
 </script>

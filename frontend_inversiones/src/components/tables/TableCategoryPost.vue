@@ -10,25 +10,9 @@
         <tr v-if="items.length === 0">
           <td colspan="6" class="text-center">No hay minerales registrados</td>
         </tr>
-        <tr v-for="item in items" :key="item.id">
+        <tr v-for="item in items" :key="item.category_post_id">
           <td>{{ item.name }}</td>
-          <td>{{ item.price }}</td>
-          <td>{{ item.description }}</td>
-          <td>
-            <img
-              :src="item.image"
-              alt="Imagen"
-              height="60px"
-              width="60px"
-              class="img-fluid rounded-1"
-            />
-          </td>
-          <td>
-            <span v-if="item.deleted == 1" class="badge bg-success"
-              >Activo</span
-            >
-            <span v-else class="badge bg-danger">Inactivo</span>
-          </td>
+
           <td>
             <Button
               @click="() => actions.edit(item)"
@@ -36,7 +20,7 @@
               buttonClass="btn-warning btn-sm m-1"
             />
             <Button
-              @click="() => actions.delete(item.id)"
+              @click="() => actions.delete(item.category_post_id)"
               :icon="item.deleted ? 'fa fa-trash' : 'fa fa-check'"
               :buttonClass="`btn-${
                 item.deleted ? 'danger' : 'success'
@@ -63,7 +47,7 @@ defineProps({
   },
   actions: {
     type: Object,
-    default: null,
+    required: true,
   },
 });
 </script>

@@ -3,12 +3,14 @@
     <div class="card shadow border-0">
       <div class="card-body">
         <h4 class="card-title text-center">Minerales</h4>
-        <Button
-          data-bs-toggle="modal"
-          data-bs-target="#modalMineral"
-          text="Nuevo"
-          icon="fa fa-plus"
-        />
+        <div class="text-end">
+          <Button
+            data-bs-toggle="modal"
+            data-bs-target="#modalMineral"
+            text="Nuevo"
+            icon="fa fa-plus"
+          />
+        </div>
         <TableMinerals
           :headers="headers"
           :items="minerals"
@@ -48,7 +50,6 @@
         label="Descripción"
         v-model="description"
         placeholder="Ingrese la descripción"
-        :rows="3"
       />
 
       <InputFile
@@ -69,7 +70,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import Button from "@/components/base/Button.vue";
-import TableMinerals from "@/components/minerals/TableMinerals.vue";
+import TableMinerals from "@/components/tables/TableMinerals.vue";
 import Modal from "@/components/base/Modal.vue";
 import Input from "@/components/base/Input.vue";
 import InputTextArea from "@/components/base/InputTextArea.vue";
