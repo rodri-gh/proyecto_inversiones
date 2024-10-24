@@ -14,9 +14,9 @@ var contractsRouter = require('./routes/contracts');
 var operatingexpensesRouter = require('./routes/operatingexpenses');
 var investmentsRouter = require('./routes/investments');
 var project_mineralsRouter = require('./routes/project_minerals');
-// aqui el enrutador de contactos 
+
 var contactsRouter = require('./routes/contacts');
-// aqui el enrutador de movientos 
+
 var movementsRouter = require('./routes/movements');
 
 var categoryPostsRouter = require('./routes/categoryPosts');
