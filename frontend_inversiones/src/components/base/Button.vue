@@ -5,7 +5,7 @@
       v-bind="$attrs"
       @click="$emit('click')"
     >
-      <i v-if="icon" :class="icon + ' me-1'"></i>
+      <i v-if="icon" :class="icon"></i>
       <span :class="textClass">{{ text }}</span>
     </button>
   </div>
