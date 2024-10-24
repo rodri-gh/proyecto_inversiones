@@ -24,9 +24,8 @@
       title="Datos del Mineral"
       :showSaveButton="!selectedMineral?.id"
       :showUpdateButton="Boolean(selectedMineral?.id)"
-      @onClose="reset"
-      @onSave="createMineral"
-      @onUpdate="updateMineral"
+      @onClose="reset()"
+      @onSave="saveMineral()"
     >
       <Input
         id="name"
@@ -118,15 +117,26 @@ const handleImageChange = (file) => {
   }
 };
 
-const createMineral = async () => {
-  const formData = new FormData();
-  formData.append("name", name.value);
-  formData.append("price", price.value);
-  formData.append("description", description.value);
-  formData.append("image", image.value);
+const selectMineral = (mineral) => {
+  selectedMineral.value = mineral;
+  name.value = mineral.name;
+  price.value = mineral.price;
+  description.value = mineral.description;
+  previewUrl.value = mineral.image;
+
+  openModal("modalMineral");
+};
+
+const saveMineral = async () => {
+  const method = selectedMineral.value.id ? "put" : "post";
+  const url = selectedMineral.value.id
+    ? `${baseURL}${selectedMineral.value.id}`
+    : baseURL;
+
+  const formData = createFormData();
 
   try {
-    const { data } = await axios.post(baseURL, formData, {
+    await axios[method](url, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -140,17 +150,7 @@ const createMineral = async () => {
   }
 };
 
-const selectMineral = (mineral) => {
-  selectedMineral.value = mineral;
-  name.value = mineral.name;
-  price.value = mineral.price;
-  description.value = mineral.description;
-  previewUrl.value = mineral.image;
-
-  openModal("modalMineral");
-};
-
-const updateMineral = async () => {
+const createFormData = () => {
   const formData = new FormData();
   formData.append("name", name.value);
   formData.append("price", price.value);
@@ -158,24 +158,7 @@ const updateMineral = async () => {
   if (image.value) {
     formData.append("image", image.value);
   }
-
-  try {
-    const { data } = await axios.put(
-      baseURL + selectedMineral.value.id,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-
-    closeModal("modalMineral");
-    getMinerals();
-    reset();
-  } catch (error) {
-    console.log(error);
-  }
+  return formData;
 };
 
 const deleteMineral = async (id) => {

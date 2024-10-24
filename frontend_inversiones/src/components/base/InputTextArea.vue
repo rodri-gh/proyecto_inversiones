@@ -23,7 +23,6 @@ defineProps({
 
 const emit = defineEmits(["update:modelValue"]);
 
-// Método para emitir el nuevo valor cuando se escribe en el textarea
 const updateValue = (event) => {
   emit("update:modelValue", event.target.value);
 };

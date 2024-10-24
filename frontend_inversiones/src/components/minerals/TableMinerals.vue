@@ -36,16 +36,11 @@
               buttonClass="btn-warning btn-sm m-1"
             />
             <Button
-              v-if="item.deleted == 1"
               @click="() => actions.delete(item.id)"
-              icon="fa fa-trash"
-              buttonClass="btn-danger btn-sm m-1"
-            />
-            <Button
-              v-if="item.deleted == 0"
-              @click="() => actions.delete(item.id)"
-              icon="fa fa-check"
-              buttonClass="btn-success btn-sm m-1"
+              :icon="item.deleted ? 'fa fa-trash' : 'fa fa-check'"
+              :buttonClass="`btn-${
+                item.deleted ? 'danger' : 'success'
+              } btn-sm m-1`"
             />
           </td>
         </tr>

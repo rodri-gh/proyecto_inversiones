@@ -27,30 +27,26 @@
           <slot></slot>
         </div>
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
+          <Button
+            text="Cancelar"
+            buttonClass="btn-secondary"
             @click="$emit('onClose')"
-          >
-            {{ cancelText }}
-          </button>
-          <button
+            data-bs-dismiss="modal"
+          />
+
+          <Button
             v-if="showSaveButton"
-            type="button"
-            class="btn btn-primary"
+            text="Guardar"
+            buttonClass="btn-primary"
             @click="$emit('onSave')"
-          >
-            {{ saveText }}
-          </button>
-          <button
+          />
+
+          <Button
             v-if="showUpdateButton"
-            type="button"
-            class="btn btn-primary"
-            @click="$emit('onUpdate')"
-          >
-            {{ updateText }}
-          </button>
+            text="Actualizar"
+            buttonClass="btn-primary"
+            @click="$emit('onSave')"
+          />
         </div>
       </div>
     </div>
@@ -58,6 +54,8 @@
 </template>
 
 <script setup>
+import Button from "@/components/base/Button.vue";
+
 defineProps({
   modalId: {
     type: String,
@@ -75,19 +73,7 @@ defineProps({
     type: Boolean,
     default: false,
   },
-  saveText: {
-    type: String,
-    default: "Guardar",
-  },
-  updateText: {
-    type: String,
-    default: "Actualizar",
-  },
-  cancelText: {
-    type: String,
-    default: "Cancelar",
-  },
 });
 
-defineEmits(["onClose", "onSave", "onUpdate"]);
+defineEmits(["onClose", "onSave"]);
 </script>

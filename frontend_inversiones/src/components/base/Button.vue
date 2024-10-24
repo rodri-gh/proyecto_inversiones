@@ -1,7 +1,11 @@
 <template>
   <div class="text-end">
-    <button :class="['btn', buttonClass]">
-      <i :class="icon + ' me-1'"></i>
+    <button
+      :class="['btn', buttonClass]"
+      v-bind="$attrs"
+      @click="$emit('click')"
+    >
+      <i v-if="icon" :class="icon + ' me-1'"></i>
       <span :class="textClass">{{ text }}</span>
     </button>
   </div>
@@ -14,4 +18,6 @@ defineProps({
   icon: { type: String, default: "" },
   textClass: { type: String, default: "" },
 });
+
+defineEmits(["click"]);
 </script>
