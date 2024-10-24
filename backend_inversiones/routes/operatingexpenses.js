@@ -21,6 +21,32 @@ router.get("/", function (req, res) {
 });
 
 router.get("/:id", function (req, res) {
+  const { id } = req.params; // ID del gasto operativo
+  const query = "SELECT * FROM operating_expenses WHERE id = ?"; // Buscamos por 'id'
+
+  connection.query(query, [id], function (error, results) {
+    if (error) {
+      return res.status(500).json({
+        error: error,
+        message: "Error in the query",
+      });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({
+        message: "No operating expense found with the provided ID",
+      });
+    }
+
+    res.status(200).json({
+      data: results[0], // Retorna solo un objeto, el que corresponde al ID
+      message: "Operating expense details",
+    });
+  });
+});
+
+
+router.get("/project/:id", function (req, res) {
   const { id } = req.params; 
   const query = `SELECT * FROM operating_expenses
               WHERE project_id = ${id};`;

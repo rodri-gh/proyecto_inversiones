@@ -4,98 +4,50 @@
             <div class="card-body">
                 <h4 class="card-title text-center">Gastos Operativos</h4>
                 <div class="text-end">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#modalOperatingExpenses">
-                        <i class="fa fa-plus mx-1"></i> Nuevo
-                    </button>
+                    <Button
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalOperatingExpense"
+                        text="Nuevo"
+                        icon="fa fa-plus" 
+                    />
                 </div>
-
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Descripcion</th>
-                                <th scope="col">Gastos</th>
-                                <th scope="col">Estado</th>
-                                <th scope="col">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-if="operatingExpenses.length == 0">
-                                <td colspan="5" class="text-center">
-                                    No hay gastos operativos registrados
-                                </td>
-                            </tr>
-
-                            <tr v-for="operatingExpense in operatingExpenses" :key="operatingExpense.id">
-                                <td>{{ operatingExpense.name }}</td>
-                                <td>{{ operatingExpense.description }}</td>
-                                <td>{{ operatingExpense.expenses }}</td>
-                                <td>
-                                    <span v-if="operatingExpense.deleted == 1" class="badge bg-success">Activo</span>
-                                    <span v-else class="badge bg-danger">Inactivo</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm m-1"
-                                        @click="selectOperatingExpense(operatingExpense)">
-                                        <i class="fa fa-edit"></i>
-                                    </button>
-                                    <button v-if="operatingExpense.deleted == 1" class="btn btn-danger btn-sm m-1" @click="deleteOperatingExpense(operatingExpense.id)">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                    <button v-if="operatingExpense.deleted == 0" class="btn btn-success btn-sm m-1" @click="deleteOperatingExpense(operatingExpense.id)">
-                                        <i class="fa fa-check"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <TableOperatingExpenses
+                    :headers="headers"
+                    :items="operatingExpenses"
+                    :actions="{
+                        edit: selectOperatingExpense,
+                        delete: deleteOperatingExpense,
+                    }"
+                />
             </div>
         </div>
 
-        <!-- Modal Body -->
-        <!-- if you want to close by clicking outside the modal, delete the last endpoint:data-bs-backdrop and data-bs-keyboard -->
-        <div class="modal fade" id="modalOperatingExpenses" tabindex="-1" data-bs-backdrop="static"
-            data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalTitleId">
-                            Operating Expenses
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                            @click="reset()"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" v-model="name" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="" class="form-label">Descripcion</label>
-                            <textarea class="form-control" v-model="description"></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="" class="form-label">Gastos</label>
-                            <input type="number" class="form-control" v-model="expenses" />
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="reset()">
-                            Cancel
-                        </button>
-                        <button v-if="selectedOperatingExpense && selectedOperatingExpense.id == null" type="button"
-                            class="btn btn-primary" @click="createOperatingExpense()">Save</button>
-                        <button v-else type="button" class="btn btn-primary"
-                            @click="updateOperatingExpense()">Update</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <Modal
+            modalId="modalOperatingExpense"
+            title="Datos del Gasto Operativo"
+            :showSaveButton="!selectedOperatingExpense?.id"
+            :showUpdateButton="Boolean(selectedOperatingExpense?.id)"
+            @onClose="reset()"
+            @onSave="saveOperatingExpense()"
+        >
+            <Input
+                id="name"
+                v-model="name"
+                label="Nombre"
+                type="text"
+            />
+            <InputTextArea
+                id="description"
+                v-model="description"
+                label="Descripción"
+            />
+            <Input
+                id="expenses"
+                type="number"
+                v-model="expenses"
+                label="Gastos"
+            />
+        </Modal>
 
     </div>
 </template>
@@ -103,6 +55,21 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import Button from "@/components/base/Button.vue";
+import TableOperatingExpenses from "@/components/tables/TableOperatingExpenses.vue";
+import Modal from "@/components/base/Modal.vue";
+import Input from "@/components/base/Input.vue";
+import InputTextArea from "@/components/base/InputTextArea.vue";
+import { openModal, closeModal } from "@/utils/modal";
+
+const headers = [
+    "Nombre",
+    "Descripción",
+    "Gastos",
+    "Estado",
+    "Acciones",
+];
+
 
 const props = defineProps({
     idProject: {
@@ -128,65 +95,54 @@ onMounted(() => {
 
 const getOperatingExpenses = async () => {
     try {
-        const { data } = await axios.get(baseURL + props.idProject);
+        const { data } = await axios.get(baseURL + "project/" + props.idProject);
         operatingExpenses.value = data.data;
     } catch (error) {
         console.error(error);
     }
 };
 
-const createOperatingExpense = async () => {
-    const operatingExpense = {
-        name: name.value,
-        description: description.value,
-        expenses: expenses.value,
-        project_id: props.idProject,
-    };
-    try {
-        const { data } = await axios.post(baseURL, operatingExpense);
-        console.log(data);
-        var myModalEl = document.getElementById("modalOperatingExpenses");
-        var modal = bootstrap.Modal.getInstance(myModalEl);
-        modal.hide();
-        getOperatingExpenses();
-        reset();
-    } catch (error) {
-        console.error(error);
-    }
-};
+
 
 const selectOperatingExpense = (operatingExpense) => {
+    selectedOperatingExpense.value = operatingExpense;
     name.value = operatingExpense.name;
     description.value = operatingExpense.description;
     expenses.value = operatingExpense.expenses;
-    selectedOperatingExpense.value = operatingExpense;
+    
 
-    var myModalEl = document.getElementById("modalOperatingExpenses");
-    var modal = new bootstrap.Modal(myModalEl);
-    modal.show();
+    openModal("modalOperatingExpense");
 };
 
-const updateOperatingExpense = async () => {
-    const operatingExpense = {
-        name: name.value,
-        description: description.value,
-        expenses: expenses.value,
-        project_id: props.idProject,
-    };
+const saveOperatingExpense = async () => {
+    const method = selectedOperatingExpense.value.id ? "put" : "post";
+    const url = selectedOperatingExpense.value.id
+        ? `${baseURL}${selectedOperatingExpense.value.id}`
+        : baseURL;
+
+    const formData = createFormData();
+
     try {
-        const { data } = await axios.put(
-            baseURL + selectedOperatingExpense.value.id,
-            operatingExpense
-        );
-        console.log(data);
-        var myModalEl = document.getElementById("modalOperatingExpenses");
-        var modal = bootstrap.Modal.getInstance(myModalEl);
-        modal.hide();
+        await axios[method](url, formData, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        closeModal("modalOperatingExpense");
         getOperatingExpenses();
         reset();
     } catch (error) {
-        console.error(error);
+        console.log(error);
     }
+};
+
+const createFormData = () => {
+    const formData = new FormData();
+    formData.append("name", name.value);
+    formData.append("description", description.value);
+    formData.append("expenses", expenses.value);
+    formData.append("project_id", props.idProject);
+    return formData;
 };
 
 const deleteOperatingExpense = async (id) => {
@@ -205,5 +161,3 @@ const reset = () => {
     selectedOperatingExpense.value = {};
 };
 </script>
-
-<style scoped></style>
