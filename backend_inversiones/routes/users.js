@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 const { encrypt } = require('../helpers/handleBcrypt');
 var connection = require('../database');
-const { validateToken } = require('./auth')
+const { validateToken } = require('./auth');
+const { sendEmail } = require('../services/emailService');
 
 var lastInsertedId = null;
 
@@ -28,14 +29,13 @@ router.get('/', validateToken, (req, res, next) => {
 });
 
 router.post('/', validateToken, async (req, res) => {
-    const { email, phone, name, last_name, username, password } = req.body;
+    const { email, phone, name, lastName, username, password } = req.body;
 
-    const userQuery = `
-    INSERT INTO users (email, phone, role, name, last_name) 
-    VALUES ("${email}", "${phone}", "client", "${name}", "${last_name}");
-  `;
-
+    const userQuery = `INSERT INTO users (email, phone, role, name, last_name) VALUES ("${email}", ${phone}, "client", "${name}", "${lastName}");`;
+    console.log("query", userQuery);
+    
     connection.query(userQuery, async (error, results) => {
+        console.log("id", results);
         if (error) {
             console.log(error);
             res.status(500).json({
@@ -54,6 +54,7 @@ router.post('/', validateToken, async (req, res) => {
                     message: 'Error in the query',
                 });
             }
+            sendEmail(email, { username, password, name });
             res.status(200).json({
                 message: 'Created account',
             });
