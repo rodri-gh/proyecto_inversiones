@@ -3,81 +3,20 @@
     <div class="card shadow border-0">
       <div class="card-body">
         <h4 class="card-title text-center">Minerales</h4>
-        <div class="text-end">
-          <button
-            type="button"
-            class="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#modalMineral"
-          >
-            <i class="fa fa-plus mx-1"></i> Nuevo
-          </button>
-        </div>
-
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Nombre</th>
-                <th scope="col">Precio</th>
-                <th scope="col">Descripcion</th>
-                <th scope="col">Imagen</th>
-                <th scope="col">Estado</th>
-                <th scope="col">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-if="minerals.length == 0">
-                <td colspan="6" class="text-center">
-                  No hay minerales registrados
-                </td>
-              </tr>
-
-              <tr v-for="mineral in minerals" :key="mineral.id">
-                <td>{{ mineral.name }}</td>
-                <td>{{ mineral.price }}</td>
-                <td>{{ mineral.description }}</td>
-                <td>
-                  <img
-                    :src="mineral.image"
-                    alt="Imagen"
-                    height="60px"
-                    width="60px"
-                    class="img-fluid rounded-1"
-                  />
-                </td>
-                <td>
-                  <span v-if="mineral.deleted == 1" class="badge bg-success"
-                    >Activo</span
-                  >
-                  <span v-else class="badge bg-danger">Inactivo</span>
-                </td>
-                <td>
-                  <button
-                    class="btn btn-warning btn-sm m-1"
-                    @click="selectMineral(mineral)"
-                  >
-                    <i class="fa fa-edit"></i>
-                  </button>
-                  <button
-                    v-if="mineral.deleted == 1"
-                    class="btn btn-danger btn-sm m-1"
-                    @click="deleteMineral(mineral.id)"
-                  >
-                    <i class="fa fa-trash"></i>
-                  </button>
-                  <button
-                    v-if="mineral.deleted == 0"
-                    class="btn btn-success btn-sm m-1"
-                    @click="deleteMineral(mineral.id)"
-                  >
-                    <i class="fa fa-check"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <Button
+          data-bs-toggle="modal"
+          data-bs-target="#modalMineral"
+          text="Nuevo"
+          icon="fa fa-plus"
+        />
+        <TableMinerals
+          :headers="headers"
+          :items="minerals"
+          :actions="{
+            edit: selectMineral,
+            delete: deleteMineral,
+          }"
+        />
       </div>
     </div>
     <!-- Modal -->
@@ -187,6 +126,17 @@
   <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import Button from "@/components/base/Button.vue";
+import TableMinerals from "@/components/minerals/TableMinerals.vue";
+
+const headers = [
+  "Nombre",
+  "Precio",
+  "Descripción",
+  "Imagen",
+  "Estado",
+  "Acciones",
+];
 
 const baseURL = "http://localhost:3000/minerals/";
 
@@ -315,5 +265,5 @@ const reset = () => {
 };
 </script>
 
-  <style  scoped>
+<style  scoped>
 </style>
