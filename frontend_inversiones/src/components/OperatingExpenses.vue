@@ -70,6 +70,7 @@ const headers = [
     "Acciones",
 ];
 //asdasd
+//asdasd
 
 const props = defineProps({
     idProject: {
