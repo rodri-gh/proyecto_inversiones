@@ -69,7 +69,7 @@ const headers = [
     "Estado",
     "Acciones",
 ];
-
+//asdasd
 
 const props = defineProps({
     idProject: {
