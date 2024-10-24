@@ -4,6 +4,13 @@ var connection = require('../database');
 const multer = require ('multer');
 const path = require('path');
 const fs = require('fs');
+const cors = require('cors')
+
+router.post('withdrawalrequests')
+
+router.use(cors({
+  origin:'http://localhost:3000'
+}));
 
 const uploadDir = 'public/images/withdrawalRequests';
 if (!fs.existsSync(uploadDir)) {
