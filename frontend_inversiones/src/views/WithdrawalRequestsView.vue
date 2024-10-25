@@ -149,7 +149,7 @@ const fetchWithdrawals = async () => {
 
 const createWithdrawal = async () => {
     const formData = new FormData(); 
-    formData.append("investment_id", asd);/////// predeterminado  (enlazar )
+    formData.append("investment_id", 1);/////// predeterminado  (enlazar )
     formData.append("user_id", 1); /////
     formData.append("request_amount", amount.value);
     formData.append("commission_apply", amount.value);////
@@ -166,7 +166,7 @@ const createWithdrawal = async () => {
 
     console.log(Array.from(formData));
     for (let [key, value] of formData.entries()) {
-     console.log(`${key}: ${value instanceof File ? value.name : value}`);
+    console.log(`${key}: ${value instanceof File ? value.name : value}`);
     }
     try {
         const response = await axios.post(
@@ -238,7 +238,7 @@ const reset = () => {
     paymentMethod.value = "";
     notes.value = "";
 };
-
+//revisando si funcionan las imagenes 
 const previewImage = (event) => {
     if (!event || !event.target || !event.target.files || event.target.files.length === 0) {
         console.error("No se ha seleccionado ningún archivo.");
