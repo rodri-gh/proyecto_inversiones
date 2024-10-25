@@ -44,6 +44,9 @@ const logOut = () => {
             <li class="nav-item">
               <router-link class="nav-link" to="/withdrawalrequests">Solicitudes de Retiro</router-link>
             </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/movements">Movimientos</router-link>
+            </li>
           </ul>
         </div>
         <div id="buttom-out">
