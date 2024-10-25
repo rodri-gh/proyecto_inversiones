@@ -65,6 +65,29 @@ router.put('/:id', function (req, res, next) {
 
 });
 
+router.patch('/:id', function (req, res, next) {
+
+  const id = req.params.id;
+
+
+  const query = 'UPDATE category_posts SET deleted = !deleted WHERE category_post_id = ?;';
+
+  connection.query(query, [id], function (error, results, fields) {
+
+    if (error) {
+      return res.status(500).json({
+        error: error,
+        message: 'Error in the query',
+      });
+    }
+
+    res.status(200).json({
+      message: 'Category post updated successfully',
+    });
+  });
+
+});
+
 module.exports = router;
 
 

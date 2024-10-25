@@ -1,9 +1,8 @@
 <script setup>
-import { RouterView } from "vue-router";
-import WhatsAppButton from "./components/WhatsAppButton.vue";
 </script>
 
 <template>
+
   <div>
     <header>
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -57,6 +56,9 @@ import WhatsAppButton from "./components/WhatsAppButton.vue";
     </main>
     <WhatsAppButton />
   </div>
+
+  <router-view />
+
 </template>
 
 <style scoped>

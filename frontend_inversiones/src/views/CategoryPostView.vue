@@ -4,150 +4,57 @@
       <div class="card-body">
         <h4 class="card-title text-center">Categoria Posts</h4>
         <div class="text-end">
-          <button
-            type="button"
-            class="btn btn-primary"
+          <Button
             data-bs-toggle="modal"
             data-bs-target="#modalCategoryPost"
-          >
-            <i class="fa fa-plus mx-1"></i> Nuevo
-          </button>
+            text="Nuevo"
+            icon="fa fa-plus"
+          />
         </div>
-
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Nombre</th>
-                <th scope="col">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-if="categoryPosts.length == 0">
-                <td colspan="6" class="text-center">
-                  No hay categorias registradas
-                </td>
-              </tr>
-
-              <tr v-for="categoryPost in categoryPosts" :key="categoryPost.id">
-                <td>{{ categoryPost.name }}</td>
-
-                <!--   <td>
-                  <span
-                    v-if="categoryPost.deleted == 1"
-                    class="badge bg-success"
-                    >Activo</span
-                  >
-                  <span v-else class="badge bg-danger">Inactivo</span>
-                </td> -->
-                <td>
-                  <button
-                    class="btn btn-warning btn-sm m-1"
-                    @click="selectCategoryPost(categoryPost)"
-                  >
-                    <i class="fa fa-edit"></i>
-                  </button>
-                  <button
-                    v-if="categoryPost.deleted == 1"
-                    class="btn btn-danger btn-sm m-1"
-                    @click="deleteCategoryPost(categoryPost.id)"
-                  >
-                    <i class="fa fa-trash"></i>
-                  </button>
-                  <button
-                    v-if="categoryPost.deleted == 0"
-                    class="btn btn-success btn-sm m-1"
-                    @click="deleteCategoryPost(categoryPost.id)"
-                  >
-                    <i class="fa fa-check"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <TableCategoryPost
+          :headers="headers"
+          :items="categoryPosts"
+          :actions="{
+            edit: selectCategoryPost,
+            delete: deleteCategoryPost,
+          }"
+        />
       </div>
     </div>
-    <!-- Modal -->
 
-    <div
-      class="modal fade"
-      id="modalCategoryPost"
-      tabindex="-1"
-      data-bs-backdrop="static"
-      data-bs-keyboard="false"
-      role="dialog"
-      aria-labelledby="modalTitleId"
-      aria-hidden="true"
+    <Modal
+      modalId="modalCategoryPost"
+      title="Datos de la Categoria-Post"
+      :showSaveButton="!selectedCategoryPost?.category_post_id"
+      :showUpdateButton="Boolean(selectedCategoryPost?.category_post_id)"
+      @onClose="reset()"
+      @onSave="saveCategory()"
     >
-      <div
-        class="modal-dialog modal-dialog-scrollable modal-dialog-centered"
-        role="document"
-      >
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalTitleId">Categoria-Post</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-              @click="reset()"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label for="name" class="form-label">Nombre</label>
-              <input
-                type="text"
-                class="form-control"
-                v-model="name"
-                id="name"
-              />
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-              @click="reset()"
-            >
-              Cancelar
-            </button>
-            <button
-              v-if="selectedCategoryPost && selectedCategoryPost.id == null"
-              type="button"
-              class="btn btn-primary"
-              @click="createCategoryPost()"
-            >
-              Guardar
-            </button>
-            <button
-              v-else
-              type="button"
-              class="btn btn-primary"
-              @click="updateCategoryPost()"
-            >
-              Actualizar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+      <Input
+        id="name"
+        label="Nombre"
+        v-model="name"
+        type="text"
+        placeholder="Ingrese el nombre"
+      />
+    </Modal>
   </div>
 </template>
 
   <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import Button from "@/components/base/Button.vue";
+import TableCategoryPost from "@/components/tables/TableCategoryPost.vue";
+import Modal from "@/components/base/Modal.vue";
+import Input from "@/components/base/Input.vue";
+import { closeModal, openModal } from "@/utils/modal";
+
+const headers = ["Nombre", "Acciones"];
 
 const baseURL = "http://localhost:3000/categoryPosts/";
-
 const categoryPosts = ref([]);
-
 const name = ref("");
-
 const selectedCategoryPost = ref({});
 
 onMounted(() => {
@@ -164,22 +71,30 @@ const getCategoryPosts = async () => {
   }
 };
 
-const createCategoryPost = async () => {
-  const categoryPost = {
-    name: name.value,
-  };
-  try {
-    const { data } = await axios.post(baseURL, categoryPost);
-    console.log(data);
-    var myModalEl = document.getElementById("modalCategoryPost");
-    var modal = bootstrap.Modal.getInstance(myModalEl);
-    modal.hide();
+const saveCategory = async () => {
+  const method = selectedCategoryPost.value.category_post_id ? "put" : "post";
+  const url = selectedCategoryPost.value.category_post_id
+    ? `${baseURL}${selectedCategoryPost.value.category_post_id}`
+    : baseURL;
 
+  const categoryPost = createCategory();
+
+  try {
+    await axios[method](url, categoryPost);
+
+    closeModal("modalCategoryPost");
     getCategoryPosts();
     reset();
   } catch (error) {
     console.log(error);
   }
+};
+
+const createCategory = () => {
+  const categoryPost = {
+    name: name.value,
+  };
+  return categoryPost;
 };
 
 const selectCategoryPost = (categoryPost) => {
@@ -187,31 +102,7 @@ const selectCategoryPost = (categoryPost) => {
 
   name.value = categoryPost.name;
 
-  var myModalEl = document.getElementById("modalCategoryPost");
-  var modal = new bootstrap.Modal(myModalEl);
-  modal.show();
-};
-
-const updateCategoryPost = async () => {
-  const categoryPost = {
-    name: name.value,
-  };
-
-  try {
-    const { data } = await axios.put(
-      baseURL + selectedCategoryPost.value.id,
-      categoryPost
-    );
-    console.log(data);
-    var myModalEl = document.getElementById("modalCategoryPost");
-    var modal = bootstrap.Modal.getInstance(myModalEl);
-    modal.hide();
-
-    getCategoryPosts();
-    reset();
-  } catch (error) {
-    console.log(error);
-  }
+  openModal("modalCategoryPost");
 };
 
 const deleteCategoryPost = async (id) => {
@@ -226,7 +117,6 @@ const deleteCategoryPost = async (id) => {
 
 const reset = () => {
   name.value = "";
-
   selectedCategoryPost.value = {};
 };
 </script>
