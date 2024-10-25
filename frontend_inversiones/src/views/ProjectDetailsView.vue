@@ -20,6 +20,10 @@
       vista del admin
     </h1>
     <div>
+      <h3>Minerales del proyecto</h3>
+      <Investments :idInvestments="idProject" />
+    </div>
+    <div>
       <h3>Gastos Operativos</h3>
       <OperatingExpenses :idProject="idProject" />
     </div>
@@ -41,6 +45,7 @@ import axios from "axios";
 import TimeLine from "@/components/TimeLine.vue";
 import ProjectMineral from "@/components/ProjectMineral.vue";
 import OperatingExpenses from "@/components/OperatingExpenses.vue";
+import Investments from "@/components/Investments.vue";
 
 
 const route = useRoute();
