@@ -15,8 +15,6 @@
                         <thead>
                             <tr>
                                 <th scope="col">Cantidad</th>
-                                <th scope="col">Método de Pago</th>
-                                <th scope="col">Notas</th>
                                 <th scope="col">Estado</th>
                                 <th scope="col">Acciones</th>
                             </tr>
@@ -28,19 +26,17 @@
                                 </td>
                             </tr>
 
-                            <tr v-for="withdrawal in withdrawals" :key="withdrawal.id">
-                                <td>{{ withdrawal.amount }}</td>
-                                <td>{{ withdrawal.paymentMethod }}</td>
-                                <td>{{ withdrawal.notes }}</td>
+                            <tr v-for="withdrawal in withdrawals" :key="withdrawal.withdrawal_requests_id">
+                                <td>{{ withdrawal.receive_amount }} </td>
                                 <td>
-                                    <span v-if="withdrawal.status === 'active'" class="badge bg-success">Activo</span>
-                                    <span v-else class="badge bg-danger">Inactivo</span>
+                                    <span v-if="withdrawal.status === 'approved'" class="badge bg-success">Aprovado</span>
+                                    <span v-else class="badge bg-danger">Pendiente</span>
                                 </td>
                                 <td>
                                     <button class="btn btn-warning btn-sm m-1" @click="selectWithdrawal(withdrawal)">
                                         <i class="fa fa-edit"></i>
                                     </button>
-                                    <button class="btn btn-danger btn-sm m-1" @click="deleteWithdrawal(withdrawal.id)">
+                                    <button class="btn btn-danger btn-sm m-1" @click="deleteWithdrawal(withdrawal.withdrawal_requests_id)">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </td>
@@ -84,9 +80,9 @@
                             <input
                             type="file"
                             class="form-control"
-                            ref="dniImage"
-                            id="dniImage"
-                            @change="previewImage()"
+                            ref="dniImageRef"
+                            id="dniImageRef"
+                            @change="previewImage($event)"
                             accept="image/png, image/jpeg"
                             />
                         </div>
@@ -96,9 +92,9 @@
                             <input
                             type="file"
                             class="form-control"
-                            ref="selfieImage"
-                            id="selfieImage"
-                            @change="previewImage()"
+                            ref="selfieImageRef"
+                            id="selfieImageRef"
+                            @change="previewImage($event)"
                             accept="image/png, image/jpeg"
                             />
                         </div>
@@ -113,10 +109,10 @@
                             Cancelar
                         </button>
                         <button v-if="selectedWithdrawal && selectedWithdrawal.id == null" type="button"
-                            class="btn btn-primary" @click="createWithdrawal()">
+                            class="btn btn-primary" @click="updateWithdrawal()">
                             Guardar
                         </button>
-                        <button v-else type="button" class="btn btn-primary" @click="updateWithdrawal()">
+                        <button v-else type="button" class="btn btn-primary" @click="createWithdrawal()">
                             Solicitar
                         </button>
                     </div>
@@ -136,29 +132,51 @@ const paymentMethod = ref("");
 const notes = ref("");
 const withdrawals = ref([]);
 const selectedWithdrawal = ref(null);
+const dniImageRef = ref(null); 
+const selfieImageRef = ref(null);
 
 const fetchWithdrawals = async () => {
     try {
-        const response = await axios.get("http://localhost:3000/withdrawals");
-        withdrawals.value = response.data; // Asumiendo que el backend devuelve un array de solicitudes
+        const response = await axios.get("http://localhost:3000/withdrawal_requests");
+        withdrawals.value = response.data.data; // Asumiendo que el backend devuelve un array de solicitudes
+        withdrawals.value = withdrawals.value.filter((w) => w.deleted == 1);
+        console.log(withdrawals.value);
+        console.log('datos recibidos exitosamente')
     } catch (error) {
-        console.error("Error fetching withdrawals:", error);
+        console.error("Error fetching withdrawals:", error);    
     }
 };
 
 const createWithdrawal = async () => {
-    const requestData = {
-        amount: amount.value,
-        paymentMethod: paymentMethod.value,
-        notes: notes.value,
-    };
+    const formData = new FormData(); 
+    formData.append("investment_id", asd);/////// predeterminado  (enlazar )
+    formData.append("user_id", 1); /////
+    formData.append("request_amount", amount.value);
+    formData.append("commission_apply", amount.value);////
+    //formData.append("paymentMethod", paymentMethod.value);
+    formData.append("receive_amount", amount.value);
+    //formData.append("notes", notes.value);
 
+    if (dniImageRef.value && dniImageRef.value.files.length > 0) {
+        formData.append("photo_document", dniImageRef.value.files[0]);
+    }
+    if (selfieImageRef.value && selfieImageRef.value.files.length > 0) {
+        formData.append("selfie_photo", selfieImageRef.value.files[0]);
+    }
+
+    console.log(Array.from(formData));
+    for (let [key, value] of formData.entries()) {
+     console.log(`${key}: ${value instanceof File ? value.name : value}`);
+    }
     try {
         const response = await axios.post(
-            "http://localhost:3000/withdrawals",
-            requestData
-        );
-        withdrawals.value.push(response.data); 
+            "http://localhost:3000/withdrawal_requests",
+            formData, {
+            headers: {
+                "Content-Type": "multipart/form-data", 
+            },
+        });
+        fetchWithdrawals();
         reset();
     } catch (error) {
         console.error("Error creating withdrawal:", error);
@@ -199,8 +217,9 @@ const updateWithdrawal = async () => {
 
 const deleteWithdrawal = async (id) => {
     try {
-        await axios.delete(`http://localhost:3000/withdrawals/${id}`);
-        withdrawals.value = withdrawals.value.filter((w) => w.id !== id); // Eliminar de la lista
+        await axios.patch(`http://localhost:3000/withdrawal_requests/${id}`);
+        withdrawals.value = withdrawals.value.filter((w) => w.deleted == 1); // Eliminar de la lista
+        fetchWithdrawals();
     } catch (error) {
         console.error("Error deleting withdrawal:", error);
     }
@@ -221,13 +240,20 @@ const reset = () => {
 };
 
 const previewImage = (event) => {
+    if (!event || !event.target || !event.target.files || event.target.files.length === 0) {
+        console.error("No se ha seleccionado ningún archivo.");
+        return;
+    }
     const file = event.target.files[0];
+    console.log("Archivo seleccionado:", file);
     if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-            console.log(e.target.result); // Muestra la URL de la imagen en consola
+            console.log("Preview de imagen:", e.target.result); // URL de la imagen
         };
         reader.readAsDataURL(file);
+    } else {
+        console.error("No se pudo leer el archivo.");
     }
 };
 
