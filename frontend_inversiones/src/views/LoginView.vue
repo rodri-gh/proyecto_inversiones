@@ -100,15 +100,20 @@ const iniciarSesion = async () => {
     console.log(data);
     if (data.token) {
       localStorage.setItem("token", data.token);
-
       localStorage.setItem("user", JSON.stringify(data.data));
-      router.push({ path: "/projects" });
+      router.push({ path: "/home" });
     }
   } catch (error) {
     console.log(error);
+    Swal.fire({
+      icon: "error",
+      title: "Login fallido",
+      text: "Credenciales incorrectas",
+    });
   }
 };
 
+//verificar si es nesesario
 const limpiar = () => {
   localStorage.clear();
   if (!localStorage.getItem("token")) {
