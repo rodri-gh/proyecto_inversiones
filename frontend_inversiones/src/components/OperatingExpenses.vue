@@ -21,7 +21,6 @@
                 />
             </div>
         </div>
-
         <Modal
             modalId="modalOperatingExpense"
             title="Datos del Gasto Operativo"
@@ -48,7 +47,6 @@
                 label="Gastos"
             />
         </Modal>
-
     </div>
 </template>
 
@@ -60,7 +58,6 @@ import TableOperatingExpenses from "@/components/tables/TableOperatingExpenses.v
 import Modal from "@/components/base/Modal.vue";
 import Input from "@/components/base/Input.vue";
 import InputTextArea from "@/components/base/InputTextArea.vue";
-import Swal from "sweetalert2";
 import { openModal, closeModal } from "@/utils/modal";
 
 const headers = [
@@ -70,8 +67,6 @@ const headers = [
     "Estado",
     "Acciones",
 ];
-//asdasd
-//asdasd
 
 const props = defineProps({
     idProject: {
@@ -81,13 +76,10 @@ const props = defineProps({
 });
 
 const baseURL = "http://localhost:3000/operatingexpenses/";
-
 const operatingExpenses = ref([]);
-
 const name = ref("");
 const description = ref("");
 const expenses = ref(0);
-
 const selectedOperatingExpense = ref({});
 
 onMounted(() => {
@@ -104,32 +96,20 @@ const getOperatingExpenses = async () => {
     }
 };
 
-
-
 const selectOperatingExpense = (operatingExpense) => {
     selectedOperatingExpense.value = operatingExpense;
     name.value = operatingExpense.name;
     description.value = operatingExpense.description;
     expenses.value = operatingExpense.expenses;
     
-
     openModal("modalOperatingExpense");
 };
 
 const saveOperatingExpense = async () => {
-    if(name.value == "" || description.value == "" || expenses.value == 0){
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Por favor llene todos los campos",
-        });
-        return;
-    }
     const method = selectedOperatingExpense.value.id ? "put" : "post";
     const url = selectedOperatingExpense.value.id
         ? `${baseURL}${selectedOperatingExpense.value.id}`
         : baseURL;
-
     const formData = createFormData();
 
     try {
