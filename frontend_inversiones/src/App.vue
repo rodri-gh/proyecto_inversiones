@@ -2,7 +2,6 @@
 </script>
 
 <template>
-
   <div>
     <header>
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -56,9 +55,6 @@
     </main>
     <WhatsAppButton />
   </div>
-
-  <router-view />
-
 </template>
 
 <style scoped>
