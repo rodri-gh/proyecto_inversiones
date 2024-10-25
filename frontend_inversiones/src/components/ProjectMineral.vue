@@ -1,5 +1,5 @@
 <template>
-  <div class="container col-md-8 mt-5">
+  <div class="container col-md-12 mt-5">
     <div class="card shadow border-0">
       <div class="card-body">
         <h4 class="card-title text-center">Minerales del Proyecto</h4>
@@ -32,7 +32,10 @@
                 </td>
               </tr>
 
-              <tr v-for="projectMineral in projectMinerals" :key="projectMineral.id">
+              <tr
+                v-for="projectMineral in projectMinerals"
+                :key="projectMineral.id"
+              >
                 <td>{{ projectMineral.mineral_id }}</td>
                 <td>{{ projectMineral.mineral_nombre }}</td>
                 <td>
@@ -57,7 +60,7 @@
     </div>
 
     <!-- Modal -->
-    <div 
+    <div
       class="modal fade"
       id="modalMineral"
       tabindex="-1"
@@ -98,9 +101,9 @@
                 @change="addMineral"
               >
                 <option value="">Seleccione un mineral</option>
-                <option 
-                  v-for="mineral in availableMinerals" 
-                  :key="mineral.id" 
+                <option
+                  v-for="mineral in availableMinerals"
+                  :key="mineral.id"
                   :value="mineral"
                 >
                   {{ mineral.name }}
@@ -111,13 +114,13 @@
             <div v-if="selectedMinerals.length > 0">
               <h6>Minerales seleccionados:</h6>
               <ul class="list-group">
-                <li 
-                  v-for="mineral in selectedMinerals" 
+                <li
+                  v-for="mineral in selectedMinerals"
                   :key="mineral.id"
                   class="list-group-item d-flex justify-content-between align-items-center"
                 >
                   {{ mineral.name }}
-                  <button 
+                  <button
                     class="btn btn-danger btn-sm"
                     @click="removeMineral(mineral)"
                   >
@@ -142,19 +145,19 @@
               :disabled="selectedMinerals.length === 0"
               @click="saveProjectMinerals"
             >
-              {{ isEditing ? 'Actualizar' : 'Guardar' }}
+              {{ isEditing ? "Actualizar" : "Guardar" }}
             </button>
           </div>
         </div>
       </div>
-    </div> 
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 const props = defineProps({
   idProjectMineral: {
@@ -188,19 +191,20 @@ const getprojectMinerals = async () => {
 
 const getMinerals = async () => {
   try {
-    const { data } = await axios.get('http://localhost:3000/minerals/');
+    const { data } = await axios.get("http://localhost:3000/minerals/");
     minerals.value = data.data;
   } catch (error) {
     console.error("Error al obtener minerales:", error);
   }
 };
 
-const availableMinerals = computed(() => { 
+const availableMinerals = computed(() => {
   // Filtrar minerales que ya están en el proyecto
-  const existingMineralIds = projectMinerals.value.map(pm => pm.mineral_id);
-  return minerals.value.filter(mineral => 
-    !existingMineralIds.includes(mineral.id) && 
-    !selectedMinerals.value.some(selected => selected.id === mineral.id)
+  const existingMineralIds = projectMinerals.value.map((pm) => pm.mineral_id);
+  return minerals.value.filter(
+    (mineral) =>
+      !existingMineralIds.includes(mineral.id) &&
+      !selectedMinerals.value.some((selected) => selected.id === mineral.id)
   );
 });
 
@@ -212,39 +216,37 @@ const addMineral = () => {
 };
 
 const removeMineral = (mineral) => {
-  selectedMinerals.value = selectedMinerals.value.filter(m => m.id !== mineral.id);
+  selectedMinerals.value = selectedMinerals.value.filter(
+    (m) => m.id !== mineral.id
+  );
 };
 
 const deleteProjectMineral = async (id) => {
   try {
     const result = await Swal.fire({
-      title: '¿Estás seguro?',
+      title: "¿Estás seguro?",
       text: "¿Deseas eliminar este mineral del proyecto?",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
     });
 
     if (result.isConfirmed) {
       await axios.patch(baseURL + id);
       await getprojectMinerals();
-      
+
       Swal.fire(
-        '¡Eliminado!',
-        'El mineral ha sido eliminado del proyecto.',
-        'success'
+        "¡Eliminado!",
+        "El mineral ha sido eliminado del proyecto.",
+        "success"
       );
     }
   } catch (error) {
     console.error("Error al eliminar:", error);
-    Swal.fire(
-      'Error',
-      'No se pudo eliminar el mineral.',
-      'error'
-    );
+    Swal.fire("Error", "No se pudo eliminar el mineral.", "error");
   }
 };
 
@@ -258,12 +260,12 @@ const saveProjectMinerals = async () => {
     // Verificamos que no excedamos el límite de 2 minerales
     const currentMinerals = projectMinerals.value.length;
     const newMineralsCount = selectedMinerals.value.length;
-    
+
     if (!isEditing.value && currentMinerals + newMineralsCount > 2) {
       Swal.fire(
-        'Error',
-        'No se pueden agregar más de 2 minerales por proyecto.',
-        'error'
+        "Error",
+        "No se pueden agregar más de 2 minerales por proyecto.",
+        "error"
       );
       return;
     }
@@ -272,7 +274,7 @@ const saveProjectMinerals = async () => {
     for (const mineral of selectedMinerals.value) {
       const projectMineral = {
         project_id: props.idProjectMineral,
-        mineral_id: mineral.id
+        mineral_id: mineral.id,
       };
 
       await axios.post(baseURL, projectMineral);
@@ -280,30 +282,30 @@ const saveProjectMinerals = async () => {
 
     await getprojectMinerals();
     closeModal();
-    
+
     Swal.fire(
-      '¡Éxito!',
-      isEditing.value ? 'Mineral actualizado correctamente.' : 'Minerales agregados correctamente.',
-      'success'
+      "¡Éxito!",
+      isEditing.value
+        ? "Mineral actualizado correctamente."
+        : "Minerales agregados correctamente.",
+      "success"
     );
   } catch (error) {
     console.error("Error al guardar minerales:", error);
-    Swal.fire(
-      'Error',
-      'No se pudieron guardar los cambios.',
-      'error'
-    );
+    Swal.fire("Error", "No se pudieron guardar los cambios.", "error");
   }
 };
 
 const selectProjectMineral = (projectMineral) => {
   isEditing.value = true;
   selectedProjectMineral.value = projectMineral;
-  const mineralToEdit = minerals.value.find(m => m.id === projectMineral.mineral_id);
+  const mineralToEdit = minerals.value.find(
+    (m) => m.id === projectMineral.mineral_id
+  );
   if (mineralToEdit) {
     selectedMinerals.value = [mineralToEdit];
   }
-  
+
   const modalEl = document.getElementById("modalMineral");
   const modal = new bootstrap.Modal(modalEl);
   modal.show();
