@@ -8,7 +8,8 @@ import WhatsAppButton from "./components/WhatsAppButton.vue";
     <header>
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Inversion Mineria</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -29,6 +30,9 @@ import WhatsAppButton from "./components/WhatsAppButton.vue";
               <router-link class="nav-link" to="/users">Users</router-link>
             </li>
             <li class="nav-item">
+              <router-link class="nav-link" to="/contact">Contáctanos</router-link>
+            </li>
+            <li class="nav-item">
               <router-link class="nav-link" to="/login">Login</router-link>
             </li>
           </ul>
@@ -42,5 +46,4 @@ import WhatsAppButton from "./components/WhatsAppButton.vue";
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
