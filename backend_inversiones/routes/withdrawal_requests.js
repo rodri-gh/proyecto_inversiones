@@ -6,10 +6,13 @@ const path = require('path');
 const fs = require('fs');
 const cors = require('cors')
 
+const jwt = require('jsonwebtoken');
+const { validateToken } = require('./auth');
+
 router.post('withdrawalrequests')
 
 router.use(cors({
-  origin:'http://localhost:3000'
+  origin:['http://localhost:3000', 'http://localhost:5173'],
 }));
 
 const uploadDir = 'public/images/withdrawalRequests';
@@ -66,8 +69,8 @@ router.get('/', function (req, res, next) {
     }
   });
 });
-router.get('/:id', function (req, res, next) {
 
+router.get('/:id', function (req, res, next) {
   const { id } = req.params;
   const query = `SELECT * FROM withdrawal_requests WHERE withdrawal_requests_id = ${id};`;
 
