@@ -11,11 +11,11 @@ import CategoryPostView from '@/views/CategoryPostView.vue'
 import PostView from '@/views/PostView.vue'
 import PostDeatilsView from '@/views/PostDeatilsView.vue'
 import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue'
+import MovementsView from '@/views/MovementsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-
     {
       path: '/home',
       name: 'home',
@@ -79,12 +79,16 @@ const router = createRouter({
       component: WithdrawalRequestsView,
       meta: { requiresAuth: true }
     },
-
-
     {
       path: '/login',
       name: 'login',
       component: LoginView
+    },
+    {
+      path: '/movements',
+      name: 'movements',
+      component: MovementsView,
+      meta: { requiresAuth: true }
     }
   ]
 })

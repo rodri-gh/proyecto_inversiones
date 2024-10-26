@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const { validateToken } = require('./auth');
 
 //insertar un movimiento  POST
-router.post('/', validateToken,function(req, res){
+router.post('/', validateToken, function(req, res){
     const { user_id, description, type, amount, request_date, state } = req.body; 
 
     const query = `INSERT INTO movements (user_id, description, type, amount, request_date, state) VALUES (?, ?, ?, ?, ?, ?)`;
@@ -30,7 +30,6 @@ router.post('/', validateToken,function(req, res){
     const query = `SELECT * FROM movements WHERE user_id = ?`;
     connection.query(query, [req.user.user_id], function(error, results){
         if (error) { 
-            console.log(error);
             return res.status(500).json({
                 error: error,
                 message: 'error in query'
