@@ -2,12 +2,10 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import Button from "@/components/base/Button.vue";
-import TableMinerals from "@/components/tables/TableMinerals.vue";
 import Modal from "@/components/base/Modal.vue";
 import Input from "@/components/base/Input.vue";
-import InputTextArea from "@/components/base/InputTextArea.vue";
-import InputFile from "@/components/base/InputFile.vue";
 import { openModal, closeModal } from "@/utils/modal";
+import TableMovements from "@/components/tables/TableMovements.vue";
 
 const headers = [
   "Descripcion",
@@ -18,7 +16,7 @@ const headers = [
   "Estado",
 ];
 
-const baseURL = "http://localhost:3000/movements";
+const baseURL = "http://localhost:3000/movements/";
 
 const movements = ref([]);
 const description = ref("");
@@ -37,79 +35,77 @@ onMounted(() => {
 const getMovements = async () => {
   try {
     const token = localStorage.getItem('token'); 
-
     const { data } = await axios.get(baseURL, {
       headers: {
         Authorization: `Bearer ${token}`, 
       },
     });
     movements.value = data.data;
-    console.log(movements.value);
   } catch (error) {
     console.log(error);
   }
 };
 
-
 const selectMineral = (mineral) => {
   selectedMineral.value = mineral;
-  description.value = mineral.name;
-  type.value = mineral.price;
   description.value = mineral.description;
-
+  type.value = mineral.type;
+  amount.value = mineral.amount;
   openModal("modalMineral");
 };
 
 const saveMineral = async () => {
-  const method = selectedMineral.value && selectedMineral.value.id ? "put" : "post";
-  const url = selectedMineral.value && selectedMineral.value.id
-    ? `${baseURL}${selectedMineral.value.id}`
+  const method = selectedMineral.value && selectedMineral.value.movement_id ? "put" : "post";
+  const url = selectedMineral.value && selectedMineral.value.movement_id
+    ? `${baseURL}${selectedMineral.value.movement_id}`
     : baseURL;
 
-  const formData = createFormData();
-  console.log("FormData:", Object.fromEntries(formData.entries()));
-  for (let [key, value] of formData.entries()) {
-    console.log(`${key}: ${value instanceof File ? value.name : value}`);
-    }
+  const dataPayload = createData();
   try {
     const token = localStorage.getItem('token'); 
 
-    await axios[method](url, formData, {
+    await axios[method](url, dataPayload, {
     headers: {
         Authorization: `Bearer ${token}`
         },
     });
 
     closeModal("modalMineral");
-    getMinerals();
+    getMovements();
     reset();
   } catch (error) {
     console.log(error);
   }
 };
 
-const createFormData = () => {
-  const formData = new FormData();
-  formData.append("user_id", 1); // tiene que ser variable segun user
-  formData.append("description", description.value);
-  formData.append("type", type.value);
-  formData.append("amount", parseFloat(amount.value));
-  formData.append("request_date", new Date().toISOString().split('T')[0]);
-  formData.append("state", 1);
-  return formData;
+const createData = () => {
+  const data = {
+    user_id: 1,
+    description: description.value,
+    type: type.value,
+    amount: amount.value,
+    request_date: new Date().toISOString().split('T')[0],
+    state: 1,
+  };
+  return data;
 };
 
 const deleteMineral = async (id) => {
+  const token = localStorage.getItem('token'); 
   try {
-    const { data } = await axios.patch(baseURL + id);
-    getMinerals();
+    const { data } = await axios.delete(baseURL + id, {
+      headers: {
+        Authorization: `Bearer ${token}`, 
+      },
+    });
+    getMovements();
   } catch (error) {
     console.log(error);
   }
 };
 
 const reset = () => {
-    description.value = "";
+  description.value = "";
     type.value = "";
     amount.value = "";
     request_date.value = "";
@@ -131,7 +127,7 @@ const reset = () => {
             icon="fa fa-plus"
           />
         </div>
-        <TableMinerals
+        <TableMovements
           :headers="headers"
           :items="movements"
           :actions="{
@@ -141,6 +137,7 @@ const reset = () => {
         />
       </div>
     </div>
+
     <Modal
       modalId="modalMineral"
       title="Datos del Movimiento"
@@ -157,13 +154,17 @@ const reset = () => {
         placeholder="Ingrese la descripcion"
       />
 
-      <Input
+      <label :for="id" class="form-label">Tipo</label> <br>
+      <select
         id="type"
         label="Tipo"
         v-model="type"
         type="text" 
         placeholder="Ingrese el tipo"
-      />
+      >
+        <option value="income">Ingreso</option>
+        <option value="expense">Gasto</option>
+      </select>
 
       <Input
         id="amount"
@@ -172,14 +173,8 @@ const reset = () => {
         type="number"
         placeholder="Ingrese el monto"
       />
-
-      <div v-if="previewUrl" class="mt-3">
-        <img :src="previewUrl" alt="Vista_previa" class="img-fluid" />
-      </div>
     </Modal>
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

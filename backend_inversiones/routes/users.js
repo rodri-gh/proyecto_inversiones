@@ -8,7 +8,7 @@ var lastInsertedId = null;
 
 router.get('/', validateToken, (req, res, next) => {
     const query = `SELECT u.id, u.email, u.phone, u.role, u.name, u.last_name, u.deleted, a.username
-                    FROM users u
+                    FROM users u LEFT
                     JOIN account a ON u.id = a.user_id;`;
     connection.query(query, (error, results, fields) => {
         if (error) {

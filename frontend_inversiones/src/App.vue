@@ -2,7 +2,6 @@
 </script>
 
 <template>
-
   <div>
     <header>
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -47,6 +46,9 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/login">Login</router-link>
             </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/movements">Movimientos</router-link>
+            </li>
           </ul>
         </div>
       </nav>
@@ -56,9 +58,6 @@
     </main>
     <WhatsAppButton />
   </div>
-
-  <router-view />
-
 </template>
 
 <style scoped>
