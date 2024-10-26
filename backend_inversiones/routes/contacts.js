@@ -1,4 +1,4 @@
-var express = require('express'); 
+var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
@@ -62,7 +62,7 @@ router.post('/', function(req, res, next){
     });
  });
 
- // para actualizar un contacto PUT 
+ // para actualizar un contacto PUT
  router.put('/:contact_id', function(req, res, next ){ 
     const { contact_id } = req.params;
     const { user_id, name, lastname, email, phone, comments, answer, status} = req.body;
