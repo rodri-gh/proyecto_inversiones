@@ -8,8 +8,8 @@ import MineralsView from '@/views/MineralsView.vue'
 import ProjectsView from '@/views/ProjectsView.vue'
 import ProjectDetailsView from '@/views/ProjectDetailsView.vue'
 import CategoryPostView from '@/views/CategoryPostView.vue'
+import PostsView from '@/views/PostsView.vue'
 import PostView from '@/views/PostView.vue'
-import PostDeatilsView from '@/views/PostDeatilsView.vue'
 import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue'
 
 import UserHomeView from '@/views/UserHomeView.vue'
@@ -82,14 +82,14 @@ const router = createRouter({
     {
       path: '/posts',
       name: 'posts',
-      component: PostView,
+      component: PostsView,
       meta: { requiresAuth: true },
 
     },
     {
-      path: '/posts/:id',
+      path: '/post/:id',
       name: 'post-details',
-      component: PostDeatilsView,
+      component: PostView,
       meta: { requiresAuth: true },
 
     },
