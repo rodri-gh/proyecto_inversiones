@@ -3,77 +3,22 @@
     <div class="card shadow border-0">
       <div class="card-body">
         <h4 class="card-title text-center">Posts</h4>
+
         <div class="text-end">
-          <button
-            type="button"
-            class="btn btn-primary"
+          <Button
             data-bs-toggle="modal"
             data-bs-target="#modalPost"
-          >
-            <i class="fa fa-plus mx-1"></i> Nuevo
-          </button>
+            text="Nuevo"
+            icon="fa fa-plus"
+          />
         </div>
-
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Título</th>
-                <th scope="col">Resumen</th>
-                <th scope="col">Estado</th>
-                <th scope="col">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-if="posts.length == 0">
-                <td colspan="6" class="text-center">
-                  No hay posts registrados
-                </td>
-              </tr>
-
-              <tr v-for="post in posts" :key="post.id">
-                <td>{{ post.title }}</td>
-                <td>{{ post.summary }}</td>
-
-                <td>
-                  <span v-if="post.status == 1" class="badge bg-success"
-                    >Activo</span
-                  >
-                  <span v-else class="badge bg-danger">Inactivo</span>
-                </td>
-                <td>
-                  <button
-                    class="btn btn-warning btn-sm m-1"
-                    @click="selectPost(post)"
-                  >
-                    <i class="fa fa-edit"></i>
-                  </button>
-                  <button
-                    v-if="post.status == 1"
-                    class="btn btn-danger btn-sm m-1"
-                    @click="deletePost(post.post_id)"
-                  >
-                    <i class="fa fa-trash"></i>
-                  </button>
-                  <button
-                    v-if="post.status == 0"
-                    class="btn btn-success btn-sm m-1"
-                    @click="deletePost(post.post_id)"
-                  >
-                    <i class="fa fa-check"></i>
-                  </button>
-                  <RouterLink class="btn btn-info btn-sm m-1">
-                    <i class="fa fa-eye"></i>
-                  </RouterLink>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <TablePosts
+          :headers="headers"
+          :items="posts"
+          :actions="{ edit: selectPost, delete: deletePost }"
+        />
       </div>
     </div>
-    <!-- Modal -->
-
     <Modal
       modalId="modalPost"
       title="Datos del Post"
@@ -114,6 +59,7 @@
         label="Portada"
         @update:modelValue="handleImageChange"
         accept="image/*"
+        ref="inputFileRef"
       />
       <div v-if="previewUrl" class="mt-3 text-center">
         <img :src="previewUrl" alt="Vista_previa" class="img-fluid" />
@@ -133,7 +79,11 @@ import Input from "@/components/base/Input.vue";
 import InputTextArea from "@/components/base/InputTextArea.vue";
 import Modal from "@/components/base/Modal.vue";
 import InputFile from "@/components/base/InputFile.vue";
+import Button from "@/components/base/Button.vue";
 import { openModal, closeModal } from "@/utils/modal";
+import TablePosts from "@/components/tables/TablePosts.vue";
+
+const headers = ["Titulo", "Resumen", "Estado", "Acciones"];
 
 const categoryURL = "http://localhost:3000/categoryPosts/";
 
@@ -148,6 +98,8 @@ const summary = ref("");
 const content = ref("");
 const cover_image = ref(null);
 let quillEditor;
+
+const inputFileRef = ref(null);
 
 //obtener de localstorage el user_id del objeto user
 const user = JSON.parse(localStorage.getItem("user"));
@@ -277,10 +229,11 @@ const reset = () => {
   title.value = "";
   summary.value = "";
   content.value = "";
-  cover_image.value.value = null;
+  cover_image.value = null;
   previewUrl.value = null;
   selectedPost.value = {};
   quillEditor.root.innerHTML = "";
+  inputFileRef.value?.reset();
 };
 </script>
 
