@@ -150,12 +150,10 @@ const fetchWithdrawals = async () => {
 const createWithdrawal = async () => {
     const formData = new FormData(); 
     formData.append("investment_id", 1);/////// predeterminado  (enlazar )
-    formData.append("user_id", 1); /////
+    formData.append("user_id", 1); 
     formData.append("request_amount", amount.value);
-    formData.append("commission_apply", amount.value);////
-    //formData.append("paymentMethod", paymentMethod.value);
+    formData.append("commission_apply", amount.value);
     formData.append("receive_amount", amount.value);
-    //formData.append("notes", notes.value);
 
     if (dniImageRef.value && dniImageRef.value.files.length > 0) {
         formData.append("photo_document", dniImageRef.value.files[0]);

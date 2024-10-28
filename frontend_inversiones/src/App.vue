@@ -58,6 +58,9 @@ const ShowNav = () => {
             <li class="nav-item">
               <router-link class="nav-link" to="/login">Login</router-link>
             </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/movements">Movimientos</router-link>
+            </li>
           </ul>
         </div>
       </nav>

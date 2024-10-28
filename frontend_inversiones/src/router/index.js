@@ -11,11 +11,16 @@ import CategoryPostView from '@/views/CategoryPostView.vue'
 import PostView from '@/views/PostView.vue'
 import PostDeatilsView from '@/views/PostDeatilsView.vue'
 import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue'
+
 import UserHomeView from '@/views/UserHomeView.vue'
+
+import MovementsView from '@/views/MovementsView.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+
     {
       path: '/',
       name: 'user-home',
@@ -95,16 +100,21 @@ const router = createRouter({
       meta: { requiresAuth: true },
 
     },
-
-
     {
       path: '/login',
       name: 'login',
       component: LoginView
     },
     {
+
       path: '/:pathMatch(.*)*',
       redirect: '/'
+    },
+    {
+      path: '/movements',
+      name: 'movements',
+      component: MovementsView,
+      meta: { requiresAuth: true }
     }
   ]
 })

@@ -52,5 +52,4 @@ app.use('/faq', faqRouter);
 app.use('/movements', movementsRouter);
 
 
-
 module.exports = app;
