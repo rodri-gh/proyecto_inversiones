@@ -4,7 +4,7 @@ import { RouterLink } from "vue-router";
 
 <template>
   <main>
-    <h1>Home</h1>
-    <RouterLink to="/login">Iniciar Sesion</RouterLink>
+    <h1>User Home</h1>
+    <RouterLink class="btn btn-dark" to="/login">Iniciar Sesion</RouterLink>
   </main>
 </template>
