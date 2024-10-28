@@ -1,10 +1,22 @@
 <script setup>
+import { RouterView, useRouter } from "vue-router";
+
+const route = useRouter();
+
+const hiddenRoutes = ["/login", "/"];
+
+const ShowNav = () => {
+  return !hiddenRoutes.includes(route.currentRoute.value.path);
+};
 </script>
 
 <template>
   <div>
     <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <nav
+        v-if="ShowNav()"
+        class="navbar navbar-expand-lg navbar-light bg-light"
+      >
         <a class="navbar-brand" href="#">Inversion Mineria</a>
         <button
           class="navbar-toggler"
