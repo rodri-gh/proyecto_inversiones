@@ -40,7 +40,7 @@ const ShowNav = () => {
               >
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/posts-admin">Post</router-link>
+              <router-link class="nav-link" to="/posts">Posts</router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/category-posts"
@@ -59,7 +59,9 @@ const ShowNav = () => {
               <router-link class="nav-link" to="/login">Login</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/movements">Movimientos</router-link>
+              <router-link class="nav-link" to="/movements"
+                >Movimientos</router-link
+              >
             </li>
           </ul>
         </div>

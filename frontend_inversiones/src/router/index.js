@@ -80,8 +80,8 @@ const router = createRouter({
 
     },
     {
-      path: '/posts-admin',
-      name: 'posts-admin',
+      path: '/posts',
+      name: 'posts',
       component: PostView,
       meta: { requiresAuth: true },
 
