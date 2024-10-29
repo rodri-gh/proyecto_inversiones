@@ -81,17 +81,17 @@ const navLinks = computed(() => {
 
 <style scoped>
 .logout-button {
-  background-color: #59369e; /* Color lila */
-  color: white; /* Color del texto */
-  border: none; /* Sin borde */
-  border-radius: 10px; /* Bordes redondeados */
-  padding: 10px 20px; /* Espaciado interno */
-  font-size: 16px; /* Tamaño de fuente */
-  cursor: pointer; /* Cambia el cursor al pasar el ratón */
-  transition: background-color 0.3s ease; /* Transición suave al cambiar el color */
+  background-color: #59369e; 
+  color: white;
+  border: none; 
+  border-radius: 10px; 
+  padding: 10px 20px; 
+  font-size: 16px; 
+  cursor: pointer; 
+  transition: background-color 0.3s ease; 
 }
 
 .logout-button:hover {
-  background-color: #8a2be2; /* Color más oscuro al pasar el ratón */
+  background-color: #8a2be2; 
 }
 </style>
