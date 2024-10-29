@@ -10,6 +10,7 @@
       <option :value="defaultOptionValue" disabled>
         {{ defaultOptionText }}
       </option>
+      <option v-if="options.length == 0" value="">{{ emptyMessage }}</option>
       <option
         v-for="option in options"
         :key="option[valueKey]"
@@ -32,6 +33,7 @@ const props = defineProps({
   defaultOptionValue: { type: [String, Number], default: "" },
   id: { type: String, default: "customSelect" },
   selectClass: { type: String, default: "" },
+  emptyMessage: { type: String, default: "No hay opciones disponibles" },
 });
 
 const emit = defineEmits(["update:modelValue"]);
