@@ -3,6 +3,7 @@ import { RouterView, useRouter } from "vue-router";
 import { computed } from 'vue';
 import { closeSession } from "./authService";
 import WhatsAppButton from "./components/WhatsAppButton.vue";
+import FooterInfo from "./components/FooterInfo.vue";
  
 const route = useRouter();
 
@@ -77,6 +78,7 @@ const navLinks = computed(() => {
     </main>
     <WhatsAppButton />
   </div>
+  <FooterInfo />
 </template>
 
 <style scoped>
