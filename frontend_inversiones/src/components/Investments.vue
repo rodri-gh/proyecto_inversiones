@@ -24,7 +24,7 @@
         <Modal
             modalId="modalInvestment"
             title="Datos"
-            modalClass="modal-fullscreen"
+            modalClass="modal-lg"
             :showSaveButton="!selectedInvestment?.id"
             :showUpdateButton="Boolean(selectedInvestment?.id)"
             @onClose="reset()"
@@ -38,8 +38,14 @@
                         value-key="id"
                         label-key="username"
                         v-model="user_id"
-                        select-class="col-6"
+                        select-class="col-8"
                     />
+                    <div class="mt-2">
+                        <h5>Datos del Usuario Seleccionado:</h5>
+                        <p><strong>Nombre:</strong> {{ selectedUser?.username || "Seleccione un usuario" }}</p>
+                        <p><strong>Email:</strong> {{ selectedUser?.email || "Seleccione un usuario" }}</p>
+                        <p><strong>Teléfono:</strong> {{ selectedUser?.phone || "Seleccione un usuario" }}</p>
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <div class="row">
@@ -75,7 +81,7 @@
     </div>
 </template>
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import axios from "axios";
 import Button from "@/components/base/Button.vue";
 import TableInvestments from "@/components/tables/TableInvestments.vue";
@@ -180,8 +186,9 @@ const createFormData = () => {
     return formData;
 };
 
-
-
+const selectedUser = computed(() => {
+    return users.value.find(user => String(user.id) === String(user_id.value));
+});
 const reset = () => {
     amount.value = 0;
     investment_date.value = "";
