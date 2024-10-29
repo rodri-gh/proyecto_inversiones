@@ -24,3 +24,28 @@ export function getStatusAuthentication() {
     return token !== null;
 }
 
+export const authServiceToken = { 
+    getToken() { 
+        return localStorage.getItem('token');
+    }, 
+    setToken(token) { 
+        return localStorage.setItem('token', token);
+    },
+    removeToken() { 
+        return localStorage.removeItem('token');
+    }
+}
+
+export function getHeaderRequest() { 
+    const token = authServiceToken.getToken() || "";
+    const header = {
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          'Cache-Control': 'no-cache'
+        },
+      };
+    return header; 
+}
+

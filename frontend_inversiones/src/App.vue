@@ -1,7 +1,7 @@
 <script setup>
 import { RouterView, useRouter } from "vue-router";
 import { computed } from 'vue';
-import { closeSession } from "./auth";
+import { closeSession } from "./authService";
 import WhatsAppButton from "./components/WhatsAppButton.vue";
  
 const route = useRouter();
