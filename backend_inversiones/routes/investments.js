@@ -3,7 +3,7 @@ var router = express.Router();
 var connection = require('../database');
 
 router.get('/', function(req, res, next) {
-    const query = 'SELECT investments.*, projects.name AS project_name, users.name AS user_name FROM investments INNER JOIN projects ON investments.project_id = projects.id INNER JOIN users ON investments.user_id = users.id ORDER BY investments.id ASC;';
+    const query = 'SELECT * FROM investments;';
 
     connection.query(query, function(error, results, fields) {
         if (error){
@@ -21,6 +21,51 @@ router.get('/', function(req, res, next) {
         }
     });
 });
+
+router.get('/:id', function(req, res, next) {
+    const {id} = req.params;
+    const query = "SELECT * FROM investments WHERE id = ?;";
+
+    connection.query(query, [id], function(error, results, fields) {
+        if (error){
+            console.log(error);
+            res.status(500).json({
+                error: error,
+                message: 'Error in the query'
+            });
+        }else{
+            console.log(results);
+            res.status(200).json({
+                data: results,
+                message: 'Details of investment'
+            });
+        }
+    });
+});
+
+router.get('/project/:id', function(req, res, next) {
+    const {id} = req.params;
+    const query = `SELECT investments.*, users.name AS user_name 
+                    FROM investments 
+                    INNER JOIN users ON investments.user_id = users.id 
+                WHERE project_id = ${id};`;
+
+    connection.query(query, function(error, results, fields) {
+        if (error){
+            console.log(error);
+            res.status(500).json({
+                error: error,
+                message: 'Error in the query'
+            });
+        }else{
+            console.log(results);
+            res.status(200).json({
+                data: results,
+                message: 'Details of investments'
+            });
+        }
+    });
+})
 
 router.post('/', function(req, res, next) {
     const {project_id, user_id, amount, profit_percentage}=req.body;

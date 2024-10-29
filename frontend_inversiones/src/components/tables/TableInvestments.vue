@@ -8,33 +8,19 @@
             </thead>
             <tbody>
                 <tr v-if="items.length == 0">
-                    <td colspan="5" class="text-center">
-                        No hay gastos operativos registrados
-                    </td>
+                    <td colspan="5" class="text-center">No hay inversiones registradas</td>
                 </tr>
-
                 <tr v-for="item in items" :key="item.id">
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.description }}</td>
-                    <td>{{ item.expenses }}</td>
+                    <td>{{ item.user_name }}</td>
+                    <td>{{ item.amount }}</td>
+                    <td>{{ item.investment_date }}</td>
+                    <td>{{ item.profit_percentage }}</td>
                     <td>
-                        <span v-if="item.deleted == 1" class="badge bg-success">Activo</span>
-                        <span v-else class="badge bg-danger">Inactivo</span>
-                    </td>
-                    <td>
-                        <Button 
+                        <Button
                             @click="() => actions.edit(item)"
                             icon="fa fa-edit"
                             buttonClass="btn-warning btn-sm m-1"
                         />
-                        <Button 
-                            @click="() => actions.delete(item.id)"
-                            :icon="item.deleted ? 'fa fa-trash' : 'fa fa-check'"
-                            :buttonClass="`btn-${
-                                item.deleted ? 'danger' : 'success'
-                            } btn-sm m-1`" 
-                        />
-                        
                     </td>
                 </tr>
             </tbody>
