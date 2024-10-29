@@ -9,7 +9,10 @@
     aria-hidden="true"
   >
     <div
-      class="modal-dialog modal-dialog-scrollable modal-dialog-centered"
+      :class="[
+        'modal-dialog modal-dialog-scrollable modal-dialog-centered',
+        modalClass,
+      ]"
       role="document"
     >
       <div class="modal-content">
@@ -72,6 +75,10 @@ defineProps({
   showUpdateButton: {
     type: Boolean,
     default: false,
+  },
+  modalClass: {
+    type: String,
+    default: "",
   },
 });
 

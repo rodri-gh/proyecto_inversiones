@@ -50,9 +50,6 @@ router.get('/', function (req, res, next) {
 
 router.post('/', upload.single('image'), function (req, res, next) {
   const { name, price, description } = req.body;
-
-
-
   const image = req.file ? `${req.file.filename}` : null;
 
   const query = `

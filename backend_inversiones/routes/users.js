@@ -2,13 +2,14 @@ var express = require('express');
 var router = express.Router();
 const { encrypt } = require('../helpers/handleBcrypt');
 var connection = require('../database');
-const { validateToken } = require('./auth')
+const { validateToken } = require('./auth');
+const { sendEmail } = require('../services/emailService');
 
 var lastInsertedId = null;
 
 router.get('/', validateToken, (req, res, next) => {
     const query = `SELECT u.id, u.email, u.phone, u.role, u.name, u.last_name, u.deleted, a.username
-                    FROM users u
+                    FROM users u LEFT
                     JOIN account a ON u.id = a.user_id;`;
     connection.query(query, (error, results, fields) => {
         if (error) {
@@ -27,15 +28,35 @@ router.get('/', validateToken, (req, res, next) => {
     });
 });
 
+router.get('/:id', validateToken, (req, res, next) => {
+    const { id } = req.params;
+    console.log(id);
+    const query = `SELECT * FROM users WHERE id = ?`;
+    connection.query(query,[id], (error, results, fields) => {
+        if (error) {
+            console.log(error);
+            res.status(500).json({
+                error: error,
+                message: 'Error in the query'
+            });
+        } else {
+            console.log(results);
+            res.status(200).json({
+                data: results,
+                message: 'List of users'
+            });
+        }
+    });
+});
+
 router.post('/', validateToken, async (req, res) => {
-    const { email, phone, name, last_name, username, password } = req.body;
+    const { email, phone, name, lastName, username, password } = req.body;
 
-    const userQuery = `
-    INSERT INTO users (email, phone, role, name, last_name) 
-    VALUES ("${email}", "${phone}", "client", "${name}", "${last_name}");
-  `;
-
+    const userQuery = `INSERT INTO users (email, phone, role, name, last_name) VALUES ("${email}", ${phone}, "client", "${name}", "${lastName}");`;
+    console.log("query", userQuery);
+    
     connection.query(userQuery, async (error, results) => {
+        console.log("id", results);
         if (error) {
             console.log(error);
             res.status(500).json({
@@ -54,6 +75,7 @@ router.post('/', validateToken, async (req, res) => {
                     message: 'Error in the query',
                 });
             }
+            sendEmail(email, { username, password, name });
             res.status(200).json({
                 message: 'Created account',
             });
