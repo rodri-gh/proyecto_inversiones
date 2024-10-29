@@ -72,6 +72,7 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 const baseUrl = "http://localhost:3000/auth/login";
+const baseUrGetUser = "http://localhost:3000/user/";
 
 const username = ref("");
 const password = ref("");
@@ -97,7 +98,16 @@ const iniciarSesion = async () => {
   };
   try {
     const { data } = await axios.post(baseUrl, datos);
-    console.log(data);
+    const userId = data.data.user_id;
+    const header = {
+      headers: {
+        authorization: `Bearer ${data.token}`,
+        'Cache-Control': 'no-cache'
+      },
+    };
+    const dataUser = await axios.get(baseUrGetUser+userId, header)
+    data.data.role = dataUser.data.data[0]?.role;
+    console.log(data.data); 
     if (data.token) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.data));
