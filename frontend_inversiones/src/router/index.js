@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MainLayout from '@/components/MainLayout.vue'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import ProjectMineralsView from '@/views/ProjectMineralsView.vue'
@@ -11,16 +10,12 @@ import CategoryPostView from '@/views/CategoryPostView.vue'
 import PostsView from '@/views/PostsView.vue'
 import PostView from '@/views/PostView.vue'
 import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue'
-
 import UserHomeView from '@/views/UserHomeView.vue'
-
 import MovementsView from '@/views/MovementsView.vue'
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-
     {
       path: '/',
       name: 'user-home',
@@ -98,7 +93,6 @@ const router = createRouter({
       name: 'withdrawalrequests',
       component: WithdrawalRequestsView,
       meta: { requiresAuth: true },
-
     },
     {
       path: '/login',

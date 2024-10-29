@@ -28,6 +28,27 @@ router.get('/', validateToken, (req, res, next) => {
     });
 });
 
+router.get('/:id', validateToken, (req, res, next) => {
+    const { id } = req.params;
+    console.log(id);
+    const query = `SELECT * FROM users WHERE id = ?`;
+    connection.query(query,[id], (error, results, fields) => {
+        if (error) {
+            console.log(error);
+            res.status(500).json({
+                error: error,
+                message: 'Error in the query'
+            });
+        } else {
+            console.log(results);
+            res.status(200).json({
+                data: results,
+                message: 'List of users'
+            });
+        }
+    });
+});
+
 router.post('/', validateToken, async (req, res) => {
     const { email, phone, name, lastName, username, password } = req.body;
 
