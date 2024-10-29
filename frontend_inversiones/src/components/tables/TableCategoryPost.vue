@@ -8,7 +8,7 @@
       </thead>
       <tbody>
         <tr v-if="items.length === 0">
-          <td colspan="6" class="text-center">No hay minerales registrados</td>
+          <td colspan="6" class="text-center">No hay categorias registradas</td>
         </tr>
         <tr v-for="item in items" :key="item.category_post_id">
           <td>{{ item.name }}</td>
