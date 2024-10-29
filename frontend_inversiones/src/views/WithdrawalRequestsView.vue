@@ -4,12 +4,13 @@
             <div class="card-body">
                 <h4 class="card-title text-center">Solicitudes de Retiro</h4>
                 <div class="text-end">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#modalWithdrawal">
-                        <i class="fa fa-plus mx-1"></i> Nueva Solicitud
-                    </button>
                 </div>
-
+                <Button
+            data-bs-toggle="modal"
+            data-bs-target="#modalMineral"
+            text="Nueva solicitud de retiro"
+            icon="fa fa-plus"
+            />
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -47,93 +48,68 @@
             </div>
         </div>
 
-        <!-- modal para retirar -->
-        <div class="modal fade" id="modalWithdrawal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-            role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalTitleId">
-                            Datos de la Solicitud de Retiro
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                            @click="reset()"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="amount" class="form-label">Cantidad</label>
-                            <input type="number" class="form-control" v-model="amount" id="amount" required />
-                        </div>
+        <Modal
+      modalId="modalMineral"
+      title="Datos del Mineral"
+      :showSaveButton="!selectedMineral?.withdrawal_requests_id"
+      :showUpdateButton="Boolean(selectedMineral?.withdrawal_requests_id)"
+      @onClose="reset()"
+      @onSave="saveMineral()"
+    >
+      <Input
+        id="request_amount"
+        label="Cantidad"
+        v-model="request_amount"
+        type="number"
+        placeholder="Ingrese la cantidad"
+      />
 
-                        <div class="mb-3">
-                            <label for="paymentMethod" class="form-label">Método de Pago</label>
-                            <select class="form-select" v-model="paymentMethod" id="paymentMethod" required>
-                                <option value="">Seleccione un método</option>
-                                <option value="bank">Transferencia Bancaria</option>
-                                <option value="paypal">PayPal</option>
-                                <option value="crypto">Criptomonedas</option>
-                            </select>
-                        </div>
+      <InputFile
+        id="photo_document"
+        label="Ingrese foto de identidad"
+        @update:modelValue="handleImageChange"
+        accept="image/*"
+      />
 
-                        <div class="mb-3">
-                            <label for="image" class="form-label">Sube una foto de tu DNI</label>
-                            <input
-                            type="file"
-                            class="form-control"
-                            ref="dniImageRef"
-                            id="dniImageRef"
-                            @change="previewImage($event)"
-                            accept="image/png, image/jpeg"
-                            />
-                        </div>
+      <InputFile
+        id="selfie_photo"
+        label="Ingrese su selfie"
+        @update:modelValue="handleImageChange"
+        accept="image/*"
+      />
 
-                        <div class="mb-3">
-                            <label for="image" class="form-label">Sube una selfie</label>
-                            <input
-                            type="file"
-                            class="form-control"
-                            ref="selfieImageRef"
-                            id="selfieImageRef"
-                            @change="previewImage($event)"
-                            accept="image/png, image/jpeg"
-                            />
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="notes" class="form-label">Notas (opcional)</label>
-                            <textarea class="form-control" v-model="notes" id="notes"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="reset()">
-                            Cancelar
-                        </button>
-                        <button v-if="selectedWithdrawal && selectedWithdrawal.id == null" type="button"
-                            class="btn btn-primary" @click="updateWithdrawal()">
-                            Guardar
-                        </button>
-                        <button v-else type="button" class="btn btn-primary" @click="createWithdrawal()">
-                            Solicitar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <div v-if="previewUrl" class="mt-3">
+        <img :src="previewUrl" alt="Vista_previa" class="img-fluid" />
+      </div>
+    </Modal>
     </div>
 </template>
 
 
 <script setup>
-import { ref } from "vue";
-import axios from "axios";
 
-const amount = ref("");
-const paymentMethod = ref("");
-const notes = ref("");
+
+
+import { ref, onMounted } from "vue";
+import axios from "axios";
+import Button from "@/components/base/Button.vue";
+import TableMinerals from "@/components/tables/TableMinerals.vue";
+import Modal from "@/components/base/Modal.vue";
+import Input from "@/components/base/Input.vue";
+import InputTextArea from "@/components/base/InputTextArea.vue";
+import InputFile from "@/components/base/InputFile.vue";
+import { openModal, closeModal } from "@/utils/modal";
+
 const withdrawals = ref([]);
-const selectedWithdrawal = ref(null);
-const dniImageRef = ref(null); 
-const selfieImageRef = ref(null);
+const request_amount = ref("");
+const selectedWithdrawal = ref(null); //recorda cambiar
+const photo_document = ref(null); 
+const selfie_photo = ref(null);
+const selectedMineral = ref({});
+const previewUrl = ref(null);
+const baseURL = "http://localhost:3000/withdrawal_requests/";
+
+
 
 const fetchWithdrawals = async () => {
     try {
@@ -147,39 +123,7 @@ const fetchWithdrawals = async () => {
     }
 };
 
-const createWithdrawal = async () => {
-    const formData = new FormData(); 
-    formData.append("investment_id", 1);/////// predeterminado  (enlazar )
-    formData.append("user_id", 1); 
-    formData.append("request_amount", amount.value);
-    formData.append("commission_apply", amount.value);
-    formData.append("receive_amount", amount.value);
 
-    if (dniImageRef.value && dniImageRef.value.files.length > 0) {
-        formData.append("photo_document", dniImageRef.value.files[0]);
-    }
-    if (selfieImageRef.value && selfieImageRef.value.files.length > 0) {
-        formData.append("selfie_photo", selfieImageRef.value.files[0]);
-    }
-
-    console.log(Array.from(formData));
-    for (let [key, value] of formData.entries()) {
-    console.log(`${key}: ${value instanceof File ? value.name : value}`);
-    }
-    try {
-        const response = await axios.post(
-            "http://localhost:3000/withdrawal_requests",
-            formData, {
-            headers: {
-                "Content-Type": "multipart/form-data", 
-            },
-        });
-        fetchWithdrawals();
-        reset();
-    } catch (error) {
-        console.error("Error creating withdrawal:", error);
-    }
-};
 
 const updateWithdrawal = async () => {
     if (!selectedWithdrawal.value || !selectedWithdrawal.value.id) {
@@ -188,9 +132,7 @@ const updateWithdrawal = async () => {
     }
 
     const requestData = {
-        amount: amount.value,
-        paymentMethod: paymentMethod.value,
-        notes: notes.value,
+        request_amount: request_amount.value,
     };
 
     try {
@@ -225,17 +167,10 @@ const deleteWithdrawal = async (id) => {
 
 const selectWithdrawal = (withdrawal) => {
     selectedWithdrawal.value = withdrawal;
-    amount.value = withdrawal.amount;
-    paymentMethod.value = withdrawal.paymentMethod;
-    notes.value = withdrawal.notes;
+    request_amount.value = withdrawal.request_amount;
 };
 
-const reset = () => {
-    selectedWithdrawal.value = null;
-    amount.value = "";
-    paymentMethod.value = "";
-    notes.value = "";
-};
+
 //revisando si funcionan las imagenes 
 const previewImage = (event) => {
     if (!event || !event.target || !event.target.files || event.target.files.length === 0) {
@@ -255,7 +190,90 @@ const previewImage = (event) => {
     }
 };
 
+
+const selectMineral = (mineral) => {
+  selectedMineral.value = mineral;
+  request_amount.value = mineral.name;
+//price.value = mineral.price;
+  //description.value = mineral.description;
+ // previewUrl.value = mineral.image;
+openModal("modalMineral");
+};
+
+const saveMineral = async () => {
+  const method = selectedMineral.value.withdrawal_requests_id ? "put" : "post";
+  const url = selectedMineral.value.withdrawal_requests_id
+    ? `${baseURL}${selectedMineral.value.withdrawal_requests_id}`
+    : baseURL;
+ 
+  const formData = createFormData();
+  console.log(Array.from(formData));
+    for (let [key, value] of formData.entries()) {
+    console.log(`${key}: ${value instanceof File ? value.name : value}`);
+    }
+
+
+  try {
+    await axios[method](url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+ 
+    closeModal("modalMineral");
+    getMinerals();
+    reset();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const reset = () => {
+  request_amount.value = "";
+  photo_document.value = null;
+  selfie_photo.value = null;
+  previewUrl.value = null;
+  selectedMineral.value = {};
+};
+
 fetchWithdrawals(); 
+
+const createFormData = () => {
+const formData = new FormData(); 
+    formData.append("investment_id", 1);/////// predeterminado  (enlazar )
+    formData.append("user_id", 1); 
+
+    console.log(parseFloat(request_amount.value));
+
+
+
+    formData.append("request_amount", request_amount.value);
+    formData.append("commission_apply", request_amount.value);
+    formData.append("receive_amount", request_amount.value);
+    
+    if (photo_document.value) {
+        formData.append("photo_document", photo_document.value);
+    }
+    if (selfie_photo.value) {
+        formData.append("selfie_photo", selfie_photo.value);
+    }
+return formData;
+};
+
+
+const handleImageChange = (file) => {
+  photo_document.value = file;
+  selfie_photo.value = file;
+  if (file) {
+    previewUrl.value = URL.createObjectURL(file);
+  } else {
+    previewUrl.value = null;
+  }
+};
+
+
+
+
 </script>
 
 <style scoped>
