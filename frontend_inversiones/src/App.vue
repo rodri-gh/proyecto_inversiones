@@ -78,7 +78,7 @@ const navLinks = computed(() => {
     </main>
     <WhatsAppButton />
   </div>
-  <FooterInfo />
+  <FooterInfo v-if="ShowNav()"/>
 </template>
 
 <style scoped>
