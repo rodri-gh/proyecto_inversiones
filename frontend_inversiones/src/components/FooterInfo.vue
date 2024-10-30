@@ -5,22 +5,23 @@
 <template>
     <footer class="footer">
         <div class="footer-section ">
-            <h5>Sobre Nosotros</h5>
-            <ul>
-                <li><a href="#">Conocenos</a></li>
-            </ul>
+            <h5>Siguenos en Redes</h5>
+            <ul class="social-links">
+            <li><a href="#" target="_blank"><img src="../assets/iconFacebook.png" alt="Facebook" width="50px" height="50px"/></a></li>
+            <li><a href="#" target="_blank"><img width="50px" height="50px" src="../assets/iconInstagram.png" alt="Instagram" /></a></li>
+            <li><a href="#" target="_blank"><img width="50px" height="50px" src="../assets/iconTikTok.png" alt="Tiktok" /></a></li>
+            <li><a href="#" target="_blank"><img width="50px" height="50px" src="../assets/IconX.png" alt="twiter" /></a></li>
+          </ul>  
         </div>
         <div class="footer-section">
-            <h5>Contacto</h5>
+            <h5>Datos de Contacto</h5>
             <ul>
-                <li><a href="mailto: Hamilo@proyectoinversiones.com">Escríbenos:  Hamilo@proyectoinversiones.com</a></li>
-            </ul>
-            <ul class="social-links">
-                <li><a href="#" target="_blank"><img src="" alt="Facebook"/></a></li>
-                <li><a href="#" target="_blank"><img src="" alt="Instagram" /></a></li>
-                <li><a href="#" target="_blank"><img src="" alt="Tiktok" /></a></li>
-                <li><a href="#" target="_blank"><img src="" alt="twiter" /></a></li>
-            </ul>   
+              <li><a href="#">Telefono: +34 123 456 789</a></li>
+              <li><a href="#">WhatsApp: +34 123 456 789</a></li>
+              <li><a href="mailto: info@mineralesfascinantes.com">Email:  info@mineralesfascinantes.com</a></li>
+              <li><a href="#">Direccion: Bolivia, Plurinational State of</a></li>
+              <li><a href="#">Horario de Atencion: Lunes a Viernes: 9:00-18:00</a></li>
+            </ul> 
         </div>
         <div class="footer-section">
             <h5>Nuestras politicas</h5>
@@ -38,10 +39,9 @@
   padding: 50px 100px; 
   display: flex;
   flex-wrap: wrap;
-  justify-content: 10px; 
+  justify-content: center; 
   border-top: 1px solid #ddd; 
-  font-family: Arial, sans-serif;
-  color: #333; 
+  font-family: Arial, sans-serif; 
 }
 .footer-section {
   flex: 1 1 200px; 
@@ -49,8 +49,8 @@
 }
 .footer-section h5 {
   margin-bottom: 15px;
-  font-size: 18px; 
-  color: #007bff; 
+  font-size: 20px; 
+  color: #002fff; 
 }
 .footer-section ul {
   list-style: none; 
@@ -62,7 +62,7 @@
   transition: color 0.3s; 
 }
 .footer-section a:hover {
-  color: #007bff; 
+  color: #ff6600; 
 }
 
 </style>
