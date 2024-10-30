@@ -1,1 +1,6 @@
-
+:root {
+    --button-primary: #f18350;
+    --button-primary-hover: #d97340;
+    --navbar-bg: #d8d8d8;
+    --navbar-bg-hover: #c0c0c0;
+}

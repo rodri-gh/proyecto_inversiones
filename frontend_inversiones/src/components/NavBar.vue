@@ -1,9 +1,13 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { closeSession } from "../authService";
 import { RouterLink, useRouter } from "vue-router";
 
 const route = useRouter();
+
+const isRootRoute = computed(() => route.currentRoute.value.path === "/");
+
+const isLoggedIn = ref(!!localStorage.getItem("token"));
 
 const scrollToSection = (sectionId) => {
   const section = document.getElementById(sectionId);
@@ -19,22 +23,15 @@ const scrollToSection = (sectionId) => {
 
 const logOut = () => {
   closeSession(route);
+  isLoggedIn.value = false;
 };
 
 const navLinks = computed(() => {
   var user = JSON.parse(localStorage.getItem("user"));
   var userRole = user?.role;
   let links = [
-    { name: "Home", path: "/home" },
-    { name: "Minerales", path: "/minerals" },
-    { name: "Post", path: "/posts" },
-    { name: "Category posts", path: "/category-posts" },
-    { name: "Projectos", path: "/projects" },
-    { name: "Users", path: "/users" },
-    { name: "Movimientos", path: "/movements" },
-    ...(userRole === "super_user" || userRole === "admin"
-      ? [{ name: "Solicitudes de Retiro", path: "/withdrawalrequests" }]
-      : []),
+    { name: "Marketplace", path: "/marketplace" },
+    { name: "Panel de control", path: "/dashboard" },
   ];
 
   return links;
@@ -45,7 +42,16 @@ const navLinks = computed(() => {
   <div class="nav-wrapper">
     <nav class="navbar navbar-expand-lg navbar-light bg-light floating-nav">
       <div class="navbar-container">
-        <a class="navbar-brand" href="#">Inversion Mineria</a>
+        <div class="navbar-left">
+          <img
+            src="https://i.pinimg.com/originals/b4/25/66/b4256667e1af5e793841db4165ad470a.png"
+            width="100"
+            height="50"
+            alt="Logo"
+            class="navbar-logo"
+          />
+          <a class="navbar-brand mx-1" href="#">Minerales</a>
+        </div>
         <button
           class="navbar-toggler"
           type="button"
@@ -58,30 +64,35 @@ const navLinks = computed(() => {
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item">
+          <ul class="navbar-nav navbar-center">
+            <li v-if="isRootRoute" class="nav-item">
               <a class="nav-link" @click="scrollToSection('home')">Inicio</a>
             </li>
-            <li v-for="link in navLinks" :key="link.name" class="nav-item">
-              <router-link class="nav-link" :to="link.path">
-                {{ link.name }}
-              </router-link>
-            </li>
-            <li class="nav-item">
+            <template v-if="isLoggedIn">
+              <li v-for="link in navLinks" :key="link.name" class="nav-item">
+                <router-link class="nav-link" :to="link.path">
+                  {{ link.name }}
+                </router-link>
+              </li>
+            </template>
+            <li v-if="isRootRoute" class="nav-item">
               <a class="nav-link" @click="scrollToSection('about')"
                 >Acerca de</a
               >
             </li>
-            <li class="nav-item">
+            <li v-if="isRootRoute" class="nav-item">
               <a class="nav-link" @click="scrollToSection('contact')"
                 >Contacto</a
               >
             </li>
           </ul>
-          <div id="button-out">
-            <button class="logout-button" @click="logOut()">
+          <div class="navbar-right">
+            <button v-if="isLoggedIn" class="logout-button" @click="logOut()">
               Cerrar Sesion
             </button>
+            <RouterLink v-else class="logout-button" to="/login"
+              >Iniciar Sesion</RouterLink
+            >
           </div>
         </div>
       </div>
@@ -101,9 +112,9 @@ const navLinks = computed(() => {
 }
 
 .floating-nav {
-  background-color: #fff !important;
+  background-color: var(--navbar-bg) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  border-radius: 80px;
   margin: 0 auto;
   width: 100%;
   max-width: 1200px;
@@ -116,31 +127,59 @@ const navLinks = computed(() => {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 0.5rem;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-center {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+.navbar-logo {
+  border-radius: 70px;
 }
 
 .logout-button {
-  background-color: #59369e;
+  background-color: var(--button-primary);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 70px;
   padding: 10px 20px;
   font-size: 16px;
+  height: 50px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  text-decoration: none;
+  line-height: 1.6;
 }
 
 .logout-button:hover {
-  background-color: #8a2be2;
+  background-color: var(--button-primary-hover);
 }
 
 .nav-link {
   cursor: pointer;
 }
+.nav-item {
+  transition: background-color 0.3s ease, border-radius 0.3s ease;
+}
 
-.nav-link:hover {
-  color: #59369e !important;
-  transition: color 0.3s ease;
+.nav-item:hover {
+  background-color: var(--navbar-bg-hover);
+  border-radius: 18px;
+}
+li {
+  padding: 0 10px;
 }
 
 @media (max-width: 991px) {
@@ -149,14 +188,21 @@ const navLinks = computed(() => {
     align-items: flex-start;
   }
 
-  #button-out {
+  .navbar-center {
+    justify-content: flex-start;
+  }
+
+  .navbar-right {
     margin-top: 1rem;
     margin-bottom: 1rem;
+  }
+  .navbar-left {
+    display: none;
   }
 
   .floating-nav {
     max-width: 100%;
-    border-radius: 0;
+    border-radius: 25px;
   }
 }
 </style>

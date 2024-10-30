@@ -35,10 +35,10 @@ const ShowNav = () => {
 
 .main-content {
   flex: 1;
-  padding-top: 60px; /* Default padding */
+  padding-top: 60px;
 }
 
 .no-padding {
-  padding-top: 0; /* Remove padding when on root route */
+  padding-top: 0;
 }
 </style>
