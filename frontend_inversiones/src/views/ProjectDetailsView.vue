@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <div>
     <h3>Detalles del proyecto</h3>
     <h5><strong>Nombre:</strong> {{ project.name }}</h5>
@@ -24,16 +25,31 @@
       <Investments :idInvestments="idProject" />
     </div>
     <div>
+=======
+  <div class="row">
+    <div class="col-md-6">
+      <h3>Minerales del proyecto</h3>
+      <ProjectMineral :idProjectMineral="idProject" />
+    </div>
+
+    <div class="col-md-6">
+      <h3>Contratos</h3>
+    </div>
+
+    <div class="col-md-6">
+      <h3>Inversores</h3>
+      <p>mostrar todos los inversores con el monto invertido</p>
+    </div>
+
+    <div class="col-md-6">
+>>>>>>> 7f076658c8c5a78b8c0a0a88ff9a75a03a05ff94
       <h3>Gastos Operativos</h3>
       <OperatingExpenses :idProject="idProject" />
     </div>
+
     <div>
       <h3>Linea de tiempo</h3>
       <TimeLine :idProject="idProject" />
-    </div>
-    <div>
-      <h3>Minerales del proyecto</h3>
-      <ProjectMineral :idProjectMineral="idProject" />
     </div>
   </div>
 </template>
@@ -46,7 +62,6 @@ import TimeLine from "@/components/TimeLine.vue";
 import ProjectMineral from "@/components/ProjectMineral.vue";
 import OperatingExpenses from "@/components/OperatingExpenses.vue";
 import Investments from "@/components/Investments.vue";
-
 
 const route = useRoute();
 const idProject = ref(route.params.id);

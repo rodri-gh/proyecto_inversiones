@@ -1,65 +1,131 @@
   <template>
-  <div class="container col-md-8 mt-5">
+  <div class="container col-md-10 mt-5">
     <div class="card shadow border-0">
       <div class="card-body">
-        <h4 class="card-title text-center">Linea de Tiempo</h4>
+        <h4 class="card-title text-center">Línea de Tiempo</h4>
         <div class="text-end">
           <button
             type="button"
             class="btn btn-primary"
             data-bs-toggle="modal"
             data-bs-target="#modalTimeline"
+            :disabled="availablePhases.length === 0"
           >
             <i class="fa fa-plus mx-1"></i> Nuevo
           </button>
         </div>
 
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Fase</th>
-                <th scope="col">Fecha Inicio</th>
-                <th scope="col">Fecha Fin</th>
-                <th scope="col">Estado</th>
-                <th scope="col">Descripcion</th>
-                <th scope="col">Precios</th>
-                <th scope="col">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-if="timeLines.length == 0">
-                <td colspan="6" class="text-center">
-                  No hay lineas de tiempo registradas
-                </td>
-              </tr>
-
-              <tr v-for="timeline in timeLines" :key="timeline.id">
-                <td>{{ timeline.phase }}</td>
-                <td>{{ timeline.start_date }}</td>
-                <td>{{ timeline.end_date }}</td>
-                <td>{{ timeline.status }}</td>
-                <td>{{ timeline.description }}</td>
-                <td>
-                  <span> Mineral 1: {{ timeline.price_mineral_1 }}</span>
-                  <span> Mineral 2: {{ timeline.price_mineral_2 }}</span>
-                </td>
-
-                <td>
-                  <button
-                    class="btn btn-warning btn-sm m-1"
-                    @click="selectTimeLine(timeline)"
+        <div class="timeline-container position-relative mt-4">
+          <div class="timeline-line"></div>
+          <div
+            v-for="(timeline, index) in timeLines"
+            :key="timeline.id"
+            class="timeline-item"
+            :class="{
+              'timeline-left': index % 2 === 0,
+              'timeline-right': index % 2 !== 0,
+            }"
+          >
+            <div
+              class="timeline-point"
+              :class="getStatusClass(timeline.status)"
+            >
+              <i :class="getStatusIcon(timeline.status)"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="card shadow-sm">
+                <div class="card-body">
+                  <!-- <span
+                    class="phase-badge"
+                    :class="getPhaseClass(timeline.phase)"
                   >
-                    <i class="fa fa-edit"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                    {{ timeline.phase }}
+                  </span> -->
+
+                  <span
+                    v-if="timeline.phase == 'contrato'"
+                    class="phase-badge"
+                    :class="getPhaseClass(timeline.phase)"
+                  >
+                    Contrato
+                  </span>
+                  <span
+                    v-if="timeline.phase == 'pre-compra'"
+                    class="phase-badge"
+                    :class="getPhaseClass(timeline.phase)"
+                  >
+                    Pre-compra
+                  </span>
+
+                  <span
+                    v-if="timeline.phase == 'compra'"
+                    class="phase-badge"
+                    :class="getPhaseClass(timeline.phase)"
+                  >
+                    Compra
+                  </span>
+
+                  <span
+                    v-if="timeline.phase == 'entrada-al-ingenio'"
+                    class="phase-badge"
+                    :class="getPhaseClass(timeline.phase)"
+                  >
+                    Entrada al ingenio
+                  </span>
+
+                  <span
+                    v-if="timeline.phase == 'salida-del-ingenio'"
+                    class="phase-badge"
+                    :class="getPhaseClass(timeline.phase)"
+                  >
+                    Salida del ingenio
+                  </span>
+
+                  <span
+                    v-if="timeline.phase == 'certificacion'"
+                    class="phase-badge"
+                    :class="getPhaseClass(timeline.phase)"
+                  >
+                    Certificación
+                  </span>
+
+                  <div class="dates mt-2">
+                    <small class="text-muted">
+                      {{ formatDate(timeline.start_date) }} -
+                      {{ formatDate(timeline.end_date) }}
+                    </small>
+                  </div>
+
+                  <p class="mt-2">{{ timeline.description }}</p>
+
+                  <div class="prices mt-2">
+                    <small class="d-block">
+                      <strong>Mineral 1:</strong> ${{
+                        timeline.price_mineral_1
+                      }}
+                    </small>
+                    <small class="d-block">
+                      <strong>Mineral 2:</strong> ${{
+                        timeline.price_mineral_2
+                      }}
+                    </small>
+                  </div>
+
+                  <div class="mt-3">
+                    <button
+                      class="btn btn-warning btn-sm"
+                      @click="selectTimeLine(timeline)"
+                    >
+                      <i class="fa fa-edit"></i> Editar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <!-- Modal -->
 
     <div
       class="modal fade"
@@ -94,14 +160,13 @@
                 v-model="phase"
                 id="phase"
               >
-                <option selected>Selecciona una fase</option>
-                <option value="contrato">Contrato</option>
-                <option value="pre-compra">Pre-Compra</option>
-                <option value="compra">Compra</option>
-                <option value="entrada-al-ingenio">Entrada al ingenio</option>
-                <option value="salida-del-ingenio">Salida del ingenio</option>
-                <option value="certificacion">
-                  Certificacion internacional
+                <option value="">Selecciona una fase</option>
+                <option
+                  v-for="phase in availablePhases"
+                  :key="phase"
+                  :value="phase"
+                >
+                  {{ phase }}
                 </option>
               </select>
             </div>
@@ -200,7 +265,7 @@
 </template>
 
   <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 
 const props = defineProps({
@@ -224,15 +289,102 @@ const mineral_2 = ref(0);
 
 const selectedTimeLine = ref({});
 
+const phases = [
+  "contrato",
+  "pre-compra",
+  "compra",
+  "entrada-al-ingenio",
+  "salida-del-ingenio",
+  "certificacion",
+];
+
+const availablePhases = computed(() => {
+  // Siempre incluye la fase actual
+  const usedPhases = timeLines.value.map((timeline) => timeline.phase);
+  const uniqueUsedPhases = [...new Set(usedPhases)];
+
+  // Incluye la fase actual en las fases disponibles
+  const remainingPhases = phases.filter(
+    (phase) => !uniqueUsedPhases.includes(phase)
+  );
+
+  // Asegúrate de que la fase actual esté siempre disponible
+  if (
+    selectedTimeLine.value.phase &&
+    !remainingPhases.includes(selectedTimeLine.value.phase)
+  ) {
+    remainingPhases.push(selectedTimeLine.value.phase);
+  }
+
+  return remainingPhases;
+});
+
 onMounted(() => {
   getTimeLines();
-  console.log("imprimiendo el prop " + props.idProject);
 });
+
+const getStatusClass = (status) => {
+  const statusLower = status.toLowerCase();
+  if (
+    statusLower.includes("completado") ||
+    statusLower.includes("finalizado")
+  ) {
+    return "status-completed";
+  }
+  if (statusLower.includes("progreso") || statusLower.includes("activo")) {
+    return "status-progress";
+  }
+  return "status-pending";
+};
+
+const getStatusIcon = (status) => {
+  const statusLower = status.toLowerCase();
+  if (
+    statusLower.includes("completado") ||
+    statusLower.includes("finalizado")
+  ) {
+    return "fa fa-check";
+  }
+  if (statusLower.includes("progreso") || statusLower.includes("activo")) {
+    return "fa fa-clock";
+  }
+  return "fa fa-circle";
+};
+
+const getPhaseClass = (phase) => {
+  const phaseLower = phase.toLowerCase();
+  const phaseClasses = {
+    contrato: "phase-contract",
+    "pre-compra": "phase-prebuying",
+    compra: "phase-buying",
+    "entrada-al-ingenio": "phase-entry",
+    "salida-del-ingenio": "phase-exit",
+    certificacion: "phase-certification",
+  };
+  return phaseClasses[phaseLower] || "phase-default";
+};
+
+const formatDate = (date) => {
+  if (!date) return "";
+  return new Date(date).toLocaleDateString();
+};
+
+const formatInputDate = (date) => {
+  if (!date) return "";
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
 const getTimeLines = async () => {
   try {
     const { data } = await axios.get(baseURL + props.idProject);
-    timeLines.value = data.data;
+    timeLines.value = data.data.sort(
+      (a, b) => new Date(a.start_date) - new Date(b.start_date)
+    );
+
     console.log(timeLines.value);
   } catch (error) {
     console.log(error);
@@ -257,7 +409,6 @@ const createTimeLine = async () => {
     var myModalEl = document.getElementById("modalTimeline");
     var modal = bootstrap.Modal.getInstance(myModalEl);
     modal.hide();
-
     getTimeLines();
     reset();
   } catch (error) {
@@ -268,9 +419,11 @@ const createTimeLine = async () => {
 const selectTimeLine = (timeLine) => {
   selectedTimeLine.value = timeLine;
 
+  console.log(selectedTimeLine.value, timeLine.p);
+
   phase.value = timeLine.phase;
-  start_date.value = timeLine.start_date;
-  end_date.value = timeLine.end_date;
+  start_date.value = formatInputDate(timeLine.start_date);
+  end_date.value = formatInputDate(timeLine.end_date);
   status.value = timeLine.status;
   description.value = timeLine.description;
   mineral_1.value = timeLine.price_mineral_1;
@@ -322,5 +475,139 @@ const reset = () => {
 };
 </script>
 
-  <style  scoped>
+ <style scoped>
+.timeline-container {
+  padding: 20px 0;
+  width: 100%;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background-color: #e9ecef;
+  top: 0;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 30px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.timeline-point {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.timeline-content {
+  width: 45%;
+  position: relative;
+}
+
+.timeline-left .timeline-content {
+  margin-right: 55%;
+}
+
+.timeline-right .timeline-content {
+  margin-left: 55%;
+}
+
+.phase-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+/* Estados */
+.status-completed {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.status-progress {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.status-pending {
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+/* Fases */
+.phase-contract {
+  background-color: #6f42c1;
+  color: white;
+}
+
+.phase-prebuying {
+  background-color: #007bff;
+  color: white;
+}
+
+.phase-buying {
+  background-color: #28a745;
+  color: white;
+}
+
+.phase-entry {
+  background-color: #ffc107;
+  color: black;
+}
+
+.phase-exit {
+  background-color: #fd7e14;
+  color: white;
+}
+
+.phase-certification {
+  background-color: #dc3545;
+  color: white;
+}
+
+.phase-default {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* Animaciones */
+.timeline-content .card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.timeline-content .card:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .timeline-content {
+    width: 80%;
+    margin: 0 0 0 60px !important;
+  }
+
+  .timeline-line {
+    left: 30px;
+  }
+
+  .timeline-point {
+    left: 30px;
+  }
+}
 </style>

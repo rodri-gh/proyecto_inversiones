@@ -7,16 +7,92 @@ import MineralsView from '@/views/MineralsView.vue'
 import ProjectsView from '@/views/ProjectsView.vue'
 import ProjectDetailsView from '@/views/ProjectDetailsView.vue'
 import CategoryPostView from '@/views/CategoryPostView.vue'
+import PostsView from '@/views/PostsView.vue'
 import PostView from '@/views/PostView.vue'
-import PostDeatilsView from '@/views/PostDeatilsView.vue'
+import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue'
+import UserHomeView from '@/views/UserHomeView.vue'
+import MovementsView from '@/views/MovementsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
+      name: 'user-home',
+      component: UserHomeView,
+    },
+
+    {
+      path: '/home',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      meta: { requiresAuth: true },
+
+    },
+    {
+      path: '/minerals',
+      name: 'minerals',
+      component: MineralsView,
+      meta: { requiresAuth: true },
+
+    },
+    {
+      path: '/projects',
+      name: 'projects',
+      component: ProjectsView,
+      meta: { requiresAuth: true },
+
+    },
+    {
+      path: '/projects/:id',
+      name: 'project-details',
+      component: ProjectDetailsView,
+      meta: { requiresAuth: true },
+
+    },
+    {
+
+      path: '/projectminerals',
+      name: 'projectminerals',
+      component: ProjectMineralsView,
+      meta: { requiresAuth: true },
+
+    },
+
+    {
+      path: '/users',
+      name: 'users',
+      component: UsersView,
+      meta: { requiresAuth: true },
+
+
+    },
+    {
+      path: '/category-posts',
+      name: 'category-posts',
+      component: CategoryPostView,
+      meta: { requiresAuth: true },
+
+    },
+    {
+      path: '/posts',
+      name: 'posts',
+      component: PostsView,
+      meta: { requiresAuth: true },
+
+    },
+    {
+      path: '/post/:id',
+      name: 'post-details',
+      component: PostView,
+      meta: { requiresAuth: true },
+
+    },
+    {
+      path: '/withdrawalrequests',
+      name: 'withdrawalrequests',
+      component: WithdrawalRequestsView,
+      meta: { requiresAuth: true },
     },
     {
       path: '/login',
@@ -24,49 +100,28 @@ const router = createRouter({
       component: LoginView
     },
     {
-      path: '/minerals',
-      name: 'minerals',
-      component: MineralsView
-    },
-    {
-      path: '/projects',
-      name: 'projects',
-      component: ProjectsView
-    },
-    {
-      path: '/projects/:id',
-      name: 'project-details',
-      component: ProjectDetailsView
-    },
-    {
 
-      path: '/projectminerals',
-      name: 'projectminerals',
-      component: ProjectMineralsView
-    },
-
-    {
-      path: '/users',
-      name: 'users',
-      component: UsersView
-
+      path: '/:pathMatch(.*)*',
+      redirect: '/'
     },
     {
-      path: '/category-posts',
-      name: 'category-posts',
-      component: CategoryPostView
-    },
-    {
-      path: '/posts-admin',
-      name: 'posts-admin',
-      component: PostView
-    },
-    {
-      path: '/posts/:id',
-      name: 'post-details',
-      component: PostDeatilsView
+      path: '/movements',
+      name: 'movements',
+      component: MovementsView,
+      meta: { requiresAuth: true }
     }
   ]
+})
+
+// este es el verifidor si esta autenticado mediante token en las rutas 
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = !!localStorage.getItem("token");
+  // is la ruta nesesita autenticacion y si el user esta autentificado
+  if (to.matched.some(record => record.meta.requiresAuth) && !isLoggedIn) {
+    next('/login') // redireccion
+  } else {
+    next(); //permitir
+  }
 })
 
 export default router
