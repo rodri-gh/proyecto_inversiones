@@ -3,6 +3,7 @@ import { RouterLink } from "vue-router";
 import Cover from "@/components/Landing/Cover.vue";
 import About from "@/components/Landing/About.vue";
 import ContactForm from "@/components/Landing/ContactForm.vue";
+import Carousel from "@/components/Landing/Carousel.vue";
 </script>
 
 <template>
@@ -13,6 +14,11 @@ import ContactForm from "@/components/Landing/ContactForm.vue";
     <section id="about">
       <About />
     </section>
+
+    <section id="carousel">
+      <Carousel />
+    </section>
+
     <section id="contact">
       <ContactForm />
     </section>

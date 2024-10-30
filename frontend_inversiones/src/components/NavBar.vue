@@ -80,6 +80,10 @@ const navLinks = computed(() => {
                 >Acerca de</a
               >
             </li>
+
+            <li v-if="isRootRoute" class="nav-item">
+              <a class="nav-link" @click="scrollToSection('carousel')">Blogs</a>
+            </li>
             <li v-if="isRootRoute" class="nav-item">
               <a class="nav-link" @click="scrollToSection('contact')"
                 >Contacto</a
@@ -118,6 +122,7 @@ const navLinks = computed(() => {
   margin: 0 auto;
   width: 100%;
   max-width: 1200px;
+  opacity: 0.8;
 }
 
 .navbar-container {
