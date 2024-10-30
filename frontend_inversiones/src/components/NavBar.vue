@@ -40,7 +40,7 @@ const navLinks = computed(() => {
 
 <template>
   <div class="nav-wrapper">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light floating-nav">
+    <nav class="navbar navbar-expand-lg  floating-nav">
       <div class="navbar-container">
         <div class="navbar-left">
           <img
@@ -114,15 +114,14 @@ const navLinks = computed(() => {
   z-index: 1000;
   padding-top: 15px;
 }
-
 .floating-nav {
   background-color: var(--navbar-bg) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   border-radius: 80px;
   margin: 0 auto;
   width: 100%;
   max-width: 1200px;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .navbar-container {
