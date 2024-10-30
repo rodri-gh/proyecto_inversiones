@@ -43,7 +43,7 @@
           value-key="category_post_id"
           label-key="name"
           v-model="category_post_id"
-          select-class="col-6"
+          selectClass="col-6"
         />
       </div>
 
