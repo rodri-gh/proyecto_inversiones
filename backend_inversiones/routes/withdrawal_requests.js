@@ -61,7 +61,6 @@ router.get('/', function (req, res, next) {
         message: 'Error in the query'
       });
     } else {
-      console.log(results);
       res.status(200).json({
         data: results,
         message: 'List of withdrawal requests'
@@ -93,10 +92,12 @@ router.get('/:id', function (req, res, next) {
 
 router.post('/', upload.fields([{ name: 'photo_document' }, { name: 'selfie_photo' }]), function (req, res, next) {
   const { investment_id, user_id, request_amount, commission_apply, receive_amount, status } = req.body;
-
-  const photo_document = req.files['photo_document'] ? req.files['photo_document'][0].filename : null;
-  const selfie_photo = req.files['selfie_photo'] ? req.files['selfie_photo'][0].filename : null;
+  const photo_document = req.file ? `${req.file.filename}` : null;
+  const selfie_photo = req.file ? `${req.file.filename}` : null;
   const projectStatus = status || 'pending';
+
+  console.log(photo_document);
+  
 
   const query = `INSERT INTO withdrawal_requests (investment_id, user_id, request_amount, commission_apply, receive_amount, photo_document, selfie_photo, status)
                 VALUES ('${investment_id}', '${user_id}', '${request_amount}', '${commission_apply}', '${receive_amount}', '${photo_document}', '${selfie_photo}', '${projectStatus}');`;
