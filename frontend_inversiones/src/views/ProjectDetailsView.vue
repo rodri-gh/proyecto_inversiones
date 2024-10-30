@@ -38,7 +38,7 @@
 
     <div class="col-md-6">
       <h3>Inversores</h3>
-      <p>mostrar todos los inversores con el monto invertido</p>
+      <Investments :idProjectInvestment="idProject" />
     </div>
 
     <div class="col-md-6">
@@ -72,9 +72,13 @@ const urlProject = "http://localhost:3000/projects/";
 const operatingExpenses = ref({});
 const urlOperatingExpenses = "http://localhost:3000/operatingexpenses/";
 
+const investments = ref({});
+const urlInvestments = "http://localhost:3000/investments/";
+
 onMounted(() => {
   getProject();
   getOperatingExpenses();
+  getInvestments();
   console.log(idProject);
 });
 
@@ -97,6 +101,16 @@ const getOperatingExpenses = async () => {
     console.error(error);
   }
 };
+
+const getInvestments = async () => {
+  try{
+    const { data } = await axios.get(urlInvestments + idProject.value);
+    investments.value = data.data;
+    console.log(investments.value);
+  }catch (error) {
+    console.error(error);
+  }
+}
 </script>
 
 <style  scoped>
