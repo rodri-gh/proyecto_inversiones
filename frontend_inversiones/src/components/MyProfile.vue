@@ -12,7 +12,9 @@ onMounted(async () => {
 
 const getUserProfile = async () => {
     try { 
-        const response = await axios.get(baseURL+getIdUser(), getHeaderRequest()); 
+        const header = getHeaderRequest();
+        console.log(header);
+        const response = await axios.get(baseURL+getIdUser(), header); 
         userProfile.value = response.data.data[0];
         console.log(response.data.data)
     } catch(e) { 
