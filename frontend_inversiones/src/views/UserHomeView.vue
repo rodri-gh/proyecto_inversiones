@@ -16,10 +16,6 @@ import Blog from "@/components/Landing/Blog.vue";
     <section id="about">
       <About />
     </section>
-
-    <section id="carousel">
-      <Carousel />
-    </section>
     <section id="faq">
       <FAQ />
     </section>

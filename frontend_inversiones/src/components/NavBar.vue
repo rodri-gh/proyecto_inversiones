@@ -82,9 +82,6 @@ const navLinks = computed(() => {
             </li>
 
             <li v-if="isRootRoute" class="nav-item">
-              <a class="nav-link" @click="scrollToSection('carousel')">Blogs</a>
-            </li>
-            <li v-if="isRootRoute" class="nav-item">
               <a class="nav-link" @click="scrollToSection('faq')">FAQ</a>
             </li>
             <li v-if="isRootRoute" class="nav-item">
