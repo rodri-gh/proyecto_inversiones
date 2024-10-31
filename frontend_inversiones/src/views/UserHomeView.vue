@@ -4,6 +4,8 @@ import Cover from "@/components/Landing/Cover.vue";
 import About from "@/components/Landing/About.vue";
 import ContactForm from "@/components/Landing/ContactForm.vue";
 import Carousel from "@/components/Landing/Carousel.vue";
+import FAQ from "@/components/Landing/FAQ.vue";
+import Blog from "@/components/Landing/Blog.vue";
 </script>
 
 <template>
@@ -18,6 +20,12 @@ import Carousel from "@/components/Landing/Carousel.vue";
     <section id="carousel">
       <Carousel />
     </section>
+    <section id="faq">
+      <FAQ />
+    </section>
+    <section id="blog">
+      <Blog />
+    </section>
 
     <section id="contact">
       <ContactForm />
@@ -26,3 +34,8 @@ import Carousel from "@/components/Landing/Carousel.vue";
     <RouterLink class="btn btn-dark" to="/login">Iniciar Sesion</RouterLink>
   </main>
 </template>
+<style scoped>
+main {
+  background-color: #eaeaec;
+}
+</style>

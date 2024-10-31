@@ -40,7 +40,7 @@ const navLinks = computed(() => {
 
 <template>
   <div class="nav-wrapper">
-    <nav class="navbar navbar-expand-lg  floating-nav">
+    <nav class="navbar navbar-expand-lg floating-nav">
       <div class="navbar-container">
         <div class="navbar-left">
           <img
@@ -85,9 +85,15 @@ const navLinks = computed(() => {
               <a class="nav-link" @click="scrollToSection('carousel')">Blogs</a>
             </li>
             <li v-if="isRootRoute" class="nav-item">
+              <a class="nav-link" @click="scrollToSection('faq')">FAQ</a>
+            </li>
+            <li v-if="isRootRoute" class="nav-item">
               <a class="nav-link" @click="scrollToSection('contact')"
                 >Contacto</a
               >
+            </li>
+            <li v-if="isRootRoute" class="nav-item">
+              <a class="nav-link" @click="scrollToSection('blog')">Blog</a>
             </li>
           </ul>
           <div class="navbar-right">
@@ -121,7 +127,7 @@ const navLinks = computed(() => {
   margin: 0 auto;
   width: 100%;
   max-width: 1200px;
-  opacity: 0.9  ;
+  opacity: 0.9;
 }
 
 .navbar-container {
