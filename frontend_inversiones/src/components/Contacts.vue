@@ -14,26 +14,21 @@ const form = reactive({
     answer:''
 })
 
-
+//testeando contacto 
 
 
 const handleSubmit = async ()  => {
     try {
-        console.log('Datos del formulario:', JSON.stringify(form));
         const response = await axios.post('http://localhost:3000/contacts', form);
-
-        console.log(form);
-
         console.log(response.data);
     }
     catch (error) {
         console.error(error);
     }
 }
-
-
-
 </script>
+
+
 
 <template>
     <div class="container md-6">
@@ -68,6 +63,7 @@ const handleSubmit = async ()  => {
         </div>
     </div>
 </template>
+
 
 <style scope>
 .contact-container{

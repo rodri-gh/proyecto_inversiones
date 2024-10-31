@@ -10,7 +10,7 @@ const username = JSON.parse(localStorage.getItem('user'))?.username;
       <br>
       <h2>Hola {{ username }}</h2>
       <br>
-      <h5>estas son tus inversiones inversiones</h5>
+      <h5>estas son tus inversiones</h5>
       <br>
       <InvestmentsOfUser />
       <Contacts/>
