@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center">
+  <div class="text-center bg-white py-2">
     <h1>Nuestro Blog</h1>
     <Carousel v-bind="config">
       <Slide v-for="(mineral, index) in mineralImages" :key="index">

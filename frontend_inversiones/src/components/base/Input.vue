@@ -26,3 +26,13 @@ const updateValue = (event) => {
   emit("update:modelValue", event.target.value);
 };
 </script>
+<style scoped>
+input {
+  width: 100%;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 50px;
+  outline: none;
+}
+</style>

@@ -4,3 +4,14 @@
     --navbar-bg: #d8d8d8;
     --navbar-bg-hover: #fcfcfc;
 }
+.btn-primary {
+    background-color: var(--button-primary);
+    border: none;
+    border-radius: 1rem !important;
+}
+.btn-primary:hover {
+    background-color: var(--button-primary-hover);
+}
+.btn-primary:active {
+    background-color: var(--button-primary) !important;
+}
