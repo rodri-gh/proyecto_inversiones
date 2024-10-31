@@ -48,4 +48,8 @@ export function getHeaderRequest() {
       };
     return header; 
 }
-
+    
+export function getIdUser() { 
+    const userId = JSON.parse(localStorage.getItem('user'))?.user_id;
+    return userId;
+}

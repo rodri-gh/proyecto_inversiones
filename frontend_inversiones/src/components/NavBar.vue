@@ -121,7 +121,7 @@ const navLinks = computed(() => {
   margin: 0 auto;
   width: 100%;
   max-width: 1200px;
-  opacity: 0.9;
+  opacity: 0.9  ;
 }
 
 .navbar-container {

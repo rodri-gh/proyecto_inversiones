@@ -17,12 +17,16 @@ const ShowNav = () => {
 </script>
 <template>
   <div class="app-container">
-    <NavBar v-if="ShowNav()" />
+    <header>
+      <NavBar v-if="ShowNav()" />
+    </header>
     <main :class="['main-content', { 'no-padding': isRootRoute }]">
       <RouterView />
     </main>
-    <WhatsAppButton />
-    <FooterInfo v-if="ShowNav()" />
+    <footer>
+      <WhatsAppButton />
+      <FooterInfo v-if="ShowNav()" />
+    </footer>
   </div>
 </template>
 
@@ -32,12 +36,9 @@ const ShowNav = () => {
   display: flex;
   flex-direction: column;
 }
-
 .main-content {
   flex: 1;
-  padding-top: 60px;
 }
-
 .no-padding {
   padding-top: 0;
 }
