@@ -26,8 +26,6 @@ import Blog from "@/components/Landing/Blog.vue";
     <section id="contact">
       <ContactForm />
     </section>
-    <h1>User Home</h1>
-    <RouterLink class="btn btn-dark" to="/login">Iniciar Sesion</RouterLink>
   </main>
 </template>
 <style scoped>
