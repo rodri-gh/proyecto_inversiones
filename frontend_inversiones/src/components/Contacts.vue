@@ -19,9 +19,10 @@ const form = reactive({
 
 const handleSubmit = async ()  => {
     try {
+        console.log('Datos del formulario:', JSON.stringify(form));
         const response = await axios.post('http://localhost:3000/contacts', form);
 
-        console.log(form.email);
+        console.log(form);
 
         console.log(response.data);
     }

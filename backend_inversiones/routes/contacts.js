@@ -4,12 +4,12 @@ var connection = require('../database');
 
 //insertar un contacto  POST
 router.post('/', function(req, res, next){
-    const { user_id, name, lastname, email, phone, comments, answer, status } = req.body; 
+    const { name, lastname, email, phone, comments, answer } = req.body; 
 
-    const query = `INSERT INTO contacts (user_id, name, lastname, email, phone, comments, answer, status)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO contacts ( name, lastname, email, phone, comments, answer)
+                   VALUES (?, ?, ?, ?, ?, ?)`;
 
-    connection.query(query, [user_id, name, lastname, email, phone, comments, answer, status], function(error, results) {
+    connection.query(query, [ name, lastname, email, phone, comments, answer], function(error, results) {
         if (error) { 
             console.log(error);
             return res.status(500).json({
