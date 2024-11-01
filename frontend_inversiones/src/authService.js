@@ -49,7 +49,14 @@ export function getHeaderRequest() {
     return header; 
 }
     
-export function getIdUser() { 
-    const userId = JSON.parse(localStorage.getItem('user'))?.user_id;
+export function getUserIdOfLocalStorage() { 
+    const user = JSON.parse(localStorage.getItem('user'));
+    var userId = user?.user_id;
     return userId;
+}
+
+export function getUserRoleOfLocalStorage() { 
+    var user = JSON.parse(localStorage.getItem('user'));
+    var userRole = user?.role;
+    return userRole;
 }

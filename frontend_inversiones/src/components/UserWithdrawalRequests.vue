@@ -3,17 +3,18 @@ import { getHeaderRequest, getUserIdOfLocalStorage } from '@/authService';
 import axios from 'axios';
 import { ref, onMounted} from 'vue';
 
-const baseUrl = 'http://localhost:3000/investments/user/'
+const baseUrl = 'http://localhost:3000/withdrawal_requests/user/'
 
-const investments = ref([]); 
+const withdrawalRequests = ref([]); 
 
 onMounted( async () => { 
     try { 
         const userId = getUserIdOfLocalStorage();
         const header = getHeaderRequest();
         const response = await axios.get(baseUrl+userId, header);
-        investments.value = Array.isArray(response.data.data) ? response.data.data : [response.data.data];
-        console.log(investments.value);
+        console.log(response.data);
+        withdrawalRequests.value = Array.isArray(response.data.data) ? response.data.data : [response.data.data];
+        console.log(withdrawalRequests.value);
     } catch(e) { 
         console.error(e);
     }
@@ -22,8 +23,8 @@ onMounted( async () => {
 
 <template>
     <div>
-        <h3>Tus inversiones</h3>
-        <div v-if="investments.length > 0" class="table-responsive">
+        <h3>Tus Solicitudes de Retiro</h3>
+        <div v-if="withdrawalRequests.length > 0" class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
@@ -34,18 +35,18 @@ onMounted( async () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="investment in investments" :key="investment.id">
-                        <td>{{ investment.project_id }}</td>
-                        <td>{{  investment.amount }}</td>
-                        <td>{{ investment.profit_percentage }}</td>
-                        <td>{{ investment.investment_date }}</td>
+                    <tr v-for="item in withdrawalRequests" :key="item.withdrawal_requests_id">
+                        <td>{{ item.request_amount }}</td>
+                        <td>{{  item.request_amount }}</td>
+                        <td>{{ item.request_amount }}</td>
+                        <td>{{ item.request_amount }}</td>
                     </tr>
                     <tr></tr>
                 </tbody>
             </table>
         </div>
         <div v-else>
-            <p>No tienes inversiones</p>
+            <p>No tienes Solicitudes de retiro</p>
         </div>
     </div>
 </template>
