@@ -90,6 +90,27 @@ router.get('/:id', function (req, res, next) {
   });
 });
 
+router.get('/user/:id', function (req, res, next) {
+  const { id } = req.params;
+  const query = `SELECT * FROM withdrawal_requests WHERE user_id = ?;`;
+
+  connection.query(query,[id], function (error, results, fields) {
+    if (error) {
+      console.log(error);
+      res.status(500).json({
+        error: error,
+        message: 'Error in the query'
+      });
+    } else {
+      console.log(results);
+      res.status(200).json({
+        data: results,
+        message: 'Withdrawal request details'
+      });
+    }
+  });
+});
+
 router.post('/', upload.fields([{ name: 'photo_document' }, { name: 'selfie_photo' }]), function (req, res, next) {
   const { investment_id, user_id, request_amount, commission_apply, receive_amount, status } = req.body;
   const photo_document = req.file ? `${req.file.filename}` : null;

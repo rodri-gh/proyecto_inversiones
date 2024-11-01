@@ -43,6 +43,27 @@ router.get('/:id', function(req, res, next) {
     });
 });
 
+router.get('/user/:id', function(req, res, next) {
+    const { id } = req.params;
+    const query = "SELECT * FROM investments WHERE user_id = ?;";
+
+    connection.query(query, [id], function(error, results, fields) {
+        if (error){
+            console.log(error);
+            res.status(500).json({
+                error: error,
+                message: 'Error in the query'
+            });
+        }else{
+            console.log(results);
+            res.status(200).json({
+                data: results,
+                message: 'Details of investments'
+            });
+        }
+    });
+})
+
 router.get('/project/:id', function(req, res, next) {
     const {id} = req.params;
     const query = `SELECT investments.*, users.name AS user_name 
