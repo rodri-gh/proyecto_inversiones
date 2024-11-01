@@ -1,15 +1,45 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import MyProfile from './MyProfile.vue';
 import ProjectsView from '@/views/ProjectsView.vue';
 import InvestmentsOfUser from './InvestmentsOfUser.vue';
-import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue';
+import UserWithdrawalRequests from './UserWithdrawalRequests.vue';
+import { getUserRoleOfLocalStorage } from '@/authService';
 
 const activeComponent = ref(MyProfile);
 const showComponent = (componentName) => { 
   activeComponent.value = componentName;
 };
 
+const componentslinks = computed(() => { 
+  const userRole = getUserRoleOfLocalStorage();
+  console.log(userRole);
+  let links = [
+    { name: 'Mi Perfil', component: MyProfile },
+  ]
+  if (userRole == 'super_user') { 
+    links.push({ name: 'Actividad Reciente', component: ProjectsView });
+    links.push({ name: 'Gestion de Usuarios', component: ProjectsView });
+    links.push({ name: 'Projectos', component: ProjectsView });
+    links.push({ name: 'Finanzas', component: ProjectsView });
+    links.push({ name: 'Retiro de Fondos', component: ProjectsView });
+    links.push({ name: 'Analisis y Reportes', component: ProjectsView });
+    links.push({ name: 'Configuracion y Seguridad', component: ProjectsView });
+  } else if ( userRole == 'admin') {
+    links.push({ name: 'Actividad Reciente', component: ProjectsView });
+    links.push({ name: 'Gestion de Usuarios', component: ProjectsView });
+    links.push({ name: 'Projectos', component: ProjectsView });
+    links.push({ name: 'Finanzas', component: ProjectsView });
+    links.push({ name: 'Retiro de Fondos', component: ProjectsView });
+    links.push({ name: 'Analisis y Reportes', component: ProjectsView });
+    links.push({ name: 'Configuracion y Seguridad', component: ProjectsView });
+  } else if (userRole == 'client') { 
+    links.push({ name: 'Projectos', component: ProjectsView });
+    links.push({ name: 'Inversiones', component: InvestmentsOfUser });
+    links.push({ name: 'Solicitudes de Retiro', component: UserWithdrawalRequests });
+  }
+  return links;
+});
 </script>
 
 <template>
@@ -18,10 +48,12 @@ const showComponent = (componentName) => {
       d-flex flex-column justify-content-center 
       align-items-center"
       >
-      <a @click="showComponent(MyProfile)">Mi Perfil</a>
-      <a @click="showComponent(ProjectsView)">Proyectos</a>
-      <a @click="showComponent(InvestmentsOfUser)">Inversiones</a>
-      <a @click="showComponent(WithdrawalRequestsView)">Solicitudes de Retiro</a>
+      <a v-for="(item, index) in componentslinks"
+        :key="index"
+        @click="showComponent(item.component)"
+      >
+        {{ item.name }}
+      </a>
     </div>
     <div class="col-9 vh-100 d-flex flex-column justify-content-center 
       align-items-center">
