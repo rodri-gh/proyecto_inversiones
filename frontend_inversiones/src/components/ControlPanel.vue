@@ -1,14 +1,16 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, markRaw, ref } from 'vue';
+import { getUserRoleOfLocalStorage } from '@/authService';
 import MyProfile from './MyProfile.vue';
 import ProjectsView from '@/views/ProjectsView.vue';
 import InvestmentsOfUser from './InvestmentsOfUser.vue';
 import UserWithdrawalRequests from './UserWithdrawalRequests.vue';
-import { getUserRoleOfLocalStorage } from '@/authService';
+import UsersView from '@/views/UsersView.vue';
+import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue';
 
-const activeComponent = ref(MyProfile);
+const activeComponent = ref(markRaw(MyProfile));
 const showComponent = (componentName) => { 
-  activeComponent.value = componentName;
+  activeComponent.value = markRaw(componentName);
 };
 
 const componentslinks = computed(() => { 
@@ -19,10 +21,10 @@ const componentslinks = computed(() => {
   ]
   if (userRole == 'super_user') { 
     links.push({ name: 'Actividad Reciente', component: ProjectsView });
-    links.push({ name: 'Gestion de Usuarios', component: ProjectsView });
+    links.push({ name: 'Gestion de Usuarios', component: UsersView });
     links.push({ name: 'Projectos', component: ProjectsView });
     links.push({ name: 'Finanzas', component: ProjectsView });
-    links.push({ name: 'Retiro de Fondos', component: ProjectsView });
+    links.push({ name: 'Retiro de Fondos', component: WithdrawalRequestsView });
     links.push({ name: 'Analisis y Reportes', component: ProjectsView });
     links.push({ name: 'Configuracion y Seguridad', component: ProjectsView });
   } else if ( userRole == 'admin') {
