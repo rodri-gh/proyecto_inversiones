@@ -7,6 +7,10 @@ import InvestmentsOfUser from './InvestmentsOfUser.vue';
 import UserWithdrawalRequests from './UserWithdrawalRequests.vue';
 import UsersView from '@/views/UsersView.vue';
 import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue';
+import ConfigurationAndSecurity from './Dashboard/ConfigurationAndSecurity.vue';
+import Finance from './Dashboard/Finance.vue';
+import AnalysisAndReports from './Dashboard/AnalysisAndReports.vue';
+import Start from './Dashboard/Start.vue';
 
 const activeComponent = ref(markRaw(MyProfile));
 const showComponent = (componentName) => { 
@@ -20,21 +24,21 @@ const componentslinks = computed(() => {
     { name: 'Mi Perfil', component: MyProfile },
   ]
   if (userRole == 'super_user') { 
-    links.push({ name: 'Actividad Reciente', component: ProjectsView });
+    links.push({ name: 'Inicio', component: Start });
     links.push({ name: 'Gestion de Usuarios', component: UsersView });
     links.push({ name: 'Projectos', component: ProjectsView });
-    links.push({ name: 'Finanzas', component: ProjectsView });
+    links.push({ name: 'Finanzas', component: Finance });
     links.push({ name: 'Retiro de Fondos', component: WithdrawalRequestsView });
-    links.push({ name: 'Analisis y Reportes', component: ProjectsView });
-    links.push({ name: 'Configuracion y Seguridad', component: ProjectsView });
+    links.push({ name: 'Analisis y Reportes', component: AnalysisAndReports });
+    links.push({ name: 'Configuracion y Seguridad', component: ConfigurationAndSecurity });
   } else if ( userRole == 'admin') {
-    links.push({ name: 'Actividad Reciente', component: ProjectsView });
+    links.push({ name: 'Inicio', component: Start });
     links.push({ name: 'Gestion de Usuarios', component: ProjectsView });
     links.push({ name: 'Projectos', component: ProjectsView });
-    links.push({ name: 'Finanzas', component: ProjectsView });
+    links.push({ name: 'Finanzas', component: Finance });
     links.push({ name: 'Retiro de Fondos', component: ProjectsView });
-    links.push({ name: 'Analisis y Reportes', component: ProjectsView });
-    links.push({ name: 'Configuracion y Seguridad', component: ProjectsView });
+    links.push({ name: 'Analisis y Reportes', component: AnalysisAndReports });
+    links.push({ name: 'Configuracion y Seguridad', component: ConfigurationAndSecurity });
   } else if (userRole == 'client') { 
     links.push({ name: 'Projectos', component: ProjectsView });
     links.push({ name: 'Inversiones', component: InvestmentsOfUser });
@@ -57,9 +61,9 @@ const componentslinks = computed(() => {
         {{ item.name }}
       </a>
     </div>
-    <div class="col-9 vh-100 d-flex flex-column justify-content-center 
-      align-items-center">
-      <component :is="activeComponent" />
+    <div class="col-9 d-flex flex-column justify-content-center 
+      align-items-center flex-fill">
+      <component :is="activeComponent"/>
     </div>
   </div>
 </template>
@@ -79,5 +83,8 @@ a {
 a:hover { 
   background-color: #df6621; 
   border-radius: 60%;
+}
+.flex-fill { 
+  margin-top: 2%;
 }
 </style>
