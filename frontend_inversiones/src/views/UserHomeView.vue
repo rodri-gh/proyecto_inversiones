@@ -3,7 +3,6 @@ import { RouterLink } from "vue-router";
 import Cover from "@/components/Landing/Cover.vue";
 import About from "@/components/Landing/About.vue";
 import ContactForm from "@/components/Landing/ContactForm.vue";
-import Carousel from "@/components/Landing/Carousel.vue";
 import FAQ from "@/components/Landing/FAQ.vue";
 import Blog from "@/components/Landing/Blog.vue";
 </script>

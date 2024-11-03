@@ -1,6 +1,6 @@
 <script setup> 
 import { onMounted, ref } from 'vue';
-import BarsGraphic from './BarsGraphic.vue';
+import BarsGraphic from '@/components/BarsGraphic.vue';
 import axios from 'axios';
 import { getHeaderRequest } from '@/authService';
 
@@ -52,7 +52,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="kpi-dashboard">
+    <div class="view-container">
         <div class="chart">
             <!--conponentes-->
             <BarsGraphic
@@ -73,4 +73,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.view-container { 
+    padding: 10%;
+}
 </style>
