@@ -1,17 +1,6 @@
 <template>
   <div class="table-responsive">
     <table class="table">
-      <colgroup>
-        <col style="width: 10px;">
-        <col style="width: 10px;">
-        <col style="width: 20px;">
-        <col style="width: 10px;">
-        <col style="width: 30px;">
-        <col style="width: 10px;">
-        <col style="width: 10px;">
-        <col style="width: 10px;">
-        <col style="width: 100px;">
-      </colgroup>
       <thead>
         <tr>
           <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
@@ -27,8 +16,7 @@
           <td>{{ item.email }}</td>
           <td>{{ item.phone }}</td>
           <td>{{ item.comments }}</td>
-          <td>{{ item.created_date }}</td>
-          <!-- <td>{{ new Date(created_date).toLocaleDateString() }}</td> -->
+          <td>{{ new Date(item.created_date).toLocaleDateString() }}</td>
           <td>
             <span v-if="item.answer === 'pending'" class="badge bg-dark">Pendiente</span>
             <span v-if="item.answer === 'answered'" class="badge bg-secondary">Enviado</span>
@@ -37,7 +25,7 @@
             <span v-if="item.deleted == 1" class="badge bg-success">Activo</span>
             <span v-else class="badge bg-danger">Inactivo</span>
           </td>
-          <td>
+          <td width="10%">
             <Button @click="() => actions.answer(item.contact_id)" icon="fa fa-envelope"
               buttonClass="btn btn-outline-dark btn-sm m-1" :disabled="item.answer === 'answered'">
             </Button>

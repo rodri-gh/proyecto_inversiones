@@ -9,14 +9,10 @@ import ProjectDetailsView from '@/views/ProjectDetailsView.vue'
 import CategoryPostView from '@/views/CategoryPostView.vue'
 import PostsView from '@/views/PostsView.vue'
 import PostView from '@/views/PostView.vue'
-<<<<<<< HEAD
-import PostDeatilsView from '@/views/PostDeatilsView.vue'
 import ContactView from '@/views/ContactView.vue'
-=======
 import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue'
 import UserHomeView from '@/views/UserHomeView.vue'
 import MovementsView from '@/views/MovementsView.vue'
->>>>>>> 11b9a88312af205aebfb373d71fef9dd78fe9d7a
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -110,31 +106,30 @@ const router = createRouter({
       redirect: '/'
     },
     {
-<<<<<<< HEAD
       path: '/category-posts',
       name: 'category-posts',
       component: CategoryPostView
     },
     {
-      path: '/posts-admin',
-      name: 'posts-admin',
-      component: PostView
+      path: '/posts',
+      name: 'posts',
+      component: PostsView
     },
     {
       path: '/posts/:id',
       name: 'post-details',
-      component: PostDeatilsView
+      component: PostView
     },
     {
       path: '/contact',
       name: 'contct',
       component: ContactView
-=======
+    },
+    {
       path: '/movements',
       name: 'movements',
       component: MovementsView,
       meta: { requiresAuth: true }
->>>>>>> 11b9a88312af205aebfb373d71fef9dd78fe9d7a
     }
   ]
 })

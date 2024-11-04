@@ -24,10 +24,11 @@ const navLinks = computed(() => {
     { name: 'Home', path: '/home' },
     { name: 'Minerales', path: '/minerals' },
     { name: 'Post', path: '/posts' },
-    { name: 'Category posts', path: '/category-posts' },
-    { name: 'Projectos', path: '/projects' },
-    { name: 'Users', path: '/users' },
+    { name: 'Categoría Posts', path: '/category-posts' },
+    { name: 'Proyectos', path: '/projects' },
+    { name: 'Usuarios', path: '/users' },
     { name: 'Movimientos', path: '/movements' },
+    { name: 'Contáctanos', path: '/contact' },
   ];
   if (userRole == 'super_user') {
     links.push({ name: 'Solicitudes de Retiro', path: '/withdrawalrequests' })

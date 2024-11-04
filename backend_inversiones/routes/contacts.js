@@ -33,34 +33,26 @@ router.get('/', function (req, res, next) {
                 error: error,
                 message: 'contact not found'
             });
-<<<<<<< HEAD
-        } else {
-            console.log(results);
-            res.status(200).send({
-                data: results,
-                message: 'contact details'
-=======
         }
-        res.status(200).json({ 
-            data: results[0],
+        res.status(200).json({
+            data: results,
             message: 'contact details'
         });
     });
- });
+});
 
- // para actualizar un contacto PUT
- router.put('/:contact_id', function(req, res, next ){ 
+// para actualizar un contacto PUT
+router.put('/:contact_id', function (req, res, next) {
     const { contact_id } = req.params;
-    const { user_id, name, lastname, email, phone, comments, answer, status} = req.body;
+    const { user_id, name, lastname, email, phone, comments, answer, status } = req.body;
     const query = `UPDATE contacts SET user_id = ?, name = ?, lastname = ?, email = ?, phone = ?, comments = ?, answer = ?, status = ?
                    WHERE contact_id = ?`;
-    connection.query(query, [user_id, name, lastname, email, phone, comments, answer, status, contact_id], function(error, results) { 
-        if (error) { 
+    connection.query(query, [user_id, name, lastname, email, phone, comments, answer, status, contact_id], function (error, results) {
+        if (error) {
             console.log(error);
             return res.status(500).json({
                 error: error,
                 message: 'error updating contact'
->>>>>>> 11b9a88312af205aebfb373d71fef9dd78fe9d7a
             });
         }
     });

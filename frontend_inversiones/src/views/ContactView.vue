@@ -1,7 +1,6 @@
 <template>
     <div class="mt-5">
-        <!-- <div v-if="token && (user.role != 'admin' && user.role != 'super_user')"> -->
-        <div class="container col-md-10">
+        <div class="container col-md-10" v-if="!token && (user.role != 'admin' && user.role != 'super_user')">
             <div class="row col-md-12">
                 <div class="col-md-6">
                     <div class="card">
@@ -62,8 +61,7 @@
                 </div>
             </div>
         </div>
-        <div class="container col-md-10 mt-5">
-            <!-- <div v-if="token && (user.role == 'admin' || user.role == 'super_user')"> -->
+        <div class="container col-md-10 my-5" v-if="token && (user.role == 'admin' || user.role == 'super_user')">
             <div class="col-md-12">
                 <div class="card shadow border-0">
                     <div class="card-body">
