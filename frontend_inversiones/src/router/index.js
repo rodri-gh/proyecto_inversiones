@@ -9,7 +9,6 @@ import ProjectDetailsView from '@/views/ProjectDetailsView.vue'
 import CategoryPostView from '@/views/CategoryPostView.vue'
 import PostsView from '@/views/PostsView.vue'
 import PostView from '@/views/PostView.vue'
-import ContactView from '@/views/ContactView.vue'
 import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue'
 import UserHomeView from '@/views/UserHomeView.vue'
 import MovementsView from '@/views/MovementsView.vue'
@@ -121,11 +120,6 @@ const router = createRouter({
       path: '/posts/:id',
       name: 'post-details',
       component: PostView
-    },
-    {
-      path: '/contact',
-      name: 'contct',
-      component: ContactView
     },
     {
       path: '/movements',

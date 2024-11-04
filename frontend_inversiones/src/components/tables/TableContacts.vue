@@ -1,14 +1,14 @@
 <template>
-  <div class="table-responsive">
-    <table class="table">
+  <div class="table-responsive" style="width: 100%; max-height: 700px; overflow-y: auto;">
+    <table class="table table-hover ">
       <thead>
         <tr>
-          <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
+          <th v-for="(header, index) in headers" :key="index" class="bg-light">{{ header }}</th>
         </tr>
       </thead>
       <tbody>
         <tr v-if="items.length === 0">
-          <td colspan="9" class="text-center">No hay minerales registrados</td>
+          <td colspan="9" class="text-center">No existen solicitudes de información</td>
         </tr>
         <tr v-for="item in items" :key="item.id" v-show="item.deleted !== 0">
           <td>{{ item.name }}</td>

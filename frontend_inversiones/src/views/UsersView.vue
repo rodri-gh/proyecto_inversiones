@@ -1,17 +1,14 @@
 <template>
-  <div class="container col-md-8 mt-5">
-    <div class="card shadow border-0">
-      <div class="card-body">
-        <h4 class="card-title text-center">Usuarios Registrados</h4>
-        <div class="text-end">
-          <Button data-bs-toggle="modal" data-bs-target="#modalUser" text="Nuevo" icon="fa fa-plus" />
-        </div>
-        <TableMinerals :headers="headers" :items="users" :actions="{
-          edit: selectUser,
-          delete: deleteUser,
-        }" />
-      </div>
+  <div class="container col-md-10 mt-5">
+    <h4 class="card-title text-center">Usuarios Registrados</h4>
+    <div class="text-end">
+      <Button data-bs-toggle="modal" data-bs-target="#modalUser" text="Nuevo" icon="fa fa-plus" class="btn-color" />
     </div>
+    <TableMinerals :headers="headers" :items="users" :actions="{
+      edit: selectUser,
+      delete: deleteUser,
+    }" />
+
     <Modal modalId="modalUser" title="Registro de Usuario" :showSaveButton="!selectedUser?.id"
       :showUpdateButton="Boolean(selectedUser?.id)" @onClose="reset()" @onSave="createUser()">
       <Input id="name" label="Nombre" v-model="name" type="text" placeholder="Ingrese el nombre" />
@@ -169,4 +166,13 @@ const reset = () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.btn-color {
+  background: linear-gradient(20deg, #f98f52, #858484) !important;
+  color: #fff;
+}
+
+.btn-color:hover {
+  background: linear-gradient(20deg, #c8c7c7, #e97939) !important;
+}
+</style>
