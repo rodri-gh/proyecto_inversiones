@@ -14,6 +14,8 @@ import UserHomeView from '@/views/UserHomeView.vue'
 import MovementsView from '@/views/MovementsView.vue'
 import ControlPanel from '@/components/ControlPanel.vue'
 import InvestmentsOfUser from '@/components/InvestmentsOfUser.vue'
+import AnalysisAndReportsView from '@/views/AnalysisAndReportsView.vue'
+import FinanceView from '@/views/FinanceView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -107,6 +109,21 @@ const router = createRouter({
       redirect: '/'
     },
     {
+      path: '/category-posts',
+      name: 'category-posts',
+      component: CategoryPostView
+    },
+    {
+      path: '/posts',
+      name: 'posts',
+      component: PostsView
+    },
+    {
+      path: '/posts/:id',
+      name: 'post-details',
+      component: PostView
+    },
+    {
       path: '/movements',
       name: 'movements',
       component: MovementsView,
@@ -122,6 +139,18 @@ const router = createRouter({
       path: "/investmentOfUser",
       name: "investmentOfUser",
       component: InvestmentsOfUser,
+      meta: { requiresAuth: true }
+    }, 
+    { 
+      path: "/analysisAndReports",
+      name: "analysisAndReports",
+      component: AnalysisAndReportsView,
+      meta: { requiresAuth: true }
+    },
+    { 
+      path: "/finance",
+      name: "finance",
+      component: FinanceView,
       meta: { requiresAuth: true }
     }
   ]

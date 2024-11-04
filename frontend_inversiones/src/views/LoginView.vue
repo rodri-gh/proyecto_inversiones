@@ -114,7 +114,7 @@ const iniciarSesion = async () => {
     if (data.token) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.data));
-      router.push({ path: "/home" });
+      router.push({ path: "/dashboard" });
     }
   } catch (error) {
     console.log(error);

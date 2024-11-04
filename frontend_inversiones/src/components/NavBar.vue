@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from "vue";
-import { closeSession } from "../authService";
+import { closeSession, getUserRoleOfLocalStorage } from "../authService";
 import { RouterLink, useRouter } from "vue-router";
 
 const route = useRouter();
@@ -28,11 +28,20 @@ const logOut = () => {
 
 const navLinks = computed(() => {
   var user = JSON.parse(localStorage.getItem("user"));
-  var userRole = user?.role;
+  var userRole = getUserRoleOfLocalStorage(); 
   let links = [
     { name: "Marketplace", path: "/marketplace" },
     { name: "Panel de control", path: "/dashboard" },
   ];
+  if (userRole == 'super_user'){
+    links.push({ name: "Analisis y Reportes", path: "/analysisAndReports" });
+    links.push({ name: "Finanzas", path: "/finance" });
+  } else if ( userRole == 'admin') { 
+    links.push({ name: "Analisis y Reportes", path: "/analysisAndReports" });
+    links.push({ name: "Finanzas", path: "/finance" });
+  } else if( userRole == "client") {
+    //aqui se puede aumentar en el navbar rutas para clientes
+  }
 
   return links;
 });
@@ -40,7 +49,7 @@ const navLinks = computed(() => {
 
 <template>
   <div class="nav-wrapper">
-    <nav class="navbar navbar-expand-lg  floating-nav">
+    <nav class="navbar navbar-expand-lg floating-nav">
       <div class="navbar-container">
         <div class="navbar-left">
           <img
@@ -82,12 +91,15 @@ const navLinks = computed(() => {
             </li>
 
             <li v-if="isRootRoute" class="nav-item">
-              <a class="nav-link" @click="scrollToSection('carousel')">Blogs</a>
+              <a class="nav-link" @click="scrollToSection('faq')">FAQ</a>
             </li>
             <li v-if="isRootRoute" class="nav-item">
               <a class="nav-link" @click="scrollToSection('contact')"
                 >Contacto</a
               >
+            </li>
+            <li v-if="isRootRoute" class="nav-item">
+              <a class="nav-link" @click="scrollToSection('blog')">Blog</a>
             </li>
           </ul>
           <div class="navbar-right">
@@ -121,7 +133,7 @@ const navLinks = computed(() => {
   margin: 0 auto;
   width: 100%;
   max-width: 1200px;
-  opacity: 0.9  ;
+  opacity: 0.9;
 }
 
 .navbar-container {

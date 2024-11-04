@@ -2,104 +2,114 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
-//insertar un contacto  POST
-router.post('/', function(req, res, next){
-    const { name, lastname, email, phone, comments, answer } = req.body; 
+router.post('/', function (req, res, next) {
+    const { name, lastname, email, phone, comments, answer, deleted } = req.body;
 
-    const query = `INSERT INTO contacts ( name, lastname, email, phone, comments, answer)
-                   VALUES (?, ?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO contacts (name, lastname, email, phone, comments, answer, deleted)
+                   VALUES ( ?, ?, ?, ?, ?, 'pending', 1)`;
 
-    connection.query(query, [ name, lastname, email, phone, comments, answer], function(error, results) {
-        if (error) { 
+    connection.query(query, [name, lastname, email, phone, comments, answer, deleted], function (error, results) {
+        if (error) {
             console.log(error);
             return res.status(500).json({
                 error: error,
                 message: 'error creating contact'
             });
-        } 
-        res.status(201).json({ 
+        }
+        res.status(201).json({
             message: 'contact created successfully',
             data: results
-        }); 
-    });
- });
-
- // obtener todos los contactos  GET
- router.get ('/', function(req, res, next){
-    const query = 'SELECT * FROM contacts';
-
-    connection.query(query, function(error, results){
-        if (error) { 
-            console.log(error);
-            return res.status(500).json({
-                error: error,
-                message: 'error fetching contacts'
-            });   
-        }
-        res.status(200).json({
-            data: results, 
-            message: 'List of contacts'
         });
     });
- });
+});
 
- //obtener un contacto por su id  GET
- router.get('/:contact_id', function(req, res, next){
-    const { contact_id } = req.params;
-    const query = 'SELECT * FROM contacts WHERE contact_id = ?';
-    connection.query(query, [contact_id], function(error, results){
-        if (error || results.length == 0) { 
+router.get('/', function (req, res, next) {
+
+    const query = 'SELECT * FROM contacts;';
+    connection.query(query, function (error, results) {
+        if (error) {
             console.log(error);
-            return res.status(404).json({
+            res.status(500).send({
                 error: error,
                 message: 'contact not found'
             });
         }
-        res.status(200).json({ 
-            data: results[0],
+        res.status(200).json({
+            data: results,
             message: 'contact details'
         });
     });
- });
+});
 
- // para actualizar un contacto PUT
- router.put('/:contact_id', function(req, res, next ){ 
+// para actualizar un contacto PUT
+router.put('/:contact_id', function (req, res, next) {
     const { contact_id } = req.params;
-    const { user_id, name, lastname, email, phone, comments, answer, status} = req.body;
+    const { user_id, name, lastname, email, phone, comments, answer, status } = req.body;
     const query = `UPDATE contacts SET user_id = ?, name = ?, lastname = ?, email = ?, phone = ?, comments = ?, answer = ?, status = ?
                    WHERE contact_id = ?`;
-    connection.query(query, [user_id, name, lastname, email, phone, comments, answer, status, contact_id], function(error, results) { 
-        if (error) { 
+    connection.query(query, [user_id, name, lastname, email, phone, comments, answer, status, contact_id], function (error, results) {
+        if (error) {
             console.log(error);
             return res.status(500).json({
                 error: error,
                 message: 'error updating contact'
             });
         }
-        res.status(200).json({
-            message: 'contact updated successfully',
-            data: results
-        });
     });
- });
+});
 
- //para borrar un contacto DELETE 
- router.delete('/:contact_id', function(req, res, next) { 
-    const { contact_id } = req.params; 
-    const query = 'DELETE FROM contacts WHERE contact_id = ?'; 
-    connection.query(query, [contact_id], function(error, results){ 
-        if (error) { 
+router.patch('/:contact_id', function (req, res, next) {
+    const { contact_id } = req.params;
+    const query = `UPDATE contacts SET answer = CASE WHEN answer = 'pending' THEN 'answered' END WHERE contact_id = ?`;
+    connection.query(query, [contact_id], function (error, results) {
+        if (error) {
             console.log(error);
             return res.status(500).json({
                 error: error,
                 message: 'Error deleting contact'
             });
+        } else {
+            res.status(204).json({
+                message: 'Contact deleted successfully'
+            });
         }
-        res.status(204).json({
-            message: 'Contact deleted successfully'
-        });
     });
- });
+});
 
- //exporto el enrutador 
- module.exports = router; 
+//para borrar un contacto DELETE 
+// router.delete('/:contact_id', function (req, res, next) {
+//     const { contact_id } = req.params;
+//     const query = 'UPDATE contacts SET deleted = !deleted WHERE contact_id = ?';
+//     connection.query(query, [contact_id], function (error, results) {
+//         if (error) {
+//             console.log(error);
+//             return res.status(500).json({
+//                 error: error,
+//                 message: 'Error deleting contact'
+//             });
+//         } else {
+//             res.status(204).json({
+//                 message: 'Contact deleted successfully'
+//             });
+//         }
+//     });
+// });
+router.delete('/:contact_id', function (req, res, next) {
+    const { contact_id } = req.params;
+    const query = `UPDATE contacts SET deleted = !deleted WHERE contact_id = ${contact_id};`;
+    connection.query(query, function (error, results) {
+        if (error) {
+            console.log(error);
+            return res.status(500).json({
+                error: error,
+                message: 'Error deleting contact'
+            });
+        } else {
+            res.status(204).json({
+                message: 'Contact deleted successfully'
+            });
+        }
+    });
+});
+
+module.exports = router; 
