@@ -16,13 +16,25 @@ router.get("/", function (req, res) {
 });
 
 router.get("/:id", async (req, res) => {
-  const { id } = req.params; 
+  const { id } = req.params;
   try {
     const operatingExpense = await OperatingExpense.findOne({
       where: { id },
     });
     verifyIfIdExists(operatingExpense);
     getHandleSuccess(200)(res, operatingExpense);
+  } catch (error) {
+    getHandleError(error, res)
+  }
+});
+
+router.get("/project/:id", async (req, res) => {
+  const { id } = req.params; 
+  try {
+    const operatingExpenses = await OperatingExpense.findAll({
+      where: { projectId: id },
+    });
+    getHandleSuccess(200)(res, operatingExpenses);
   } catch (error) {
     getHandleError(error, res)
   }
@@ -51,7 +63,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const [operatingExpenseDeleted] = await OperatingExpense.update({ deleted: true }, {

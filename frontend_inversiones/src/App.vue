@@ -1,64 +1,47 @@
 <script setup>
-</script>
+import { RouterView, useRouter } from "vue-router";
+import { computed } from "vue";
+import WhatsAppButton from "./components/WhatsAppButton.vue";
+import FooterInfo from "./components/FooterInfo.vue";
+import NavBar from "./components/NavBar.vue";
 
+const route = useRouter();
+
+const isRootRoute = computed(() => route.currentRoute.value.path === "/");
+
+const hiddenRoutes = ["/login"];
+
+const ShowNav = () => {
+  return !hiddenRoutes.includes(route.currentRoute.value.path);
+};
+</script>
 <template>
-  <div>
+  <div class="app-container">
     <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Inversion Mineria</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <router-link class="nav-link" to="/home">Home</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/minerals"
-                >Minerals</router-link
-              >
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/posts-admin">Post</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/category-posts"
-                >Categorias de Post</router-link
-              >
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/projects"
-                >Projects</router-link
-              >
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/users">Users</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/login">Login</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/movements">Movimientos</router-link>
-            </li>
-          </ul>
-        </div>
-      </nav>
+      <NavBar v-if="ShowNav()" />
     </header>
-    <main>
+    <main :class="['main-content', { 'no-padding': isRootRoute }]">
       <RouterView />
     </main>
-    <WhatsAppButton />
+    <footer>
+      <WhatsAppButton />
+      <FooterInfo v-if="ShowNav()" />
+    </footer>
   </div>
 </template>
 
 <style scoped>
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+}
+
+.no-padding {
+  padding-top: 0;
+}
 </style>

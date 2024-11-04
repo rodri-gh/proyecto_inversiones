@@ -2,7 +2,8 @@
 </script>
 
 <template>
-  <main>
-    <RouterView />
-  </main>
+  <div>
+    <main>
+    </main>
+  </div>
 </template>

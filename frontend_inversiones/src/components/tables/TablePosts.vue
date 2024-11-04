@@ -8,10 +8,15 @@
       </thead>
       <tbody>
         <tr v-if="items.length === 0">
-          <td colspan="6" class="text-center">No hay categorias registradas</td>
+          <td colspan="6" class="text-center">No hay posts registrados</td>
         </tr>
-        <tr v-for="item in items" :key="item.category_post_id">
-          <td>{{ item.name }}</td>
+        <tr v-for="item in items" :key="item.post_id">
+          <td>{{ item.title }}</td>
+          <td>{{ item.summary }}</td>
+          <td>
+            <span v-if="item.status == 1" class="badge bg-success">Activo</span>
+            <span v-else class="badge bg-danger">Inactivo</span>
+          </td>
 
           <td>
             <Button
@@ -20,10 +25,10 @@
               buttonClass="btn-warning btn-sm m-1"
             />
             <Button
-              @click="() => actions.delete(item.category_post_id)"
-              :icon="item.deleted ? 'fa fa-trash' : 'fa fa-check'"
+              @click="() => actions.delete(item.post_id)"
+              :icon="item.status ? 'fa fa-trash' : 'fa fa-check'"
               :buttonClass="`btn-${
-                item.deleted ? 'danger' : 'success'
+                item.status ? 'danger' : 'success'
               } btn-sm m-1`"
             />
           </td>

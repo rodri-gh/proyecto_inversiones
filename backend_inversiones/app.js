@@ -48,5 +48,6 @@ app.use('/category_post', categoryPostsRouter);
 app.use('/post', postRouter);
 app.use('/faq', faqRouter);
 app.use('/movement', movementsRouter);
+app.use('/analysis_report', analysisReportRouter);
 
 export default app;

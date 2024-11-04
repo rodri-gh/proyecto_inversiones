@@ -27,3 +27,13 @@ const updateValue = (event) => {
   emit("update:modelValue", event.target.value);
 };
 </script>
+<style scoped>
+textarea {
+  width: 100%;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 50px;
+  outline: none;
+}
+</style>

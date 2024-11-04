@@ -57,6 +57,7 @@
         label="Imagen"
         @update:modelValue="handleImageChange"
         accept="image/*"
+        ref="inputFileRef"
       />
 
       <div v-if="previewUrl" class="mt-3">
@@ -95,6 +96,8 @@ const description = ref("");
 const image = ref(null);
 const previewUrl = ref(null);
 const selectedMineral = ref({});
+
+const inputFileRef = ref(null);
 
 onMounted(() => {
   getMinerals();
@@ -178,5 +181,6 @@ const reset = () => {
   image.value = null;
   previewUrl.value = null;
   selectedMineral.value = {};
+  inputFileRef.value?.reset();
 };
 </script>
