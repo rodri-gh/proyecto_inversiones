@@ -13,6 +13,8 @@ import ContactView from '@/views/ContactView.vue'
 import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue'
 import UserHomeView from '@/views/UserHomeView.vue'
 import MovementsView from '@/views/MovementsView.vue'
+import ControlPanel from '@/components/ControlPanel.vue'
+import InvestmentsOfUser from '@/components/InvestmentsOfUser.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -129,6 +131,18 @@ const router = createRouter({
       path: '/movements',
       name: 'movements',
       component: MovementsView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: "/dashboard",
+      name: "dashboard",
+      component: ControlPanel,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: "/investmentOfUser",
+      name: "investmentOfUser",
+      component: InvestmentsOfUser,
       meta: { requiresAuth: true }
     }
   ]
