@@ -129,7 +129,7 @@ const reset = () => {
     <div class="container col-md-12 mt-5">
         <div class="card shadow border-0">
             <div class="card-body">
-                <h4 class="card-title text-center">Inversiones</h4>
+                <h4 class="card-title text-center">Inversiones de los Usuarios</h4>
                 <div class="text-end">
                     <Button 
                         data-bs-toggle="modal"

@@ -50,9 +50,9 @@ router.get('/:id', validateToken, (req, res, next) => {
 });
 
 router.post('/', validateToken, async (req, res) => {
-    const { email, phone, name, lastName, username, password } = req.body;
+    const { email, phone, role, name, lastName, username, password } = req.body;
 
-    const userQuery = `INSERT INTO users (email, phone, role, name, last_name) VALUES ("${email}", ${phone}, "client", "${name}", "${lastName}");`;
+    const userQuery = `INSERT INTO users (email, phone, role, name, last_name) VALUES ("${email}", ${phone}, "${role}", "${name}", "${lastName}");`;
     console.log("query", userQuery);
     
     connection.query(userQuery, async (error, results) => {
@@ -64,6 +64,7 @@ router.post('/', validateToken, async (req, res) => {
                 message: 'Error in the query',
             });
         }
+        console.log(results);
         lastInsertedId = results.insertId;
         const passwordHash = await encrypt(password);
         const accountQuery = `INSERT INTO account (user_id, username, password) VALUES (${lastInsertedId}, "${username}", "${passwordHash}");`;
