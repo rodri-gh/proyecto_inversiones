@@ -1,135 +1,79 @@
-var express = require("express");
-var router = express.Router();
-var connection = require("../database");
+import express from "express";
+import { getHandleSuccess } from "../helpers/handleSuccess.js";
+import { OperatingExpense } from "../models/mainExport.js";
+import { getHandleError } from "../helpers/handleExceptions.js";
+import { verifyIfIdExists } from "../helpers/handleId.js";
 
+
+const router = express.Router();
 router.get("/", function (req, res) {
-  const query = "SELECT * FROM operating_expenses;";
-
-  connection.query(query, function (error, results) {
-    if (error) {
-      return res.status(500).json({
-        error: error,
-        message: "Error in the query",
-      });
-    }
-
-    res.status(200).json({
-      data: results,
-      message: "List of operating expenses and investments",
-    })
-  });
+  try {
+    const operatingExpenses = OperatingExpense.findAll();
+    getHandleSuccess(200)(res, operatingExpenses);
+  } catch (error) {
+    getHandleError(error, res)
+  }
 });
 
-router.get("/:id", function (req, res) {
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const operatingExpense = await OperatingExpense.findOne({
+      where: { id },
+    });
+    verifyIfIdExists(operatingExpense);
+    getHandleSuccess(200)(res, operatingExpense);
+  } catch (error) {
+    getHandleError(error, res)
+  }
+});
+
+router.get("/project/:id", async (req, res) => {
   const { id } = req.params; 
-  const query = "SELECT * FROM operating_expenses WHERE id = ?"; 
-
-  connection.query(query, [id], function (error, results) {
-    if (error) {
-      return res.status(500).json({
-        error: error,
-        message: "Error in the query",
-      });
-    }
-
-    if (results.length === 0) {
-      return res.status(404).json({
-        message: "No operating expense found with the provided ID",
-      });
-    }
-
-    res.status(200).json({
-      data: results[0], 
-      message: "Operating expense details",
+  try {
+    const operatingExpenses = await OperatingExpense.findAll({
+      where: { projectId: id },
     });
-  });
+    getHandleSuccess(200)(res, operatingExpenses);
+  } catch (error) {
+    getHandleError(error, res)
+  }
 });
 
+router.post("/", async (req, res) => {
+  const { name, description, expenses, projectId } = req.body;
+  try {
+    await OperatingExpense.create({ name, description, expenses, projectId });
+    getHandleSuccess(201)(res, "Operating Expenses created successfully");
+  } catch (error) {
+    getHandleError(error, res)
+  }
+});
 
-router.get("/project/:id", function (req, res) {
-  const { id } = req.params; 
-  const query = `SELECT * FROM operating_expenses
-              WHERE project_id = ${id};`;
-
-  connection.query(query, function (error, results) {
-    if (error) {
-      return res.status(500).json({
-        error: error,
-        message: "Error in the query",
-      });
-    }
-
-    res.status(200).json({
-      data: results,
-      message: "Details of operating expenses",
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name, description, expenses, projectId } = req.body;
+  try {
+    await OperatingExpense.update({ name, description, expenses, projectId }, {
+      where: { id },
     });
-  });
+    getHandleSuccess(204)(res);
+  } catch (error) {
+    getHandleError(error, res)
+  }
 });
 
-router.post("/", (req, res) => {
-  const { name, description, expenses, project_id } = req.body;
-
-  const query =
-    "INSERT INTO operating_expenses (name, description, expenses, project_id) VALUES (?, ?, ?, ?);";
-
-  connection.query(
-    query,
-    [name, description, expenses, project_id],
-    function (error, results) {
-      if (error) {
-        return res.status(400).json({
-          error: error,
-          message: "Project ID error post",
-        });
-      }
-
-      res.status(201).json({
-        message: "POST succesfully",
-      });
-    }
-  );
-});
-
-router.put("/:id", (req, res) => {
-  const { name, description, expenses, project_id } = req.body;
-  const id = req.params.id;
-
-  const query =
-    "UPDATE operating_expenses SET name = ?, description = ?, expenses = ?, project_id = ? WHERE id = ?";
-
-  connection.query(
-    query,
-    [name, description, expenses, project_id, id],
-    function (error, results) {
-      if (error) {
-        return res.status(500).json({
-          message: "Project ID ERROR",
-        });
-      }
-
-      res.status(200).json({
-        error: error,
-        message: "Succesfully PUT",
-      });
-    }
-  );
-});
-
-router.patch("/:id", function (req, res) {
-  const query =
-    "UPDATE  operating_expenses SET deleted = !deleted WHERE id= ?;";
-
-  connection.query(query, [req.params.id], function (error, results) {
-    if (error) {
-      res.status(500).json({
-        error: error,
-        message: "Error DELETE",
-      });
-    }
-    res.status(200).json({
-      message: "Succesfully DELETE",
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [operatingExpenseDeleted] = await OperatingExpense.update({ deleted: true }, {
+      where: { id },
     });
-  });
+    verifyIfIdExists(operatingExpenseDeleted);
+    getHandleSuccess(204)(res);
+  } catch (error) {
+    getHandleError(error, res)
+  }
 });
 
-module.exports = router;
+export default router;

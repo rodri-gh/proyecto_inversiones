@@ -1,11 +1,14 @@
-var express = require('express');
-var router = express.Router();
-const conexion = require('../database');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { getHandleSuccess } from '../helpers/handleSuccess.js';
+import { getHandleError } from '../helpers/handleExceptions.js';
+import Mineral from '../models/mineralModel.js';
+import { verifyIfIdExists } from '../helpers/handleId.js';
 
-// Asegurar que el directorio donde se guardaran las imagenes existe
+
+const router = express.Router();
 const uploadDir = 'public/images/minerals';
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -23,55 +26,46 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get('/', function (req, res, next) {
-  const query = 'SELECT * FROM minerals;';
-  conexion.query(query, function (error, results, fields) {
-    if (error) {
-      console.log(error);
-      res.status(500).json({
-        error: error,
-        message: 'Error in the query',
-      });
-    } else {
-      console.log(results);
-      // para mostrar imagenes de la base de datos
-      results.forEach(element => {
-        if (element.image) {
-          element.image = `http://localhost:3000/images/minerals/${element.image}`;
-        }
-      })
-      res.status(200).json({
-        data: results,
-        message: 'Listing minerals',
-      });
-    }
-  });
+router.get('/', async (req, res, next) => {
+  // const query = 'SELECT * FROM minerals;';
+  // connection.query(query, function (error, results, fields) {
+  //   if (error) {
+  //     console.log(error);
+  //     res.status(500).json({
+  //       error: error,
+  //       message: 'Error in the query',
+  //     });
+  //   } else {
+  //     console.log(results);
+  //     // para mostrar imagenes de la base de datos
+  //     results.forEach(element => {
+  //       if (element.image) {
+  //         element.image = `http://localhost:3000/images/minerals/${element.image}`;
+  //       }
+  //     })
+  //     res.status(200).json({
+  //       data: results,
+  //       message: 'Listing minerals',
+  //     });
+  //   }
+  // });
+  try {
+    const minerals = await Mineral.findAll();
+    getHandleSuccess(200)(res, minerals);
+  } catch (error) {
+    getHandleError(error, res)
+  }
 });
 
-router.post('/', upload.single('image'), function (req, res, next) {
+router.post('/', upload.single('image'), async (req, res, next) => {
   const { name, price, description } = req.body;
   const image = req.file ? `${req.file.filename}` : null;
-
-  const query = `
-    INSERT INTO minerals (name,price,description,image) 
-    VALUES ("${name}","${price}","${description}","${image}");
-  `;
-
-  conexion.query(query, function (error, results, fields) {
-    if (error) {
-      console.log(error);
-      res.status(500).json({
-        error: error,
-        message: 'Error in the query',
-      });
-    } else {
-      console.log(results);
-      res.status(200).json({
-        data: results,
-        message: 'Mineral created',
-      });
-    }
-  });
+  try {
+    await Mineral.create({ name, price, description, image });
+    getHandleSuccess(201)(res, "Mineral created successfully");
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
 router.put('/:id', upload.single('image'), function (req, res, next) {
@@ -79,7 +73,7 @@ router.put('/:id', upload.single('image'), function (req, res, next) {
   const { name, description, price } = req.body;
 
   const query = `SELECT image FROM minerals WHERE id = "${mineralId}";`;
-  conexion.query(query, function (error, results, fields) {
+  connection.query(query, function (error, results, fields) {
     if (error) {
       console.error(error);
       return res.status(500).json({
@@ -111,7 +105,7 @@ router.put('/:id', upload.single('image'), function (req, res, next) {
       WHERE id = "${mineralId}";
     `;
 
-    conexion.query(query, (error, results) => {
+    connection.query(query, (error, results) => {
       if (error) {
         console.error(error);
         return res.status(500).json({
@@ -127,22 +121,15 @@ router.put('/:id', upload.single('image'), function (req, res, next) {
   });
 });
 
-router.patch('/:id', function (req, res, next) {
-  const mineralId = req.params.id;
-
-  const query = `UPDATE minerals SET deleted = !deleted WHERE id = "${mineralId}";`;
-  conexion.query(query, function (error, results, fields) {
-    if (error) {
-      console.error(error);
-      return res.status(500).json({
-        error: error,
-        message: 'Error deleting mineral',
-      });
-    }
-    res.status(200).json({
-      message: 'Mineral deleted',
-    });
-  });
+router.delete('/:id', async (req, res, next) =>{
+  const { id } = req.params;
+  try {
+    const [mineralDeleted] = await Mineral.update({ deleted: true }, { where: { id } });
+    verifyIfIdExists(mineralDeleted);
+    getHandleSuccess(204)(res, "Mineral created successfully");
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
-module.exports = router;
+export default router;
