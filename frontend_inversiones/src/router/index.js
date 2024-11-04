@@ -109,6 +109,21 @@ const router = createRouter({
       redirect: '/'
     },
     {
+      path: '/category-posts',
+      name: 'category-posts',
+      component: CategoryPostView
+    },
+    {
+      path: '/posts',
+      name: 'posts',
+      component: PostsView
+    },
+    {
+      path: '/posts/:id',
+      name: 'post-details',
+      component: PostView
+    },
+    {
       path: '/movements',
       name: 'movements',
       component: MovementsView,
