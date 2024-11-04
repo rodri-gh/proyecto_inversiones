@@ -5,11 +5,9 @@ import MyProfile from './MyProfile.vue';
 import ProjectsView from '@/views/ProjectsView.vue';
 import InvestmentsOfUser from './InvestmentsOfUser.vue';
 import UserWithdrawalRequests from './UserWithdrawalRequests.vue';
-import UsersView from '@/views/UsersView.vue';
+import UserViewCopy from '@/views/UserViewCopy.vue';
 import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue';
 import ConfigurationAndSecurity from './Dashboard/ConfigurationAndSecurity.vue';
-import Finance from './Dashboard/Finance.vue';
-import AnalysisAndReports from './Dashboard/AnalysisAndReports.vue';
 import Start from './Dashboard/Start.vue';
 import ContactView from '@/views/ContactView.vue';
 
@@ -26,20 +24,16 @@ const componentslinks = computed(() => {
   ]
   if (userRole == 'super_user') {
     links.push({ name: 'Inicio', component: Start });
-    links.push({ name: 'Gestion de Usuarios', component: UsersView });
+    links.push({ name: 'Gestion de Usuarios', component: UserViewCopy });
     links.push({ name: 'Projectos', component: ProjectsView });
-    links.push({ name: 'Finanzas', component: Finance });
     links.push({ name: 'Retiro de Fondos', component: WithdrawalRequestsView });
-    links.push({ name: 'Analisis y Reportes', component: AnalysisAndReports });
     links.push({ name: 'Configuracion y Seguridad', component: ConfigurationAndSecurity });
     links.push({ name: 'Responder Contacto', component: ContactView });
   } else if (userRole == 'admin') {
     links.push({ name: 'Inicio', component: Start });
-    links.push({ name: 'Gestion de Usuarios', component: ProjectsView });
+    links.push({ name: 'Gestion de Usuarios', component: UserViewCopy });
     links.push({ name: 'Projectos', component: ProjectsView });
-    links.push({ name: 'Finanzas', component: Finance });
     links.push({ name: 'Retiro de Fondos', component: ProjectsView });
-    links.push({ name: 'Analisis y Reportes', component: AnalysisAndReports });
     links.push({ name: 'Configuracion y Seguridad', component: ConfigurationAndSecurity });
   } else if (userRole == 'client') {
     links.push({ name: 'Projectos', component: ProjectsView });
