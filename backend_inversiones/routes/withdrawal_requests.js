@@ -1,20 +1,14 @@
-var express = require('express');
-var router = express.Router();
-var connection = require('../database');
-const multer = require ('multer');
-const path = require('path');
-const fs = require('fs');
-const cors = require('cors')
+import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { getHandleSuccess } from '../helpers/handleSuccess.js';
+import { getHandleError } from '../helpers/handleExceptions.js';
+import { WithdrawalRequest } from '../models/mainExport.js';
+import { verifyIfIdExists } from '../helpers/handleId.js';
 
-const jwt = require('jsonwebtoken');
-const { validateToken } = require('./auth');
 
-router.post('withdrawalrequests')
-
-router.use(cors({
-  origin:['http://localhost:3000', 'http://localhost:5173'],
-}));
-
+const router = express.Router();
 const uploadDir = 'public/images/withdrawalRequests';
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
@@ -31,7 +25,6 @@ const storage = multer.diskStorage({
   }
 });
 
-//
 const fileFilter = (req, file, cb) => {
   const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
   if (allowedTypes.includes(file.mimetype)) {
@@ -50,45 +43,24 @@ const upload = multer({
 });
 
 
-router.get('/', function (req, res, next) {
-  const query = 'SELECT * FROM withdrawal_requests;';
-
-  connection.query(query, function (error, results, fields) {
-    if (error) {
-      console.log(error);
-      res.status(500).json({
-        error: error,
-        message: 'Error in the query'
-      });
-    } else {
-      console.log(results);
-      res.status(200).json({
-        data: results,
-        message: 'List of withdrawal requests'
-      });
-    }
-  });
+router.get('/', async (req, res, next) => {
+  try {
+    const withdrawalRequests = await WithdrawalRequest.findAll();
+    getHandleSuccess(200)(res, withdrawalRequests);
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
-router.get('/:id', function (req, res, next) {
+router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
-  const query = `SELECT * FROM withdrawal_requests WHERE withdrawal_requests_id = ${id};`;
-
-  connection.query(query, function (error, results, fields) {
-    if (error) {
-      console.log(error);
-      res.status(500).json({
-        error: error,
-        message: 'Error in the query'
-      });
-    } else {
-      console.log(results);
-      res.status(200).json({
-        data: results[0],
-        message: 'Withdrawal request details'
-      });
-    }
-  });
+  try {
+    const withdrawalRequest = await WithdrawalRequest.findOne({ where: { id } });  
+    verifyIfIdExists(withdrawalRequest);
+    getHandleSuccess(200)(res, withdrawalRequest);
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
 router.post('/', upload.fields([{ name: 'photo_document' }, { name: 'selfie_photo' }]), function (req, res, next) {
@@ -175,44 +147,29 @@ router.put('/:id', upload.fields([{ name: 'photo_document' }, { name: 'selfie_ph
   });
 });
 
-//tareas de martes
-router.patch('/status/:id', function (req, res, next) {
+router.patch('/status/:id', async (req, res, next) => {
   const { id } = req.params;
   const { status } = req.body;
-  const query = `UPDATE withdrawal_requests SET status = ? WHERE withdrawal_requests_id = "${id}";`;
-
-  connection.query(query, [status, id ], function (error, results) {
-    if (error) {
-      console.log(error);
-      res.status(500).json({
-        error: error,
-        message: 'Error in the query'
-      });
-    } else {
-      res.status(200).json({
-        data: results,
-        message: 'Withdrawal status updated'
-      });
-    }
-  });
+  try {
+    const [withdrawalRequestCount] = await WithdrawalRequest.update({ deleted: true }, { 
+      where: { id } 
+    });
+  verifyIfIdExists(withdrawalRequestCount);
+    getHandleSuccess(204)(res);
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
-
-router.patch('/:id', function (req, res, next) {
+router.delete('/:id', async (req, res, next) => {
   const { id } = req.params;
-  const query = `UPDATE withdrawal_requests SET deleted = 0 WHERE withdrawal_requests_id = "${id}";`;
-  connection.query(query, function (error, results) {
-    if (error) {
-      res.status(500).json({
-        message: 'Error updating withdrawal requests',
-        error
-      });
-    } else if (results.affectedRows === 0) {
-      res.status(404).json({ mensaje: 'Movement not found' });
-    } else {
-      res.status(200).json({ mensaje: 'Movement successfully updated' });
-    }
-  });
+  try {
+    const [withdrawalRequestDeleted] = await WithdrawalRequest.update({ deleted: true }, { where: { id } });
+  verifyIfIdExists(withdrawalRequestDeleted);
+    getHandleSuccess(204)(res);
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
-module.exports = router;
+export default router;

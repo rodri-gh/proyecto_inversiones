@@ -1,97 +1,59 @@
-var express = require('express');
-var router = express.Router();
-var connection = require('../database');
+import express from 'express';
+import { getHandleError } from '../helpers/handleExceptions.js';
+import { getHandleSuccess } from '../helpers/handleSuccess.js';
+import { CategoryPost } from '../models/mainExport.js';
+import { verifyIfIdExists } from '../helpers/handleId.js';
 
 
-router.get('/', function (req, res, next) {
-  const query = 'SELECT * FROM category_posts;';
-
-  connection.query(query, function (error, results, fields) {
-    if (error) {
-      return res.status(500).json({
-        error: error,
-        message: 'Error in the query',
-      });
-    }
-
-    res.status(200).json({
-      data: results,
-      message: ' List of category posts',
-    });
-  });
+const router = express.Router();
+router.get('/', async (req, res, next) => {
+  try {
+    const categoryPosts = await CategoryPost.findAll();
+    getHandleSuccess(res, categoryPosts)
+  } catch (error) {
+    getHandleError(error, res)
+  }
 });
 
 
-router.post('/', function (req, res, next) {
+router.post('/', async (req, res, next) => {
   const { name } = req.body;
-
-  const query = 'INSERT INTO category_posts (name) VALUES (?);';
-
-  connection.query(query, [name], function (error, results, fields) {
-    if (error) {
-      return res.status(500).json({
-        error: error,
-        message: 'Error in the query',
-      });
-    }
-
-    res.status(201).json({
-      message: 'Category post created successfully',
-    });
-  });
+  try {
+    await CategoryPost.create({ name });
+    getHandleSuccess(res, "Category post created successfully")
+  } catch (error) {
+    getHandleError(error, res)
+  }
 });
 
 
-router.put('/:id', function (req, res, next) {
-
-  const postId = req.params.id;
+router.put('/:id', async (req, res, next) => {
+  const { id } = req.params;
   const { name } = req.body;
-
-  const query = 'UPDATE category_posts SET name = ? WHERE category_post_id = ?;';
-
-  connection.query(query, [name, postId], function (error, results, fields) {
-
-    if (error) {
-      return res.status(500).json({
-        error: error,
-        message: 'Error in the query',
-      });
-    }
-
-    res.status(200).json({
-      message: 'Category post updated successfully',
+  try {
+    const [updatedCount] = await CategoryPost.update({ name }, {
+      where: { id },
+      returning: true
     });
-  });
-
+    verifyIfIdExists(updatedCount);
+    getHandleSuccess(res)
+  } catch (error) {
+    getHandleError(error, res)
+  }
 });
 
-router.patch('/:id', function (req, res, next) {
-
-  const id = req.params.id;
-
-
-  const query = 'UPDATE category_posts SET deleted = !deleted WHERE category_post_id = ?;';
-
-  connection.query(query, [id], function (error, results, fields) {
-
-    if (error) {
-      return res.status(500).json({
-        error: error,
-        message: 'Error in the query',
-      });
-    }
-
-    res.status(200).json({
-      message: 'Category post updated successfully',
+router.patch('/:id', async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const [updatedCount] = await CategoryPost.update({ deleted: 1 }, {
+      where: { id },
+      returning: true
     });
-  });
-
+    verifyIfIdExists(updatedCount);
+    getHandleSuccess(res)
+  } catch (error) {
+    getHandleError(error, res)
+  }
 });
 
-module.exports = router;
-
-
-
-
-
-
+export default router;
