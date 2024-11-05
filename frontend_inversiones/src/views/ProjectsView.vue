@@ -208,7 +208,7 @@ import { ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
 import axios from "axios";
 
-const baseURL = "http://localhost:3000/project/";
+const baseURL = "http://localhost:3000/projects/";
 
 const projects = ref([]);
 
@@ -234,7 +234,7 @@ onMounted(() => {
 const getProjects = async () => {
   try {
     const { data } = await axios.get(baseURL);
-    projects.value = data;
+    projects.value = data.data;
     console.log(projects.value);
   } catch (error) {
     console.log(error);

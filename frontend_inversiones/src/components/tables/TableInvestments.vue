@@ -11,7 +11,7 @@
                     <td colspan="5" class="text-center">No hay inversiones registradas</td>
                 </tr>
                 <tr v-for="item in items" :key="item.id">
-                    <td>{{ item.userId }}</td>
+                    <td>{{ item.user_id }}</td>
                     <td>{{ item.amount }}</td>
                     <td>{{ item.investment_date }}</td>
                     <td>{{ item.profit_percentage }}</td>

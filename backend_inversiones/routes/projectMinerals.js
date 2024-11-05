@@ -15,14 +15,13 @@ router.get('/', (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', (req, res) => {
   const { id } = req.params;
   try {
-    const projectMineral = await ProjectMineral.findOne({ where: { id } });
+    const projectMineral = ProjectMineral.findOne({ where: { id } });
     verifyIfIdExists(projectMineral);
     getHandleSuccess(200)(res, projectMineral);
   } catch (error) {
-    console.log(error);
     getHandleError(error, res);
   }
 });

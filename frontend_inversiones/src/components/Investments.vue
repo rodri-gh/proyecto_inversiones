@@ -106,7 +106,7 @@ const props = defineProps({
 });
 
 const users = ref([]);
-const baseURL = "http://localhost:3000/investment/";
+const baseURL = "http://localhost:3000/investments/";
 const investments = ref([]);
 const amount = ref(0);
 const investment_date = ref("");
@@ -129,10 +129,8 @@ onMounted(() => {
 
 const getInvestments = async () => {
     try {
-        console.log(props.idProjectInvestment);
         const {data} = await axios.get(baseURL + "project/" + props.idProjectInvestment);
-        console.log(data);
-        investments.value = data;
+        investments.value = data.data;
     } catch (error) {
         console.error(error);
     }
@@ -141,7 +139,7 @@ const getInvestments = async () => {
 const getUsers = async () => {
     try {
         const {data} = await axios.get("http://localhost:3000/user" ,header);
-        users.value = data;
+        users.value = data.data;
         console.log(users.value)
     } catch (error) {
         console.error(error);
