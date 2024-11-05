@@ -158,6 +158,7 @@
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { getHeaderRequest } from "@/authService";
 
 const props = defineProps({
   idProjectMineral: {
@@ -174,6 +175,7 @@ const selectedMinerals = ref([]);
 const selectedMineral = ref("");
 const selectedProjectMineral = ref({});
 const isEditing = ref(false); // Indica si se está editando o no
+const header = getHeaderRequest();
 
 onMounted(() => {
   getprojectMinerals();
@@ -182,8 +184,10 @@ onMounted(() => {
 
 const getprojectMinerals = async () => {
   try {
-    const { data } = await axios.get(baseURL + props.idProjectMineral);
-    projectMinerals.value = data;
+    console.log(props.idProjectMineral);
+    const { data } = await axios.get(baseURL + props.idProjectMineral, header);
+    console.log(data);
+    projectMinerals.value = Array.isArray(data) ? data : [data];
   } catch (error) {
     console.error(error);
   }
@@ -192,7 +196,8 @@ const getprojectMinerals = async () => {
 const getMinerals = async () => {
   try {
     const { data } = await axios.get("http://localhost:3000/minerals/");
-    minerals.value = data.data;
+    minerals.value = data;
+    console.log(data);
   } catch (error) {
     console.error("Error al obtener minerales:", error);
   }

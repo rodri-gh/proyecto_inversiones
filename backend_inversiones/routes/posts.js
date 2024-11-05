@@ -1,12 +1,11 @@
-var express = require('express');
-var router = express.Router();
-const conexion = require('../database');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-const mysql = require('mysql');
+import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import mysql from 'mysql';
 
-// Asegurar que el directorio donde se guardaran las imagenes existe
+
+const router = express.Router();
 const uploadDir = 'public/images/posts';
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -26,7 +25,7 @@ const upload = multer({ storage: storage });
 
 router.get('/', function (req, res, next) {
   const query = 'SELECT * FROM posts';
-  conexion.query(query, function (error, results, fields) {
+  connection.query(query, function (error, results, fields) {
     if (error) {
       console.log(error);
       res.status(500).json({
@@ -62,7 +61,7 @@ router.post('/', upload.single('cover_image'), function (req, res, next) {
     VALUES ("${category_post_id}", "${user_id}", "${title}", "${summary}", "${cover_image}", "${contentHTML}");
   `;
 
-  conexion.query(query, function (error, results, fields) {
+  connection.query(query, function (error, results, fields) {
     if (error) {
       console.log(error);
       res.status(500).json({
@@ -85,7 +84,7 @@ router.put('/:id', upload.single('cover_image'), function (req, res, next) {
   const contentHTML = mysql.escape(content);
 
   const query = `SELECT cover_image FROM posts WHERE post_id = "${postId}";`;
-  conexion.query(query, function (error, results, fields) {
+  connection.query(query, function (error, results, fields) {
     if (error) {
       console.error(error);
       return res.status(500).json({
@@ -116,7 +115,7 @@ router.put('/:id', upload.single('cover_image'), function (req, res, next) {
       WHERE post_id = "${postId}";
     `;
 
-    conexion.query(query, (error, results) => {
+    connection.query(query, (error, results) => {
       if (error) {
         console.error(error);
         return res.status(500).json({
@@ -136,7 +135,7 @@ router.patch('/:id', function (req, res, next) {
   const postId = req.params.id;
   // Cambiar el campo de eliminado del post de 1 a 0 o de 0 a 1
   const query = `UPDATE posts SET status = !status WHERE post_id = "${postId}";`;
-  conexion.query(query, function (error, results, fields) {
+  connection.query(query, function (error, results, fields) {
     if (error) {
       console.error(error);
       return res.status(500).json({
@@ -150,4 +149,4 @@ router.patch('/:id', function (req, res, next) {
   });
 });
 
-module.exports = router;
+export default router;

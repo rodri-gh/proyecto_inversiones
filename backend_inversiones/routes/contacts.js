@@ -1,115 +1,73 @@
-var express = require('express');
-var router = express.Router();
-var connection = require('../database');
+import express from 'express';
+import { getHandleError } from '../helpers/handleExceptions.js';
+import { getHandleSuccess } from '../helpers/handleSuccess.js';
+import Contact from '../models/contactModel.js';
+import { verifyIfIdExists } from '../helpers/handleId.js';
 
-router.post('/', function (req, res, next) {
-    const { name, lastname, email, phone, comments, answer, deleted } = req.body;
 
-    const query = `INSERT INTO contacts (name, lastname, email, phone, comments, answer, deleted)
-                   VALUES ( ?, ?, ?, ?, ?, 'pending', 1)`;
+const router = express.Router();
 
-    connection.query(query, [name, lastname, email, phone, comments, answer, deleted], function (error, results) {
-        if (error) {
-            console.log(error);
-            return res.status(500).json({
-                error: error,
-                message: 'error creating contact'
-            });
-        }
-        res.status(201).json({
-            message: 'contact created successfully',
-            data: results
+router.get('/', async (req, res, next) => {
+    try {
+        const contacts = await Contact.findAll();
+        getHandleSuccess(200)(res, contacts)
+    } catch (error) {
+        console.log(error);
+        getHandleError(error, res)
+    }
+});
+
+router.get('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        const contact = await Contact.findOne({ where: { id } });
+        verifyIfIdExists(contact);
+        getHandleSuccess(200)(res, contact)
+    } catch (error) {
+        getHandleError(error, res)
+    }
+});
+
+router.post('/', async (req, res, next) => {
+    //TODO: verify if we can create a repeat contact
+    const { name, lastName, email, phone, comment, answer } = req.body;
+    try {
+        await Contact.create({ name, lastName, email, phone, comment, answer });
+        getHandleSuccess(201)(res, "Contact created successfully")
+    } catch (error) {
+        getHandleError(error, res)
+    }
+});
+
+router.put('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    const { name, lastName, email, phone, comment, answer } = req.body;
+    try {
+        const [updatedContact] =await Contact.update({ name, lastName, email, phone, comment, answer },{
+            where: { id },
+            returning: true
         });
-    });
+        verifyIfIdExists(updatedContact);
+        getHandleSuccess(204)(res);
+    } catch (error) {
+        getHandleError(error, res);
+    }
 });
 
-router.get('/', function (req, res, next) {
-
-    const query = 'SELECT * FROM contacts;';
-    connection.query(query, function (error, results) {
-        if (error) {
-            console.log(error);
-            res.status(500).send({
-                error: error,
-                message: 'contact not found'
-            });
-        }
-        res.status(200).json({
-            data: results,
-            message: 'contact details'
+router.delete('/:id', async function (req, res, next) {
+    const { id } = req.params;
+    const contact_id = id;
+    try {
+        const [updatedContact] = await Contact.update({ deleted: 1 },{
+            where: { contact_id },
+            returning: true
         });
-    });
+        verifyIfIdExists(updatedContact);
+        getHandleSuccess(204)(res);
+    } catch (error) {
+        console.log(error);
+        getHandleError(error, res);
+    }
 });
 
-// para actualizar un contacto PUT
-router.put('/:contact_id', function (req, res, next) {
-    const { contact_id } = req.params;
-    const { user_id, name, lastname, email, phone, comments, answer, status } = req.body;
-    const query = `UPDATE contacts SET user_id = ?, name = ?, lastname = ?, email = ?, phone = ?, comments = ?, answer = ?, status = ?
-                   WHERE contact_id = ?`;
-    connection.query(query, [user_id, name, lastname, email, phone, comments, answer, status, contact_id], function (error, results) {
-        if (error) {
-            console.log(error);
-            return res.status(500).json({
-                error: error,
-                message: 'error updating contact'
-            });
-        }
-    });
-});
-
-router.patch('/:contact_id', function (req, res, next) {
-    const { contact_id } = req.params;
-    const query = `UPDATE contacts SET answer = CASE WHEN answer = 'pending' THEN 'answered' END WHERE contact_id = ?`;
-    connection.query(query, [contact_id], function (error, results) {
-        if (error) {
-            console.log(error);
-            return res.status(500).json({
-                error: error,
-                message: 'Error deleting contact'
-            });
-        } else {
-            res.status(204).json({
-                message: 'Contact deleted successfully'
-            });
-        }
-    });
-});
-
-//para borrar un contacto DELETE 
-// router.delete('/:contact_id', function (req, res, next) {
-//     const { contact_id } = req.params;
-//     const query = 'UPDATE contacts SET deleted = !deleted WHERE contact_id = ?';
-//     connection.query(query, [contact_id], function (error, results) {
-//         if (error) {
-//             console.log(error);
-//             return res.status(500).json({
-//                 error: error,
-//                 message: 'Error deleting contact'
-//             });
-//         } else {
-//             res.status(204).json({
-//                 message: 'Contact deleted successfully'
-//             });
-//         }
-//     });
-// });
-router.delete('/:contact_id', function (req, res, next) {
-    const { contact_id } = req.params;
-    const query = `UPDATE contacts SET deleted = !deleted WHERE contact_id = ${contact_id};`;
-    connection.query(query, function (error, results) {
-        if (error) {
-            console.log(error);
-            return res.status(500).json({
-                error: error,
-                message: 'Error deleting contact'
-            });
-        } else {
-            res.status(204).json({
-                message: 'Contact deleted successfully'
-            });
-        }
-    });
-});
-
-module.exports = router; 
+export default router;

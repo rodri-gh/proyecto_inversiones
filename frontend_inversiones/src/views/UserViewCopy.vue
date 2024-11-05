@@ -28,7 +28,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-if="users.length === 0">
+                <tr v-if="users != null">
                   <td colspan="7" class="text-center">
                     No existen usuarios registrados
                   </td>
@@ -255,8 +255,8 @@
   
   const getUsers = async () => {
     try {
-      const { data } = await axios.get(baseURL, header);
-      users.value = data.data;
+      const response = await axios.get(baseURL, header);
+      users.value = response.data;
       console.log(users.value);
     } catch (error) {
       console.log(error);

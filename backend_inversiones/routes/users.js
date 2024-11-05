@@ -1,151 +1,99 @@
-var express = require('express');
-var router = express.Router();
-const { encrypt } = require('../helpers/handleBcrypt');
-var connection = require('../database');
-const { validateToken } = require('./auth');
-const { sendEmail } = require('../services/emailService');
+import express from 'express';
+import { encrypt } from '../helpers/handleBcrypt.js';
+import { User, Account } from '../models/mainExport.js';
+import { getHandleSuccess } from '../helpers/handleSuccess.js';
+import { getHandleError } from '../helpers/handleExceptions.js';
+import sequelize from '../database/connection.js';
+import { verifyIfIdExists } from '../helpers/handleId.js';
 
-var lastInsertedId = null;
-
-router.get('/', validateToken, (req, res, next) => {
-    const query = `SELECT u.id, u.email, u.phone, u.role, u.name, u.last_name, u.deleted, a.username
-                    FROM users u LEFT
-                    JOIN account a ON u.id = a.user_id;`;
-    connection.query(query, (error, results, fields) => {
-        if (error) {
-            console.log(error);
-            res.status(500).json({
-                error: error,
-                message: 'Error in the query'
-            });
-        } else {
-            console.log(results);
-            res.status(200).json({
-                data: results,
-                message: 'List of users'
-            });
-        }
-    });
-});
-
-router.get('/:id', validateToken, (req, res, next) => {
-    const { id } = req.params;
-    console.log(id);
-    const query = `SELECT * FROM users WHERE id = ?`;
-    connection.query(query, [id], (error, results, fields) => {
-        if (error) {
-            console.log(error);
-            res.status(500).json({
-                error: error,
-                message: 'Error in the query'
-            });
-        } else {
-            console.log(results);
-            res.status(200).json({
-                data: results,
-                message: 'List of users'
-            });
-        }
-    });
-});
-
-router.post('/', validateToken, async (req, res) => {
-    const { email, phone, role, name, lastName, username, password } = req.body;
-    const userQuery = `INSERT INTO users (email, phone, role, name, last_name) VALUES ("${email}", ${phone}, "${role}", "${name}", "${lastName}");`;
-
-    console.log("query", userQuery);
-
-    connection.query(userQuery, async (error, results) => {
-        console.log("id", results);
-        if (error) {
-            console.log(error);
-            res.status(500).json({
-                error: error,
-                message: 'Error in the query',
-            });
-        }
-        console.log(results);
-        lastInsertedId = results.insertId;
-        const passwordHash = await encrypt(password);
-        const accountQuery = `INSERT INTO account (user_id, username, password) VALUES (${lastInsertedId}, "${username}", "${passwordHash}");`;
-        connection.query(accountQuery, (error) => {
-            if (error) {
-                console.log(error);
-                res.status(500).json({
-                    error: error,
-                    message: 'Error in the query',
-                });
-            }
-            sendEmail(email, { username, password, name });
-            res.status(200).json({
-                message: 'Created account',
-            });
+const router = express.Router();
+router.get('/', async (req, res, next) => {
+    try {
+        const users = await User.findAll({
+            include: [{
+                model: Account,
+                attributes: ['username', 'password']
+            }]
         });
-    });
+        getHandleSuccess(200)(res, users);
+    } catch (error) {
+        getHandleError(error, res);
+    }
 });
 
-router.put('/:id', validateToken, async (req, res) => {
+router.get('/:id', async (req, res, next) => {
     const { id } = req.params;
-    const { email, phone, name, last_name, username, password } = req.body;
-    const passwordHash = await encrypt(password);
-
-    const userQuery = `UPDATE users SET email = '${email}', phone = '${phone}', name = '${name}', 
-    last_name = '${last_name}' WHERE id = ${id};`;
-    connection.query(userQuery, function (error, results) {
-        if (error) {
-            console.log(error);
-            res.status(500).json({
-                error: error,
-                message: 'Error in the query'
-            });
-        } else {
-            const accountQuery = `UPDATE account SET username = '${username}', password = '${passwordHash}' WHERE user_id = ${id};`;
-            connection.query(accountQuery, function (error, results) {
-                if (error) {
-                    console.log(error);
-                    res.status(500).json({
-                        error: error,
-                        message: 'Error in the query'
-                    });
-                } else {
-                    console.log(results);
-                    res.status(200).json({
-                        data: results,
-                        message: 'Updated user'
-                    });
-                }
-            });
-        }
-    });
+    try {
+        const user = await User.findOne({
+            where: { id },
+            include: [{
+                model: Account,
+                attributes: ['username', 'password']
+            }]
+        });
+        verifyIfIdExists(user);
+        getHandleSuccess(200)(res, user);
+    } catch (error) {
+        getHandleError(error, res);
+    }
 });
 
-router.delete('/:id', validateToken, (req, res) => {
+router.post('/', async (req, res, next) => {
+    const { email, phone, name, lastName, username, password } = req.body;
+    const transaction = await sequelize.transaction();
+    try {
+        const newUser = await User.create({ email, phone, role: 'client', name, lastName }, {
+            transaction
+        })
+        const passwordHash = await encrypt(password);
+        await Account.create({ userId: newUser.id, username, password: passwordHash }, {
+            transaction
+        })
+        await transaction.commit();
+        getHandleSuccess(201)(res, 'User and Account created successfully');
+    } catch (error) {
+        transaction.rollback();
+        getHandleError(error, res);
+    }
+});
+
+router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
-    // const user = `SELECT deleted FROM users WHERE id = ${id};`;
-    // const query = `UPDATE users SET deleted = 0 WHERE id = ${id};`;
-    const query = `UPDATE users SET deleted = !deleted WHERE id = ${id};`;
+    const { email, phone, name, lastName, username, password } = req.body;
+    const transaction = await sequelize.transaction();
 
-    // connection.query(query, (error, results) => {
-    //     if (error || results[0].deleted) {
-    //         res.status(500).json({
-    //             message: 'Error in the query',
-    //             error
-    //         });
-    //     } else {
-    connection.query(query, (error, results) => {
-        if (error) {
-            res.status(500).json({
-                message: 'Error in the query',
-                error
-            });
-        } else {
-            res.status(200).json({
-                mensaje: 'Deleted user'
-            });
+    try {
+        const [updatedUserCount] = await User.update({ email, phone, name, lastName }, {
+            where: { id },
+            returning: true,
+            transaction
+        });
+        verifyIfIdExists(updatedUserCount);
+        const passwordHash = await encrypt(password);
+        const [updatedAccountCount] = await Account.update({ username, password: passwordHash }, {
+            where: { userId: id },
+            returning: true,
+            transaction
         }
-    });
-
-    // });
+        );
+        verifyIfIdExists(updatedAccountCount);
+        await transaction.commit();
+        getHandleSuccess(204)(res);
+    } catch (error) {
+        await transaction.rollback();
+        getHandleError(error, res);
+    }
 });
 
-module.exports = router;
+router.delete('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        const [userDeleted] = await User.update({ deleted: true }, { where: { id } });
+        verifyIfIdExists(userDeleted);
+        getHandleSuccess(204)(res);
+    } catch (error) {
+        getHandleError(error, res)
+    }
+});
+
+export default router;

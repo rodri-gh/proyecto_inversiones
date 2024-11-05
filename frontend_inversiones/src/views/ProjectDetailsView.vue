@@ -39,13 +39,13 @@ const route = useRoute();
 const idProject = ref(route.params.id);
 
 const project = ref({});
-const urlProject = "http://localhost:3000/projects/";
+const urlProject = "http://localhost:3000/project/";
 
 const operatingExpenses = ref({});
-const urlOperatingExpenses = "http://localhost:3000/operatingexpenses/";
+const urlOperatingExpenses = "http://localhost:3000/operating_expenses/";
 
 const investments = ref({});
-const urlInvestments = "http://localhost:3000/investments/";
+const urlInvestments = "http://localhost:3000/investment/";
 
 onMounted(() => {
   getProject();
@@ -57,7 +57,7 @@ onMounted(() => {
 const getProject = async () => {
   try {
     const { data } = await axios.get(urlProject + idProject.value);
-    project.value = data.data;
+    project.value = data;
     console.log(project.value);
   } catch (error) {
     console.error(error);
@@ -67,7 +67,7 @@ const getProject = async () => {
 const getOperatingExpenses = async () => {
   try {
     const { data } = await axios.get(urlOperatingExpenses + idProject.value);
-    operatingExpenses.value = data.data;
+    operatingExpenses.value = data;
     console.log(operatingExpenses.value);
   } catch (error) {
     console.error(error);
@@ -77,7 +77,7 @@ const getOperatingExpenses = async () => {
 const getInvestments = async () => {
   try{
     const { data } = await axios.get(urlInvestments + idProject.value);
-    investments.value = data.data;
+    investments.value = data;
     console.log(investments.value);
   }catch (error) {
     console.error(error);

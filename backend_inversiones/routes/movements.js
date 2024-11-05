@@ -1,104 +1,67 @@
-var express = require('express'); 
-var router = express.Router();
-var connection = require('../database');
-const jwt = require('jsonwebtoken');
-const { validateToken } = require('./auth');
+import express from 'express';
+import { getHandleSuccess } from '../helpers/handleSuccess.js';
+import { getHandleError } from '../helpers/handleExceptions.js';
+import { Movement } from '../models/mainExport.js';
+import { verifyIfIdExists } from '../helpers/handleId.js';
 
-//insertar un movimiento  POST
-router.post('/', validateToken, function(req, res){
-    const { user_id, description, type, amount, request_date, state } = req.body; 
 
-    const query = `INSERT INTO movements (user_id, description, type, amount, request_date, state) VALUES (?, ?, ?, ?, ?, ?)`;
+const router = express.Router();
+router.get('/', async (req, res) => {
+    try {
+        const movements = await Movement.findAll();
+        getHandleSuccess(200)(res, movements);
+    } catch (error) {
+        getHandleError(error, res)
+    }
+});
 
-    connection.query(query, [user_id, description, type, amount, request_date, state], function(error, results) {
-        if (error) { 
-            console.log(error);
-            return res.status(500).json({
-                error: error,
-                message: 'error inserting movement'
-            });
-        } 
-        res.status(201).json({ 
-            message: 'movement created successfully',
-            data: results
-        }); 
-    });
- });
+router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const movement = await Movement.findOne({ where: { id } });
+        verifyIfIdExists(movement);
+        getHandleSuccess(200)(res, movement);
+    } catch (error) {
+        getHandleError(error, res)
+    }
+});
 
- // obtener todos los movimientos  GET
- router.get ('/', validateToken, function(req, res){
-    const query = `SELECT * FROM movements WHERE user_id = ?`;
-    connection.query(query, [req.user.user_id], function(error, results){
-        if (error) { 
-            return res.status(500).json({
-                error: error,
-                message: 'error in query'
-            });   
-        }
-        res.status(200).json({
-            message: 'List of movements',
-            data: results, 
+router.post('/', async (req, res) => {
+    //TODO: state?
+    const { userId, description, type, amount, requestDate, state } = req.body;
+    try {
+        await Movement.create({ userId, description, type, amount, requestDate, state });
+        getHandleSuccess(201)(res, "Movement created successfully");
+    } catch (error) {
+        getHandleError(error, res)
+    }
+});
+
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const { description, type, amount, requestDate, disbursementDate, state } = req.body;
+    try {
+        const [movementCount] = await Movement.update({ description, type, amount, requestDate, disbursementDate, state }, {
+            where: { id },
         });
-    });
- });
+        verifyIfIdExists(movementCount);
+        getHandleSuccess(204)(res);
+    } catch (error) {
+        getHandleError(error, res)
+    }
+});
 
- //obtener un contacto por su id  GET
- router.get('/:movement_id', validateToken, function(req, res){
-    const { movement_id } = req.params;
-    const query = `SELECT * FROM movements WHERE movement_id = ? AND user_id = ?`;
-    connection.query(query, [movement_id, req.user.user_id], function(error, results){
-        if (error || results.length == 0) { 
-            console.log(error);
-            return res.status(404).json({
-                error: error,
-                message: 'movement not found'
-            });
-        }
-        res.status(200).json({ 
-            data: results[0],
-            message: 'movement details'
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [movementCount] = await Movement.destroy({
+            where: { id },
         });
-    });
- });
+        verifyIfIdExists(movementCount);
+        getHandleSuccess(204)(res);
+    } catch (error) {
+        getHandleError(error, res)
+    }
+});
 
- // para actualizar un contacto PUT 
- router.put('/:movement_id', validateToken, function(req, res){ 
-    const { movement_id } = req.params;
-    const { description, type, amount, request_date, disbursement_date, state } = req.body;
-    const query = `UPDATE movements SET description = ?, type = ?, amount = ?, request_date = ?, disbursement_date = ?,
-                     state = ? WHERE movement_id = ? AND user_id = ?`;
-    connection.query(query, [description, type, amount, request_date, disbursement_date, state, movement_id, req.user.user_id], function(error, results) {
-        if (error) { 
-            console.log(error);
-            return res.status(500).json({
-                error: error,
-                message: 'error updating movement'
-            });
-        }
-        res.status(200).json({
-            data: results,
-            message: 'Movement updated successfully',
-        });
-    });
- });
-
- //para borrar un contacto DELETE 
- router.delete('/:movement_id', validateToken, function(req, res) { 
-    const { movement_id } = req.params;
-    const query = `DELETE FROM movements WHERE movement_id = ? AND user_id = ?`;
-    connection.query(query, [movement_id, req.user.user_id], function(error, results){ 
-        if (error) { 
-            console.log(error);
-            return res.status(500).json({
-                error: error,
-                message: 'Error deleting movement'
-            });
-        }
-        res.status(204).json({
-            message: 'Movement deleted successfully'
-        });
-    });
- });
-
- //exporto el enrutador 
- module.exports = router; 
+export default router;
