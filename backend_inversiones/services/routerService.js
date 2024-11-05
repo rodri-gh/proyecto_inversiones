@@ -1,9 +1,5 @@
-import express from 'express';
 import jwt from 'jsonwebtoken';
-import connection from '../database.js';
 
-
-const router = express.Router();
 
 const generateAccessToken = (user) => {
     return jwt.sign(user, process.env.SECRET, { expiresIn: '1h' })
@@ -29,4 +25,4 @@ const validateToken = (req, res, next) => {
     });
 }
 
-export { router, connection, generateAccessToken, validateToken };
+export { generateAccessToken, validateToken };

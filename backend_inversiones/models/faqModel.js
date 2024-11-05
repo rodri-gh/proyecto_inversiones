@@ -18,11 +18,10 @@ Faq.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        //TODO: to review default value '1'
-        status: {
+        deleted: {
             type: DataTypes.TINYINT,
             allowNull: false,
-            defaultValue: 1
+            defaultValue: 0
         },
         created_date: {
             type: DataTypes.DATE,
