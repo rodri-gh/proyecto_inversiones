@@ -5,44 +5,49 @@ import sequelize from "../database/connection.js";
 class WithdrawalRequest extends Model {}
 
 WithdrawalRequest.init({
-    withdrawalRequestId: {
+    withdrawal_request_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         field: 'withdrawal_requests_id'
     },
-    requestAmount: {
+    request_amount: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
-    commissionApply: {
+    commission_apply: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
-    receiveAmount: {
+    receive_amount: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
-    requestDate: {
+    request_date: {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW
     },
-    approvalDate: {
+    approval_date: {
         type: DataTypes.DATE,
         allowNull: true
     },
-    photoDocument: {
+    photo_document: {
         type: DataTypes.STRING,
         allowNull: true
     },
-    selfiePhoto: {
+    selfie_photo: {
         type: DataTypes.STRING,
         allowNull: true
     },
     status: {
         type: DataTypes.ENUM('pending', 'approved', 'rejected'),
         allowNull: false
+    },
+    deleted: {
+        type: DataTypes.TINYINT,
+        allowNull: false,
+        defaultValue: 1
     }
 }, {
     sequelize,

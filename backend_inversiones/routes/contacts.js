@@ -12,6 +12,7 @@ router.get('/', async (req, res, next) => {
         const contacts = await Contact.findAll();
         getHandleSuccess(200)(res, contacts)
     } catch (error) {
+        console.log(error);
         getHandleError(error, res)
     }
 });
@@ -55,14 +56,16 @@ router.put('/:id', async (req, res, next) => {
 
 router.delete('/:id', async function (req, res, next) {
     const { id } = req.params;
+    const contact_id = id;
     try {
-        const [updatedContact] =await Contact.update({ deleted: 1 },{
-            where: { id },
+        const [updatedContact] = await Contact.update({ deleted: 1 },{
+            where: { contact_id },
             returning: true
         });
         verifyIfIdExists(updatedContact);
         getHandleSuccess(204)(res);
     } catch (error) {
+        console.log(error);
         getHandleError(error, res);
     }
 });

@@ -6,19 +6,19 @@ import { verifyIfIdExists } from '../helpers/handleId.js';
 
 
 const router = express.Router();
-router.get('/', function (req, res, next) {
+router.get('/', async function (req, res, next) {
   try {
-    const projects = Project.findAll();
+    const projects = await Project.findAll();
     getHandleSuccess(200)(res, projects);
   } catch (error) {
     getHandleError(error, res);
   }
 });
 
-router.get('/:id', function (req, res, next) {
+router.get('/:id', async function (req, res, next) {
   const { id } = req.params;
   try {
-    const project = Project.findOne({ where: { id } });
+    const project = await Project.findOne({ where: { id } });
     verifyIfIdExists(project);
     getHandleSuccess(200)(res, project);
   } catch (error) {

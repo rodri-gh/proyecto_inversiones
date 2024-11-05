@@ -18,7 +18,7 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
     const { id } = req.params;
     try {
-        const investment = await Investment.findOne({ where: { id } });
+        const investment = await Investment.findOne({ where: { project_id: id } });
         getHandleSuccess(200)(res, investment);
     } catch (error) {
         getHandleError(error, res)

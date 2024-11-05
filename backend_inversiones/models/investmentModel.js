@@ -10,11 +10,11 @@ Investment.init(
             primaryKey: true,
             autoIncrement: true
         },
-        projectId: {
+        project_id: {
             type: DataTypes.BIGINT,
             allowNull: false,
         },
-        userId: {
+        user_id: {
             type: DataTypes.BIGINT,
             allowNull: false,
         },
@@ -22,12 +22,12 @@ Investment.init(
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
         },
-        investmentDate: {
+        investment_date: {
             type: DataTypes.DATE,
             //TODO: change to NOW and add allow null
             defaultValue: DataTypes.NOW
         },
-        profitPercentage: {
+        profit_percentage: {
             type: DataTypes.DECIMAL(10, 2),
         }
     },

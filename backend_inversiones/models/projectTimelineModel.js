@@ -42,7 +42,7 @@ ProjectTimeline.init(
     {
         sequelize,
         modelName: 'projectTimeline',
-        tableName: 'project_timelines',
+        tableName: 'project_timeline',
         timestamps: false
     }
 );

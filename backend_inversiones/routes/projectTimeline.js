@@ -17,10 +17,10 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const projectTimeline = await ProjectTimeline.findOne({ where: { id } });
-    verifyIfIdExists(projectTimeline);
+    const projectTimeline = await ProjectTimeline.findAll({ where: { project_id: id } });
     getHandleSuccess(200)(res, projectTimeline);
   } catch (error) {
+    console.log(error);
     getHandleError(error, res)
   }
 });

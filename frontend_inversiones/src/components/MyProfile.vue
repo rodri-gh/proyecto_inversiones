@@ -15,8 +15,8 @@ const getUserProfile = async () => {
         var userId = getUserIdOfLocalStorage();
         var header = getHeaderRequest();
         const response = await axios.get(baseURL+userId, header); 
-        userProfile.value = response.data.data[0];
-        console.log(response.data.data)
+        userProfile.value = response.data;
+        console.log(response.data)
     } catch(e) { 
         console.error(e);
     }
