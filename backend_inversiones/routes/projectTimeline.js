@@ -2,6 +2,8 @@ import express from 'express';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { ProjectTimeline } from '../models/mainExport.js';
+import { verifyIfIdExists } from '../helpers/handleId.js';
+import { created } from '../helpers/customMessage.js';
 
 
 const router = express.Router();
@@ -28,9 +30,8 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res, next) => {
   const { projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 } = req.body;
   try {
-    const projectTimeline = await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 });
-    verifyIfIdExists(projectTimeline);
-    getHandleSuccess(201)(res, "Project Timeline created successfully");
+    await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 });
+    getHandleSuccess(201)(res, created.projectTimeline);
   } catch (error) {
     getHandleError(error, res)
   }

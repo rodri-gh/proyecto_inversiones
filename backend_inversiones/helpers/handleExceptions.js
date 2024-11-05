@@ -63,7 +63,8 @@ export const errorNotExists = (type) => {
 export const getHandleError = (error, res) => {
     const errors = error.errors;
     const name = error.name;
-
+    console.log("EEEE", error);
+    
     switch (name) {
         case 'SequelizeValidationError':
             return handleBadRequest(res, errors);

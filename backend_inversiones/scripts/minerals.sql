@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `two_factor_enabled` tinyint(1) DEFAULT '0',
   `name` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
   `last_name` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
-  `deleted` tinyint NOT NULL DEFAULT '1',
+  `deleted` tinyint NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `phone` (`phone`)
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `contracts` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `project_id` bigint NOT NULL,
   `user_id` bigint NOT NULL,
-  `investment_id` bigint NOT NULL DEFAULT '0',
+  `investment_id` bigint NOT NULL DEFAULT 0,
   `contract_code` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
   `contract_date` date NOT NULL,
   `contract_file_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `project_minerals` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `project_id` bigint(20) NOT NULL,
   `mineral_id` bigint(20) NOT NULL,
-  `deleted` tinyint(4) NOT NULL DEFAULT 1,
+  `deleted` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `mineral_id` (`mineral_id`),
   KEY `project_id` (`project_id`),
@@ -114,16 +114,16 @@ CREATE TABLE IF NOT EXISTS `project_minerals` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-CREATE TABLE IF NOT EXISTS `project_timeline` (
+CREATE TABLE IF NOT EXISTS `project_timelines` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `project_id` bigint(20) NOT NULL,
   `phase` varchar(50) NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
-  `status` varchar(50) NOT NULL,
   `description` varchar(200) NOT NULL,
-  `price_mineral_1` decimal(10,2) NOT NULL,
-  `price_mineral_2` decimal(10,2) NOT NULL,
+  `price_mineral1` decimal(10,2) NOT NULL,
+  `price_mineral2` decimal(10,2) NOT NULL,
+  `deleted` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `project_id_fk` (`project_id`),
   CONSTRAINT `project_id_fk` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`)
@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `faqs` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `ask` TEXT NOT NULL, 
   `answer` TEXT NOT NULL,
-  `status` TINYINT NOT NULL DEFAULT 1,
+  `deleted` tinyint(4) NOT NULL DEFAULT 0,
   `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_date` DATETIME NULL ON UPDATE CURRENT_TIMESTAMP, 
   PRIMARY KEY (`id`) 
