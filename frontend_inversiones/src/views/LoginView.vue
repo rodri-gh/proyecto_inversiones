@@ -100,8 +100,8 @@ const iniciarSesion = async () => {
     password: password.value,
   };
   try {
-    const { data } = await axios.post(baseUrl, datos);  
-    const userId = data.account.userId;
+    const { data } = await axios.post(baseUrl, datos);
+    const userId = data.data.user_id;
     const header = {
       headers: {
         authorization: `Bearer ${data.token}`,
@@ -109,12 +109,11 @@ const iniciarSesion = async () => {
       },
     };
     const dataUser = await axios.get(baseUrGetUser+userId, header)
-    data.account.role = dataUser.data.role;
-    data.account.user_id = userId;
-
+    data.data.role = dataUser.data.data[0]?.role;
+    console.log(data.data); 
     if (data.token) {
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.account));
+      localStorage.setItem("user", JSON.stringify(data.data));
       router.push({ path: "/dashboard" });
     }
   } catch (error) {

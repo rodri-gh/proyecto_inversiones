@@ -3,7 +3,7 @@ import { getHeaderRequest, getUserIdOfLocalStorage } from '@/authService';
 import axios from 'axios';
 import { ref, onMounted} from 'vue';
 
-const baseUrl = 'http://localhost:3000/withdrawal_request/user/'
+const baseUrl = 'http://localhost:3000/withdrawal_requests/user/'
 
 const withdrawalRequests = ref([]); 
 

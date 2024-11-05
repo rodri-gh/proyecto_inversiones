@@ -21,7 +21,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-if="withdrawals.length === 0">
+                            <tr v-if="withdrawals.length == 0">
                                 <td colspan="5" class="text-center">
                                     No hay solicitudes de retiro registradas
                                 </td>
@@ -93,8 +93,10 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import Button from "@/components/base/Button.vue";
+import TableMinerals from "@/components/tables/TableMinerals.vue";
 import Modal from "@/components/base/Modal.vue";
 import Input from "@/components/base/Input.vue";
+import InputTextArea from "@/components/base/InputTextArea.vue";
 import InputFile from "@/components/base/InputFile.vue";
 import { openModal, closeModal } from "@/utils/modal";
 
@@ -105,20 +107,23 @@ const photo_document = ref(null);
 const selfie_photo = ref(null);
 const selectedMineral = ref({});
 const previewUrl = ref(null);
-const baseURL = "http://localhost:3000/withdrawal_request/";
+const baseURL = "http://localhost:3000/withdrawal_requests/";
 
 
 
 const fetchWithdrawals = async () => {
     try {
-        const response = await axios.get("http://localhost:3000/withdrawal_request");
-        withdrawals.value = response.data; 
-        console.log(response.data);
-        withdrawals.value = withdrawals.value.filter((w) => w.deleted = 1 );
+        const response = await axios.get("http://localhost:3000/withdrawal_requests");
+        withdrawals.value = response.data.data; // Asumiendo que el backend devuelve un array de solicitudes
+        withdrawals.value = withdrawals.value.filter((w) => w.deleted == 1);
+        console.log(withdrawals.value);
+        console.log('datos recibidos exitosamente')
     } catch (error) {
         console.error("Error fetching withdrawals:", error);    
     }
 };
+
+
 
 const updateWithdrawal = async () => {
     if (!selectedWithdrawal.value || !selectedWithdrawal.value.id) {
@@ -152,7 +157,7 @@ const updateWithdrawal = async () => {
 
 const deleteWithdrawal = async (id) => {
     try {
-        await axios.patch(`http://localhost:3000/withdrawal_request/${id}`);
+        await axios.patch(`http://localhost:3000/withdrawal_requests/${id}`);
         withdrawals.value = withdrawals.value.filter((w) => w.deleted == 1); // Eliminar de la lista
         fetchWithdrawals();
     } catch (error) {
@@ -265,7 +270,12 @@ const handleImageChange = (file) => {
     previewUrl.value = null;
   }
 };
+
+
+
+
 </script>
 
 <style scoped>
+
 </style>

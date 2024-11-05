@@ -10,7 +10,7 @@ import mineralsRouter from './routes/minerals.js';
 import projectTimelineRouter from './routes/projectTimeline.js';
 import projectsRouter from './routes/projects.js';
 import contractsRouter from './routes/contracts.js';
-import operatingexpensesRouter from './routes/operatingexpenses.js';
+import operatingexpensesRouter from './routes/operatingExpenses.js';
 import investmentsRouter from './routes/investments.js';
 import project_mineralsRouter from './routes/projectMinerals.js';
 import withdrawal_requestsRouter from './routes/withdrawal_requests.js';
@@ -19,7 +19,6 @@ import movementsRouter from './routes/movements.js';
 import categoryPostsRouter from './routes/categoryPosts.js';
 import postRouter from './routes/posts.js';
 import faqRouter from './routes/faq.js';
-import analysisReportRouter from './routes/analysisReport.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -33,13 +33,9 @@ export const handleDuplicateValue = (res, errors) => {
 
 const createMessageToFields = (errors) => {
     const messages = {};
-    if (Array.isArray(errors)) {
-        errors.forEach(element => {
-            messages[element.path] = element.message;
-        });
-    } else {
-        console.error("El parámetro 'errors' no es un arreglo o está indefinido");
-    }
+    errors.forEach(element => {
+        messages[element.path] = element.message;
+    });
     return messages
 }
 
