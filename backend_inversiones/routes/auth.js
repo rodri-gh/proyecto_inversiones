@@ -1,94 +1,33 @@
-var express = require('express');
-var router = express.Router();
-const connection = require('../database');
-const { compare } = require('../helpers/handleBcrypt');
-const jwt = require('jsonwebtoken');
+import express from 'express';
+import { compare } from '../helpers/handleBcrypt.js';
+import { getHandleSuccess } from '../helpers/handleSuccess.js';
+import { getHandleError, errorNotExists } from '../helpers/handleExceptions.js';
+import { generateAccessToken } from '../services/jwtService.js';
+import { Account } from '../models/mainExport.js';
+import { validateData } from '../validations/validateData.js';
 
 
-router.post('/login', async (req, res, next) => {
+const router = express.Router();
+router.post('/login', async (req, res) => {
     const { username, password } = req.body;
-
-    const userQuery = `SELECT * FROM account WHERE username = "${username}"`;
-
-    connection.query(userQuery, async (error, results, fields) => {
-        if (error || results.length === 0) {
-            console.log(error);
-            res.status(500).json({
-                error: error,
-                message: 'Error in the query',
-            });
-            return;
+    console.log(req.body); 
+    try {
+        validateData([username, password]);
+        const account = await Account.findOne({ where: { username } });
+        if (!account) {
+            errorNotExists("auth");
         }
-        const checkPassword = await compare(password, results[0].password)
-        if (checkPassword) {
-
-            const accessToken = generateAccessToken(results[0])
-
-            const userId = results[0].id;
-
-            res.header('authorization', accessToken).json({
-                data: results[0],
-                message: 'Authenticated user',
-                token: accessToken
-            });
-            return;
+        const passwordMatch = await compare(password, account.password);
+        if (!passwordMatch) {
+            errorNotExists("auth");
         }
-        if (!checkPassword) {
-            res.status(409);
-            res.send({
-                error: 'Invalid account'
-            })
-            return;
-        }
-    });
+        const accessToken = generateAccessToken({ username: username });
+        getHandleSuccess(200)(res, { account, token: accessToken }, "Authenticated user");
+    } catch (error) {
+        console.log(error); 
+        console.log(res);
+        getHandleError(error, res);    
+    }
 });
 
-const generateAccessToken = (user) => {
-    const payload = {
-        user_id: user.user_id, 
-        username: user.username
-    }
-    return jwt.sign(payload, process.env.SECRET, { expiresIn: '1h' })
-}
-
-const validateToken = (req, res, next) => {
-    const accessToken = req.headers['authorization'];
-
-    if (!accessToken) {
-        return res.status(403).send('Access denied: No token provided');
-    }
-    const token = accessToken.split(' ')[1];
-    if (!token) {
-        return res.status(403).send('Access denied: Invalid token format');
-    }
-    jwt.verify(token, process.env.SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).send('Access denid, token expired or incorrect');
-        } else {
-            req.user = user;
-            next();
-        }
-    });
-}
-
-router.get('/estado/:id', function (req, res, next) {
-
-    var query = `UPDATE users SET deleted = !deleted WHERE id = ${req.params.id};`;
-    conexion.query(query, function (error, results, fields) {
-        if (error) {
-            console.log(error);
-            res.status(500).send({
-                error: error,
-                message: 'Error when making the request'
-            });
-        } else {
-            res.status(200).send({
-                data: results,
-                message: 'The field was updated successfully'
-            });
-        }
-    });
-});
-
-module.exports = router
-module.exports.validateToken = validateToken;
+export default router;

@@ -3,7 +3,7 @@ import { getHeaderRequest, getUserIdOfLocalStorage } from '@/authService';
 import axios from 'axios';
 import { ref, onMounted} from 'vue';
 
-const baseUrl = 'http://localhost:3000/investments/user/'
+const baseUrl = 'http://localhost:3000/investment/user/'
 
 const investments = ref([]); 
 
@@ -23,7 +23,7 @@ onMounted( async () => {
 <template>
     <div>
         <h3>Tus inversiones</h3>
-        <div v-if="investments.length > 0" class="table-responsive">
+        <div v-if="investments.length > 0 && investments != null" class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>

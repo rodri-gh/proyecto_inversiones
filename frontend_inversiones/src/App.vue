@@ -36,9 +36,11 @@ const ShowNav = () => {
   display: flex;
   flex-direction: column;
 }
+
 .main-content {
   flex: 1;
 }
+
 .no-padding {
   padding-top: 0;
 }

@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from "vue";
-import { closeSession } from "../authService";
+import { closeSession, getUserRoleOfLocalStorage } from "../authService";
 import { RouterLink, useRouter } from "vue-router";
 
 const route = useRouter();
@@ -28,11 +28,20 @@ const logOut = () => {
 
 const navLinks = computed(() => {
   var user = JSON.parse(localStorage.getItem("user"));
-  var userRole = user?.role;
+  var userRole = getUserRoleOfLocalStorage(); 
   let links = [
     { name: "Marketplace", path: "/marketplace" },
     { name: "Panel de control", path: "/dashboard" },
   ];
+  if (userRole == 'super_user'){
+    links.push({ name: "Analisis y Reportes", path: "/analysisAndReports" });
+    links.push({ name: "Finanzas", path: "/finance" });
+  } else if ( userRole == 'admin') { 
+    links.push({ name: "Analisis y Reportes", path: "/analysisAndReports" });
+    links.push({ name: "Finanzas", path: "/finance" });
+  } else if( userRole == "client") {
+    //aqui se puede aumentar en el navbar rutas para clientes
+  }
 
   return links;
 });

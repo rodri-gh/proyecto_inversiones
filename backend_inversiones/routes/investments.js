@@ -1,138 +1,80 @@
-var express = require('express');
-var router = express.Router();
-var connection = require('../database');
+import express from 'express';
+import { getHandleError } from '../helpers/handleExceptions.js';
+import { getHandleSuccess } from '../helpers/handleSuccess.js';
+import { Investment, User } from '../models/mainExport.js';
+import { verifyIfIdExists } from '../helpers/handleId.js';
 
-router.get('/', function(req, res, next) {
-    const query = 'SELECT * FROM investments;';
 
-    connection.query(query, function(error, results, fields) {
-        if (error){
-            console.log(error);
-            res.status(500).json({
-                error: error,
-                message: 'Error in the query'
-            });
-        }else{
-            console.log(results);
-            res.status(200).json({
-                data: results,
-                message: 'List of investments'
-            });
-        }
-    });
+const router = express.Router();
+router.get('/', async (req, res, next) => {
+    try {
+        const investments = await Investment.findAll();
+        getHandleSuccess(200)(res, investments);
+    } catch (error) {
+        getHandleError(error, res)
+    }
 });
 
-router.get('/:id', function(req, res, next) {
-    const {id} = req.params;
-    const query = "SELECT * FROM investments WHERE id = ?;";
-
-    connection.query(query, [id], function(error, results, fields) {
-        if (error){
-            console.log(error);
-            res.status(500).json({
-                error: error,
-                message: 'Error in the query'
-            });
-        }else{
-            console.log(results);
-            res.status(200).json({
-                data: results,
-                message: 'Details of investment'
-            });
-        }
-    });
-});
-
-router.get('/user/:id', function(req, res, next) {
+router.get('/:id', async (req, res, next) => {
     const { id } = req.params;
-    const query = "SELECT * FROM investments WHERE user_id = ?;";
-
-    connection.query(query, [id], function(error, results, fields) {
-        if (error){
-            console.log(error);
-            res.status(500).json({
-                error: error,
-                message: 'Error in the query'
-            });
-        }else{
-            console.log(results);
-            res.status(200).json({
-                data: results,
-                message: 'Details of investments'
-            });
-        }
-    });
-})
-
-router.get('/project/:id', function(req, res, next) {
-    const {id} = req.params;
-    const query = `SELECT investments.*, users.name AS user_name 
-                    FROM investments 
-                    INNER JOIN users ON investments.user_id = users.id 
-                WHERE project_id = ${id};`;
-
-    connection.query(query, function(error, results, fields) {
-        if (error){
-            console.log(error);
-            res.status(500).json({
-                error: error,
-                message: 'Error in the query'
-            });
-        }else{
-            console.log(results);
-            res.status(200).json({
-                data: results,
-                message: 'Details of investments'
-            });
-        }
-    });
-})
-
-router.post('/', function(req, res, next) {
-    const {project_id, user_id, amount, profit_percentage}=req.body;
-
-    const query = `INSERT INTO investments (project_id, user_id, amount, investment_date, profit_percentage) VALUES ('${project_id}', '${user_id}', '${amount}', CURRENT_TIMESTAMP(), '${profit_percentage}');`;
-    connection.query(query, function(error, results) {
-        if (error){
-            console.log(error);
-            res.status(500).json({
-                error: error,
-                message: 'Error in the query'
-            });
-        }else{
-            console.log(results);
-            res.status(200).json({
-                data: results,
-                message: 'Investment created'
-            });
-        }
-    });
+    try {
+        const investment = await Investment.findOne({ where: { project_id: id } });
+        getHandleSuccess(200)(res, investment);
+    } catch (error) {
+        getHandleError(error, res)
+    }
 });
 
-router.put('/:id', function(req, res, next) {
-    const {id} = req.params;
-    const {project_id, user_id, amount, profit_percentage}=req.body;
+router.get('/user/:id', async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        //TODO: if is to single user or several users ? to chenge from findAll to findOne
+        const investment = await Investment.findAll({ where: { userId: id } });
+        getHandleSuccess(200)(res, investment);
+    } catch (error) {
+        getHandleError(error, res)
+    }
+})
 
-    const query = `UPDATE investments SET project_id = '${project_id}', user_id = '${user_id}', amount = '${amount}', profit_percentage = '${profit_percentage}' WHERE id = ${id};`;
-    connection.query(query, function(error, results) {
-        if (error){
-            console.log(error);
-            res.status(500).json({
-                error: error,
-                message: 'Error in the query'
-            });
-        }else{
-            console.log(results);
-            res.status(200).json({
-                data: results,
-                message: 'Investment updated'
-            });
-        }
-    });
+router.get('/project/:id', async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        const investments = await Investment.findAll({
+            where: { projectId: id },
+            include: [{
+                model: User,
+                attributes: ['name'],
+                as: 'user'
+            }]
+        });
+        getHandleSuccess(200)(res, investments);
+    } catch (error) {
+        getHandleError(error, res)
+    }
+})
+
+router.post('/', async (req, res, next) => {
+    const { projectId, userId, amount, profitPercentage } = req.body;
+    try {
+        await Investment.create({ projectId, userId, amount, profitPercentage });
+        getHandleSuccess(201)(res, "Investment created successfully");
+    } catch (error) {
+        getHandleError(error, res)
+    }
 });
 
+router.put('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    const { projectId, userId, amount, profitPercentage } = req.body;
+    try {
+        const [updatedCount] = await Investment.update({ projectId, userId, amount, profitPercentage }, {
+            where: { id },
+        });
+        verifyIfIdExists(updatedCount);
+        getHandleSuccess(204)(res);
+    } catch (error) {
+        getHandleError(error, res)
+    }
+});
 
-
-
-
-module.exports = router;
+export default router;

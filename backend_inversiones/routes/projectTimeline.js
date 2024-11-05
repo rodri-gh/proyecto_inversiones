@@ -1,94 +1,53 @@
-var express = require('express');
-var router = express.Router();
-var conexion = require('../database');
+import express from 'express';
+import { getHandleSuccess } from '../helpers/handleSuccess.js';
+import { getHandleError } from '../helpers/handleExceptions.js';
+import { ProjectTimeline } from '../models/mainExport.js';
 
-router.get('/', function (req, res) {
 
-  var query = 'SELECT * FROM project_timeline;';
-
-  conexion.query(query, function (error, results) {
-    if (error) {
-      console.log(error);
-      res.status(500).send({
-        error: error,
-        message: 'Error when making the request'
-      })
-    } else {
-      console.log(results);
-      res.status(200).send({
-        data: results,
-        message: 'Project timeline view'
-      });
-    }
-  });
+const router = express.Router();
+router.get('/', async (req, res) => {
+  try {
+    const projectTimelines = await ProjectTimeline.findAll();
+    getHandleSuccess(200)(res, projectTimelines);
+  } catch (error) {
+    getHandleError(error, res)
+  }
 });
-router.get('/:id', function (req, res) {
 
+router.get('/:id', async (req, res) => {
   const { id } = req.params;
-
-  var query = `SELECT * FROM project_timeline WHERE project_id = ${id} ;`;
-
-  conexion.query(query, function (error, results) {
-    if (error) {
-      console.log(error);
-      res.status(500).send({
-        error: error,
-        message: 'Error when making the request'
-      })
-    } else {
-      console.log(results);
-      res.status(200).send({
-        data: results,
-        message: 'Project timeline view'
-      });
-    }
-  });
+  try {
+    const projectTimeline = await ProjectTimeline.findAll({ where: { project_id: id } });
+    getHandleSuccess(200)(res, projectTimeline);
+  } catch (error) {
+    console.log(error);
+    getHandleError(error, res)
+  }
 });
 
-router.post('/', function (req, res, next) {
-  const { project_id, phase, start_date, end_date, status, description, price_mineral_1, price_mineral_2 } = req.body;
-
-  var query = `INSERT INTO project_timeline (project_id, phase, start_date, end_date, status, description, price_mineral_1, price_mineral_2)
- VALUES (' ${project_id}', '${phase}', '${start_date}', '${end_date}', '${status}', '${description}', '${price_mineral_1}', '${price_mineral_2}');`;
-
-  conexion.query(query, function (error, results, fields) {
-    if (error) {
-      console.log(error);
-      res.status(500).send({
-        error: error,
-        message: 'Error when making the request'
-      })
-    } else {
-      console.log(results.insertId);
-      res.status(200).send({
-        data: results.insertId,
-        message: 'Project timeline registered correctly'
-      });
-    }
-  });
-
+router.post('/', async (req, res, next) => {
+  const { projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 } = req.body;
+  try {
+    const projectTimeline = await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 });
+    verifyIfIdExists(projectTimeline);
+    getHandleSuccess(201)(res, "Project Timeline created successfully");
+  } catch (error) {
+    getHandleError(error, res)
+  }
 });
 
-router.put('/:id', function (req, res, next) {
-  const { project_id, phase, start_date, end_date, status, description, price_mineral_1, price_mineral_2 } = req.body;
-
-  var query = `UPDATE project_timeline SET project_id="${project_id}", phase="${phase}", start_date="${start_date}", end_date="${end_date}", status="${status}", description="${description}", price_mineral_1="${price_mineral_1}", price_mineral_2="${price_mineral_2}" 
-                WHERE id = ${req.params.id} ;`;
-
-  conexion.query(query, function (error, results, fields) {
-    if (error) {
-      console.log(error);
-      res.status(500).send({
-        error: error,
-        message: 'Error when making the request'
-      })
-    } else {
-      console.log(results);
-      res.status(200).send({
-        data: results.insertId,
-        message: 'The project timeline was updated successfully'
-      });
-    }
-  });
+router.put('/:id', async (req, res, next) => {
+  const { id } = req.params;
+  const { projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 } = req.body;
+  try {
+    const projectTimeline = await ProjectTimeline.update({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 },{ 
+      where: { id } 
+    });
+    verifyIfIdExists(projectTimeline);
+    getHandleSuccess(204)(res, projectTimeline);
+  } catch (error) {
+    getHandleError(error, res)
+  }
 });
-module.exports = router;
+
+export default router;
