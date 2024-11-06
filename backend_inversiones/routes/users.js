@@ -7,14 +7,82 @@ import sequelize from '../database/connection.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 import { created } from '../helpers/customMessage.js';
 
-const router = express.Router();
-router.get('/', async (req, res, next) => {
-    try {
-        const users = await User.findAll({
-            include: [{
-                model: Account,
-                attributes: ['username', 'password']
-            }]
+var lastInsertedId = null;
+
+router.get('/', validateToken, (req, res, next) => {
+    const query = `SELECT u.id, u.email, u.phone, u.role, u.name, u.last_name, u.deleted, a.username
+                    FROM users u LEFT
+                    JOIN account a ON u.id = a.user_id;`;
+    connection.query(query, (error, results, fields) => {
+        if (error) {
+            console.log(error);
+            res.status(500).json({
+                error: error,
+                message: 'Error in the query'
+            });
+        } else {
+            console.log(results);
+            res.status(200).json({
+                data: results,
+                message: 'List of users'
+            });
+        }
+    });
+});
+
+router.get('/:id', validateToken, (req, res, next) => {
+    const { id } = req.params;
+    console.log(id);
+    const query = `SELECT * FROM users WHERE id = ?`;
+    connection.query(query, [id], (error, results, fields) => {
+        if (error) {
+            console.log(error);
+            res.status(500).json({
+                error: error,
+                message: 'Error in the query'
+            });
+        } else {
+            console.log(results);
+            res.status(200).json({
+                data: results,
+                message: 'List of users'
+            });
+        }
+    });
+});
+
+router.post('/', validateToken, async (req, res) => {
+    const { email, phone, role, name, lastName, username, password } = req.body;
+
+    const userQuery = `INSERT INTO users (email, phone, role, name, last_name) VALUES ("${email}", "${phone}", "${role}", "${name}", "${lastName}");`;
+
+    console.log("query", userQuery);
+
+    connection.query(userQuery, async (error, results) => {
+        console.log("id", results);
+        if (error) {
+            console.log(error);
+            res.status(500).json({
+                error: error,
+                message: 'Error in the query',
+            });
+        }
+        console.log(results);
+        lastInsertedId = results.insertId;
+        const passwordHash = await encrypt(password);
+        const accountQuery = `INSERT INTO account (user_id, username, password) VALUES (${lastInsertedId}, "${username}", "${passwordHash}");`;
+        connection.query(accountQuery, (error) => {
+            if (error) {
+                console.log(error);
+                res.status(500).json({
+                    error: error,
+                    message: 'Error in the query',
+                });
+            }
+            sendEmail(email, { username, password, name });
+            res.status(200).json({
+                message: 'Created account',
+            });
         });
         getHandleSuccess(200)(res, users);
     } catch (error) {
