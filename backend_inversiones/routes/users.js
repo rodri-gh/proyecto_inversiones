@@ -50,14 +50,9 @@ router.get('/:id', validateToken, (req, res, next) => {
 });
 
 router.post('/', validateToken, async (req, res) => {
-
-    const { email, phone, name, last_name, username, password } = req.body;
-
-    const userQuery = `INSERT INTO users (email, phone, role, name, last_name) VALUES ("${email}", "${phone}", "client", "${name}", "${last_name}");`;
-
     const { email, phone, role, name, lastName, username, password } = req.body;
 
-    const userQuery = `INSERT INTO users (email, phone, role, name, last_name) VALUES ("${email}", ${phone}, "${role}", "${name}", "${lastName}");`;
+    const userQuery = `INSERT INTO users (email, phone, role, name, last_name) VALUES ("${email}", "${phone}", "${role}", "${name}", "${lastName}");`;
 
     console.log("query", userQuery);
 
