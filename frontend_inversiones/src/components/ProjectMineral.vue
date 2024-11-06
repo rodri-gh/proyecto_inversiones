@@ -1,5 +1,4 @@
 <template>
-  <div class="container col-md-12 mt-5">
     <div class="card shadow border-0">
       <div class="card-body">
         <h4 class="card-title text-center">Minerales del Proyecto</h4>
@@ -151,13 +150,13 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { getHeaderRequest } from "@/authService";
 
 const props = defineProps({
   idProjectMineral: {
@@ -166,7 +165,7 @@ const props = defineProps({
   },
 });
 
-const baseURL = "http://localhost:3000/project_minerals/";
+const baseURL = "http://localhost:3000/project-minerals/";
 
 const projectMinerals = ref([]);
 const minerals = ref([]);
@@ -174,6 +173,7 @@ const selectedMinerals = ref([]);
 const selectedMineral = ref("");
 const selectedProjectMineral = ref({});
 const isEditing = ref(false); // Indica si se está editando o no
+const header = getHeaderRequest();
 
 onMounted(() => {
   getprojectMinerals();
@@ -182,8 +182,9 @@ onMounted(() => {
 
 const getprojectMinerals = async () => {
   try {
-    const { data } = await axios.get(baseURL + props.idProjectMineral);
-    projectMinerals.value = data;
+    const data = await axios.get(baseURL + props.idProjectMineral, header);
+    projectMinerals.value = data.data;
+    console.log(projectMinerals.value);
   } catch (error) {
     console.error(error);
   }
@@ -191,7 +192,7 @@ const getprojectMinerals = async () => {
 
 const getMinerals = async () => {
   try {
-    const { data } = await axios.get("http://localhost:3000/minerals/");
+    const data = await axios.get("http://localhost:3000/mineral/", header);
     minerals.value = data.data;
   } catch (error) {
     console.error("Error al obtener minerales:", error);
