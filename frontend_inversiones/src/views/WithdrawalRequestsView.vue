@@ -27,8 +27,8 @@
                                 </td>
                             </tr>
 
-                            <tr v-for="withdrawal in withdrawals" :key="withdrawal.withdrawal_requests_id">
-                                <td>{{ withdrawal.receive_amount }} </td>
+                            <tr v-for="withdrawal in withdrawals" :key="withdrawal.withdrawalRequestId">
+                                <td>{{ withdrawal.receiveAmount }} </td>
                                 <td>
                                     <span v-if="withdrawal.status === 'approved'" class="badge bg-success">Aprovado</span>
                                     <span v-else class="badge bg-danger">Pendiente</span>
@@ -37,7 +37,7 @@
                                     <button class="btn btn-warning btn-sm m-1" @click="selectWithdrawal(withdrawal)">
                                         <i class="fa fa-edit"></i>
                                     </button>
-                                    <button class="btn btn-danger btn-sm m-1" @click="deleteWithdrawal(withdrawal.withdrawal_requests_id)">
+                                    <button class="btn btn-danger btn-sm m-1" @click="deleteWithdrawal(withdrawal.withdrawalRequestId)">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </td>
@@ -51,28 +51,28 @@
         <Modal
       modalId="modalMineral"
       title="Datos del Mineral"
-      :showSaveButton="!selectedMineral?.withdrawal_requests_id"
-      :showUpdateButton="Boolean(selectedMineral?.withdrawal_requests_id)"
+      :showSaveButton="!selectedMineral?.withdrawalRequestId"
+      :showUpdateButton="Boolean(selectedMineral?.withdrawalRequestId)"
       @onClose="reset()"
       @onSave="saveMineral()"
     >
       <Input
-        id="request_amount"
+        id="requestAmount"
         label="Cantidad"
-        v-model="request_amount"
+        v-model="requestAmount"
         type="number"
         placeholder="Ingrese la cantidad"
       />
 
       <InputFile
-        id="photo_document"
+        id="photoDocument"
         label="Ingrese foto de identidad"
         @update:modelValue="handleImageChange"
         accept="image/*"
       />
 
       <InputFile
-        id="selfie_photo"
+        id="selfiePhoto"
         label="Ingrese su selfie"
         @update:modelValue="handleImageChange"
         accept="image/*"
@@ -99,23 +99,25 @@ import Input from "@/components/base/Input.vue";
 import InputTextArea from "@/components/base/InputTextArea.vue";
 import InputFile from "@/components/base/InputFile.vue";
 import { openModal, closeModal } from "@/utils/modal";
+import { getHeaderRequest } from "@/authService";
 
 const withdrawals = ref([]);
-const request_amount = ref("");
+const requestAmount = ref("");
 const selectedWithdrawal = ref(null); //recorda cambiar
-const photo_document = ref(null); 
-const selfie_photo = ref(null);
+const photoDocument = ref(null); 
+const selfiePhoto = ref(null);
 const selectedMineral = ref({});
 const previewUrl = ref(null);
-const baseURL = "http://localhost:3000/withdrawal_requests/";
+const baseURL = "http://localhost:3000/withdrawal-request/";
+const header = getHeaderRequest();
 
 
 
 const fetchWithdrawals = async () => {
     try {
-        const response = await axios.get("http://localhost:3000/withdrawal_requests");
-        withdrawals.value = response.data.data; // Asumiendo que el backend devuelve un array de solicitudes
-        withdrawals.value = withdrawals.value.filter((w) => w.deleted == 1);
+        const response = await axios.get(baseURL, header);
+        withdrawals.value = response.data; // Asumiendo que el backend devuelve un array de solicitudes
+        //withdrawals.value = withdrawals.value.filter((w) => w.deleted == 1);
         console.log(withdrawals.value);
         console.log('datos recibidos exitosamente')
     } catch (error) {
@@ -132,12 +134,12 @@ const updateWithdrawal = async () => {
     }
 
     const requestData = {
-        request_amount: request_amount.value,
+        requestAmount: requestAmount.value,
     };
 
     try {
         await axios.put(
-            `http://localhost:3000/withdrawals/${selectedWithdrawal.value.id}`,
+            `http://localhost:3000/withdrawal/${selectedWithdrawal.value.id}`,
             requestData
         );
         const index = withdrawals.value.findIndex(
@@ -157,7 +159,7 @@ const updateWithdrawal = async () => {
 
 const deleteWithdrawal = async (id) => {
     try {
-        await axios.patch(`http://localhost:3000/withdrawal_requests/${id}`);
+        await axios.patch(`http://localhost:3000/withdrawal_request/${id}`);
         withdrawals.value = withdrawals.value.filter((w) => w.deleted == 1); // Eliminar de la lista
         fetchWithdrawals();
     } catch (error) {
@@ -167,7 +169,7 @@ const deleteWithdrawal = async (id) => {
 
 const selectWithdrawal = (withdrawal) => {
     selectedWithdrawal.value = withdrawal;
-    request_amount.value = withdrawal.request_amount;
+    requestAmount.value = withdrawal.requestAmount;
 };
 
 
@@ -193,7 +195,7 @@ const previewImage = (event) => {
 
 const selectMineral = (mineral) => {
   selectedMineral.value = mineral;
-  request_amount.value = mineral.name;
+  requestAmount.value = mineral.name;
 //price.value = mineral.price;
   //description.value = mineral.description;
  // previewUrl.value = mineral.image;
@@ -201,9 +203,9 @@ openModal("modalMineral");
 };
 
 const saveMineral = async () => {
-  const method = selectedMineral.value.withdrawal_requests_id ? "put" : "post";
-  const url = selectedMineral.value.withdrawal_requests_id
-    ? `${baseURL}${selectedMineral.value.withdrawal_requests_id}`
+  const method = selectedMineral.value.withdrawalRequestId ? "put" : "post";
+  const url = selectedMineral.value.withdrawalRequestId
+    ? `${baseURL}${selectedMineral.value.withdrawalRequestId}`
     : baseURL;
  
   const formData = createFormData();
@@ -229,9 +231,9 @@ const saveMineral = async () => {
 };
 
 const reset = () => {
-  request_amount.value = "";
-  photo_document.value = null;
-  selfie_photo.value = null;
+  requestAmount.value = "";
+  photoDocument.value = null;
+  selfiePhoto.value = null;
   previewUrl.value = null;
   selectedMineral.value = {};
 };
@@ -243,27 +245,27 @@ const formData = new FormData();
     formData.append("investment_id", 1);/////// predeterminado  (enlazar )
     formData.append("user_id", 1); 
 
-    console.log(parseFloat(request_amount.value));
+    console.log(parseFloat(requestAmount.value));
 
 
 
-    formData.append("request_amount", request_amount.value);
-    formData.append("commission_apply", request_amount.value);
-    formData.append("receive_amount", request_amount.value);
+    formData.append("requestAmount", requestAmount.value);
+    formData.append("commission_apply", requestAmount.value);
+    formData.append("receive_amount", requestAmount.value);
     
-    if (photo_document.value) {
-        formData.append("photo_document", photo_document.value);
+    if (photoDocument.value) {
+        formData.append("photoDocument", photoDocument.value);
     }
-    if (selfie_photo.value) {
-        formData.append("selfie_photo", selfie_photo.value);
+    if (selfiePhoto.value) {
+        formData.append("selfiePhoto", selfiePhoto.value);
     }
 return formData;
 };
 
 
 const handleImageChange = (file) => {
-  photo_document.value = file;
-  selfie_photo.value = file;
+  photoDocument.value = file;
+  selfiePhoto.value = file;
   if (file) {
     previewUrl.value = URL.createObjectURL(file);
   } else {

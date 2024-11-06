@@ -3,7 +3,7 @@ import { getHeaderRequest, getUserIdOfLocalStorage } from '@/authService';
 import axios from 'axios';
 import { ref, onMounted} from 'vue';
 
-const baseUrl = 'http://localhost:3000/investments/user/'
+const baseUrl = 'http://localhost:3000/investment/user/'
 
 const investments = ref([]); 
 
@@ -12,7 +12,7 @@ onMounted( async () => {
         const userId = getUserIdOfLocalStorage();
         const header = getHeaderRequest();
         const response = await axios.get(baseUrl+userId, header);
-        investments.value = Array.isArray(response.data.data) ? response.data.data : [response.data.data];
+        investments.value = Array.isArray(response.data) ? response.data : [response.data];
         console.log(investments.value);
     } catch(e) { 
         console.error(e);
@@ -35,10 +35,10 @@ onMounted( async () => {
                 </thead>
                 <tbody>
                     <tr v-for="investment in investments" :key="investment.id">
-                        <td>{{ investment.project_id }}</td>
+                        <td>{{ investment.projectId }}</td>
                         <td>{{  investment.amount }}</td>
-                        <td>{{ investment.profit_percentage }}</td>
-                        <td>{{ investment.investment_date }}</td>
+                        <td>{{ investment.profitPercentage }}</td>
+                        <td>{{ investment.investmentDate }}</td>
                     </tr>
                     <tr></tr>
                 </tbody>

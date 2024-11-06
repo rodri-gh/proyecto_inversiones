@@ -29,7 +29,7 @@ const headers = [
     "Acciones"
 ];
 
-const baseURL = "http://localhost:3000/contacts/";
+const baseURL = "http://localhost:3000/contact/";
 const contacts = ref([]);
 
 onMounted(() => {
@@ -39,7 +39,7 @@ onMounted(() => {
 
 const getContacts = async () => {
     try {
-        const { data } = await axios.get(baseURL);
+        const data = await axios.get(baseURL);
         contacts.value = data.data;
         console.log("Contactos:", contacts.value);
     } catch (error) {
