@@ -5,11 +5,10 @@ import sequelize from "../database/connection.js";
 class WithdrawalRequest extends Model {}
 
 WithdrawalRequest.init({
-    withdrawalRequestId: {
+    id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true,
-        field: 'withdrawal_requests_id'
+        autoIncrement: true
     },
     requestAmount: {
         type: DataTypes.DECIMAL(10, 2),

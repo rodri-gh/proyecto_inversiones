@@ -32,7 +32,7 @@ Account.init(
     {
         sequelize,
         modelName: 'account',
-        tableName: 'account',
+        tableName: 'accounts',
         timestamps: false
     }
 );
