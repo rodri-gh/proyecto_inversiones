@@ -1,9 +1,5 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../database/connection.js";
-import Project from "./projectModel.js";
-import User from "./userModel.js";
-import Investment from "./investmentModel.js";
-
 
 
 class Contract extends Model { }
@@ -48,9 +44,5 @@ Contract.init(
         timestamps: false
     }
 );
-
-Contract.belongsTo(Project, { foreignKey: 'projectId' });
-Contract.belongsTo(User, { foreignKey: 'userId' });
-Contract.belongsTo(Investment, { foreignKey: 'investmentId' });
 
 export default Contract;

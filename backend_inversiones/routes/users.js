@@ -5,6 +5,7 @@ import { getHandleSuccess } from '../helpers/handleSuccess.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import sequelize from '../database/connection.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
+import { created } from '../helpers/customMessage.js';
 
 const router = express.Router();
 router.get('/', async (req, res, next) => {
@@ -50,7 +51,7 @@ router.post('/', async (req, res, next) => {
             transaction
         })
         await transaction.commit();
-        getHandleSuccess(201)(res, 'User and Account created successfully');
+        getHandleSuccess(201)(res, created.user);
     } catch (error) {
         transaction.rollback();
         getHandleError(error, res);

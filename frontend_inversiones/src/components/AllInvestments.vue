@@ -45,8 +45,8 @@ onMounted(() => {
 
 const getInvestments = async () => {
     try {
-        const response = await axios.get(baseURL, header );
-        investments.value = response.data;
+        const data = await axios.get(baseURL, header);
+        investments.value = data.data;
     } catch (error) {
         console.error(error);
     }
@@ -56,7 +56,7 @@ const getUsers = async () => {
     try {
         const data = await axios.get("http://localhost:3000/user", header);
         users.value = data.data;
-        console.log(users.value)
+        console.log(data.data)
     } catch (error) {
         console.error(error);
     }

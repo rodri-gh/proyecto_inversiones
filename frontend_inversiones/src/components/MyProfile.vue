@@ -6,9 +6,9 @@ import { getHeaderRequest, getUserIdOfLocalStorage } from '@/authService';
 const userProfile = ref({});
 const baseURL = 'http://localhost:3000/user/';
 
-onMounted(async () => {
+onMounted(() => {
     getUserProfile();
-})
+});
 
 const getUserProfile = async () => {
     try { 
@@ -20,7 +20,7 @@ const getUserProfile = async () => {
     } catch(e) { 
         console.error(e);
     }
-}
+};
 </script>
 
 <template>

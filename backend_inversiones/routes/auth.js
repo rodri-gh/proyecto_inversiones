@@ -10,7 +10,6 @@ import { validateData } from '../validations/validateData.js';
 const router = express.Router();
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    console.log(req.body); 
     try {
         validateData([username, password]);
         const account = await Account.findOne({ where: { username } });
@@ -24,8 +23,6 @@ router.post('/login', async (req, res) => {
         const accessToken = generateAccessToken({ username: username });
         getHandleSuccess(200)(res, { account, token: accessToken }, "Authenticated user");
     } catch (error) {
-        console.log(error); 
-        console.log(res);
         getHandleError(error, res);    
     }
 });

@@ -10,7 +10,7 @@ import mineralsRouter from './routes/minerals.js';
 import projectTimelineRouter from './routes/projectTimeline.js';
 import projectsRouter from './routes/projects.js';
 import contractsRouter from './routes/contracts.js';
-import operatingexpensesRouter from './routes/operatingexpenses.js';
+import operatingexpensesRouter from './routes/operatingExpenses.js';
 import investmentsRouter from './routes/investments.js';
 import project_mineralsRouter from './routes/projectMinerals.js';
 import withdrawal_requestsRouter from './routes/withdrawal_requests.js';
@@ -19,7 +19,7 @@ import movementsRouter from './routes/movements.js';
 import categoryPostsRouter from './routes/categoryPosts.js';
 import postRouter from './routes/posts.js';
 import faqRouter from './routes/faq.js';
-import analysisReportRouter from './routes/analysisReport.js'
+import analysisReportRouter from './routes/analysisReport.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,20 +35,20 @@ app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use('/auth', authRouter)
 app.use('/user', usersRouter);
-app.use('/minerals', mineralsRouter);
-app.use('/projectTimeline', projectTimelineRouter);
+app.use('/mineral', mineralsRouter);
+app.use('/project-timeline', projectTimelineRouter);
 app.use('/project', projectsRouter);
 app.use('/contract', contractsRouter);
-app.use('/operating_expenses', operatingexpensesRouter);
+app.use('/operating-expenses', operatingexpensesRouter);
 app.use('/investment', investmentsRouter);
-app.use('/project_minerals', project_mineralsRouter);
-app.use('/withdrawal_request', withdrawal_requestsRouter);
+app.use('/project-minerals', project_mineralsRouter);
+app.use('/withdrawal-request', withdrawal_requestsRouter);
 app.use('/contact', contactsRouter);
 app.use('/movement', movementsRouter);
-app.use('/category_post', categoryPostsRouter);
+app.use('/category-post', categoryPostsRouter);
 app.use('/post', postRouter);
 app.use('/faq', faqRouter);
 app.use('/movement', movementsRouter);
-app.use('/analysis_report', analysisReportRouter);
+app.use('/analysis-report', analysisReportRouter);
 
 export default app;

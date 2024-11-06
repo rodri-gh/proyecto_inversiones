@@ -31,12 +31,22 @@ ProjectTimeline.init(
         },
         description: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: false
+        },
+        priceMineral1: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: false,
+            field: 'price_mineral1'
+        },
+        priceMineral2: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: false,
+            field: 'price_mineral2'
         },
         deleted: {
             type: DataTypes.TINYINT,
             allowNull: false,
-            defaultValue: 1
+            defaultValue: 0
         }
     },
     {

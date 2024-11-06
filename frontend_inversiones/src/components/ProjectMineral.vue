@@ -1,5 +1,4 @@
 <template>
-  <div class="container col-md-12 mt-5">
     <div class="card shadow border-0">
       <div class="card-body">
         <h4 class="card-title text-center">Minerales del Proyecto</h4>
@@ -36,8 +35,8 @@
                 v-for="projectMineral in projectMinerals"
                 :key="projectMineral.id"
               >
-                <td>{{ projectMineral.mineral_id }}</td>
-                <td>{{ projectMineral.mineral_nombre }}</td>
+                <td>{{ projectMineral.id }}</td>
+                <td>{{ projectMineral.name }}</td>
                 <td>
                   <button
                     class="btn btn-warning btn-sm m-1"
@@ -151,7 +150,6 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -167,7 +165,8 @@ const props = defineProps({
   },
 });
 
-const baseURL = "http://localhost:3000/project_minerals/";
+const baseURL = "http://localhost:3000/project-minerals/";
+const baseURLMineral = "http://localhost:3000/mineral/";
 
 const projectMinerals = ref([]);
 const minerals = ref([]);
@@ -184,10 +183,17 @@ onMounted(() => {
 
 const getprojectMinerals = async () => {
   try {
-    console.log(props.idProjectMineral);
-    const { data } = await axios.get(baseURL + props.idProjectMineral, header);
-    console.log(data);
-    projectMinerals.value = Array.isArray(data) ? data : [data];
+    const data = await axios.get(baseURL + props.idProjectMineral, header);
+    var uniqueMineralsIds = new Set();
+    data.data.forEach(item => {
+      uniqueMineralsIds.add(item.mineralId); 
+    });
+    uniqueMineralsIds = Array.from(uniqueMineralsIds);
+    for (const item of uniqueMineralsIds) {
+      const mineral = await axios.get(baseURLMineral + item, header);
+      projectMinerals.value.push(mineral.data[0]);
+    }
+    console.log(projectMinerals.value)
   } catch (error) {
     console.error(error);
   }
@@ -195,9 +201,8 @@ const getprojectMinerals = async () => {
 
 const getMinerals = async () => {
   try {
-    const { data } = await axios.get("http://localhost:3000/minerals/");
-    minerals.value = data;
-    console.log(data);
+    const data = await axios.get("http://localhost:3000/mineral/", header);
+    minerals.value = data.data;
   } catch (error) {
     console.error("Error al obtener minerales:", error);
   }

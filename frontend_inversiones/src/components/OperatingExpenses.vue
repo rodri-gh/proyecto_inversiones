@@ -76,7 +76,7 @@ const props = defineProps({
   },
 });
 
-const baseURL = "http://localhost:3000/operating_expenses/";
+const baseURL = "http://localhost:3000/operating-expenses/";
 const operatingExpenses = ref([]);
 const name = ref("");
 const description = ref("");
@@ -91,8 +91,10 @@ onMounted(() => {
 
 const getOperatingExpenses = async () => {
   try {
-      const { data } = await axios.get(baseURL + "project/" + props.idProject);
-      operatingExpenses.value = data;
+      console.log(baseURL+"project/")
+      console.log(props.idProject)
+      const data = await axios.get(baseURL + "project/" + props.idProject, header);
+      operatingExpenses.value = data.data;
   } catch (error) {
       console.error(error);
   }

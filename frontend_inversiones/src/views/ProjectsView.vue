@@ -233,8 +233,8 @@ onMounted(() => {
 
 const getProjects = async () => {
   try {
-    const { data } = await axios.get(baseURL);
-    projects.value = data;
+    const data = await axios.get(baseURL);
+    projects.value = data.data;
     console.log(projects.value);
   } catch (error) {
     console.log(error);
