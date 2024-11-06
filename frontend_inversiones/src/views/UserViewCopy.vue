@@ -255,7 +255,7 @@
   
   const getUsers = async () => {
     try {
-      const { data } = await axios.get(baseURL, header);
+      const data  = await axios.get(baseURL, header);
       users.value = data.data;
       console.log(users.value);
     } catch (error) {

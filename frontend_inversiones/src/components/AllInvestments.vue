@@ -26,7 +26,7 @@ const props = defineProps({
 
 const users = ref([]);
 const projects = ref([])
-const baseURL = "http://localhost:3000/investments";
+const baseURL = "http://localhost:3000/investment";
 const investments = ref([]);
 const amount = ref(0);
 const investment_date = ref("");
@@ -45,7 +45,7 @@ onMounted(() => {
 
 const getInvestments = async () => {
     try {
-        const {data} = await axios.get(baseURL, );
+        const data = await axios.get(baseURL, header);
         investments.value = data.data;
     } catch (error) {
         console.error(error);
@@ -54,9 +54,9 @@ const getInvestments = async () => {
 
 const getUsers = async () => {
     try {
-        const {data} = await axios.get("http://localhost:3000/user", header);
+        const data = await axios.get("http://localhost:3000/user", header);
         users.value = data.data;
-        console.log(users.value)
+        console.log(data.data)
     } catch (error) {
         console.error(error);
     }
@@ -64,7 +64,7 @@ const getUsers = async () => {
 
 const getProjects = async () => {
     try {
-        const {data} = await axios.get("http://localhost:3000/projects", header);
+        const data = await axios.get("http://localhost:3000/project", header);
         projects.value = data.data;
         console.log(projects.value)
     } catch (error) {

@@ -5,7 +5,7 @@ import sequelize from "../database/connection.js";
 class Contact extends Model { }
 Contact.init(
     {
-        id: {
+        contact_id: {
             type: DataTypes.BIGINT,
             primaryKey: true,
             autoIncrement: true
@@ -17,6 +17,7 @@ Contact.init(
         lastName: {
             type: DataTypes.STRING,
             allowNull: false,
+            field: 'lastname'
         },
         email: {
             type: DataTypes.STRING,
@@ -31,6 +32,7 @@ Contact.init(
         comment: {
             type: DataTypes.STRING,
             allowNull: false,
+            field: 'comments'
         },
         answer: {
             type: DataTypes.STRING,
