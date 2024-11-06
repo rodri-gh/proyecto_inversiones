@@ -275,7 +275,7 @@ const props = defineProps({
   },
 });
 
-const baseURL = "http://localhost:3000/projectTimeLine/";
+const baseURL = "http://localhost:3000/project-timeline/";
 
 const timeLines = ref([]);
 

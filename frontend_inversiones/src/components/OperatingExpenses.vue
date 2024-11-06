@@ -59,6 +59,7 @@ import Modal from "@/components/base/Modal.vue";
 import Input from "@/components/base/Input.vue";
 import InputTextArea from "@/components/base/InputTextArea.vue";
 import { openModal, closeModal } from "@/utils/modal";
+import { getHeaderRequest } from "@/authService";
 
 const headers = [
   "Nombre",
@@ -75,12 +76,13 @@ const props = defineProps({
   },
 });
 
-const baseURL = "http://localhost:3000/operatingexpenses/";
+const baseURL = "http://localhost:3000/operating-expenses/";
 const operatingExpenses = ref([]);
 const name = ref("");
 const description = ref("");
 const expenses = ref(0);
 const selectedOperatingExpense = ref({});
+const header = getHeaderRequest();
 
 onMounted(() => {
   getOperatingExpenses();
@@ -89,7 +91,9 @@ onMounted(() => {
 
 const getOperatingExpenses = async () => {
   try {
-      const { data } = await axios.get(baseURL + "project/" + props.idProject);
+      console.log(baseURL+"project/")
+      console.log(props.idProject)
+      const data = await axios.get(baseURL + "project/" + props.idProject, header);
       operatingExpenses.value = data.data;
   } catch (error) {
       console.error(error);
@@ -113,11 +117,7 @@ const saveOperatingExpense = async () => {
   const formData = createFormData();
 
   try {
-      await axios[method](url, formData, {
-          headers: {
-              "Content-Type": "application/json",
-          },
-      });
+      await axios[method](url, formData, header);
       closeModal("modalOperatingExpense");
       getOperatingExpenses();
       reset();

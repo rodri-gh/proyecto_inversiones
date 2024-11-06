@@ -31,11 +31,13 @@ ProjectTimeline.init(
         },
         priceMineral1: {
             type: DataTypes.DECIMAL(10, 2),
-            allowNull: false
+            allowNull: false,
+            field: 'price_mineral_1'
         },
         priceMineral2: {
             type: DataTypes.DECIMAL(10, 2),
-            allowNull: false
+            allowNull: false,
+            field: 'price_mineral_2'
         },
         deleted: {
             type: DataTypes.TINYINT,
@@ -46,7 +48,7 @@ ProjectTimeline.init(
     {
         sequelize,
         modelName: 'projectTimeline',
-        tableName: 'project_timelines',
+        tableName: 'project_timeline',
         timestamps: false
     }
 );

@@ -89,6 +89,7 @@ import Modal from "@/components/base/Modal.vue";
 import Input from "@/components/base/Input.vue";
 import Select from "@/components/base/Select.vue";
 import { openModal, closeModal } from "@/utils/modal";
+import { getHeaderRequest } from "@/authService";
 
 const headers = [
     "Usuario",
@@ -106,22 +107,16 @@ const props = defineProps({
 });
 
 const users = ref([]);
-const baseURL = "http://localhost:3000/investments/";
+const baseURL = "http://localhost:3000/investment/";
 const investments = ref([]);
 const amount = ref(0);
 const investment_date = ref("");
 const profit_percentage = ref(0);
 const selectedInvestment = ref({});
 const user_id = ref("");
-const token = localStorage.getItem("token") || "";
 
-const header = {
-    headers: {
-        authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-    },
-};
+const header = getHeaderRequest();
+
 onMounted(() => {
     getInvestments();
     getUsers();
@@ -129,7 +124,7 @@ onMounted(() => {
 
 const getInvestments = async () => {
     try {
-        const {data} = await axios.get(baseURL + "project/" + props.idProjectInvestment);
+        const data = await axios.get(baseURL + "project/" + props.idProjectInvestment, header);
         investments.value = data.data;
     } catch (error) {
         console.error(error);
@@ -138,7 +133,7 @@ const getInvestments = async () => {
 
 const getUsers = async () => {
     try {
-        const {data} = await axios.get("http://localhost:3000/user" ,header);
+        const data = await axios.get("http://localhost:3000/user", header);
         users.value = data.data;
         console.log(users.value)
     } catch (error) {
@@ -162,11 +157,7 @@ const saveInvestment = async () => {
         : baseURL;
     const formData = createFormData();
     try {
-        await axios[method](url, formData, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        await axios[method](url, formData, header);
         closeModal("modalInvestment");
         getInvestments();
         getUsers();
