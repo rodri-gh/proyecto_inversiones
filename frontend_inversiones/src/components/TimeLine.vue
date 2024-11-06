@@ -67,7 +67,7 @@
 
                   <span
                     v-if="timeline.phase == 'entrada-al-ingenio'"
-                    class="phase-badge"
+                    class="phase-"
                     :class="getPhaseClass(timeline.phase)"
                   >
                     Entrada al ingenio
@@ -267,6 +267,7 @@
   <script setup>
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
+import { getHeaderRequest } from "@/authService";
 
 const props = defineProps({
   idProject: {
@@ -286,6 +287,8 @@ const status = ref("");
 const description = ref("");
 const mineral_1 = ref(0);
 const mineral_2 = ref(0);
+
+const header = getHeaderRequest();
 
 const selectedTimeLine = ref({});
 
@@ -380,11 +383,11 @@ const formatInputDate = (date) => {
 
 const getTimeLines = async () => {
   try {
-    const { data } = await axios.get(baseURL + props.idProject);
+    const data = await axios.get(baseURL+"project/" + props.idProject, header);
+    console.log(data.data)
     timeLines.value = data.data.sort(
       (a, b) => new Date(a.start_date) - new Date(b.start_date)
     );
-
     console.log(timeLines.value);
   } catch (error) {
     console.log(error);

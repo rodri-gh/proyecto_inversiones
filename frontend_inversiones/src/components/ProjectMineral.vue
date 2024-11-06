@@ -35,8 +35,8 @@
                 v-for="projectMineral in projectMinerals"
                 :key="projectMineral.id"
               >
-                <td>{{ projectMineral.mineral_id }}</td>
-                <td>{{ projectMineral.mineral_nombre }}</td>
+                <td>{{ projectMineral.id }}</td>
+                <td>{{ projectMineral.name }}</td>
                 <td>
                   <button
                     class="btn btn-warning btn-sm m-1"
@@ -166,6 +166,7 @@ const props = defineProps({
 });
 
 const baseURL = "http://localhost:3000/project-minerals/";
+const baseURLMineral = "http://localhost:3000/mineral/";
 
 const projectMinerals = ref([]);
 const minerals = ref([]);
@@ -183,8 +184,16 @@ onMounted(() => {
 const getprojectMinerals = async () => {
   try {
     const data = await axios.get(baseURL + props.idProjectMineral, header);
-    projectMinerals.value = data.data;
-    console.log(projectMinerals.value);
+    var uniqueMineralsIds = new Set();
+    data.data.forEach(item => {
+      uniqueMineralsIds.add(item.mineralId); 
+    });
+    uniqueMineralsIds = Array.from(uniqueMineralsIds);
+    for (const item of uniqueMineralsIds) {
+      const mineral = await axios.get(baseURLMineral + item, header);
+      projectMinerals.value.push(mineral.data[0]);
+    }
+    console.log(projectMinerals.value)
   } catch (error) {
     console.error(error);
   }

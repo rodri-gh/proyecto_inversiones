@@ -27,6 +27,18 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+router.get('/project/:id', async (req, res) => {
+  const { id } = req.params;
+  console.log(id)
+  try {
+    const projectTimeline = await ProjectTimeline.findAll({ where: { project_id: id } });
+    verifyIfIdExists(projectTimeline);
+    getHandleSuccess(200)(res, projectTimeline);
+  } catch (error) {
+    getHandleError(error, res)
+  }
+});
+
 router.post('/', async (req, res, next) => {
   const { projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 } = req.body;
   try {
