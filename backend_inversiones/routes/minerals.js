@@ -57,6 +57,16 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+router.get('/:id', async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const minerals = await Mineral.findAll({ where: { id: id }});
+    getHandleSuccess(200)(res, minerals);
+  } catch (error) {
+    getHandleError(error, res)
+  }
+});
+
 router.post('/', upload.single('image'), async (req, res, next) => {
   const { name, price, description } = req.body;
   const image = req.file ? `${req.file.filename}` : null;
