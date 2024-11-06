@@ -7,9 +7,11 @@ import { verifyIfIdExists } from '../helpers/handleId.js';
 
 const router = express.Router();
 router.get('/', async (req, res, next) => {
-    try { const contracts = await Contract.findAll();
-        getHandleSuccess(200)()(res, contracts)
+    try { 
+        const contracts = await Contract.findAll();
+        getHandleSuccess(200)(res, contracts);
     } catch (error) {
+        console.log(error)
         getHandleError(error, res)
     }
 });
@@ -18,7 +20,7 @@ router.post('/', async (req, res, next) => {
     const { projectId, userId, investmentId, contractCode, contractDate, contractFilePath } = req.body;
     try {
         await Contract.create({ projectId, userId, investmentId, contractCode, contractDate, contractFilePath });
-        getHandleSuccess(201)()(res, "Contract created successfully")
+        getHandleSuccess(201)(res, "Contract created successfully")
     } catch (error) {
         getHandleError(error, res)
     }
@@ -33,7 +35,7 @@ router.put('/:id', async(req, res, next) => {
             returning: true
         });
         verifyIfIdExists(updatedCount);
-        getHandleSuccess(204)()(res)
+        getHandleSuccess(204)(res)
     } catch (error) {
         getHandleError(error, res)
     }
@@ -46,7 +48,7 @@ router.delete('/:id', async (req, res, next) => {
             where: { id }
         });
         verifyIfIdExists(updatedCount);
-        getHandleSuccess(204)()(res)
+        getHandleSuccess(204)(res)
     } catch (error) {
         getHandleError(error, res)
     }
