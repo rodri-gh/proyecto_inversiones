@@ -36,12 +36,12 @@ ProjectTimeline.init(
         priceMineral1: {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
-            field: 'price_mineral_1'
+            field: 'price_mineral1'
         },
         priceMineral2: {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
-            field: 'price_mineral_2'
+            field: 'price_mineral2'
         },
         deleted: {
             type: DataTypes.TINYINT,
