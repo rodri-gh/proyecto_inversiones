@@ -72,6 +72,7 @@ import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
 import Input from "@/components/base/Input.vue";
 import Button from "@/components/base/Button.vue";
+import { getHeaderRequest } from "@/authService";
 
 const router = useRouter();
 const baseUrl = "http://localhost:3000/auth/login";
@@ -79,6 +80,8 @@ const baseUrGetUser = "http://localhost:3000/user/";
 
 const username = ref("");
 const password = ref("");
+
+const header = getHeaderRequest();
 
 onMounted(() => {
   limpiar();
@@ -100,20 +103,16 @@ const iniciarSesion = async () => {
     password: password.value,
   };
   try {
-    const { data } = await axios.post(baseUrl, datos);
-    const userId = data.data.user_id;
-    const header = {
-      headers: {
-        authorization: `Bearer ${data.token}`,
-        'Cache-Control': 'no-cache'
-      },
-    };
-    const dataUser = await axios.get(baseUrGetUser+userId, header)
-    data.data.role = dataUser.data.data[0]?.role;
-    console.log(data.data); 
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.data));
+    const data = await axios.post(baseUrl, datos);
+    const userId = data.data.account.userId;
+    const dataUser = await axios.get(baseUrGetUser+userId, header);
+    console.log(dataUser.data.id);
+    data.data.account.role = dataUser.data.role;
+    data.data.account.user_id = dataUser.data.id;
+    console.log(data.data.account); 
+    if (data.data.token) {
+      localStorage.setItem("token", data.data.token);
+      localStorage.setItem("user", JSON.stringify(data.data.account));
       router.push({ path: "/dashboard" });
     }
   } catch (error) {
