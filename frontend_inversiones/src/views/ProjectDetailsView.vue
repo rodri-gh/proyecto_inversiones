@@ -10,6 +10,7 @@
 
       <div class="m-5">
         <h3>Contratos del Poyecto</h3>
+        <Contract />
       </div>
 
       <div class="m-5">
@@ -40,6 +41,7 @@ import TimeLine from "@/components/TimeLine.vue";
 import ProjectMineral from "@/components/ProjectMineral.vue";
 import OperatingExpenses from "@/components/OperatingExpenses.vue";
 import Investments from "@/components/Investments.vue";
+import Contract from "@/components/Contract.vue";
 import { getHeaderRequest } from "@/authService";
 
 const route = useRoute();
