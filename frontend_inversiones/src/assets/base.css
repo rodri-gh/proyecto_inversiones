@@ -39,7 +39,8 @@ Diseño del sitio:
     --text-color: #333333; /* Color del texto */
     --pending-color: #ff3300; /* Etiqueta de estado pendiente */
     --active-color: #008000; /* Etiqueta de estado activo */
-
+    --navbar-bg: #d8d8d8;
+    --navbar-bg-hover: #fcfcfc;
     --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
