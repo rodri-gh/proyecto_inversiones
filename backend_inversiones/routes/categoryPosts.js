@@ -46,12 +46,15 @@ router.put('/:id', async (req, res, next) => {
 router.patch('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
-    const [updatedCount] = await CategoryPost.update({ deleted: 1 }, {
-      where: { id },
-      returning: true
-    });
-    verifyIfIdExists(updatedCount);
-    getHandleSuccess(204)(res)
+    const categoryPost = await CategoryPost.findOne({ where: { id } });
+    if (!categoryPost) {
+      return getHandleError(new Error('CategoryPost not found'), res);
+    }
+
+    const newDeletedStatus = categoryPost.deleted ? 0 : 1;
+    await categoryPost.update({ deleted: newDeletedStatus }, { where: { id } });
+
+    getHandleSuccess(200)(res, `CategoryPost ${newDeletedStatus ? 'deleted' : 'restored'} successfully`);
   } catch (error) {
     getHandleError(error, res)
   }

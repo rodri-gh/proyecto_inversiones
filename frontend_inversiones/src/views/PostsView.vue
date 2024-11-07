@@ -1,24 +1,21 @@
   <template>
-  <div class="container col-md-8 mt-5">
-    <div class="card shadow border-0">
-      <div class="card-body">
-        <h4 class="card-title text-center">Posts</h4>
+  <div class="container col-md-10 mt-5">
+    <h4 class="card-title text-center">Posts</h4>
 
-        <div class="text-end">
-          <Button
-            data-bs-toggle="modal"
-            data-bs-target="#modalPost"
-            text="Nuevo"
-            icon="fa fa-plus"
-          />
-        </div>
-        <TablePosts
-          :headers="headers"
-          :items="posts"
-          :actions="{ edit: selectPost, delete: deletePost }"
-        />
-      </div>
+    <div class="text-end">
+      <Button
+        data-bs-toggle="modal"
+        data-bs-target="#modalPost"
+        text="Nuevo"
+        icon="fa fa-plus"
+      />
     </div>
+    <TablePosts
+      :headers="headers"
+      :items="posts"
+      :actions="{ edit: selectPost, delete: deletePost }"
+    />
+
     <Modal
       modalId="modalPost"
       title="Datos del Post"
@@ -40,7 +37,7 @@
         <Select
           :options="categoryPosts"
           label="Categoría del post"
-          value-key="category_post_id"
+          value-key="id"
           label-key="name"
           v-model="category_post_id"
           selectClass="col-6"
@@ -85,11 +82,11 @@ import TablePosts from "@/components/tables/TablePosts.vue";
 
 const headers = ["Titulo", "Resumen", "Estado", "Acciones"];
 
-const categoryURL = "http://localhost:3000/categoryPosts/";
+const categoryURL = "http://localhost:3000/category-post/";
 
 const categoryPosts = ref([]);
 
-const baseURL = "http://localhost:3000/posts/";
+const baseURL = "http://localhost:3000/post/";
 
 const posts = ref([]);
 
@@ -145,7 +142,7 @@ const getPosts = async () => {
 const getCategoryPosts = async () => {
   try {
     const { data } = await axios.get(categoryURL);
-    categoryPosts.value = data.data;
+    categoryPosts.value = data;
     console.log("Las categorias:", categoryPosts.value);
   } catch (error) {
     console.log(error);
@@ -178,6 +175,7 @@ const savePost = async () => {
       },
     });
 
+    console.log("Post guardado");
     closeModal("modalPost");
     getPosts();
     reset();

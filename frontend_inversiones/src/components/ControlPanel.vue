@@ -11,6 +11,9 @@ import ConfigurationAndSecurity from "./Dashboard/ConfigurationAndSecurity.vue";
 import Start from "./Dashboard/Start.vue";
 import ContactView from "@/views/ContactView.vue";
 import UsersView from "@/views/UsersView.vue";
+import MineralsView from "@/views/MineralsView.vue";
+import CategoryPostView from "@/views/CategoryPostView.vue";
+import PostsView from "../views/PostsView.vue";
 
 const activeComponent = ref(markRaw(MyProfile));
 const activeLink = ref("Mi Perfil");
@@ -22,13 +25,27 @@ const showComponent = (componentName, linkName) => {
 
 const componentslinks = computed(() => {
   const userRole = getUserRoleOfLocalStorage();
-  let links = [{ name: "Mi Perfil", component: MyProfile }];
+  let links = [
+    { name: "Ir a web", path: "/", divider: true },
+    { name: "Mi Perfil", component: MyProfile },
+  ];
   if (userRole == "super_user" || userRole == "admin") {
-    links.push({ name: "Inicio", component: Start });
+    links.push({ name: "Inicio", component: Start, divider: true });
     links.push({ name: "Gestion de Usuarios", component: UsersView });
-    links.push({ name: "Projectos", component: ProjectsView });
-    links.push({ name: "Retiro de Fondos", component: WithdrawalRequestsView });
-    links.push({ name: "Responder Contacto", component: ContactView });
+    links.push({ name: "Proyectos", component: ProjectsView });
+    links.push({ name: "Minerales", component: MineralsView });
+    links.push({
+      name: "Solicitudes de retiro",
+      component: WithdrawalRequestsView,
+    });
+    links.push({
+      name: "Responder Contacto",
+      component: ContactView,
+      divider: true,
+    });
+    links.push({ name: "Categorias Post", component: CategoryPostView });
+    links.push({ name: "Posts", component: PostsView });
+    links.push({ name: "Administrar Web", component: ContactView });
   } else if (userRole == "client") {
     links.push({ name: "Projectos", component: ProjectsView });
     links.push({ name: "Inversiones", component: InvestmentsOfUser });
@@ -81,14 +98,24 @@ const componentslinks = computed(() => {
       <div class="row">
         <!-- Barra lateral -->
         <div class="col-md-2 sidebar">
-          <a
-            v-for="(item, index) in componentslinks"
-            :key="index"
-            @click="() => showComponent(item.component, item.name)"
-            :class="{ active: activeLink === item.name }"
-          >
-            {{ item.name }}
-          </a>
+          <template v-for="(item, index) in componentslinks" :key="index">
+            <router-link
+              v-if="item.path"
+              :to="item.path"
+              class="nav-link"
+              :class="{ activeSideBar: activeLink === item.name }"
+            >
+              {{ item.name }}
+            </router-link>
+            <a
+              v-else
+              @click="() => showComponent(item.component, item.name)"
+              :class="{ activeSideBar: activeLink === item.name }"
+            >
+              {{ item.name }}
+            </a>
+            <hr v-if="item.divider" />
+          </template>
         </div>
         <!-- Contenido principal -->
         <div class="col-md-10">
@@ -104,7 +131,7 @@ const componentslinks = computed(() => {
 </template>
 
 <style scoped>
-.sidebar a.active {
+.sidebar a.activeSideBar {
   font-weight: bold;
   color: var(--primary-color);
 }
