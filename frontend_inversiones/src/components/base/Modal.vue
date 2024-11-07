@@ -84,3 +84,5 @@ defineProps({
 
 defineEmits(["onClose", "onSave"]);
 </script>
+<style scoped>
+</style>
