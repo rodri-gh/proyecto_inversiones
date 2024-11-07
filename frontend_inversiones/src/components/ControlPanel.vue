@@ -14,6 +14,7 @@ import UsersView from "@/views/UsersView.vue";
 import MineralsView from "@/views/MineralsView.vue";
 import CategoryPostView from "@/views/CategoryPostView.vue";
 import PostsView from "../views/PostsView.vue";
+import FaqAdmin from "../components/FaqAdmin.vue";
 
 const activeComponent = ref(markRaw(MyProfile));
 const activeLink = ref("Mi Perfil");
@@ -45,6 +46,8 @@ const componentslinks = computed(() => {
     });
     links.push({ name: "Categorias Post", component: CategoryPostView });
     links.push({ name: "Posts", component: PostsView });
+    links.push({ name: "FAQs", component: FaqAdmin });
+
     links.push({ name: "Administrar Web", component: ContactView });
   } else if (userRole == "client") {
     links.push({ name: "Projectos", component: ProjectsView });
