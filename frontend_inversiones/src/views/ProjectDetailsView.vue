@@ -10,7 +10,7 @@
 
       <div class="m-5">
         <h3>Contratos del Poyecto</h3>
-        <Contract />
+        <Contract :idProject="idProject"/>
       </div>
 
       <div class="m-5">

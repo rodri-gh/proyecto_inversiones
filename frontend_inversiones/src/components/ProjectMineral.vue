@@ -1,7 +1,6 @@
 <template>
-    <div class="card shadow border-0">
-      <div class="card-body">
-        <h4 class="card-title text-center">Minerales del Proyecto</h4>
+    <div>
+      <div>
         <div class="text-end">
           <button
             type="button"

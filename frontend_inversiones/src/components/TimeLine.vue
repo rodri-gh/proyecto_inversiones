@@ -1,124 +1,121 @@
   <template>
-  <div class="container col-md-10 mt-5">
-    <div class="card shadow border-0">
-      <div class="card-body">
-        <h4 class="card-title text-center">Línea de Tiempo</h4>
-        <div class="text-end">
-          <button
-            type="button"
-            class="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#modalTimeline"
-            :disabled="availablePhases.length === 0"
-          >
-            <i class="fa fa-plus mx-1"></i> Nuevo
-          </button>
-        </div>
+  <div>
+    <div>
+      <div class="text-end">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#modalTimeline"
+          :disabled="availablePhases.length === 0"
+        >
+          <i class="fa fa-plus mx-1"></i> Nuevo
+        </button>
+      </div>
 
-        <div class="timeline-container position-relative mt-4">
-          <div class="timeline-line"></div>
+      <div class="timeline-container position-relative mt-4">
+        <div class="timeline-line"></div>
+        <div
+          v-for="(timeline, index) in timeLines"
+          :key="timeline.id"
+          class="timeline-item"
+          :class="{
+            'timeline-left': index % 2 === 0,
+            'timeline-right': index % 2 !== 0,
+          }"
+        >
           <div
-            v-for="(timeline, index) in timeLines"
-            :key="timeline.id"
-            class="timeline-item"
-            :class="{
-              'timeline-left': index % 2 === 0,
-              'timeline-right': index % 2 !== 0,
-            }"
+            class="timeline-point"
+            :class="getStatusClass(timeline.status)"
           >
-            <div
-              class="timeline-point"
-              :class="getStatusClass(timeline.status)"
-            >
-              <i :class="getStatusIcon(timeline.status)"></i>
-            </div>
-            <div class="timeline-content">
-              <div class="card shadow-sm">
-                <div class="card-body">
-                  <!-- <span
-                    class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)"
+            <i :class="getStatusIcon(timeline.status)"></i>
+          </div>
+          <div class="timeline-content">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <!-- <span
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  {{ timeline.phase }}
+                </span> -->
+
+                <span
+                  v-if="timeline.phase == 'contrato'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Contrato
+                </span>
+                <span
+                  v-if="timeline.phase == 'pre-compra'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Pre-compra
+                </span>
+
+                <span
+                  v-if="timeline.phase == 'compra'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Compra
+                </span>
+
+                <span
+                  v-if="timeline.phase == 'entrada-al-ingenio'"
+                  class="phase-"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Entrada al ingenio
+                </span>
+
+                <span
+                  v-if="timeline.phase == 'salida-del-ingenio'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Salida del ingenio
+                </span>
+
+                <span
+                  v-if="timeline.phase == 'certificacion'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Certificación
+                </span>
+
+                <div class="dates mt-2">
+                  <small class="text-muted">
+                    {{ formatDate(timeline.start_date) }} -
+                    {{ formatDate(timeline.end_date) }}
+                  </small>
+                </div>
+
+                <p class="mt-2">{{ timeline.description }}</p>
+
+                <div class="prices mt-2">
+                  <small class="d-block">
+                    <strong>Mineral 1:</strong> ${{
+                      timeline.price_mineral_1
+                    }}
+                  </small>
+                  <small class="d-block">
+                    <strong>Mineral 2:</strong> ${{
+                      timeline.price_mineral_2
+                    }}
+                  </small>
+                </div>
+
+                <div class="mt-3">
+                  <button
+                    class="btn btn-warning btn-sm"
+                    @click="selectTimeLine(timeline)"
                   >
-                    {{ timeline.phase }}
-                  </span> -->
-
-                  <span
-                    v-if="timeline.phase == 'contrato'"
-                    class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)"
-                  >
-                    Contrato
-                  </span>
-                  <span
-                    v-if="timeline.phase == 'pre-compra'"
-                    class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)"
-                  >
-                    Pre-compra
-                  </span>
-
-                  <span
-                    v-if="timeline.phase == 'compra'"
-                    class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)"
-                  >
-                    Compra
-                  </span>
-
-                  <span
-                    v-if="timeline.phase == 'entrada-al-ingenio'"
-                    class="phase-"
-                    :class="getPhaseClass(timeline.phase)"
-                  >
-                    Entrada al ingenio
-                  </span>
-
-                  <span
-                    v-if="timeline.phase == 'salida-del-ingenio'"
-                    class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)"
-                  >
-                    Salida del ingenio
-                  </span>
-
-                  <span
-                    v-if="timeline.phase == 'certificacion'"
-                    class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)"
-                  >
-                    Certificación
-                  </span>
-
-                  <div class="dates mt-2">
-                    <small class="text-muted">
-                      {{ formatDate(timeline.start_date) }} -
-                      {{ formatDate(timeline.end_date) }}
-                    </small>
-                  </div>
-
-                  <p class="mt-2">{{ timeline.description }}</p>
-
-                  <div class="prices mt-2">
-                    <small class="d-block">
-                      <strong>Mineral 1:</strong> ${{
-                        timeline.price_mineral_1
-                      }}
-                    </small>
-                    <small class="d-block">
-                      <strong>Mineral 2:</strong> ${{
-                        timeline.price_mineral_2
-                      }}
-                    </small>
-                  </div>
-
-                  <div class="mt-3">
-                    <button
-                      class="btn btn-warning btn-sm"
-                      @click="selectTimeLine(timeline)"
-                    >
-                      <i class="fa fa-edit"></i> Editar
-                    </button>
-                  </div>
+                    <i class="fa fa-edit"></i> Editar
+                  </button>
                 </div>
               </div>
             </div>
@@ -383,39 +380,42 @@ const formatInputDate = (date) => {
 
 const getTimeLines = async () => {
   try {
+    console.log(baseURL+"project/" + props.idProject);
     const data = await axios.get(baseURL+"project/" + props.idProject, header);
     console.log(data.data)
     timeLines.value = data.data.sort(
       (a, b) => new Date(a.start_date) - new Date(b.start_date)
     );
-    console.log(timeLines.value);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
 const createTimeLine = async () => {
   const timeLine = {
+    projectId: props.idProject,
     phase: phase.value,
-    start_date: start_date.value,
-    end_date: end_date.value,
+    startDate: start_date.value,
+    endDate: end_date.value,
     status: status.value,
     description: description.value,
-    price_mineral_1: mineral_1.value,
-    price_mineral_2: mineral_2.value,
-    project_id: props.idProject,
+    priceMineral1: mineral_1.value,
+    priceMineral2: mineral_2.value,
   };
 
+  console.log(timeLine.value);
+
   try {
-    const { data } = await axios.post(baseURL, timeLine);
-    console.log(data);
+    console.log(baseURL);
+    const data = await axios.post(baseURL, timeLine, header);
+    console.log(data.data);
     var myModalEl = document.getElementById("modalTimeline");
     var modal = bootstrap.Modal.getInstance(myModalEl);
     modal.hide();
     getTimeLines();
     reset();
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
