@@ -1,20 +1,7 @@
 /* :root {
-    --button-primary: #f05c17;
-    --button-primary-hover: #e6743c;
-    --navbar-bg: #d8d8d8;
-    --navbar-bg-hover: #fcfcfc;
+   
 }
-.btn-primary {
-    background-color: var(--button-primary);
-    border: none;
-    border-radius: 1rem !important;
-}
-.btn-primary:hover {
-    background-color: var(--button-primary-hover);
-}
-.btn-primary:active {
-    background-color: var(--button-primary) !important;
-}
+
  */
 
 /* - Plata (#B1B1B1)
@@ -39,12 +26,26 @@ Diseño del sitio:
     --text-color: #333333; /* Color del texto */
     --pending-color: #ff3300; /* Etiqueta de estado pendiente */
     --active-color: #008000; /* Etiqueta de estado activo */
+
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --button-primary: #f05c17;
+    --button-primary-hover: #e6743c;
     --navbar-bg: #d8d8d8;
     --navbar-bg-hover: #fcfcfc;
-    --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
 /* Estilos de los botones de acción */
+.btn-primary {
+    background-color: var(--button-primary);
+    border: none;
+    border-radius: 1rem !important;
+}
+.btn-primary:hover {
+    background-color: var(--button-primary-hover);
+}
+.btn-primary:active {
+    background-color: var(--button-primary) !important;
+}
 .btn-action {
     color: white;
     font-weight: bold;
@@ -61,6 +62,18 @@ Diseño del sitio:
 .btn-restore {
     background-color: var(--active-color);
     border-radius: 25px;
+}
+.btn-edit:hover {
+    opacity: 0.5 !important;
+    background-color: var(--primary-color);
+}
+.btn-delete:hover {
+    opacity: 0.5 !important;
+    background-color: var(--pending-color);
+}
+.btn-restore:hover {
+    opacity: 0.5 !important;
+    background-color: var(--active-color);
 }
 .btn-primary {
     background-color: var(--primary-color);
@@ -88,7 +101,7 @@ Diseño del sitio:
     border-radius: 25px;
 }
 
-.active {
+.activeSideBar {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
     border-radius: 25px;

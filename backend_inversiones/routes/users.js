@@ -86,6 +86,40 @@ router.put('/:id', async (req, res, next) => {
   }
 });
 
+
+router.put('/update/:id', async (req, res, next) => {
+  const { id } = req.params;
+  const { phone, password } = req.body;
+  const transaction = await sequelize.transaction();
+  try {
+    const [updatedUserCount] = await User.update({ phone }, {
+      where: { id },
+      returning: true,
+      transaction
+    });
+
+    if (!password) {
+      await transaction.commit();
+      getHandleSuccess(204)(res);
+      return;
+    }
+
+    verifyIfIdExists(updatedUserCount);
+    const passwordHash = await encrypt(password);
+    const [updatedAccountCount] = await Account.update({ password: passwordHash }, {
+      where: { userId: id },
+      returning: true,
+      transaction
+    });
+    verifyIfIdExists(updatedAccountCount);
+    await transaction.commit();
+    getHandleSuccess(204)(res);
+  } catch (error) {
+    await transaction.rollback();
+    getHandleError(error, res);
+  }
+});
+
 router.patch('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {

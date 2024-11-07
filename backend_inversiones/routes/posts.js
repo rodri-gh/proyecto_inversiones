@@ -3,6 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import mysql from 'mysql';
+import connection from '../database/connection.js';
 
 
 const router = express.Router();
@@ -23,9 +24,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get('/', function (req, res, next) {
-  const query = 'SELECT * FROM posts';
-  connection.query(query, function (error, results, fields) {
+router.get('/', async (req, res, next) => {
+  console.log('GET /posts');
+  const query = 'SELECT * FROM posts;';
+  await connection.query(query, function (error, results, fields) {
     if (error) {
       console.log(error);
       res.status(500).json({
@@ -35,11 +37,11 @@ router.get('/', function (req, res, next) {
     } else {
       console.log(results);
       // para mostrar imagenes de la base de datos
-      results.forEach(element => {
+      /* results.forEach(element => {
         if (element.cover_image) {
           element.cover_image = `http://localhost:3000/images/posts/${element.cover_image}`;
         }
-      })
+      }) */
       res.status(200).json({
         data: results,
         message: 'Listing posts',

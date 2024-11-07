@@ -1,26 +1,23 @@
 <template>
-  <div class="container col-md-8 mt-5">
-    <div class="card shadow border-0">
-      <div class="card-body">
-        <h4 class="card-title text-center">Minerales</h4>
-        <div class="text-end">
-          <Button
-            data-bs-toggle="modal"
-            data-bs-target="#modalMineral"
-            text="Nuevo"
-            icon="fa fa-plus"
-          />
-        </div>
-        <TableMinerals
-          :headers="headers"
-          :items="minerals"
-          :actions="{
-            edit: selectMineral,
-            delete: deleteMineral,
-          }"
-        />
-      </div>
+  <div class="container col-md-10 mt-5">
+    <h4 class="card-title text-center">Minerales</h4>
+    <div class="text-end">
+      <Button
+        data-bs-toggle="modal"
+        data-bs-target="#modalMineral"
+        text="Nuevo"
+        icon="fa fa-plus"
+      />
     </div>
+    <TableMinerals
+      :headers="headers"
+      :items="minerals"
+      :actions="{
+        edit: selectMineral,
+        delete: deleteMineral,
+      }"
+    />
+
     <Modal
       modalId="modalMineral"
       title="Datos del Mineral"
