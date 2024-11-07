@@ -87,7 +87,7 @@ const headers = [
   "Acciones",
 ];
 
-const baseURL = "http://localhost:3000/minerals/";
+const baseURL = "http://localhost:3000/mineral/";
 
 const minerals = ref([]);
 const name = ref("");
@@ -106,7 +106,7 @@ onMounted(() => {
 const getMinerals = async () => {
   try {
     const { data } = await axios.get(baseURL);
-    minerals.value = data.data;
+    minerals.value = data;
   } catch (error) {
     console.log(error);
   }
