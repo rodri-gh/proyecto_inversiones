@@ -1,4 +1,4 @@
-:root {
+/* :root {
     --button-primary: #f05c17;
     --button-primary-hover: #e6743c;
     --navbar-bg: #d8d8d8;
@@ -14,4 +14,116 @@
 }
 .btn-primary:active {
     background-color: var(--button-primary) !important;
+}
+ */
+
+/* - Plata (#B1B1B1)
+- Cobre (#FF9900)
+- Blanco (#FFFFFF)
+- Gris oscuro (#333333)
+- Negro (#000000)
+
+Diseño del sitio:
+
+- Fondo: Gris claro (#F7F7F7)
+- Título principal: Cobre (#FF9900)
+- Texto principal: Gris oscuro (#333333)
+- Botones: Plata (#B1B1B1) con texto Cobre (#FF9900)
+- Enlaces: Cobre (#FF9900) */
+
+/* Colores personalizados */
+:root {
+    --primary-color: #ff9900; /* Botón de acción */
+    --primary-light: #ffa927; /* Botón de acción en modo oscuro */
+    --secondary-color: #b1b1b1; /* Fondo de barra de navegación */
+    --text-color: #333333; /* Color del texto */
+    --pending-color: #ff3300; /* Etiqueta de estado pendiente */
+    --active-color: #008000; /* Etiqueta de estado activo */
+
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos de los botones de acción */
+.btn-action {
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+.btn-edit {
+    background-color: var(--primary-color);
+    border-radius: 25px;
+}
+.btn-delete {
+    background-color: var(--pending-color);
+    border-radius: 25px;
+}
+.btn-restore {
+    background-color: var(--active-color);
+    border-radius: 25px;
+}
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    border-radius: 25px;
+    color: white !important;
+}
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    border-radius: 25px;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-light);
+    border-color: var(--primary-color);
+    border-radius: 25px;
+    box-shadow: 0 0 10px var(--shadow-color);
+}
+
+.brand {
+    width: 80px;
+    height: 30px;
+    border-radius: 25px;
+}
+
+.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    border-radius: 25px;
+    color: white !important;
+}
+
+.amount-info {
+    font-size: 25px;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.form-control {
+    border-radius: 25px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.form-select {
+    border-radius: 25px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--shadow-color);
+}
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--shadow-color);
+}
+.bg-success {
+    background-color: var(--active-color) !important;
+}
+.bg-danger {
+    background-color: var(--pending-color) !important;
 }

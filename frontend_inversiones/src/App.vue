@@ -18,7 +18,7 @@ const ShowNav = () => {
 <template>
   <div class="app-container">
     <header>
-      <NavBar v-if="ShowNav()" />
+      <NavBar v-if="isRootRoute" />
     </header>
     <main :class="['main-content', { 'no-padding': isRootRoute }]">
       <RouterView />

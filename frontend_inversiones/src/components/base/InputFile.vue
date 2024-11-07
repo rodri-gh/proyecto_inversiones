@@ -1,6 +1,6 @@
 <template>
-  <div class="mb-3">
-    <label :for="id" class="form-label">{{ label }}</label>
+  <div>
+    <label :for="id" class="form-label m-0">{{ label }}</label>
     <input
       type="file"
       :id="id"

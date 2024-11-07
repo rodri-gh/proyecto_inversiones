@@ -1,6 +1,6 @@
 <template>
   <button :class="['btn', buttonClass]" v-bind="$attrs" @click="$emit('click')">
-    <i v-if="icon" :class="icon + ' mx-1'"></i>
+    <i v-if="icon" :class="icon + ' mx-1 text-white'"></i>
     <span :class="textClass">{{ text }}</span>
   </button>
 </template>
