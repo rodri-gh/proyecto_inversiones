@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive">
+  <div class="table table-striped">
     <table class="table">
       <thead>
         <tr>
@@ -17,13 +17,24 @@
           <td>{{ item.email }}</td>
           <td>{{ item.phone }}</td>
           <td>
-            <span v-if="item.deleted == 1" class="badge bg-success">Activo</span>
+            <span v-if="item.deleted == 0" class="badge bg-success"
+              >Activo</span
+            >
             <span v-else class="badge bg-danger">Inactivo</span>
           </td>
           <td>
-            <Button @click="() => actions.edit(item)" icon="fa fa-edit" buttonClass="btn-warning btn-sm m-1" />
-            <Button @click="() => actions.delete(item.id)" :icon="item.deleted ? 'fa fa-trash' : 'fa fa-check'"
-              :buttonClass="`btn-${item.deleted ? 'danger' : 'success'} btn-sm m-1`" />
+            <Button
+              @click="() => actions.edit(item)"
+              icon="fa fa-edit"
+              buttonClass="btn-edit btn-sm m-1"
+            />
+            <Button
+              @click="() => actions.delete(item.id)"
+              :icon="item.deleted ? 'fa fa-check' : 'fa fa-trash'"
+              :buttonClass="`btn-${
+                item.deleted ? 'restore' : 'delete'
+              } btn-sm m-1`"
+            />
           </td>
         </tr>
       </tbody>
@@ -49,3 +60,19 @@ defineProps({
   },
 });
 </script>
+<style scoped>
+.btn-edit:hover {
+  opacity: 0.5 !important;
+  background-color: var(--primary-color);
+}
+.btn-delete:hover {
+  opacity: 0.5 !important;
+  background-color: var(--pending-color);
+}
+.btn-restore:hover {
+  opacity: 0.5 !important;
+  background-color: var(--active-color);
+}
+</style>
+
+
