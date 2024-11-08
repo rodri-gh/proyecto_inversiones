@@ -2,9 +2,10 @@
   <div class="text-center">
     <h1>Preguntas Frecuentes</h1>
     <div class="accordion w-50 mx-auto" id="faqAccordion">
-      <div v-for="(faq, index) in FAQs" :key="index" class="accordion-item">
+      <div v-for="(faq, index) in faqs" :key="index" class="accordion-item">
         <h2 class="accordion-header" :id="'heading' + index">
           <button
+            v-if="faq.deleted == 0"
             class="accordion-button collapsed py-4"
             type="button"
             data-bs-toggle="collapse"
@@ -13,7 +14,7 @@
             :aria-controls="'collapse' + index"
             :class="{ collapsed: index !== 0 }"
           >
-            {{ faq.question }}
+            {{ faq.ask }}
           </button>
         </h2>
         <div
@@ -32,33 +33,28 @@
 </template>
 
 <script setup>
-const FAQs = [
-  {
-    question: "¿Qué son los minerales?",
-    answer:
-      "Los minerales son sustancias naturales, inorgánicas y de composición química definida.",
-  },
-  {
-    question: "¿Cómo se clasifican los minerales?",
-    answer:
-      "Los minerales se clasifican según su composición química y estructura cristalina.",
-  },
-  {
-    question: "¿Dónde se encuentran los minerales?",
-    answer:
-      "Los minerales se encuentran en todo tipo de formaciones geológicas, incluyendo rocas y suelos.",
-  },
-  {
-    question: "¿Por qué son importantes los minerales?",
-    answer:
-      "Los minerales son fundamentales para la industria y la tecnología moderna.",
-  },
-  {
-    question: "¿Cómo se extraen los minerales?",
-    answer:
-      "Los minerales se extraen mediante diversos métodos de minería, según su ubicación y características.",
-  },
-];
+import { onMounted, ref } from "vue";
+import axios from "axios";
+
+const baseURL = "http://localhost:3000/faq/";
+const faqs = ref([]);
+
+const ask = ref("");
+const answer = ref("");
+
+onMounted(() => {
+  getFaqs();
+});
+
+const getFaqs = async () => {
+  try {
+    const { data } = await axios.get(baseURL);
+    faqs.value = data;
+    console.log("FAQs data:", faqs.value);
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
 
 <style scoped>

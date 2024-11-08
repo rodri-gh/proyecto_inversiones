@@ -9,92 +9,132 @@ import { created } from '../helpers/customMessage.js';
 
 const router = express.Router();
 router.get('/', async (req, res, next) => {
-    try {
-        const users = await User.findAll({
-            include: [{
-                model: Account,
-                attributes: ['username', 'password']
-            }]
-        });
-        getHandleSuccess(200)(res, users);
-    } catch (error) {
-        getHandleError(error, res);
-    }
+  try {
+    const users = await User.findAll({
+      include: [{
+        model: Account,
+        attributes: ['username', 'password']
+      }]
+    });
+    getHandleSuccess(200)(res, users);
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
 router.get('/:id', async (req, res, next) => {
-    const { id } = req.params;
-    try {
-        const user = await User.findOne({
-            where: { id },
-            include: [{
-                model: Account,
-                attributes: ['username', 'password']
-            }]
-        });
-        verifyIfIdExists(user);
-        getHandleSuccess(200)(res, user);
-    } catch (error) {
-        getHandleError(error, res);
-    }
+  const { id } = req.params;
+  try {
+    const user = await User.findOne({
+      where: { id },
+      include: [{
+        model: Account,
+        attributes: ['username', 'password']
+      }]
+    });
+    verifyIfIdExists(user);
+    getHandleSuccess(200)(res, user);
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
 router.post('/', async (req, res, next) => {
-    const { email, phone, name, lastName, username, password } = req.body;
-    const transaction = await sequelize.transaction();
-    try {
-        const newUser = await User.create({ email, phone, role: 'client', name, lastName }, {
-            transaction
-        })
-        const passwordHash = await encrypt(password);
-        await Account.create({ userId: newUser.id, username, password: passwordHash }, {
-            transaction
-        })
-        await transaction.commit();
-        getHandleSuccess(201)(res, created.user);
-    } catch (error) {
-        transaction.rollback();
-        getHandleError(error, res);
-    }
+  const { email, phone, role, name, lastName, username, password } = req.body;
+  const transaction = await sequelize.transaction();
+  try {
+    const newUser = await User.create({ email, phone, role: role, name, lastName }, {
+      transaction
+    })
+    const passwordHash = await encrypt(password);
+    await Account.create({ userId: newUser.id, username, password: passwordHash }, {
+      transaction
+    })
+    await transaction.commit();
+    getHandleSuccess(201)(res, created.user);
+  } catch (error) {
+    transaction.rollback();
+    getHandleError(error, res);
+  }
 });
 
 router.put('/:id', async (req, res, next) => {
-    const { id } = req.params;
-    const { email, phone, name, lastName, username, password } = req.body;
-    const transaction = await sequelize.transaction();
+  const { id } = req.params;
+  const { email, phone, name, lastName, username, password } = req.body;
+  const transaction = await sequelize.transaction();
 
-    try {
-        const [updatedUserCount] = await User.update({ email, phone, name, lastName }, {
-            where: { id },
-            returning: true,
-            transaction
-        });
-        verifyIfIdExists(updatedUserCount);
-        const passwordHash = await encrypt(password);
-        const [updatedAccountCount] = await Account.update({ username, password: passwordHash }, {
-            where: { userId: id },
-            returning: true,
-            transaction
-        }
-        );
-        verifyIfIdExists(updatedAccountCount);
-        await transaction.commit();
-        getHandleSuccess(204)(res);
-    } catch (error) {
-        await transaction.rollback();
-        getHandleError(error, res);
+  try {
+    const [updatedUserCount] = await User.update({ email, phone, name, lastName }, {
+      where: { id },
+      returning: true,
+      transaction
+    });
+    verifyIfIdExists(updatedUserCount);
+    const passwordHash = await encrypt(password);
+    const [updatedAccountCount] = await Account.update({ username, password: passwordHash }, {
+      where: { userId: id },
+      returning: true,
+      transaction
     }
+    );
+    verifyIfIdExists(updatedAccountCount);
+    await transaction.commit();
+    getHandleSuccess(204)(res);
+  } catch (error) {
+    await transaction.rollback();
+    getHandleError(error, res);
+  }
 });
 
-router.delete('/:id', async (req, res, next) => {
-    const { id } = req.params;
-    try {
-        const [userDeleted] = await User.update({ deleted: true }, { where: { id } });
-        verifyIfIdExists(userDeleted);
-        getHandleSuccess(204)(res);
-    } catch (error) {
-        getHandleError(error, res)
+
+router.put('/update/:id', async (req, res, next) => {
+  const { id } = req.params;
+  const { phone, password } = req.body;
+  const transaction = await sequelize.transaction();
+  try {
+    const [updatedUserCount] = await User.update({ phone }, {
+      where: { id },
+      returning: true,
+      transaction
+    });
+
+    if (!password) {
+      await transaction.commit();
+      getHandleSuccess(204)(res);
+      return;
     }
+
+    verifyIfIdExists(updatedUserCount);
+    const passwordHash = await encrypt(password);
+    const [updatedAccountCount] = await Account.update({ password: passwordHash }, {
+      where: { userId: id },
+      returning: true,
+      transaction
+    });
+    verifyIfIdExists(updatedAccountCount);
+    await transaction.commit();
+    getHandleSuccess(204)(res);
+  } catch (error) {
+    await transaction.rollback();
+    getHandleError(error, res);
+  }
+});
+
+router.patch('/:id', async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findOne({ where: { id } });
+    if (!user) {
+      return getHandleError(new Error('User not found'), res);
+    }
+
+    const newDeletedStatus = user.deleted ? 0 : 1;
+    await User.update({ deleted: newDeletedStatus }, { where: { id } });
+
+    getHandleSuccess(200)(res, `User ${newDeletedStatus ? 'deleted' : 'restored'} successfully`);
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
 export default router;

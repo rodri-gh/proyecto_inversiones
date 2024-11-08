@@ -7,10 +7,11 @@
     </thead>
     <tbody>
       <tr v-if="items.length === 0">
-        <td colspan="6" class="text-center">No hay categorias registradas</td>
+        <td colspan="6" class="text-center">No FAQs registrados</td>
       </tr>
       <tr v-for="item in items" :key="item.id">
-        <td>{{ item.name }}</td>
+        <td>{{ item.ask }}</td>
+        <td width="40%">{{ item.answer }}</td>
         <td>
           <span v-if="item.deleted == 0" class="badge bg-success">Activo</span>
           <span v-else class="badge bg-danger">Inactivo</span>

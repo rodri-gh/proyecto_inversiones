@@ -1,86 +1,161 @@
 <script setup>
-import { computed, markRaw, ref } from 'vue';
-import { getUserRoleOfLocalStorage } from '@/authService';
-import MyProfile from './MyProfile.vue';
-import ProjectsView from '@/views/ProjectsView.vue';
-import InvestmentsOfUser from './InvestmentsOfUser.vue';
-import UserWithdrawalRequests from './UserWithdrawalRequests.vue';
-import UserViewCopy from '@/views/UserViewCopy.vue';
-import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue';
-import ConfigurationAndSecurity from './Dashboard/ConfigurationAndSecurity.vue';
-import Start from './Dashboard/Start.vue';
-import ContactView from '@/views/ContactView.vue';
+import { computed, markRaw, ref } from "vue";
+import { getUserRoleOfLocalStorage } from "@/authService";
+import MyProfile from "./MyProfile.vue";
+import ProjectsView from "@/views/ProjectsView.vue";
+import InvestmentsOfUser from "./InvestmentsOfUser.vue";
+import UserWithdrawalRequests from "./UserWithdrawalRequests.vue";
+import UserViewCopy from "@/views/UserViewCopy.vue";
+import WithdrawalRequestsView from "@/views/WithdrawalRequestsView.vue";
+import ConfigurationAndSecurity from "./Dashboard/ConfigurationAndSecurity.vue";
+import Start from "./Dashboard/Start.vue";
+import ContactView from "@/views/ContactView.vue";
+import UsersView from "@/views/UsersView.vue";
+import MineralsView from "@/views/MineralsView.vue";
+import CategoryPostView from "@/views/CategoryPostView.vue";
+import PostsView from "../views/PostsView.vue";
+import FaqAdmin from "../components/FaqAdmin.vue";
 
 const activeComponent = ref(markRaw(MyProfile));
-const showComponent = (componentName) => {
+const activeLink = ref("Mi Perfil");
+
+const showComponent = (componentName, linkName) => {
   activeComponent.value = markRaw(componentName);
+  activeLink.value = linkName;
 };
 
 const componentslinks = computed(() => {
   const userRole = getUserRoleOfLocalStorage();
-  console.log(userRole);
   let links = [
-    { name: 'Mi Perfil', component: MyProfile },
-  ]
-  if (userRole == 'super_user') {
-    links.push({ name: 'Inicio', component: Start });
-    links.push({ name: 'Gestion de Usuarios', component: UserViewCopy });
-    links.push({ name: 'Projectos', component: ProjectsView });
-    links.push({ name: 'Retiro de Fondos', component: WithdrawalRequestsView });
-    links.push({ name: 'Configuracion y Seguridad', component: ConfigurationAndSecurity });
-    links.push({ name: 'Responder Contacto', component: ContactView });
-  } else if (userRole == 'admin') {
-    links.push({ name: 'Inicio', component: Start });
-    links.push({ name: 'Gestion de Usuarios', component: UserViewCopy });
-    links.push({ name: 'Projectos', component: ProjectsView });
-    links.push({ name: 'Retiro de Fondos', component: ProjectsView });
-    links.push({ name: 'Configuracion y Seguridad', component: ConfigurationAndSecurity });
-  } else if (userRole == 'client') {
-    links.push({ name: 'Projectos', component: ProjectsView });
-    links.push({ name: 'Inversiones', component: InvestmentsOfUser });
-    links.push({ name: 'Solicitudes de Retiro', component: UserWithdrawalRequests });
-    links.push({ name: 'Responder Contacto', component: ContactView });
+    { name: "Ir a web", path: "/", divider: true },
+    { name: "Mi Perfil", component: MyProfile },
+  ];
+  if (userRole == "super_user" || userRole == "admin") {
+    links.push({ name: "Inicio", component: Start, divider: true });
+    links.push({ name: "Gestion de Usuarios", component: UsersView });
+    links.push({ name: "Proyectos", component: ProjectsView });
+    links.push({ name: "Minerales", component: MineralsView });
+    links.push({
+      name: "Solicitudes de retiro",
+      component: WithdrawalRequestsView,
+    });
+    links.push({
+      name: "Responder Contacto",
+      component: ContactView,
+      divider: true,
+    });
+    links.push({ name: "Categorias Post", component: CategoryPostView });
+    links.push({ name: "Posts", component: PostsView });
+    links.push({ name: "FAQs", component: FaqAdmin });
+
+    links.push({ name: "Administrar Web", component: ContactView });
+  } else if (userRole == "client") {
+    links.push({ name: "Projectos", component: ProjectsView });
+    links.push({ name: "Inversiones", component: InvestmentsOfUser });
+    links.push({
+      name: "Solicitudes de Retiro",
+      component: UserWithdrawalRequests,
+    });
   }
   return links;
 });
 </script>
 
 <template>
-  <div class="row">
-    <div class="col-3 vh-100 panel-control 
-      d-flex flex-column justify-content-center 
-      align-items-center">
-      <a v-for="(item, index) in componentslinks" :key="index" @click="showComponent(item.component)">
-        {{ item.name }}
+  <div>
+    <nav
+      class="navbar navbar-expand-lg navbar-light px-3"
+      style="background-color: var(--secondary-color)"
+    >
+      <a class="navbar-brand" href="#">
+        <img
+          src="https://banner2.cleanpng.com/20180331/hre/avishui7k.webp"
+          alt="Logo"
+          class="brand"
+        />
+        <b>Minerales</b>
       </a>
-    </div>
-    <div class="col-9 d-flex flex-column justify-content-center 
-      align-items-center flex-fill">
-      <component :is="activeComponent" />
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <router-link to="/login" class="nav-link btn btn-primary"
+              >Cerrar Sesión</router-link
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Barra lateral -->
+        <div class="col-md-2 sidebar">
+          <template v-for="(item, index) in componentslinks" :key="index">
+            <router-link
+              v-if="item.path"
+              :to="item.path"
+              class="nav-link"
+              :class="{ activeSideBar: activeLink === item.name }"
+            >
+              {{ item.name }}
+            </router-link>
+            <a
+              v-else
+              @click="() => showComponent(item.component, item.name)"
+              :class="{ activeSideBar: activeLink === item.name }"
+            >
+              {{ item.name }}
+            </a>
+            <hr v-if="item.divider" />
+          </template>
+        </div>
+        <!-- Contenido principal -->
+        <div class="col-md-10">
+          <div class="container">
+            <div class="d-flex justify-content-between align-items-center mt-4">
+              <component :is="activeComponent" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.panel-control {
-  background-color: #f8f9fa;
-  border-right: 1px solid #ddd;
-  color: black;
+.sidebar a.activeSideBar {
+  font-weight: bold;
+  color: var(--primary-color);
 }
 
-a {
-  padding: 20px;
+/* Estilos de la barra lateral */
+.sidebar {
+  background-color: #f3f3f3;
+  color: var(--text-color);
+  min-height: 100vh;
+  padding-top: 20px;
+  border-right: var(--secondary-color) 1px solid;
+}
+.sidebar a {
+  color: var(--text-color);
+  text-decoration: none;
+  display: block;
+  padding: 10px 20px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 1.2em;
 }
-
-a:hover {
-  background-color: #df6621;
-  border-radius: 60%;
-}
-
-.flex-fill {
-  margin-top: 2%;
+.sidebar a:hover {
+  background-color: #e0e0e0;
+  border-radius: 25px;
 }
 </style>
