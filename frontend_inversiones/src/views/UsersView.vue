@@ -169,7 +169,7 @@
       />
       <Input
         id="phone"
-        label="phone"
+        label="Teléfono"
         v-model="phone"
         type="text"
         placeholder="Ingrese número de teléfono"
@@ -370,7 +370,7 @@ const reset = () => {
   border-radius: 0;
 }
 .nav-tabs .nav-link.active {
-  color: #495057;
+  color: white;
   background-color: var(--primary-color);
   border-color: var(--primary-color);
 }

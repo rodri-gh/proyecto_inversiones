@@ -6,7 +6,7 @@
       :id="id"
       :value="modelValue"
       @input="updateValue"
-      class="form-control"
+      class="form-control m-0"
       :placeholder="placeholder"
     />
   </div>
