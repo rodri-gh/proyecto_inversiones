@@ -34,11 +34,11 @@ const navLinks = computed(() => {
     { name: "Panel de control", path: "/dashboard" },
   ];
   if (userRole == "super_user") {
-    links.push({ name: "Analisis y Reportes", path: "/analysisAndReports" });
-    links.push({ name: "Finanzas", path: "/finance" });
+    /*     links.push({ name: "Analisis y Reportes", path: "/analysisAndReports" }); */
+    /*  links.push({ name: "Finanzas", path: "/finance" }); */
   } else if (userRole == "admin") {
-    links.push({ name: "Analisis y Reportes", path: "/analysisAndReports" });
-    links.push({ name: "Finanzas", path: "/finance" });
+    /*  links.push({ name: "Analisis y Reportes", path: "/analysisAndReports" });
+    links.push({ name: "Finanzas", path: "/finance" }); */
   } else if (userRole == "client") {
     //aqui se puede aumentar en el navbar rutas para clientes
   }

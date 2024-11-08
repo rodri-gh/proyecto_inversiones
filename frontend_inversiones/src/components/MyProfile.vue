@@ -2,7 +2,7 @@
 import axios from "axios";
 import { onMounted, ref } from "vue";
 import { getHeaderRequest, getUserIdOfLocalStorage } from "@/authService";
-
+import Swal from "sweetalert2";
 const userProfile = ref({});
 const baseURL = "http://localhost:3000/user/";
 
@@ -29,7 +29,11 @@ const getUserProfile = async () => {
 
 const updateProfile = async () => {
   if (password.value !== confirmPassword.value) {
-    alert("Las contraseñas no coinciden");
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Las contraseñas no coinciden",
+    });
     return;
   }
   try {
@@ -46,6 +50,14 @@ const updateProfile = async () => {
     console.log(response.data);
 
     getUserProfile();
+
+    Swal.fire({
+      icon: "success",
+      title: "Actualizado",
+      text: "Perfil actualizado correctamente",
+    });
+    password.value = "";
+    confirmPassword.value = "";
   } catch (e) {
     console.error(e);
   }
@@ -172,11 +184,11 @@ const updateProfile = async () => {
               v-model="newPhone"
             />
           </div>
-          <div class="mb-3 col-md-6 d-flex justify-content-center">
-            <button class="btn btn-primary mx-auto" @click="updateProfile">
-              Actualizar
-            </button>
-          </div>
+        </div>
+        <div class="mb-3 text-end">
+          <button class="btn btn-primary mx-auto" @click="updateProfile">
+            Actualizar
+          </button>
         </div>
       </div>
     </div>
