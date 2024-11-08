@@ -116,7 +116,7 @@ const iniciarSesion = async () => {
       router.push({ path: "/dashboard" });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     Swal.fire({
       icon: "error",
       title: "Login fallido",
@@ -124,7 +124,6 @@ const iniciarSesion = async () => {
     });
   }
 };
-
 //verificar si es nesesario
 const limpiar = () => {
   localStorage.clear();

@@ -14,7 +14,6 @@ const contracts = ref([]);
 
 const users = ref([]);
 const baseURL = "http://localhost:3000/contract/";
-const investments = ref([]);
 
 const userId = ref("");
 const investmentAmount = ref('');
@@ -57,21 +56,9 @@ const getContracts = async () => {
 
 onMounted(() => {
     getContracts();
-    getInvestments();
     getUsers();
 });
 
-
-const getInvestments = async () => {
-    try {
-        console.log(baseURL + "project/" + props.idProject);
-        const data = await axios.get(baseURL + "project/" + props.idProject, header);
-        investments.value = data.data;
-        console.log(data.data);
-    } catch (error) {
-        console.error(error);
-    }
-};
 
 const getUsers = async () => {
     try {
@@ -115,7 +102,6 @@ const saveInvestment = async () => {
     try {
         await axios[method](url, formData, header);
         closeModal("modalContract");
-        getInvestments();
         getUsers();
         reset();
     } catch (error) {

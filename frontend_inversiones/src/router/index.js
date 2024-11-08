@@ -52,6 +52,7 @@ const router = createRouter({
       name: 'project-details',
       component: ProjectDetailsView,
       meta: { requiresAuth: true },
+      props: true,
 
     },
     {
@@ -89,8 +90,6 @@ const router = createRouter({
       path: '/post/:id',
       name: 'post-details',
       component: PostView,
-
-
     },
     {
       path: '/withdrawalrequests',
