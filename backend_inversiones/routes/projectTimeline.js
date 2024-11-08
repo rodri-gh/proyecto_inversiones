@@ -29,12 +29,12 @@ router.get('/:id', async (req, res) => {
 
 router.get('/project/:id', async (req, res) => {
   const { id } = req.params;
-  console.log(id)
   try {
     const projectTimeline = await ProjectTimeline.findAll({ where: { project_id: id } });
     verifyIfIdExists(projectTimeline);
     getHandleSuccess(200)(res, projectTimeline);
   } catch (error) {
+    console.error(error);
     getHandleError(error, res)
   }
 });

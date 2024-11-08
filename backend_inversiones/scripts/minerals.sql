@@ -124,6 +124,7 @@ CREATE TABLE IF NOT EXISTS `project_timelines` (
   `price_mineral1` decimal(10,2) NOT NULL,
   `price_mineral2` decimal(10,2) NOT NULL,
   `deleted` tinyint(4) NOT NULL DEFAULT 0,
+  `status` varchar(255) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `project_id_fk` (`project_id`),
   CONSTRAINT `project_id_fk` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`)

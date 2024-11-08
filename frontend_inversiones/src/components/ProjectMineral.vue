@@ -1,7 +1,6 @@
 <template>
-    <div class="card shadow border-0">
-      <div class="card-body">
-        <h4 class="card-title text-center">Minerales del Proyecto</h4>
+    <div>
+      <div>
         <div class="text-end">
           <button
             type="button"
@@ -9,7 +8,7 @@
             data-bs-toggle="modal"
             data-bs-target="#modalMineral"
             @click="resetModal"
-            :disabled="projectMinerals.length >= 2"
+            :disabled="projectMinerals.length >= 4"
           >
             <i class="fa fa-plus mx-1"></i> Nuevo
           </button>
@@ -19,8 +18,11 @@
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">Id del Mineral</th>
-                <th scope="col">Mineral</th>
+                <th scope="col">Id del projecto</th>
+                <th scope="col">Nombre del mineral</th>
+                <th scope="col">Precio estimado de compra</th>
+                <th scope="col">Precio pre compra</th>
+                <th scope="col">Precio de compra</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
@@ -35,8 +37,11 @@
                 v-for="projectMineral in projectMinerals"
                 :key="projectMineral.id"
               >
-                <td>{{ projectMineral.id }}</td>
-                <td>{{ projectMineral.name }}</td>
+                <td>{{ projectMineral.projectId }}</td>
+                <td>{{ projectMineral.mineral.name }}</td>
+                <td>{{ projectMineral.estimatedPurchasePrice }}</td>
+                <td>{{ projectMineral.prePurchase }}</td>
+                <td>{{ projectMineral.purchasePrice }}</td>
                 <td>
                   <button
                     class="btn btn-warning btn-sm m-1"
@@ -128,6 +133,26 @@
                 </li>
               </ul>
             </div>
+            <div>
+              <Input
+                id="estimatedPurchasePrice"
+                label="Precio estimado de compra"
+                type="number"
+                v-model="estimatedPurchasePrice"
+              />
+              <Input
+                id="prePurchase"
+                label="Precio pre compra"
+                type="number"
+                v-model="prePurchase"
+              />
+              <Input
+                id="purchasePrice"
+                label="Precio de compra"
+                type="number"
+                v-model="purchasePrice"
+              />
+            </div>
           </div>
           <div class="modal-footer">
             <button
@@ -157,6 +182,7 @@ import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { getHeaderRequest } from "@/authService";
+import Input from "./base/Input.vue";
 
 const props = defineProps({
   idProjectMineral: {
@@ -170,6 +196,11 @@ const baseURLMineral = "http://localhost:3000/mineral/";
 
 const projectMinerals = ref([]);
 const minerals = ref([]);
+
+const estimatedPurchasePrice = ref(''); 
+const prePurchase = ref(''); 
+const purchasePrice = ref(''); 
+
 const selectedMinerals = ref([]);
 const selectedMineral = ref("");
 const selectedProjectMineral = ref({});
@@ -184,16 +215,8 @@ onMounted(() => {
 const getprojectMinerals = async () => {
   try {
     const data = await axios.get(baseURL + props.idProjectMineral, header);
-    var uniqueMineralsIds = new Set();
-    data.data.forEach(item => {
-      uniqueMineralsIds.add(item.mineralId); 
-    });
-    uniqueMineralsIds = Array.from(uniqueMineralsIds);
-    for (const item of uniqueMineralsIds) {
-      const mineral = await axios.get(baseURLMineral + item, header);
-      projectMinerals.value.push(mineral.data[0]);
-    }
-    console.log(projectMinerals.value)
+    projectMinerals.value = data.data;
+    console.log(data.data);
   } catch (error) {
     console.error(error);
   }
@@ -261,17 +284,18 @@ const deleteProjectMineral = async (id) => {
 };
 
 const saveProjectMinerals = async () => {
+  console.log('estoy guardandoooo');
+  console.log(baseURL+selectedProjectMineral.value.id); 
   try {
     if (isEditing.value) {
+     console.log(selectedProjectMineral.value.id); 
       // Si estamos editando, eliminamos el mineral actual
-      await axios.patch(baseURL + selectedProjectMineral.value.id);
+      //await axios.patch(baseURL + selectedProjectMineral.value.id);
     }
-
     // Verificamos que no excedamos el límite de 2 minerales
     const currentMinerals = projectMinerals.value.length;
     const newMineralsCount = selectedMinerals.value.length;
-
-    if (!isEditing.value && currentMinerals + newMineralsCount > 2) {
+    if (!isEditing.value && currentMinerals + newMineralsCount > 4) {
       Swal.fire(
         "Error",
         "No se pueden agregar más de 2 minerales por proyecto.",
@@ -279,17 +303,17 @@ const saveProjectMinerals = async () => {
       );
       return;
     }
-
     // Guardamos los nuevos minerales
     for (const mineral of selectedMinerals.value) {
       const projectMineral = {
-        project_id: props.idProjectMineral,
-        mineral_id: mineral.id,
+        projectId: props.idProjectMineral,
+        mineralId: mineral.id,
+        purchasePrice: purchasePrice.value,
+        prePurchase: prePurchase.value,
+        estimatedPurchasePrice: estimatedPurchasePrice.value
       };
-
-      await axios.post(baseURL, projectMineral);
+      await axios.put(baseURL+selectedProjectMineral.value.id, projectMineral);
     }
-
     await getprojectMinerals();
     closeModal();
 
@@ -308,9 +332,15 @@ const saveProjectMinerals = async () => {
 
 const selectProjectMineral = (projectMineral) => {
   isEditing.value = true;
+  
   selectedProjectMineral.value = projectMineral;
+  estimatedPurchasePrice.value = projectMineral.estimatedPurchasePrice;
+  prePurchase.value = projectMineral.prePurchase;
+  purchasePrice.value = projectMineral.purchasePrice;
+
   const mineralToEdit = minerals.value.find(
     (m) => m.id === projectMineral.mineral_id
+
   );
   if (mineralToEdit) {
     selectedMinerals.value = [mineralToEdit];

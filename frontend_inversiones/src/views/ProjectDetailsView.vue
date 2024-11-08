@@ -1,16 +1,15 @@
 <template>
-  <div class="row config-container">
-    <div class="d-flex flex-column justify-content-center 
-      align-items-center">
+  <div >
+    <div class="d-flex flex-column ">
+
+      <div class="m-5">
+        <h3>Contratos del Poyecto</h3>
+        <Contract :idProject="idProject"/>
+      </div>
 
       <div class="m-5">
         <h3>Minerales del proyecto</h3>
         <ProjectMineral :idProjectMineral="idProject" />
-      </div>
-
-      <div class="m-5">
-        <h3>Contratos del Poyecto</h3>
-        <Contract />
       </div>
 
       <div class="m-5">
@@ -45,8 +44,16 @@ import Contract from "@/components/Contract.vue";
 import { getHeaderRequest } from "@/authService";
 
 const route = useRoute();
-const idProject = ref(route.params.id);
 
+const props = defineProps({
+  projectId: {
+    type: Number,
+    required: true,
+  },
+});
+
+
+const idProject = ref(props.projectId || route.params.id);
 const project = ref({});
 const urlProject = "http://localhost:3000/project/";
 
@@ -59,15 +66,29 @@ const urlInvestments = "http://localhost:3000/investment/";
 const header = getHeaderRequest();
 
 onMounted(() => {
-  getProject();
-  getOperatingExpenses();
-  getInvestments();
-  console.log(idProject);
+  console.log("Prop projectId:", props.projectId);
+  console.log("Route params id:", route.params.id);
+  console.log("idProject inicial:", idProject.value);
+
+  if (!idProject.value) {
+    idProject.value = route.params.id || props.projectId;
+  }
+
+  console.log("idProject después de asignar:", idProject.value);
+
+  if (idProject.value) {
+    getProject();
+    getOperatingExpenses();
+    getInvestments();
+  } else {
+    console.error("idProject es undefined");
+  }
 });
 
 const getProject = async () => {
   try {
-    const data = await axios.get(urlProject + idProject.value, header);
+    console.log(urlProject + props.projectId);
+    const data = await axios.get(urlProject + props.projectId, header);
     project.value = data.data;
     console.log(project.value);
   } catch (error) {
@@ -97,7 +118,4 @@ const getInvestments = async () => {
 </script>
 
 <style  scoped>
-.config-container { 
-  margin: 4%;
-}
 </style>

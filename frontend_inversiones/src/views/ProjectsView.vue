@@ -1,8 +1,7 @@
-  <template>
-  <div class="container col-md-8 mt-5">
-    <div class="card shadow border-0">
-      <div class="card-body">
-        <h4 class="card-title text-center">Proyectos</h4>
+<template>
+  <div>
+    <div v-if="!showDetails">
+        <h4 class="card-title text-center">Gestion de proyectos</h4>
         <div class="text-end">
           <button
             type="button"
@@ -10,7 +9,7 @@
             data-bs-toggle="modal"
             data-bs-target="#modalProject"
           >
-            <i class="fa fa-plus mx-1"></i> Nuevo
+            <i class="fa fa-plus mx-1"></i> Nuevo Proyecto
           </button>
         </div>
 
@@ -18,11 +17,12 @@
           <table class="table">
             <thead>
               <tr>
+                <th scope="col">Fecha de registro</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Descripcion</th>
-
+                <th scope="col">Meta</th>
+                <th scope="col">Ganancia</th>
                 <th scope="col">Estado del Proyecto</th>
-
                 <th scope="col">Estado</th>
                 <th scope="col">Acciones</th>
               </tr>
@@ -35,8 +35,11 @@
               </tr>
 
               <tr v-for="project in projects" :key="project.id">
+                <td>{{ project.createdAt }}</td>
                 <td>{{ project.name }}</td>
                 <td>{{ project.description }}</td>
+                <td>{{ project.investmentGoal }}%</td>
+                <td>{{ project.profitPercentage }}%</td>
 
                 <td v-if="project.status == 'open'">Abierto</td>
                 <td v-else-if="project.status == 'in_transit'">En curso</td>
@@ -71,22 +74,21 @@
                     <i class="fa fa-check"></i>
                   </button>
 
-                  <RouterLink
-                    :to="{
-                      name: 'project-details',
-                      params: { id: project.id },
-                    }"
+                  <button
                     class="btn btn-info btn-sm m-1"
+                    @click="showProjectDetails(project)"
                   >
                     <i class="fa fa-eye"></i>
-                  </RouterLink>
+                  </button>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-    </div>
+      <div v-if="showDetails">
+        <ProjectDetailsView :projectId="id" />
+      </div>
     <!-- Modal -->
 
     <div
@@ -205,8 +207,8 @@
 
   <script setup>
 import { ref, onMounted } from "vue";
-import { RouterLink } from "vue-router";
 import axios from "axios";
+import ProjectDetailsView from "./ProjectDetailsView.vue";
 
 const baseURL = "http://localhost:3000/project/";
 
@@ -217,7 +219,9 @@ const description = ref("");
 const investment_goal = ref(0);
 const profit_percentage = ref(0);
 
+const showDetails = ref(false);
 const selectedProject = ref({});
+const id = ref();
 
 const statusOptions = {
   open: "Abierto",
@@ -230,6 +234,11 @@ const status = ref("open");
 onMounted(() => {
   getProjects();
 });
+
+const showProjectDetails = (project) => {
+  id.value = project.id;
+  showDetails.value = true;
+};
 
 const getProjects = async () => {
   try {

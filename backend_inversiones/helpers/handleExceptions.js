@@ -33,9 +33,13 @@ export const handleDuplicateValue = (res, errors) => {
 
 const createMessageToFields = (errors) => {
     const messages = {};
-    errors.forEach(element => {
-        messages[element.path] = element.message;
-    });
+    if (errors != null) {
+        errors.forEach(element => {
+            messages[element.path] = element.message;
+        });
+    } else {
+        console.log('el error capturado esta vacio');
+    }
     return messages
 }
 

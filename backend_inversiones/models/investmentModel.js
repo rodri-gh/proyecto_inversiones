@@ -10,6 +10,10 @@ Investment.init(
             primaryKey: true,
             autoIncrement: true
         },
+        contractId: {
+            type: DataTypes.BIGINT,
+            allowNull: false,
+        },
         projectId: {
             type: DataTypes.BIGINT,
             allowNull: false,
@@ -29,6 +33,16 @@ Investment.init(
         },
         profitPercentage: {
             type: DataTypes.DECIMAL(10, 2),
+        },
+        currency: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: 'USD'
+        },
+        status: {
+            type: DataTypes.ENUM('active', 'pending', 'closed'),
+            allowNull: false,
+            defaultValue: 'active'
         }
     },
     {
