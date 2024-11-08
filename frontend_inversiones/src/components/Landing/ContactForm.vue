@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center mx-auto col-md-5 my-5">
+  <div class="text-center mx-auto col-md-5 py-4">
     <h1>¡Contáctanos Ya!</h1>
     <div class="row">
       <Input v-model="name" id="name" placeholder="Nombre" class="col-md-6" />
@@ -21,7 +21,7 @@
       <div>
         <Button
           text="Enviar Mensaje"
-          buttonClass="btn-primary py-3 px-4 fw-semibold"
+          buttonClass="btn-primary py-3 px-4 fw-semibold mt-4"
           @click="saveContact()"
         />
       </div>

@@ -35,10 +35,10 @@ const componentslinks = computed(() => {
     links.push({ name: "Gestion de Usuarios", component: UsersView });
     links.push({ name: "Proyectos", component: ProjectsView });
     links.push({ name: "Minerales", component: MineralsView });
-    links.push({
+    /* links.push({
       name: "Solicitudes de retiro",
       component: WithdrawalRequestsView,
-    });
+    }); */
     links.push({
       name: "Responder Contacto",
       component: ContactView,
