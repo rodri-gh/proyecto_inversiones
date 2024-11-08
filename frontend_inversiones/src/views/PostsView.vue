@@ -1,4 +1,4 @@
-  <template>
+<template>
   <div class="container col-md-10 mt-5">
     <h4 class="card-title text-center">Posts</h4>
 
@@ -13,15 +13,15 @@
     <TablePosts
       :headers="headers"
       :items="posts"
-      :actions="{ edit: selectPost, delete: deletePost }"
+      :actions="{ view: viewPost, edit: selectPost, delete: deletePost }"
     />
 
     <Modal
       modalId="modalPost"
       title="Datos del Post"
       modalClass="modal-fullscreen"
-      :showSaveButton="!selectedPost?.post_id"
-      :showUpdateButton="Boolean(selectedPost?.post_id)"
+      :showSaveButton="!selectedPost?.id"
+      :showUpdateButton="Boolean(selectedPost?.id)"
       @onClose="reset()"
       @onSave="savePost()"
     >
@@ -62,10 +62,32 @@
         <img :src="previewUrl" alt="Vista_previa" class="img-fluid" />
       </div>
     </Modal>
+
+    <Modal
+      modalId="modalViewPost"
+      title="Vista del Post"
+      modalClass="modal-fullscreen"
+      :showSaveButton="false"
+      :showUpdateButton="false"
+    >
+      <div class="row">
+        <div class="col-12">
+          <h5>{{ selectedPost.title }}</h5>
+          <p>{{ selectedPost.summary }}</p>
+          <div v-html="selectedPost.content"></div>
+          <img
+            v-if="selectedPost.cover_image"
+            :src="selectedPost.cover_image"
+            alt="Portada"
+            class="img-fluid"
+          />
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
 
-  <script setup>
+<script setup>
 import { ref, onMounted, nextTick } from "vue";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
@@ -98,7 +120,6 @@ let quillEditor;
 
 const inputFileRef = ref(null);
 
-//obtener de localstorage el user_id del objeto user
 const user = JSON.parse(localStorage.getItem("user"));
 
 const user_id = user.user_id;
@@ -113,7 +134,7 @@ onMounted(() => {
   getCategoryPosts();
 
   quillEditor = new Quill("#editor", {
-    theme: "snow", // Estilo de tema
+    theme: "snow",
     modules: {
       toolbar: [
         [{ header: [1, 2, false] }],
@@ -132,7 +153,7 @@ onMounted(() => {
 const getPosts = async () => {
   try {
     const { data } = await axios.get(baseURL);
-    posts.value = data.data;
+    posts.value = data;
     console.log("Los posts:", posts.value);
   } catch (error) {
     console.log(error);
@@ -161,9 +182,9 @@ const handleImageChange = (file) => {
 const savePost = async () => {
   content.value = quillEditor.root.innerHTML;
 
-  const method = selectedPost.value.post_id ? "put" : "post";
-  const url = selectedPost.value.post_id
-    ? `${baseURL}${selectedPost.value.post_id}`
+  const method = selectedPost.value.id ? "put" : "post";
+  const url = selectedPost.value.id
+    ? `${baseURL}${selectedPost.value.id}`
     : baseURL;
 
   const formData = createFormData();
@@ -213,6 +234,11 @@ const selectPost = (post) => {
   openModal("modalPost");
 };
 
+const viewPost = (post) => {
+  selectedPost.value = post;
+  openModal("modalViewPost");
+};
+
 const deletePost = async (id) => {
   try {
     const { data } = await axios.patch(baseURL + id);
@@ -235,7 +261,7 @@ const reset = () => {
 };
 </script>
 
-<style  scoped>
+<style scoped>
 @import "quill/dist/quill.snow.css";
 
 #editor {

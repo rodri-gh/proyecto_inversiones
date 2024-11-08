@@ -2,7 +2,7 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th v-for="(header, index) in headers" :key="index" class="bg-light">
+        <th v-for="(header, index) in headers" :key="index">
           {{ header }}
         </th>
       </tr>

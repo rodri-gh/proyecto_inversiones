@@ -16,18 +16,22 @@
           <span v-if="item.status == 1" class="badge bg-success">Activo</span>
           <span v-else class="badge bg-danger">Inactivo</span>
         </td>
-
         <td>
+          <Button
+            @click="() => actions.view(item)"
+            icon="fa fa-eye"
+            buttonClass="btn-view btn-sm m-1"
+          />
           <Button
             @click="() => actions.edit(item)"
             icon="fa fa-edit"
-            buttonClass="btn-warning btn-sm m-1"
+            buttonClass="btn-edit btn-sm m-1"
           />
           <Button
-            @click="() => actions.delete(item.post_id)"
+            @click="() => actions.delete(item.id)"
             :icon="item.status ? 'fa fa-trash' : 'fa fa-check'"
             :buttonClass="`btn-${
-              item.status ? 'danger' : 'success'
+              item.status ? 'delete' : 'restore'
             } btn-sm m-1`"
           />
         </td>

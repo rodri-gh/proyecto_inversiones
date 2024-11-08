@@ -89,7 +89,7 @@ const router = createRouter({
       path: '/post/:id',
       name: 'post-details',
       component: PostView,
-      meta: { requiresAuth: true },
+
 
     },
     {
@@ -118,11 +118,11 @@ const router = createRouter({
       name: 'posts',
       component: PostsView
     },
-    {
+    /* {
       path: '/posts/:id',
       name: 'post-details',
       component: PostView
-    },
+    }, */
     {
       path: '/movements',
       name: 'movements',
@@ -140,14 +140,14 @@ const router = createRouter({
       name: "investmentOfUser",
       component: InvestmentsOfUser,
       meta: { requiresAuth: true }
-    }, 
-    { 
+    },
+    {
       path: "/analysisAndReports",
       name: "analysisAndReports",
       component: AnalysisAndReportsView,
       meta: { requiresAuth: true }
     },
-    { 
+    {
       path: "/finance",
       name: "finance",
       component: FinanceView,
