@@ -11,8 +11,8 @@
       </tr>
       <tr v-for="item in items" :key="item.id">
         <td>{{ item.name }}</td>
-        <td>{{ item.last_name }}</td>
-        <td>{{ item.username }}</td>
+        <td>{{ item.lastName }}</td>
+        <td>{{ item.account.username }}</td>
         <td>{{ item.email }}</td>
         <td>{{ item.phone }}</td>
         <td>
