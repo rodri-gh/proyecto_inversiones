@@ -169,7 +169,7 @@
       />
       <Input
         id="phone"
-        label="phone"
+        label="Teléfono"
         v-model="phone"
         type="text"
         placeholder="Ingrese número de teléfono"
