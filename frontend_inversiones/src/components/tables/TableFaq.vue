@@ -11,7 +11,7 @@
       </tr>
       <tr v-for="item in items" :key="item.id">
         <td>{{ item.ask }}</td>
-        <td>{{ item.answer }}</td>
+        <td width="40%">{{ item.answer }}</td>
         <td>
           <span v-if="item.deleted == 0" class="badge bg-success">Activo</span>
           <span v-else class="badge bg-danger">Inactivo</span>

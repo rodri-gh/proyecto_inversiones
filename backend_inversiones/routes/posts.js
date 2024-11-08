@@ -2,9 +2,13 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import mysql from 'mysql';
-import connection from '../database/connection.js';
+import { fileURLToPath } from 'url';
+import { getHandleSuccess } from '../helpers/handleSuccess.js';
+import { getHandleError } from '../helpers/handleExceptions.js';
+import Post from '../models/postModel.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 const uploadDir = 'public/images/posts';
@@ -25,130 +29,101 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.get('/', async (req, res, next) => {
-  console.log('GET /posts');
-  const query = 'SELECT * FROM posts;';
-  await connection.query(query, function (error, results, fields) {
-    if (error) {
-      console.log(error);
-      res.status(500).json({
-        error: error,
-        message: 'Error in the query',
-      });
-    } else {
-      console.log(results);
-      // para mostrar imagenes de la base de datos
-      /* results.forEach(element => {
-        if (element.cover_image) {
-          element.cover_image = `http://localhost:3000/images/posts/${element.cover_image}`;
-        }
-      }) */
-      res.status(200).json({
-        data: results,
-        message: 'Listing posts',
-      });
-    }
-  });
+  try {
+    const posts = await Post.findAll();
+    posts.forEach(post => {
+      if (post.cover_image) {
+        post.cover_image = `http://localhost:3000/images/posts/${post.cover_image}`;
+      }
+    });
+    getHandleSuccess(200)(res, posts);
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
-router.post('/', upload.single('cover_image'), function (req, res, next) {
-  const { category_post_id, user_id, title, summary, content } = req.body;
+router.get('/:id', async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const post = await Post.findOne({ where: { id } });
+    if (!post) {
+      return getHandleError(new Error('Post not found'), res);
+    }
+    if (post.cover_image) {
+      post.cover_image = `http://localhost:3000/images/posts/${post.cover_image}`;
+    }
+    getHandleSuccess(200)(res, post);
+  } catch (error) {
+    getHandleError(error, res);
+  }
+});
 
+router.post('/', upload.single('cover_image'), async (req, res, next) => {
+  const { category_post_id, user_id, title, summary, content } = req.body;
   const cover_image = req.file ? `${req.file.filename}` : null;
-
-
-  const contentHTML = mysql.escape(content);
-
-  const query = `
-    INSERT INTO posts (category_post_id, user_id, title, summary, cover_image, content) 
-    VALUES ("${category_post_id}", "${user_id}", "${title}", "${summary}", "${cover_image}", "${contentHTML}");
-  `;
-
-  connection.query(query, function (error, results, fields) {
-    if (error) {
-      console.log(error);
-      res.status(500).json({
-        error: error,
-        message: 'Error in the query',
-      });
-    } else {
-      console.log(results);
-      res.status(200).json({
-        data: results,
-        message: 'Post created',
-      });
-    }
-  });
+  try {
+    await Post.create({ category_post_id, user_id, title, summary, cover_image, content });
+    getHandleSuccess(201)(res, "Post created successfully");
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
-router.put('/:id', upload.single('cover_image'), function (req, res, next) {
-  const postId = req.params.id;
+router.put('/:id', upload.single('cover_image'), async (req, res, next) => {
+  const { id } = req.params;
   const { category_post_id, user_id, title, summary, content } = req.body;
-  const contentHTML = mysql.escape(content);
 
-  const query = `SELECT cover_image FROM posts WHERE post_id = "${postId}";`;
-  connection.query(query, function (error, results, fields) {
-    if (error) {
-      console.error(error);
-      return res.status(500).json({
-        error: error,
-        message: 'Error retrieving post information',
-      });
+  try {
+    const post = await Post.findOne({ where: { id } });
+    if (!post) {
+      return getHandleError(new Error('Post not found'), res);
     }
 
-    const currentPost = results[0];
-
-    let cover_image = currentPost.cover_image;
+    let cover_image = post.cover_image;
     if (req.file) {
-      // Si se subió una nueva imagen, actualizar la ruta
       cover_image = `${req.file.filename}`;
-
-      // Eliminar la imagen antigua si existe
-      if (currentPost.cover_image) {
-        const oldImagePath = path.join(__dirname, '../public/images/posts', currentPost.cover_image);
-        fs.unlink(oldImagePath, (err) => {
-          console.error('Error deleting old image:', err);
+      if (post.cover_image) {
+        const oldImagePath = path.join(__dirname, '../public/images/posts', post.cover_image);
+        fs.access(oldImagePath, fs.constants.F_OK, (err) => {
+          if (!err) {
+            fs.unlink(oldImagePath, (err) => {
+              if (err) {
+                console.error('Error deleting old image:', err);
+              }
+            });
+          } else {
+            console.error('Old image not found:', oldImagePath);
+          }
         });
       }
     }
 
-    const query = `
-      UPDATE posts 
-      SET category_post_id = "${category_post_id}", user_id = "${user_id}", title = "${title}", summary = "${summary}", cover_image = "${cover_image}", content = "${contentHTML}"
-      WHERE post_id = "${postId}";
-    `;
+    await Post.update(
+      { category_post_id, user_id, title, summary, cover_image, content },
+      { where: { id } }
+    );
 
-    connection.query(query, (error, results) => {
-      if (error) {
-        console.error(error);
-        return res.status(500).json({
-          error: error,
-          message: 'Error updating post',
-        });
-      }
-
-      res.status(200).json({
-        message: 'Post updated',
-      });
-    });
-  });
+    getHandleSuccess(200)(res, 'Post updated successfully');
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
-router.patch('/:id', function (req, res, next) {
-  const postId = req.params.id;
-  // Cambiar el campo de eliminado del post de 1 a 0 o de 0 a 1
-  const query = `UPDATE posts SET status = !status WHERE post_id = "${postId}";`;
-  connection.query(query, function (error, results, fields) {
-    if (error) {
-      console.error(error);
-      return res.status(500).json({
-        error: error,
-        message: 'Error deleting post',
-      });
+router.patch('/:id', async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const post = await Post.findOne({ where: { id } });
+    if (!post) {
+      return getHandleError(new Error('Post not found'), res);
     }
-    res.status(200).json({
-      message: 'Post deleted',
-    });
-  });
+
+    const newStatus = !post.status;
+    await Post.update({ status: newStatus }, { where: { id } });
+
+    getHandleSuccess(200)(res, `Post ${newStatus ? 'restored' : 'deleted'} successfully`);
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
 export default router;
