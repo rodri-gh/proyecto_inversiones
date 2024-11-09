@@ -89,8 +89,8 @@
 
                 <div class="dates mt-2">
                   <small class="text-muted">
-                    {{ formatDate(timeline.start_date) }} -
-                    {{ formatDate(timeline.end_date) }}
+                    {{ formatDate(timeline.startDate) }} -
+                    {{ formatDate(timeline.endDate) }}
                   </small>
                 </div>
 
@@ -99,12 +99,12 @@
                 <div class="prices mt-2">
                   <small class="d-block">
                     <strong>Mineral 1:</strong> ${{
-                      timeline.price_mineral_1
+                      timeline.priceMineral1
                     }}
                   </small>
                   <small class="d-block">
                     <strong>Mineral 2:</strong> ${{
-                      timeline.price_mineral_2
+                      timeline.priceMineral2
                     }}
                   </small>
                 </div>
@@ -169,24 +169,24 @@
             </div>
 
             <div class="mb-3">
-              <label for="start_date" class="form-label">Fecha de inicio</label>
+              <label for="startDate" class="form-label">Fecha de inicio</label>
               <input
                 type="date"
                 class="form-control"
-                v-model="start_date"
-                id="start_date"
+                v-model="startDate"
+                id="startDate"
               />
             </div>
 
             <div class="mb-3">
-              <label for="end_date" class="form-label"
+              <label for="endDate" class="form-label"
                 >Fecha de finalizacion</label
               >
               <input
                 type="date"
                 class="form-control"
-                v-model="end_date"
-                id="end_date"
+                v-model="endDate"
+                id="endDate"
               />
             </div>
             <div class="mb-3">
@@ -261,7 +261,7 @@
   </div>
 </template>
 
-  <script setup>
+<script setup>
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { getHeaderRequest } from "@/authService";
@@ -278,8 +278,8 @@ const baseURL = "http://localhost:3000/project-timeline/";
 const timeLines = ref([]);
 
 const phase = ref("");
-const start_date = ref("");
-const end_date = ref("");
+const startDate = ref("");
+const endDate = ref("");
 const status = ref("");
 const description = ref("");
 const mineral_1 = ref(0);
@@ -384,7 +384,7 @@ const getTimeLines = async () => {
     const data = await axios.get(baseURL+"project/" + props.idProject, header);
     console.log(data.data)
     timeLines.value = data.data.sort(
-      (a, b) => new Date(a.start_date) - new Date(b.start_date)
+      (a, b) => new Date(a.startDate) - new Date(b.startDate)
     );
   } catch (error) {
     console.error(error);
@@ -395,8 +395,8 @@ const createTimeLine = async () => {
   const timeLine = {
     projectId: props.idProject,
     phase: phase.value,
-    startDate: start_date.value,
-    endDate: end_date.value,
+    startDate: startDate.value,
+    endDate: endDate.value,
     status: status.value,
     description: description.value,
     priceMineral1: mineral_1.value,
@@ -425,12 +425,12 @@ const selectTimeLine = (timeLine) => {
   console.log(selectedTimeLine.value, timeLine.p);
 
   phase.value = timeLine.phase;
-  start_date.value = formatInputDate(timeLine.start_date);
-  end_date.value = formatInputDate(timeLine.end_date);
+  startDate.value = formatInputDate(timeLine.startDate);
+  endDate.value = formatInputDate(timeLine.endDate);
   status.value = timeLine.status;
   description.value = timeLine.description;
-  mineral_1.value = timeLine.price_mineral_1;
-  mineral_2.value = timeLine.price_mineral_2;
+  mineral_1.value = timeLine.priceMineral1;
+  mineral_2.value = timeLine.priceMineral2;
 
   var myModalEl = document.getElementById("modalTimeline");
   var modal = new bootstrap.Modal(myModalEl);
@@ -440,12 +440,12 @@ const selectTimeLine = (timeLine) => {
 const updateTimeLine = async () => {
   const timeLine = {
     phase: phase.value,
-    start_date: start_date.value,
-    end_date: end_date.value,
+    startDate: startDate.value,
+    endDate: endDate.value,
     status: status.value,
     description: description.value,
-    price_mineral_1: mineral_1.value,
-    price_mineral_2: mineral_2.value,
+    priceMineral1: mineral_1.value,
+    priceMineral2: mineral_2.value,
     project_id: props.idProject,
   };
 
@@ -468,8 +468,8 @@ const updateTimeLine = async () => {
 
 const reset = () => {
   phase.value = "";
-  start_date.value = "";
-  end_date.value = "";
+  startDate.value = "";
+  endDate.value = "";
   status.value = "";
   description.value = "";
   mineral_1.value = 0;

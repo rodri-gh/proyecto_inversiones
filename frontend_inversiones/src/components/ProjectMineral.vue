@@ -2,16 +2,14 @@
     <div>
       <div>
         <div class="text-end">
-          <button
-            type="button"
-            class="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#modalMineral"
-            @click="resetModal"
-            :disabled="projectMinerals.length >= 4"
-          >
-            <i class="fa fa-plus mx-1"></i> Nuevo
-          </button>
+          <Button 
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalMineral"
+                    text="Nuevo"
+                    icon="fa fa-plus"
+                    @click="resetModal"
+                    :disabled="projectMinerals.length >= 4"
+                />
         </div>
 
         <div class="table-responsive">
@@ -183,6 +181,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { getHeaderRequest } from "@/authService";
 import Input from "./base/Input.vue";
+import Button from "./base/Button.vue";
 
 const props = defineProps({
   idProjectMineral: {
@@ -312,7 +311,7 @@ const saveProjectMinerals = async () => {
         prePurchase: prePurchase.value,
         estimatedPurchasePrice: estimatedPurchasePrice.value
       };
-      await axios.put(baseURL+selectedProjectMineral.value.id, projectMineral);
+      await axios.post(baseURL, projectMineral);
     }
     await getprojectMinerals();
     closeModal();
