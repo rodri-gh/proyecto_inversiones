@@ -46,7 +46,7 @@ const props = defineProps({
 
 const getContracts = async () => {
     try { 
-        const response = await axios.get(baseURL, header);
+        const response = await axios.get(baseURL+'project/'+props.idProject, header);
         contracts.value = response.data;
         console.log(response.data);
     } catch(e) {
@@ -85,7 +85,7 @@ const selectContract = (contract) => {
 
 const deleteContract = async (id) => {
   try {
-      const data = await axios.patch(baseURL + id);
+      const data = await axios.delete(baseURL + id);
       console.log(data);
       getOperatingExpenses();
   } catch (error) {
@@ -93,12 +93,14 @@ const deleteContract = async (id) => {
   }
 };
 
-const saveInvestment = async () => {
-    const method = selectedInvestment.value.id ? "put" : "post";
-    const url = selectedInvestment.value.id
-        ? `${baseURL}${selectedInvestment.value.id}`
+const saveContract = async () => {
+    const method = selectedContract.value.id ? "put" : "post";
+    const url = selectedContract.value.id
+        ? `${baseURL}${selectedContract.value.id}`
         : baseURL;
     const formData = createFormData();
+    console.log(url); 
+    console.log(Array.from(formData.entries()));
     try {
         await axios[method](url, formData, header);
         closeModal("modalContract");
@@ -120,6 +122,8 @@ const createFormData = () => {
     formData.append("status", status.value);
     formData.append("contractType", contractType.value);
     formData.append("currency", currency.value);
+    formData.append("contractFilePath", 'vacio');
+
     return formData;
 };
 
@@ -163,10 +167,10 @@ const reset = () => {
                 modalId="modalContract"
                 title="Datos"
                 modalClass="modal-lg"
-                :showSaveButton="!selectedInvestment?.id"
-                :showUpdateButton="Boolean(selectedInvestment?.id)"
+                :showSaveButton="!selectedContract?.id"
+                :showUpdateButton="Boolean(selectedContract?.id)"
                 @onClose="reset()"
-                @onSave="saveInvestment()"
+                @onSave="saveContract()"
             >
                 <div class="row">
                     <div class="col-md-4">

@@ -128,7 +128,7 @@ const createFormData = () => {
   formData.append("name", name.value);
   formData.append("description", description.value);
   formData.append("expenses", expenses.value);
-  formData.append("project_id", props.idProject);
+  formData.append("projectId", props.idProject);
   return formData;
 };
 
