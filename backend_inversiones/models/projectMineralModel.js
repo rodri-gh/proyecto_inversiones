@@ -17,6 +17,18 @@ ProjectMineral.init(
             type: DataTypes.BIGINT,
             allowNull: false
         },
+        purchasePrice: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: false
+        },
+        prePurchase: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: true
+        },
+        estimatedPurchasePrice: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: true
+        },
         deleted: {
             type: DataTypes.TINYINT,
             allowNull: false,

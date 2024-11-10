@@ -28,9 +28,11 @@ router.get('/:id', function (req, res, next) {
 });
 
 router.post('/', async (req, res, next) => {
-  const { name, description, investmentGoal, status, profitPercentage } = req.body;
+  const { name, description, investmentGoal, status, startDate, 
+      endDate, projectType, profitPercentage } = req.body;
   try {
-    await Project.create({ name, description, investmentGoal, status, profitPercentage });
+    await Project.create({ name, description, investmentGoal, status,
+         startDate, endDate, projectType, profitPercentage });
     getHandleSuccess(201)(res, "Project created successfully");
   } catch (error) {
     getHandleError(error, res);
@@ -39,9 +41,11 @@ router.post('/', async (req, res, next) => {
 
 router.put('/:id', async (req, res, next) => {
   const { id } = req.params;
-  const { name, description, investmentGoal, status, profitPercentage } = req.body;
+  const { name, description, investmentGoal, status,
+    startDate, endDate, projectType, profitPercentage } = req.body;
   try {
-    const [projectCount] = await Project.update({ name, description, investmentGoal, status, profitPercentage }, {
+    const [projectCount] = await Project.update({ name, description, investmentGoal, status,
+      startDate, endDate, projectType, profitPercentage }, {
       where: { id }
     });
     verifyIfIdExists(projectCount);

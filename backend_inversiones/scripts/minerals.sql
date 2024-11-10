@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `minerals`;
-USE `minerals`;
+CREATE DATABASE IF NOT EXISTS `u488326007_hamilo_mineral`;
+USE `u488326007_hamilo_mineral`;
 
 CREATE TABLE IF NOT EXISTS `projects` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -118,8 +118,8 @@ CREATE TABLE IF NOT EXISTS `project_timelines` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `project_id` bigint(20) NOT NULL,
   `phase` varchar(50) NOT NULL,
-  `start_date` date NOT NULL,
-  `end_date` date NOT NULL,
+  `start_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `end_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `description` varchar(200) NOT NULL,
   `price_mineral1` decimal(10,2) NOT NULL,
   `price_mineral2` decimal(10,2) NOT NULL,

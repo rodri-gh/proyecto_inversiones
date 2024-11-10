@@ -56,6 +56,7 @@ Contract.init(
         },
         contractFilePath: {
             type: DataTypes.STRING,
+            allowNull: true,
         }
     },
     {

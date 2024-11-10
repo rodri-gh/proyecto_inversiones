@@ -17,6 +17,20 @@ router.get('/', async (req, res, next) => {
     }
 });
 
+router.get('/project/:id', async (req, res, next) => {
+    const { id } = req.params;
+    try { 
+        const contracts = await Contract.findAll({
+            where: { projectId: id }
+        });
+        getHandleSuccess(200)(res, contracts);
+    } catch (error) {
+        console.log(error)
+        getHandleError(error, res)
+    }
+});
+
+
 router.post('/', async (req, res, next) => {
     const { projectId, userId, investmentAmount,
          contractCode, startDate, endDate, status, contractType,

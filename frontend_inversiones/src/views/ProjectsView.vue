@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="m-5">
     <div v-if="!showDetails">
         <div>
           <h4 class="card-title text-center">Gestion de proyectos</h4>
