@@ -21,10 +21,10 @@
                     <td v-else-if="item.status == 'in_transit'">En curso</td>
                     <td v-else>Cerrado</td>
                     <td>
-                        <span v-if="item.deleted == 1" class="badge bg-success"
+                        <span v-if="item.deleted === 1" class="badge bg-success"
                         >Activo</span
                         >
-                        <span v-else class="badge bg-danger">Inactivo</span>
+                        <span v-else class="badge bg-danger">Eliminado</span>
                     </td>
                     <td>
                         <Button
