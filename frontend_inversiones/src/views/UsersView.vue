@@ -10,6 +10,9 @@
         class="btn-color"
       />
     </div>
+    <CardsSummary                
+      :items="summaryUsers" 
+      />
     <ul class="nav nav-tabs" id="userTabs" role="tablist">
       <li class="nav-item" role="presentation">
         <button
@@ -76,7 +79,7 @@
         aria-labelledby="all-tab"
       >
         <TableUsers
-          :headers="headers"
+          :headers="headersTable"
           :items="users"
           :actions="{
             edit: selectUser,
@@ -212,8 +215,9 @@ import Modal from "@/components/base/Modal.vue";
 import Input from "@/components/base/Input.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import { getUserRoleOfLocalStorage } from "@/authService";
+import CardsSummary from "@/components/CardsSummary.vue";
 
-const headers = [
+const headersTable = [
   "Nombre(s)",
   "Apellidos",
   "Nombre de usuario",
@@ -222,6 +226,7 @@ const headers = [
   "Estado",
   "Acciones",
 ];
+
 const baseURL = "http://localhost:3000/user/";
 
 const rol = getUserRoleOfLocalStorage();
@@ -239,6 +244,7 @@ const role = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 const selectedUser = ref({});
+const summaryUsers = ref([]);
 
 const token = localStorage.getItem("token") || "";
 
@@ -260,6 +266,7 @@ const getUsers = async () => {
     inactiveUsers.value = data.filter((user) => user.deleted === 1);
     clientUsers.value = data.filter((user) => user.role === "client");
     console.log(users.value);
+    getsummaryUsers();
   } catch (error) {
     console.log(error);
   }
@@ -274,6 +281,35 @@ const selectUser = (user) => {
 
   openModal("modalUser");
 };
+
+const getsummaryUsers = () => {
+  if (users.value.length > 0) {
+    let userTotals = users.value.length;
+    let userActives = 0;
+    let userAdmins = 0; 
+    let userClients = 0;
+    for (var item of users.value){ 
+      if ( item.deleted === 1) { 
+        userActives++;
+      }
+      if ( item.role === 'admin') { 
+        userAdmins++;
+      }
+      if (item.role === 'client') { 
+        userClients++; 
+      }
+    }
+    summaryUsers.value = [
+      { key: 'Usuarios Totales', value: userTotals },
+      { key: 'Usuarios activos', value: userActives },
+      { key: 'Administradores', value: userAdmins },
+      { key: 'Clientes', value: userClients },
+    ]
+    console.log(summaryUsers.value); 
+  } else { 
+    console.log('el array de users para cards sumary esta vacio'); 
+  }
+}
 
 const createUser = async () => {
   if (!validateUserInput()) return;

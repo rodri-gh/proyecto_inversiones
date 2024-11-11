@@ -5,7 +5,6 @@ import MyProfile from "./MyProfile.vue";
 import ProjectsView from "@/views/ProjectsView.vue";
 import InvestmentsOfUser from "./InvestmentsOfUser.vue";
 import UserWithdrawalRequests from "./UserWithdrawalRequests.vue";
-import UserViewCopy from "@/views/UserViewCopy.vue";
 import WithdrawalRequestsView from "@/views/WithdrawalRequestsView.vue";
 import ConfigurationAndSecurity from "./Dashboard/ConfigurationAndSecurity.vue";
 import Start from "./Dashboard/Start.vue";
