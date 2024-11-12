@@ -1,11 +1,11 @@
 <template>
-  <div class="mb-3">
-    <label :for="id" class="form-label">{{ label }}</label>
+  <div>
+    <label :for="id" class="form-label m-0">{{ label }}</label>
     <input
       type="file"
       :id="id"
       @change="handleFileChange"
-      class="form-control"
+      class="form-control m-0"
       :accept="accept"
       ref="fileInput"
     />

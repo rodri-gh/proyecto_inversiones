@@ -1,26 +1,24 @@
 <template>
-  <div class="container col-md-8 mt-5">
-    <div class="card shadow border-0">
-      <div class="card-body">
-        <h4 class="card-title text-center">Minerales</h4>
-        <div class="text-end">
-          <Button
-            data-bs-toggle="modal"
-            data-bs-target="#modalMineral"
-            text="Nuevo"
-            icon="fa fa-plus"
-          />
-        </div>
-        <TableMinerals
-          :headers="headers"
-          :items="minerals"
-          :actions="{
-            edit: selectMineral,
-            delete: deleteMineral,
-          }"
-        />
-      </div>
+  <div class="container col-md-10 mt-5">
+    <h4 class="card-title text-center">Minerales</h4>
+    <div class="text-end">
+      <Button
+        data-bs-toggle="modal"
+        data-bs-target="#modalMineral"
+        text="Nuevo"
+        icon="fa fa-plus"
+      />
     </div>
+    <CardsSummary :items="summaryMinerals"/>
+    <TableMinerals
+      :headers="headers"
+      :items="minerals"
+      :actions="{
+        edit: selectMineral,
+        delete: deleteMineral,
+      }"
+    />
+
     <Modal
       modalId="modalMineral"
       title="Datos del Mineral"
@@ -77,6 +75,7 @@ import Input from "@/components/base/Input.vue";
 import InputTextArea from "@/components/base/InputTextArea.vue";
 import InputFile from "@/components/base/InputFile.vue";
 import { openModal, closeModal } from "@/utils/modal";
+import CardsSummary from "@/components/CardsSummary.vue";
 
 const headers = [
   "Nombre",
@@ -96,6 +95,7 @@ const description = ref("");
 const image = ref(null);
 const previewUrl = ref(null);
 const selectedMineral = ref({});
+const summaryMinerals = ref([]);
 
 const inputFileRef = ref(null);
 
@@ -107,10 +107,31 @@ const getMinerals = async () => {
   try {
     const { data } = await axios.get(baseURL);
     minerals.value = data;
+    console.log(minerals.value);
+    getsummaryMinerals();
   } catch (error) {
     console.log(error);
   }
 };
+
+const getsummaryMinerals = () => {
+  if (minerals.value.length > 0) {
+    let userTotals = minerals.value.length;
+    let projectDeleted = 0;
+    for (var item of minerals.value){ 
+      if (item.deleted === 0) { 
+        projectDeleted++; 
+      }
+    }
+    summaryMinerals.value = [
+      { key: 'Minerales Totales', value: userTotals },
+      { key: 'Eliminados', value: projectDeleted },
+    ]
+    console.log(summaryMinerals.value); 
+  } else { 
+    console.log('el array de minerals para cards sumary esta vacio'); 
+  }
+}
 
 const handleImageChange = (file) => {
   image.value = file;

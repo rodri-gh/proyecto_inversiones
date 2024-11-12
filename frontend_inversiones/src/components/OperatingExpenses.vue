@@ -1,25 +1,22 @@
 <template>
-  <div class="container col-md-12 mt-5">
-      <div class="card shadow border-0">
-          <div class="card-body">
-              <h4 class="card-title text-center">Gastos Operativos</h4>
-              <div class="text-end">
-                  <Button
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalOperatingExpense"
-                      text="Nuevo"
-                      icon="fa fa-plus" 
-                  />
-              </div>
-              <TableOperatingExpenses
-                  :headers="headers"
-                  :items="operatingExpenses"
-                  :actions="{
-                      edit: selectOperatingExpense,
-                      delete: deleteOperatingExpense,
-                  }"
-              />
-          </div>
+  <div>
+      <div>
+            <div class="text-end">
+                <Button
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalOperatingExpense"
+                    text="Nuevo"
+                    icon="fa fa-plus" 
+                />
+            </div>
+            <TableOperatingExpenses
+                :headers="headers"
+                :items="operatingExpenses"
+                :actions="{
+                    edit: selectOperatingExpense,
+                    delete: deleteOperatingExpense,
+                }"
+            />
       </div>
       <Modal
           modalId="modalOperatingExpense"
@@ -131,7 +128,7 @@ const createFormData = () => {
   formData.append("name", name.value);
   formData.append("description", description.value);
   formData.append("expenses", expenses.value);
-  formData.append("project_id", props.idProject);
+  formData.append("projectId", props.idProject);
   return formData;
 };
 

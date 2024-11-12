@@ -20,6 +20,14 @@ import categoryPostsRouter from './routes/categoryPosts.js';
 import postRouter from './routes/posts.js';
 import faqRouter from './routes/faq.js';
 import analysisReportRouter from './routes/analysisReport.js';
+import financialProjectionsRouter from './routes/financialProjections.js';
+import financialSettingsRouter from './routes/financialSettings.js';
+import financialTransactionsRouter from './routes/financialTransactions.js';
+import mineralPriceHistoryRouter from './routes/mineralPriceHistory.js';
+import projectChangesRouter from './routes/projectChanges.js';
+import projectPerformanceRouter from './routes/projectPerformance.js';
+import userActivitylogRouter from './routes/userActivitylog.js';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -50,5 +58,12 @@ app.use('/post', postRouter);
 app.use('/faq', faqRouter);
 app.use('/movement', movementsRouter);
 app.use('/analysis-report', analysisReportRouter);
+app.use('/financialProjections', financialProjectionsRouter);
+app.use('/financialSettings', financialSettingsRouter);
+app.use('/financialTransactions', financialTransactionsRouter);
+app.use('/mineralPriceHistory', mineralPriceHistoryRouter);
+app.use('/projectChanges', projectChangesRouter);
+app.use('/projectPerformance', projectPerformanceRouter);
+app.use('/userActivitylog', userActivitylogRouter);
 
 export default app;

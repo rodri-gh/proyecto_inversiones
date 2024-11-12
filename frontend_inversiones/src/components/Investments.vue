@@ -1,24 +1,21 @@
 <template>
-    <div class="container col-md-12 mt-5">
-        <div class="card shadow border-0">
-            <div class="card-body">
-                <h4 class="card-title text-center">Inversores</h4>
-                <div class="text-end">
-                    <Button 
-                        data-bs-toggle="modal"
-                        data-bs-target="#modalInvestment"
-                        text="Nuevo"
-                        icon="fa fa-plus"
-                    />
-                </div>
-                <TableInvestments
-                    :headers="headers"
-                    :items="investments"
-                    :actions="{
-                        edit: selectInvestment,
-                    }"
+    <div>
+        <div class="text-end">
+            <div>
+                <Button 
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalInvestment"
+                    text="Nuevo"
+                    icon="fa fa-plus"
                 />
             </div>
+            <TableInvestments
+                :headers="headers"
+                :items="investments"
+                :actions="{
+                    edit: selectInvestment,
+                }"
+            />
         </div>
 
         <Modal
@@ -120,6 +117,7 @@ const header = getHeaderRequest();
 onMounted(() => {
     getInvestments();
     getUsers();
+    console.log(props.idProjectInvestment);
 });
 
 const getInvestments = async () => {

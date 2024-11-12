@@ -12,6 +12,13 @@ import Contact from './contactModel.js';
 import Faq from './faqModel.js';
 import Movement from './movementModel.js';
 import WithdrawalRequest from './withdrawalRequestModel.js';
+import UserActivitylog from './userActivitylogModel.js';
+import FinancialTransactions from './financialTransactionsModel.js'
+import MineralPriceHistory from './mineralPriceHistoryModel.js';
+import FinancialSettings from './financialSettingsModel.js';
+import ProjectPerformance from './projectPerformanceModel.js';
+import ProjectChanges from './projectChangesModel.js';
+import FinancialProjections from './financialProjectionsModel.js';
 
 
 User.hasOne(Account, { foreignKey: 'userId' });
@@ -50,6 +57,28 @@ WithdrawalRequest.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 Investment.hasMany(WithdrawalRequest, { foreignKey: 'investment_id', as: 'withdrawalRequests' });
 WithdrawalRequest.belongsTo(Investment, { foreignKey: 'investment_id', as: 'investment' });
 
+User.hasMany(FinancialTransactions, { foreignKey: 'userId' });
+FinancialTransactions.belongsTo(User, { foreignKey: 'userId' });
+
+Project.hasMany(FinancialTransactions, { foreignKey: 'projectId' });
+FinancialTransactions.belongsTo(Project, { foreignKey: 'projectId' });
+
+Mineral.hasMany(MineralPriceHistory, { foreignKey: 'mineralId' });
+MineralPriceHistory.belongsTo(Mineral, { foreignKey: 'mineralId' });
+
+User.hasMany(UserActivitylog, { foreignKey: 'userId' });
+UserActivitylog.belongsTo(User, { foreignKey: 'userId' });
+
+Project.hasMany(ProjectPerformance, { foreignKey: 'projectId' });
+ProjectPerformance.belongsTo(Project, { foreignKey: 'projectId' });
+
+Project.hasMany(ProjectChanges, { foreignKey: 'projectId' });
+ProjectChanges.belongsTo(Project, { foreignKey: 'projectId' });
+
+Project.hasMany(FinancialProjections, { foreignKey: 'projectId' });
+FinancialProjections.belongsTo(Project, { foreignKey: 'projectId' });
+
+
 export {
     User,
     Project,
@@ -64,5 +93,12 @@ export {
     Contact,
     Faq,
     Movement,
-    WithdrawalRequest
+    WithdrawalRequest,
+    FinancialTransactions,
+    MineralPriceHistory,
+    FinancialSettings,
+    UserActivitylog,
+    ProjectPerformance,
+    ProjectChanges,
+    FinancialProjections,
 };

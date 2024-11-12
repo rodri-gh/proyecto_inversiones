@@ -1,161 +1,175 @@
 <template>
-  <div class="card shadow border-0">
-    <div class="card-body">
-      <h4 class="card-title text-center">Minerales del Proyecto</h4>
-      <div class="text-end">
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#modalMineral"
-          @click="resetModal"
-          :disabled="activeProjectMinerals.length >= 2"
-        >
-          <i class="fa fa-plus mx-1"></i> Nuevo
-        </button>
-      </div>
+    <div>
+      <div>
+        <div class="text-end">
+          <Button 
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalMineral"
+                    text="Nuevo"
+                    icon="fa fa-plus"
+                    @click="resetModal"
+                    :disabled="projectMinerals.length >= 4"
+                />
+        </div>
 
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Mineral</th>
-              <th scope="col">Estado</th>
-              <th scope="col">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="projectMinerals.length === 0">
-              <td colspan="4" class="text-center">
-                No hay minerales asociados a este proyecto
-              </td>
-            </tr>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Id del projecto</th>
+                <th scope="col">Nombre del mineral</th>
+                <th scope="col">Precio estimado de compra</th>
+                <th scope="col">Precio pre compra</th>
+                <th scope="col">Precio de compra</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="projectMinerals.length == 0">
+                <td colspan="6" class="text-center">
+                  No hay minerales asociados a este proyecto
+                </td>
+              </tr>
 
-            <tr
-              v-for="projectMineral in projectMinerals"
-              :key="projectMineral.id"
-              :class="{ 'table-secondary': !projectMineral.isActive }"
-            >
-              <td>{{ projectMineral.id }}</td>
-              <td>{{ projectMineral.name }}</td>
-              <td>
-                <span 
-                  :class="projectMineral.isActive ? 'text-success' : 'text-danger'"
-                >
-                  {{ projectMineral.isActive ? 'Activo' : 'Inactivo' }}
-                </span>
-              </td>
-              <td>
-                <button
-                  class="btn btn-warning btn-sm m-1"
-                  @click="selectProjectMineral(projectMineral)"
-                  :disabled="!projectMineral.isActive"
-                >
-                  <i class="fa fa-edit"></i>
-                </button>
-                <button
-                  :class="['btn btn-sm m-1', projectMineral.isActive ? 'btn-danger' : 'btn-success']"
-                  @click="toggleProjectMineralStatus(projectMineral)"
-                >
-                  <i :class="projectMineral.isActive ? 'fa fa-times' : 'fa fa-check'"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              <tr
+                v-for="projectMineral in projectMinerals"
+                :key="projectMineral.id"
+              >
+                <td>{{ projectMineral.projectId }}</td>
+                <td>{{ projectMineral.mineral.name }}</td>
+                <td>{{ projectMineral.estimatedPurchasePrice }}</td>
+                <td>{{ projectMineral.prePurchase }}</td>
+                <td>{{ projectMineral.purchasePrice }}</td>
+                <td>
+                  <button
+                    class="btn btn-warning btn-sm m-1"
+                    @click="selectProjectMineral(projectMineral)"
+                  >
+                    <i class="fa fa-edit"></i>
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm m-1"
+                    @click="deleteProjectMineral(projectMineral.id)"
+                  >
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Modal -->
-  <div
-    class="modal fade"
-    id="modalMineral"
-    tabindex="-1"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    role="dialog"
-    aria-labelledby="modalTitleId"
-    aria-hidden="true"
-  >
+    <!-- Modal -->
     <div
-      class="modal-dialog modal-dialog-scrollable modal-dialog-centered"
-      role="document"
+      class="modal fade"
+      id="modalMineral"
+      tabindex="-1"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      role="dialog"
+      aria-labelledby="modalTitleId"
+      aria-hidden="true"
     >
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalTitleId">Minerales</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-            @click="resetModal"
-          ></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label for="mineral" class="form-label">
-              Selecciona minerales (máximo 2)
-              <span class="text-muted">
-                ({{ selectedMinerals.length }}/2)
-              </span>
-            </label>
-            <select
-              class="form-select"
-              id="mineral"
-              :disabled="selectedMinerals.length >= 2"
-              v-model="selectedMineral"
-              @change="addMineral"
-            >
-              <option value="">Seleccione un mineral</option>
-              <option
-                v-for="mineral in availableMinerals"
-                :key="mineral.id"
-                :value="mineral"
-              >
-                {{ mineral.name }}
-              </option>
-            </select>
+      <div
+        class="modal-dialog modal-dialog-scrollable modal-dialog-centered"
+        role="document"
+      >
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitleId">Minerales</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              @click="resetModal"
+            ></button>
           </div>
-
-          <div v-if="selectedMinerals.length > 0">
-            <h6>Minerales seleccionados:</h6>
-            <ul class="list-group">
-              <li
-                v-for="mineral in selectedMinerals"
-                :key="mineral.id"
-                class="list-group-item d-flex justify-content-between align-items-center"
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="mineral" class="form-label">
+                Selecciona minerales (máximo 2)
+                <span class="text-muted">
+                  ({{ selectedMinerals.length }}/2)
+                </span>
+              </label>
+              <select
+                class="form-select"
+                id="mineral"
+                :disabled="selectedMinerals.length >= 2"
+                v-model="selectedMineral"
+                @change="addMineral"
               >
-                {{ mineral.name }}
-                <button
-                  class="btn btn-danger btn-sm"
-                  @click="removeMineral(mineral)"
+                <option value="">Seleccione un mineral</option>
+                <option
+                  v-for="mineral in availableMinerals"
+                  :key="mineral.id"
+                  :value="mineral"
                 >
-                  <i class="fa fa-times"></i>
-                </button>
-              </li>
-            </ul>
+                  {{ mineral.name }}
+                </option>
+              </select>
+            </div>
+
+            <div v-if="selectedMinerals.length > 0">
+              <h6>Minerales seleccionados:</h6>
+              <ul class="list-group">
+                <li
+                  v-for="mineral in selectedMinerals"
+                  :key="mineral.id"
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  {{ mineral.name }}
+                  <button
+                    class="btn btn-danger btn-sm"
+                    @click="removeMineral(mineral)"
+                  >
+                    <i class="fa fa-times"></i>
+                  </button>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <Input
+                id="estimatedPurchasePrice"
+                label="Precio estimado de compra"
+                type="number"
+                v-model="estimatedPurchasePrice"
+              />
+              <Input
+                id="prePurchase"
+                label="Precio pre compra"
+                type="number"
+                v-model="prePurchase"
+              />
+              <Input
+                id="purchasePrice"
+                label="Precio de compra"
+                type="number"
+                v-model="purchasePrice"
+              />
+            </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-            @click="resetModal"
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            :disabled="selectedMinerals.length === 0"
-            @click="saveProjectMinerals"
-          >
-            {{ isEditing ? "Actualizar" : "Guardar" }}
-          </button>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              @click="resetModal"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              :disabled="selectedMinerals.length === 0"
+              @click="saveProjectMinerals"
+            >
+              {{ isEditing ? "Actualizar" : "Guardar" }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -167,6 +181,8 @@ import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { getHeaderRequest } from "@/authService";
+import Input from "./base/Input.vue";
+import Button from "./base/Button.vue";
 
 const props = defineProps({
 idProjectMineral: {
@@ -183,6 +199,11 @@ const mineralsURL = `${API_BASE_URL}/mineral`;
 // Estados reactivos
 const projectMinerals = ref([]);
 const minerals = ref([]);
+
+const estimatedPurchasePrice = ref(''); 
+const prePurchase = ref(''); 
+const purchasePrice = ref(''); 
+
 const selectedMinerals = ref([]);
 const selectedMineral = ref("");
 const selectedProjectMineral = ref({});
@@ -194,39 +215,14 @@ const activeProjectMinerals = computed(() => {
 return projectMinerals.value.filter(mineral => mineral.isActive);
 });
 
-const availableMinerals = computed(() => {
-const existingMineralIds = activeProjectMinerals.value.map(pm => pm.mineralId);
-return minerals.value.filter(
-  mineral =>
-    !existingMineralIds.includes(mineral.id) &&
-    !selectedMinerals.value.some(selected => selected.id === mineral.id)
-);
-});
-
-// Métodos de ciclo de vida
-onMounted(() => {
-getProjectMinerals();
-getMinerals();
-});
-
-// Métodos de obtención de datos
-const getProjectMinerals = async () => {
-try {
-  const { data } = await axios.get(`${projectMineralsURL}/${props.idProjectMineral}`, header);
-  projectMinerals.value = await Promise.all(
-    data.map(async item => {
-      const mineralResponse = await axios.get(`${mineralsURL}/${item.mineralId}`, header);
-      return {
-        id: item.id,
-        mineralId: item.mineralId,
-        name: mineralResponse.data.name,
-        isActive: item.isActive
-      };
-    })
-  );
-} catch (error) {
-  handleError(error, 'Error al obtener minerales del proyecto');
-}
+const getprojectMinerals = async () => {
+  try {
+    const data = await axios.get(baseURL + props.idProjectMineral, header);
+    projectMinerals.value = data.data;
+    console.log(data.data);
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const getMinerals = async () => {
@@ -290,12 +286,45 @@ try {
 };
 
 const saveProjectMinerals = async () => {
-try {
-  if (isEditing.value) {
-    await axios.patch(
-      `${projectMineralsURL}/${selectedProjectMineral.value.id}`,
-      { isActive: false },
-      header
+  console.log('estoy guardandoooo');
+  console.log(baseURL+selectedProjectMineral.value.id); 
+  try {
+    if (isEditing.value) {
+     console.log(selectedProjectMineral.value.id); 
+      // Si estamos editando, eliminamos el mineral actual
+      //await axios.patch(baseURL + selectedProjectMineral.value.id);
+    }
+    // Verificamos que no excedamos el límite de 2 minerales
+    const currentMinerals = projectMinerals.value.length;
+    const newMineralsCount = selectedMinerals.value.length;
+    if (!isEditing.value && currentMinerals + newMineralsCount > 4) {
+      Swal.fire(
+        "Error",
+        "No se pueden agregar más de 2 minerales por proyecto.",
+        "error"
+      );
+      return;
+    }
+    // Guardamos los nuevos minerales
+    for (const mineral of selectedMinerals.value) {
+      const projectMineral = {
+        projectId: props.idProjectMineral,
+        mineralId: mineral.id,
+        purchasePrice: purchasePrice.value,
+        prePurchase: prePurchase.value,
+        estimatedPurchasePrice: estimatedPurchasePrice.value
+      };
+      await axios.post(baseURL, projectMineral);
+    }
+    await getprojectMinerals();
+    closeModal();
+
+    Swal.fire(
+      "¡Éxito!",
+      isEditing.value
+        ? "Mineral actualizado correctamente."
+        : "Minerales agregados correctamente.",
+      "success"
     );
   }
 
@@ -332,14 +361,20 @@ try {
 };
 
 const selectProjectMineral = (projectMineral) => {
-isEditing.value = true;
-selectedProjectMineral.value = projectMineral;
-const mineralToEdit = minerals.value.find(
-  m => m.id === projectMineral.mineralId
-);
-if (mineralToEdit) {
-  selectedMinerals.value = [mineralToEdit];
-}
+  isEditing.value = true;
+  
+  selectedProjectMineral.value = projectMineral;
+  estimatedPurchasePrice.value = projectMineral.estimatedPurchasePrice;
+  prePurchase.value = projectMineral.prePurchase;
+  purchasePrice.value = projectMineral.purchasePrice;
+
+  const mineralToEdit = minerals.value.find(
+    (m) => m.id === projectMineral.mineral_id
+
+  );
+  if (mineralToEdit) {
+    selectedMinerals.value = [mineralToEdit];
+  }
 
 const modalEl = document.getElementById('modalMineral');
 const modal = new bootstrap.Modal(modalEl);

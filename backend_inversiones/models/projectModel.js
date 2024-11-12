@@ -25,9 +25,17 @@ Project.init(
             allowNull: false,
             defaultValue: 'open'
         },
-        createdAt: {
+        startDate: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
+        },
+        endDate: {
+            type: DataTypes.DECIMAL(10, 2),
+            defaultValue: DataTypes.NOW
+        },
+        projectType: {
+            type: DataTypes.STRING(10, 2),
+            allowNull: true
         },
         profitPercentage: {
             type: DataTypes.DECIMAL(10, 2),
