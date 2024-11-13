@@ -120,6 +120,8 @@
                         view:showProjectDetails
                     }"
                 />
+            </div>
+            
             <div
               class="tab-pane fade"
               id="clients"
@@ -222,7 +224,6 @@
           </div>
 
         </Modal>
-      </div>
       </div>
       <div v-if="showDetails">
         <button
@@ -327,7 +328,7 @@ const getsummaryProjects = () => {
       if ( item.status === 'closed') { 
         projectFinish++;
       }
-      if (item.deleted === 0) { 
+      if (item.deleted === 1) { 
         projectDeleted++; 
       }
     }
