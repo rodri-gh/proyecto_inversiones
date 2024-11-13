@@ -27,7 +27,7 @@ const getUserProfile = async () => {
   }
 };
 
-const updateProfile = async () => {
+const updatePassword = async () => {
   if (password.value !== confirmPassword.value) {
     Swal.fire({
       icon: "error",
@@ -42,7 +42,6 @@ const updateProfile = async () => {
     const response = await axios.put(
       baseURL + "update/" + userId,
       {
-        phone: newPhone.value,
         password: password.value,
       },
       header
@@ -54,10 +53,35 @@ const updateProfile = async () => {
     Swal.fire({
       icon: "success",
       title: "Actualizado",
-      text: "Perfil actualizado correctamente",
+      text: "Contraseña actualizada correctamente",
     });
     password.value = "";
     confirmPassword.value = "";
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const updatePhone = async () => {
+  try {
+    var userId = getUserIdOfLocalStorage();
+    var header = getHeaderRequest();
+    const response = await axios.put(
+      baseURL + "update/" + userId,
+      {
+        phone: newPhone.value,
+      },
+      header
+    );
+    console.log(response.data);
+
+    getUserProfile();
+
+    Swal.fire({
+      icon: "success",
+      title: "Actualizado",
+      text: "Teléfono actualizado correctamente",
+    });
   } catch (e) {
     console.error(e);
   }
@@ -155,25 +179,34 @@ const updateProfile = async () => {
         <h2>Cambiar credenciales</h2>
 
         <div class="row pt-3">
-          <div class="mb-3 col-md-6">
-            <label for="password" class="form-label">Contraseña</label>
-            <input
-              type="password"
-              class="form-control"
-              id="password"
-              v-model="password"
-            />
-          </div>
-          <div class="mb-3 col-md-6">
-            <label for="confirmPassword" class="form-label"
-              >Confirmar contraseña</label
+          <!--  <div class="mb-3 col-md-6">
+              <label for="password" class="form-label">Contraseña</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                v-model="password"
+              />
+            </div>
+            <div class="mb-3 col-md-6">
+              <label for="confirmPassword" class="form-label"
+                >Confirmar contraseña</label
+              >
+              <input
+                type="password"
+                class="form-control"
+                id="confirmPassword"
+                v-model="confirmPassword"
+              />
+            </div> -->
+          <div class="mb-3 col-md-12">
+            <button
+              class="btn btn-primary mt-2"
+              data-bs-toggle="modal"
+              data-bs-target="#passwordModal"
             >
-            <input
-              type="password"
-              class="form-control"
-              id="confirmPassword"
-              v-model="confirmPassword"
-            />
+              Cambiar contraseña
+            </button>
           </div>
           <div class="mb-3 col-md-6">
             <label for="newPhone" class="form-label">Teléfono</label>
@@ -184,11 +217,124 @@ const updateProfile = async () => {
               v-model="newPhone"
             />
           </div>
+          <div class="mb-3 col-md-12">
+            <button
+              class="btn btn-primary mt-2"
+              data-bs-toggle="modal"
+              data-bs-target="#phoneModal"
+            >
+              Cambiar teléfono
+            </button>
+          </div>
         </div>
-        <div class="mb-3 text-end">
-          <button class="btn btn-primary mx-auto" @click="updateProfile">
-            Actualizar
-          </button>
+      </div>
+    </div>
+
+    <!-- Modal para cambiar contraseña -->
+    <div
+      class="modal fade"
+      id="passwordModal"
+      tabindex="-1"
+      aria-labelledby="passwordModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="passwordModalLabel">
+              Cambiar contraseña
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                v-model="password"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label"
+                >Confirmar contraseña</label
+              >
+              <input
+                type="password"
+                class="form-control"
+                id="confirmPassword"
+                v-model="confirmPassword"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cerrar
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              @click="updatePassword"
+            >
+              Guardar cambios
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para cambiar teléfono -->
+    <div
+      class="modal fade"
+      id="phoneModal"
+      tabindex="-1"
+      aria-labelledby="phoneModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="phoneModalLabel">Cambiar teléfono</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="newPhone" class="form-label">Teléfono</label>
+              <input
+                type="phone"
+                class="form-control"
+                id="newPhone"
+                v-model="newPhone"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cerrar
+            </button>
+            <button type="button" class="btn btn-primary" @click="updatePhone">
+              Guardar cambios
+            </button>
+          </div>
         </div>
       </div>
     </div>
