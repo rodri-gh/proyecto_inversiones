@@ -11,9 +11,13 @@ ProjectMineral.init(
         },
         projectId: {
             type: DataTypes.BIGINT,
-            allowNull: false
+            allowNull: false,
         },
         mineralId: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
+        userId: {
             type: DataTypes.BIGINT,
             allowNull: false
         },
@@ -32,7 +36,7 @@ ProjectMineral.init(
         deleted: {
             type: DataTypes.TINYINT,
             allowNull: false,
-            defaultValue: 1
+            defaultValue: 0
         }
     },
     {

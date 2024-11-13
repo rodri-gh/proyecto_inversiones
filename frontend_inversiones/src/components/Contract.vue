@@ -226,35 +226,26 @@ const reset = () => {
                                 />
                             </div>
                             <div class="col-md-3">
-                                <p>Estado del contrato</p>
-                                <select
-                                    id="status"
-                                    type="text"
-                                    v-model="status"
-                                >
-                                    <option value="active">active</option>
+                                <label for="" class="form-label">Estado</label>
+                                <select class="form-select form-select" v-model="status" id="status">
+                                    <option value="">Seleccione un estado</option>
+                                    <option value="active">Active</option>
                                     <option value="pending">pending</option>
                                     <option value="finalized">finalized</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <p>Tipo de contrato</p>
-                                <select
-                                    id="contractType"
-                                    type="text"
-                                    v-model="contractType"
-                                >
+                                <label for="" class="form-label">Tipo de contrato</label>
+                                <select class="form-select form-select" v-model="contractType" id="contractType">
+                                    <option value="">Selecione una tasa</option>
                                     <option value="fixed_rate">tasa fija</option>
                                     <option value="variable_rate">tasa variable</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <p>Moneda</p>
-                                <select
-                                    id="currency"
-                                    type="text"
-                                    v-model="currency"
-                                >
+                                <label for="" class="form-label">Moneda</label>
+                                <select class="form-select form-select" v-model="currency" id="currency">
+                                    <option value="">Selecione una Moneda</option>
                                     <option value="USD">Dolares</option>
                                     <option value="BS">Bolivianos</option>
                                 </select>

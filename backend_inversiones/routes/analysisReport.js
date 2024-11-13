@@ -1,69 +1,111 @@
 import express from 'express';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
-import { Project } from '../models/mainExport.js';
+import { Project, Investment, FinancialTransactions, OperatingExpense} from '../models/mainExport.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { Sequelize } from 'sequelize';
 
-
 const router = express.Router();
-router.get('/dashboard_stats', async (req, res) => { 
-    const query = "SELECT p.name AS project_name, SUM(i.amount) AS total_investment FROM projects p JOIN investments i ON p.id = i.project_id GROUP BY p.name;";
-    connection.query(query, async (error, results) => {
-        if (error) {
-            console.error(error);
-            return res.status(500).json({
-                error: 'Error retrieving data'
-            });
-        } 
-        res.status(200).json({
-            data: results
-        });
-    })
-    try {
-        const result = Project.findAll({
-            attributes: [
-                'name',
-                [Sequelize.fn('SUM', Sequelize.col('investments.amount')), 'totalInvestment']
-            ],
-            include: [{
-                model: Investment,
-                attributes: []
-            }],
-            group: ['projects.name']
-            
-        });
-        getHandleSuccess(200)(res, result);
-    } catch (error) {
-        getHandleError(error, res);
-    }
+router.get('/projectsStatus', async (req, res, next) => {
+  try {
+    const projectsStatus = await Investment.findAll({ 
+        include: [ 
+            {
+                model: Project, 
+                attributes: ['name'],
+            }
+        ], 
+        attributes: ['amount', 'project_id'],
+        logging: console.log,
+    });
+    if (projectsStatus.length === 0) {
+        console.log('No se encontraron proyectos con inversiones.');
+      }
+      console.log(projectsStatus)
+    getHandleSuccess(200)(res, projectsStatus)
+  } catch (error) {
+    getHandleError(error, res)
+  }
 });
 
-router.get('/cash-flow', async (req, res) => { 
-    const query = `SELECT
-    (SELECT IFNULL(SUM(amount), 0) FROM investments) AS total_investments,
-    (SELECT IFNULL(SUM(expenses), 0) FROM operating_expenses) AS total_operating_expenses,
-    (SELECT IFNULL(SUM(amount), 0) FROM movements WHERE type = 'income') AS total_movements_income,
-    (SELECT IFNULL(SUM(amount), 0) FROM movements WHERE type = 'expense') AS total_movements_expense,
-    (
-        (SELECT IFNULL(SUM(amount), 0) FROM investments) +
-        (SELECT IFNULL(SUM(amount), 0) FROM movements WHERE type = 'income')
-    ) AS total_income,
-    (
-        (SELECT IFNULL(SUM(expenses), 0) FROM operating_expenses) +
-        (SELECT IFNULL(SUM(amount), 0) FROM movements WHERE type = 'expense')
-    ) AS total_expenses`;
-    connection.query(query, async (error, results) => {
-        if (error) {
-            console.error(error);   
-            return res.status(500).json({
-                error: 'Error retrieving data'
-            });
-        } 
-        res.status(200).json({
-            data: results
-        });
-    })
-});
+router.get('/totalInvestmentVsReturn/:id', async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      const projectsStatus = await Project.findAll({
+        where: { id: id },
+        attributes: [
+            'id',
+            [Sequelize.fn('SUM', Sequelize.col('investments.amount')), 'totalInvestmentsAmount'],
+            [Sequelize.fn('SUM', Sequelize.col('financialTransactions.amount')), 'totalTransactionsIncome'],
+            [Sequelize.fn('SUM', Sequelize.col('operatingExpenses.expenses')), 'totalOperatingExpenses']
+        ],
+        include: [
+            {
+                model: Investment,
+                attributes: [],
+            },
+            {
+                model: FinancialTransactions,
+                attributes: [],
+                where: {
+                    transaction_type: 'income'
+                }
+            },
+            {
+                model: OperatingExpense,
+                attributes: []
+            }
+        ],
+        group: ['project.id'],
+        logging: console.log
+      });
+      if (projectsStatus.length === 0) {
+          console.log('No se encontraron proyectos con inversiones.');
+        }
+      getHandleSuccess(200)(res, projectsStatus)
+    } catch (error) {
+        console.log(error);
+      getHandleError(error, res)
+    }
+  });
+
+  router.get('/cashFlow', async (req, res, next) => {
+    try {
+      const projectsStatus = await Project.findAll({
+        attributes: [
+            'id',
+            [Sequelize.fn('SUM', Sequelize.col('investments.amount')), 'totalInvestmentsAmount'],
+            [Sequelize.fn('SUM', Sequelize.col('financialTransactions.amount')), 'totalTransactionsIncome'],
+            [Sequelize.fn('SUM', Sequelize.col('operatingExpenses.expenses')), 'totalOperatingExpenses']
+        ],
+        include: [
+            {
+                model: Investment,
+                attributes: [],
+            },
+            {
+                model: FinancialTransactions,
+                attributes: [],
+                where: {
+                    transaction_type: 'income'
+                }
+            },
+            {
+                model: OperatingExpense,
+                attributes: []
+            }
+        ],
+        group: ['project.id'],
+        logging: console.log
+      });
+      if (projectsStatus.length === 0) {
+          console.log('No se encontraron proyectos con inversiones.');
+        }
+      getHandleSuccess(200)(res, projectsStatus)
+    } catch (error) {
+        console.log(error);
+      getHandleError(error, res)
+    }
+  });
 
 export default router;
 

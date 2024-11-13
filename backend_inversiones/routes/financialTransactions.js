@@ -28,11 +28,11 @@ router.get('/:id', function (req, res, next) {
 });
 
 router.post('/', async (req, res, next) => {
-  const { name, description, investmentGoal, status, startDate, 
-      endDate, projectType, profitPercentage } = req.body;
+  const { userId, projectId, transactionType, amount, description, 
+    status } = req.body;
   try {
-    await FinancialTransactions.create({ name, description, investmentGoal, status,
-         startDate, endDate, projectType, profitPercentage });
+    await FinancialTransactions.create({ userId, projectId, transactionType, amount, description, 
+      status });
     getHandleSuccess(201)(res, "Project created successfully");
   } catch (error) {
     getHandleError(error, res);
