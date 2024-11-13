@@ -14,6 +14,8 @@ import MineralsView from "@/views/MineralsView.vue";
 import CategoryPostView from "@/views/CategoryPostView.vue";
 import PostsView from "../views/PostsView.vue";
 import FaqAdmin from "../components/FaqAdmin.vue";
+import FinanceView from "@/views/FinanceView.vue";
+import AnalysisAndReportsView from "@/views/AnalysisAndReportsView.vue";
 
 const activeComponent = ref(markRaw(MyProfile));
 const activeLink = ref("Mi Perfil");
@@ -43,6 +45,8 @@ const componentslinks = computed(() => {
       component: ContactView,
       divider: true,
     });
+    links.push({ name: "Reportes", component: AnalysisAndReportsView });
+    links.push({ name: "Finanzas", component: FinanceView, divider: true });
     links.push({ name: "Categorias Post", component: CategoryPostView });
     links.push({ name: "Posts", component: PostsView });
     links.push({ name: "FAQs", component: FaqAdmin });

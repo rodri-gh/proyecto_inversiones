@@ -60,3 +60,19 @@ export function getUserRoleOfLocalStorage() {
     var userRole = user?.role;
     return userRole;
 }
+
+export function getPhaseOfProject() { 
+    var phases = [
+        { key: 'Contrato', value: 14.28 },
+        { key: 'Inversion', value: 28.56 },
+        { key: 'Ganancia', value: 42.84 },
+        { key: 'Compra de Mineral', value: 57.12 },
+        { key: 'Envio', value: 71.4 },
+        { key: 'Entrega', value: 85.68 },
+        { key: 'Pago', value: 100 },
+    ]
+    return phases;
+}
+
+
+

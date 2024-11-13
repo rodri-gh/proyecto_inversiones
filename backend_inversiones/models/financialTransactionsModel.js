@@ -9,6 +9,10 @@ FinancialTransactions.init(
             primaryKey: true,
             autoIncrement: true
         },
+        userId: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
         projectId: {
             type: DataTypes.BIGINT,
             allowNull: false
