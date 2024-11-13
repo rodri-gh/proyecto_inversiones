@@ -247,7 +247,7 @@ import TableProjects from "@/components/tables/TableProjects.vue";
 import Modal from "@/components/base/Modal.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import Input from "@/components/base/Input.vue";
-import { getHeaderRequest } from "@/authService";
+import { getHeaderRequest, getUserIdOfLocalStorage } from "@/authService";
 import CardsSummary from "@/components/CardsSummary.vue";
 
 const baseURL = "http://localhost:3000/project/";
@@ -268,6 +268,7 @@ const summaryProjects = ref([]);
 const activeUsers = ref([]);
 const inactiveUsers = ref([]);
 const clientUsers = ref([]);
+const userIdoOfProject = getUserIdOfLocalStorage();
 
 const statusOptions = {
   open: "Abierto",
@@ -393,6 +394,7 @@ const saveProject = async () => {
 
 const createData = () => {
   const data = {
+    userId: userIdoOfProject,
     name: name.value, 
     description: description.value, 
     investmentGoal: investmentGoal.value,
