@@ -325,6 +325,7 @@ const createUser = async () => {
     email: email.value,
     phone: phone.value,
     password: password.value,
+    role: role.value
   };
   try {
     await axios[method](url, datos, header);
