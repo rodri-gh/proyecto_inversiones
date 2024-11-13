@@ -173,7 +173,7 @@
         </div>
       </div>
     </div>
-  </div>
+ 
 </template>
 
 <script setup>
@@ -287,12 +287,12 @@ try {
 
 const saveProjectMinerals = async () => {
   console.log('estoy guardandoooo');
-  console.log(baseURL+selectedProjectMineral.value.id); 
+  console.log(baseURL + selectedProjectMineral.value.id); 
   try {
     if (isEditing.value) {
-     console.log(selectedProjectMineral.value.id); 
+      console.log(selectedProjectMineral.value.id); 
       // Si estamos editando, eliminamos el mineral actual
-      //await axios.patch(baseURL + selectedProjectMineral.value.id);
+      // await axios.patch(baseURL + selectedProjectMineral.value.id);
     }
     // Verificamos que no excedamos el límite de 2 minerales
     const currentMinerals = projectMinerals.value.length;
@@ -326,38 +326,9 @@ const saveProjectMinerals = async () => {
         : "Minerales agregados correctamente.",
       "success"
     );
+  } catch (error) {
+    handleError(error, 'Error al guardar minerales');
   }
-
-  const currentActiveMinerals = activeProjectMinerals.value.length;
-  const newMineralsCount = selectedMinerals.value.length;
-
-  if (!isEditing.value && currentActiveMinerals + newMineralsCount > 2) {
-    throw new Error('No se pueden agregar más de 2 minerales activos por proyecto.');
-  }
-
-  for (const mineral of selectedMinerals.value) {
-    const projectMineral = {
-      projectId: props.idProjectMineral,
-      mineralId: mineral.id,
-      isActive: true
-    };
-
-    await axios.post(projectMineralsURL, projectMineral, header);
-  }
-
-  await getProjectMinerals();
-  closeModal();
-
-  Swal.fire(
-    '¡Éxito!',
-    isEditing.value
-      ? 'Mineral actualizado correctamente.'
-      : 'Minerales agregados correctamente.',
-    'success'
-  );
-} catch (error) {
-  handleError(error, 'Error al guardar minerales');
-}
 };
 
 const selectProjectMineral = (projectMineral) => {
