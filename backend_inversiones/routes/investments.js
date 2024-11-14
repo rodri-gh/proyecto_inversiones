@@ -1,7 +1,7 @@
 import express from 'express';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
-import { Investment, User } from '../models/mainExport.js';
+import { Investment, Contract } from '../models/mainExport.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 
 
@@ -28,12 +28,28 @@ router.get('/:id', async (req, res, next) => {
 router.get('/user/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
-    const investment = await Investment.findAll({ where: { userId: id } });
-    getHandleSuccess(200)(res, investment);
+
+    const investments = await Investment.findAll({
+      where: { userId: id }
+    });
+    const investmentsWithContracts = await Promise.all(
+      investments.map(async (investment) => {
+        const contract = await Contract.findOne({
+          where: { id: investment.contractId }
+        });
+
+        return {
+          ...investment.toJSON(),
+          contract: contract
+        };
+      })
+    );
+
+    getHandleSuccess(200)(res, investmentsWithContracts);
   } catch (error) {
-    getHandleError(error, res)
+    getHandleError(error, res);
   }
-})
+});
 
 router.get('/project/:id', async (req, res, next) => {
   const { id } = req.params;

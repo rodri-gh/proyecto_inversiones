@@ -17,6 +17,7 @@ import FaqAdmin from "../components/FaqAdmin.vue";
 import FinanceView from "@/views/FinanceView.vue";
 import AnalysisAndReportsView from "@/views/AnalysisAndReportsView.vue";
 import ProjectsUserView from "@/views/ProjectsUserView.vue";
+import InvestmentsUserView from "@/views/InvestmentsUserView.vue";
 
 const activeComponent = ref(markRaw(MyProfile));
 const activeLink = ref("Mi Perfil");
@@ -105,7 +106,7 @@ const componentslinks = computed(() => {
     });
     links.push({
       name: "Inversiones",
-      component: InvestmentsOfUser,
+      component: InvestmentsUserView,
       isDividerWithTitle: false,
     });
     links.push({
