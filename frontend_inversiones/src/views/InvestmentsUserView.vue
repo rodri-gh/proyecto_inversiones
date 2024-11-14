@@ -69,6 +69,7 @@
             :headers="headers"
             :items="activeInvestments"
             :actions="{ view: showContractDetails }"
+            :showTotal="true"
           />
         </div>
         <div class="tab-pane fade" id="pending" role="tabpanel">
@@ -76,6 +77,7 @@
             :headers="headers"
             :items="pendingInvestments"
             :actions="{ view: showContractDetails }"
+            :showTotal="true"
           />
         </div>
         <div class="tab-pane fade" id="closed" role="tabpanel">
@@ -83,6 +85,7 @@
             :headers="headers"
             :items="closedInvestments"
             :actions="{ view: showContractDetails }"
+            :showTotal="true"
           />
         </div>
       </div>
@@ -149,7 +152,6 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
@@ -173,6 +175,8 @@ const headers = [
   "Moneda",
   "Porcentaje de Ganancia",
   "Estado",
+  "Ganancias",
+  "Detalles",
 ];
 
 onMounted(() => {

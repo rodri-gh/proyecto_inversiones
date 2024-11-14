@@ -4,7 +4,6 @@
       <thead>
         <tr>
           <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
-          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -22,6 +21,12 @@
           <td v-else-if="item.status === 'pending'">Pendiente</td>
           <td v-else>Cerrada</td>
           <td>
+            <span v-if="item.status === 'closed'"
+              >{{ item.earnings }} {{ item.currency }}</span
+            >
+            <span v-else>Pendiente</span>
+          </td>
+          <td>
             <Button
               @click="actions.view(item)"
               variant="primary"
@@ -32,11 +37,15 @@
         </tr>
         <!-- Fila del total -->
         <tr v-if="showTotal" class="table-info">
-          <td colspan="1"><strong>Total</strong></td>
-          <td>
+          <td colspan="1"><strong>Total Inversiones</strong></td>
+          <td colspan="3">
             <strong>{{ calculateTotal }}</strong>
           </td>
-          <td colspan="6"></td>
+          <td colspan="1"><strong>Total Ganancias</strong></td>
+          <td>
+            <strong>{{ calculateTotalEarnings }}</strong>
+          </td>
+          <td></td>
         </tr>
       </tbody>
     </table>
@@ -72,5 +81,14 @@ const calculateTotal = computed(() => {
     0
   );
   return total.toFixed(2);
+});
+
+const calculateTotalEarnings = computed(() => {
+  const totalEarnings = props.items.reduce(
+    (sum, item) =>
+      sum + (item.status === "closed" ? parseFloat(item.earnings) : 0),
+    0
+  );
+  return totalEarnings.toFixed(2);
 });
 </script>

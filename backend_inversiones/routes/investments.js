@@ -1,7 +1,7 @@
 import express from 'express';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
-import { Investment, Contract } from '../models/mainExport.js';
+import { Investment, Contract, Project } from '../models/mainExport.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 
 
@@ -15,25 +15,30 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id', async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const investment = await Investment.findOne({ where: { id } });
-    getHandleSuccess(200)(res, investment);
-  } catch (error) {
-    getHandleError(error, res)
-  }
-});
-
 router.get('/user/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
-
     const investments = await Investment.findAll({
-      where: { userId: id }
+      where: { userId: id },
+      include: [
+        {
+          model: Project,
+          required: false
+        }
+      ]
     });
+
+    const updatedInvestments = await Promise.all(investments.map(async (investment) => {
+      if (investment.project && investment.profitPercentage !== investment.project.profitPercentage) {
+        investment.profitPercentage = investment.project.profitPercentage;
+        investment.earnings = (investment.amount * investment.profitPercentage) / 100;
+        await investment.save();
+      }
+      return investment;
+    }));
+
     const investmentsWithContracts = await Promise.all(
-      investments.map(async (investment) => {
+      updatedInvestments.map(async (investment) => {
         const contract = await Contract.findOne({
           where: { id: investment.contractId }
         });
@@ -44,13 +49,11 @@ router.get('/user/:id', async (req, res, next) => {
         };
       })
     );
-
     getHandleSuccess(200)(res, investmentsWithContracts);
   } catch (error) {
     getHandleError(error, res);
   }
 });
-
 router.get('/project/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
