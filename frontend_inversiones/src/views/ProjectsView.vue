@@ -120,6 +120,8 @@
                         view:showProjectDetails
                     }"
                 />
+            </div>
+            
             <div
               class="tab-pane fade"
               id="clients"
@@ -223,7 +225,6 @@
 
         </Modal>
       </div>
-      </div>
       <div v-if="showDetails">
         <button
           type="button"
@@ -246,7 +247,7 @@ import TableProjects from "@/components/tables/TableProjects.vue";
 import Modal from "@/components/base/Modal.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import Input from "@/components/base/Input.vue";
-import { getHeaderRequest } from "@/authService";
+import { getHeaderRequest, getUserIdOfLocalStorage, getUserRoleOfLocalStorage } from "@/authService";
 import CardsSummary from "@/components/CardsSummary.vue";
 
 const baseURL = "http://localhost:3000/project/";
@@ -267,6 +268,8 @@ const summaryProjects = ref([]);
 const activeUsers = ref([]);
 const inactiveUsers = ref([]);
 const clientUsers = ref([]);
+const userIdoOfProject = getUserIdOfLocalStorage();
+const userRole = getUserRoleOfLocalStorage();
 
 const statusOptions = {
   open: "Abierto",
@@ -303,10 +306,14 @@ const Back = () => {
 const getProjects = async () => {
   try {
     const { data } = await axios.get(baseURL);
-    projects.value = data;
-    activeUsers.value = data.filter((user) => user.status === 'open' || user.status === 'in_transit');
-    inactiveUsers.value = data.filter((user) => user.status === 'closed');
-    clientUsers.value = data.filter((user) => user.deleted === 1);
+    if ( userRole === 'admin' ) {
+      projects.value = data.filter((item) => item.userId === userIdoOfProject);
+    } else {
+      projects.value = data;
+    }
+    activeUsers.value = projects.value.filter((user) => user.status === 'open' || user.status === 'in_transit');
+    inactiveUsers.value = projects.value.filter((user) => user.status === 'closed');
+    clientUsers.value = projects.value.filter((user) => user.deleted === 1);
     getsummaryProjects();
     console.log(projects.value);
   } catch (error) {
@@ -327,7 +334,7 @@ const getsummaryProjects = () => {
       if ( item.status === 'closed') { 
         projectFinish++;
       }
-      if (item.deleted === 0) { 
+      if (item.deleted === 1) { 
         projectDeleted++; 
       }
     }
@@ -392,6 +399,7 @@ const saveProject = async () => {
 
 const createData = () => {
   const data = {
+    userId: userIdoOfProject,
     name: name.value, 
     description: description.value, 
     investmentGoal: investmentGoal.value,

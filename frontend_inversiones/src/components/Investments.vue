@@ -33,13 +33,13 @@
                         :options="users"
                         label="Usuario"
                         value-key="id"
-                        label-key="username"
+                        label-key="name"
                         v-model="user_id"
                         select-class="col-8"
                     />
                     <div class="mt-2">
                         <h5>Datos del Usuario Seleccionado:</h5>
-                        <p><strong>Nombre:</strong> {{ selectedUser?.username || "Seleccione un usuario" }}</p>
+                        <p><strong>Nombre:</strong> {{ selectedUser?.name || "Seleccione un usuario" }}</p>
                         <p><strong>Email:</strong> {{ selectedUser?.email || "Seleccione un usuario" }}</p>
                         <p><strong>Teléfono:</strong> {{ selectedUser?.phone || "Seleccione un usuario" }}</p>
                     </div>
@@ -78,7 +78,7 @@
     </div>
 </template>
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, onUnmounted } from "vue";
 import axios from "axios";
 import Button from "@/components/base/Button.vue";
 import TableInvestments from "@/components/tables/TableInvestments.vue";
@@ -87,6 +87,7 @@ import Input from "@/components/base/Input.vue";
 import Select from "@/components/base/Select.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import { getHeaderRequest } from "@/authService";
+import { eventBus } from "@/eventBus";
 
 const headers = [
     "Usuario",
@@ -118,6 +119,11 @@ onMounted(() => {
     getInvestments();
     getUsers();
     console.log(props.idProjectInvestment);
+    eventBus.on('data-updated', getInvestments);
+});
+
+onUnmounted(() => {
+  eventBus.off('data-updated', getInvestments); 
 });
 
 const getInvestments = async () => {
@@ -154,6 +160,7 @@ const saveInvestment = async () => {
         ? `${baseURL}${selectedInvestment.value.id}`
         : baseURL;
     const formData = createFormData();
+    console.log(Array.from(formData.entries()));
     try {
         await axios[method](url, formData, header);
         closeModal("modalInvestment");
@@ -167,11 +174,11 @@ const saveInvestment = async () => {
 
 const createFormData = () => {
     const formData = new FormData();
-    formData.append("user_id", user_id.value);
+    formData.append("userId", user_id.value);
     formData.append("amount", amount.value);
-    formData.append("investment_date", investment_date.value);
-    formData.append("profit_percentage", profit_percentage.value);
-    formData.append("project_id", props.idProjectInvestment);
+    formData.append("investmentDate", investment_date.value);
+    formData.append("profitPercentage", profit_percentage.value);
+    formData.append("projectId", props.idProjectInvestment);
     return formData;
 };
 

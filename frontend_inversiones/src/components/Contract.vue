@@ -1,15 +1,16 @@
 <script setup>
-import { getHeaderRequest } from '@/authService';
+import { getHeaderRequest, getHeaderRequestMultiPartFormData } from '@/authService';
 import axios from 'axios';
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, onUnmounted } from 'vue';
 import Modal from './base/Modal.vue';
 import Button from './base/Button.vue';
 import Input from "@/components/base/Input.vue";
 import Select from "@/components/base/Select.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import TableContracts from './tables/TableContracts.vue';
+import { eventBus } from '@/eventBus';
 
-const header = getHeaderRequest();
+const header = getHeaderRequestMultiPartFormData();
 const contracts = ref([]);
 
 const users = ref([]);
@@ -23,6 +24,7 @@ const endDate = ref('');
 const status = ref('');
 const contractType = ref('');
 const currency = ref('');
+const contractFilePath = ref(null);
 const selectedContract = ref({});
 
 const headers = [
@@ -54,12 +56,20 @@ const getContracts = async () => {
     }
 };
 
+const updateData = () => {
+  eventBus.emit('data-updated');
+};
+ 
+
 onMounted(() => {
     getContracts();
     getUsers();
+    eventBus.on('data-updated', getContracts);
 });
 
-
+onUnmounted(() => {
+  eventBus.off('data-updated', getContracts); 
+});
 const getUsers = async () => {
     try {
         const data = await axios.get("http://localhost:3000/user", header);
@@ -88,6 +98,7 @@ const deleteContract = async (id) => {
       const data = await axios.delete(baseURL + id);
       console.log(data);
       getOperatingExpenses();
+      updateData();
   } catch (error) {
       console.error(error);
   }
@@ -105,6 +116,8 @@ const saveContract = async () => {
         await axios[method](url, formData, header);
         closeModal("modalContract");
         getUsers();
+        getContracts();
+        updateData();
         reset();
     } catch (error) {
         console.log(error);
@@ -122,7 +135,7 @@ const createFormData = () => {
     formData.append("status", status.value);
     formData.append("contractType", contractType.value);
     formData.append("currency", currency.value);
-    formData.append("contractFilePath", 'vacio');
+    formData.append("contractFilePath", contractFilePath.value);
 
     return formData;
 };
@@ -139,8 +152,28 @@ const reset = () => {
     status.value = "";
     contractType.value = "";
     currency.value = "";
-    selectContract.value = {};
+    selectedContract.value = {};
 };
+
+const handleFileChange = (fileEvent) => {
+    console.log('ya no soy nulo');
+    const file = fileEvent.target.files[0];
+    if (file && file.type === 'application/pdf') {
+        contractFilePath.value = file;
+        console.log('ya no soy nulo');
+    } else {
+        contractFilePath.value = null;
+        alert('Debes selecciona un archivo pdf valido.');
+    }
+};
+
+const previewUrl = computed(() => {
+  if (contractFilePath.value) {
+    return URL.createObjectURL(contractFilePath.value); 
+  }
+  return ''; 
+});
+
 </script>
 
 <template>
@@ -173,7 +206,7 @@ const reset = () => {
                 @onSave="saveContract()"
             >
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <Select
                             :options="users"
                             label="Usuario"
@@ -189,9 +222,9 @@ const reset = () => {
                             <p><strong>Teléfono:</strong> {{ selectedUser?.phone || "Seleccione un usuario" }}</p>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-9">
                         <div class="row m-4">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <Input
                                     id="investmentAmount"
                                     label="Cantidad de inversion"
@@ -199,7 +232,7 @@ const reset = () => {
                                     v-model="investmentAmount"
                                 />
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <Input
                                     id="contractCode"
                                     label="codigo de contrato para almacen"
@@ -207,7 +240,7 @@ const reset = () => {
                                     v-model="contractCode"
                                 />
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <Input
                                     id="startDate"
                                     label="Fecha de inicio"
@@ -215,8 +248,6 @@ const reset = () => {
                                     v-model="startDate"
                                 />
                             </div>
-                        </div>
-                        <div class="row m-4">
                             <div class="col-md-3">
                                 <Input
                                     id="endDate"
@@ -225,43 +256,56 @@ const reset = () => {
                                     v-model="endDate"
                                 />
                             </div>
+                        </div>
+                        <div class="row m-4">
                             <div class="col-md-3">
-                                <p>Estado del contrato</p>
-                                <select
-                                    id="status"
-                                    type="text"
-                                    v-model="status"
-                                >
-                                    <option value="active">active</option>
+                                <label for="" class="form-label">Estado</label>
+                                <select class="form-select form-select" v-model="status" id="status">
+                                    <option value="">Seleccione un estado</option>
+                                    <option value="active">Active</option>
                                     <option value="pending">pending</option>
                                     <option value="finalized">finalized</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <p>Tipo de contrato</p>
-                                <select
-                                    id="contractType"
-                                    type="text"
-                                    v-model="contractType"
-                                >
+                                <label for="" class="form-label">Tipo de contrato</label>
+                                <select class="form-select form-select" v-model="contractType" id="contractType">
+                                    <option value="">Selecione una tasa</option>
                                     <option value="fixed_rate">tasa fija</option>
                                     <option value="variable_rate">tasa variable</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <p>Moneda</p>
-                                <select
-                                    id="currency"
-                                    type="text"
-                                    v-model="currency"
-                                >
+                                <label for="" class="form-label">Moneda</label>
+                                <select class="form-select form-select" v-model="currency" id="currency">
+                                    <option value="">Selecione una Moneda</option>
                                     <option value="USD">Dolares</option>
                                     <option value="BS">Bolivianos</option>
                                 </select>
                             </div>
+                            <div class="col-md-3"> 
+                                <label for="" class="form-label">PDF escaneado del contrato</label>
+                                <input 
+                                type="file" 
+                                id="contractFilePath" 
+                                name="contract" 
+                                @change="handleFileChange"
+                                accept=".pdf" required>
+                            </div>
                         </div>
                         
                     </div>
+                </div>
+                <div v-if="contractFilePath" class="row">
+                    <p>Visualización del archivo PDF:</p>
+                    <p>Archivo seleccionado: {{ contractFilePath.name }}</p>
+                    <iframe
+                        v-if="contractFilePath"
+                        :src="previewUrl"
+                        width="100%"
+                        height="500px"
+                        frameborder="0"
+                    ></iframe>
                 </div>
             </Modal>
         </div>

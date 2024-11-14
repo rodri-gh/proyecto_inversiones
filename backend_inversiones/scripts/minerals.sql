@@ -5,7 +5,7 @@
     `id` bigint NOT NULL AUTO_INCREMENT,
     `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
     `description` text COLLATE utf8mb4_general_ci,
-    `investment_goal` bigint NOT NULL,
+    `investment_goal` DECIMAL(15, 3) NOT NULL,
     `status` enum('open','in_transit','closed') COLLATE utf8mb4_general_ci NOT NULL,
     `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
     `profit_percentage` decimal(10,2) DEFAULT NULL,
@@ -74,8 +74,6 @@
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-
-
   CREATE TABLE IF NOT EXISTS `minerals` (
     `id` bigint NOT NULL AUTO_INCREMENT,
     `name` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
@@ -101,18 +99,26 @@
   ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-  CREATE TABLE IF NOT EXISTS `project_minerals` (
-    `id` bigint(20) NOT NULL AUTO_INCREMENT,
-    `project_id` bigint(20) NOT NULL,
-    `mineral_id` bigint(20) NOT NULL,
-    `deleted` tinyint(4) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`),
-    KEY `mineral_id` (`mineral_id`),
-    KEY `project_id` (`project_id`),
-    CONSTRAINT `id_project` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
-    CONSTRAINT `mineral_id` FOREIGN KEY (`mineral_id`) REFERENCES `minerals` (`id`)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
+CREATE TABLE IF NOT EXISTS `project_minerals` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `project_id` bigint(20) NOT NULL,
+  `mineral_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `stage_id` bigint(20) NOT NULL,
+  `purchase_price` DECIMAL(20,3) NOT NULL,
+  `pre_purchase` DECIMAL(20,3) DEFAULT NULL,
+  `estimated_purchase_price` DECIMAL(20,3) DEFAULT NULL,
+  `exit_price` DECIMAL(20,3) NOT NULL,
+  `sale_price` DECIMAL(20,3) NOT NULL,
+  `deleted` tinyint(4) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `mineral_id` (`mineral_id`),
+  KEY `project_id` (`project_id`),
+  CONSTRAINT `id_project` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
+  CONSTRAINT `mineral_id` FOREIGN KEY (`mineral_id`) REFERENCES `minerals` (`id`),
+  CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES users(id);
+  CONSTRAINT fk_stage_id FOREIGN KEY (stage_id) REFERENCES project_stages(id);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
   CREATE TABLE IF NOT EXISTS `project_timelines` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -211,6 +217,18 @@
     CONSTRAINT `fk_investment` FOREIGN KEY (`investment_id`) REFERENCES `investments` (`id`), 
     CONSTRAINT `fk_user_withdrawal` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) 
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE IF NOT EXISTS `project_stages` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `project_id` BIGINT(20) NOT NULL,
+  `stage_name` VARCHAR(255) NOT NULL, -- como precompra compra salida venta Y MAS
+  `start_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  `end_date` TIMESTAMP DEFAULT NULL, -- puede ser null si la estapa es actual
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`)
+);
+
 
 INSERT INTO `users` (`id`, `email`, `phone`, `role`, `two_factor_enabled`, `name`, `last_name`, `deleted`) VALUES
 	(1, 'admin@gmail.com', '77777777', 'super_user', 0, 'admin', 'admin', 1);

@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import axios from "axios";
 import Button from "@/components/base/Button.vue";
 import TableOperatingExpenses from "@/components/tables/TableOperatingExpenses.vue";
@@ -57,6 +57,7 @@ import Input from "@/components/base/Input.vue";
 import InputTextArea from "@/components/base/InputTextArea.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import { getHeaderRequest } from "@/authService";
+import { eventBus } from "@/eventBus";
 
 const headers = [
   "Nombre",
@@ -84,7 +85,13 @@ const header = getHeaderRequest();
 onMounted(() => {
   getOperatingExpenses();
   console.log("Imprimiendo el prop operatingExpenses: ", props.idProject);
+  eventBus.on('data-updated', getOperatingExpenses);
 });
+
+onUnmounted(() => {
+  eventBus.off('data-updated', getOperatingExpenses); 
+});
+
 
 const getOperatingExpenses = async () => {
   try {

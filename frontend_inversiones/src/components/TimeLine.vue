@@ -13,7 +13,7 @@
         </button>
       </div>
 
-      <div class="timeline-container position-relative mt-4">
+      <div class="timeline-container position-relative mt-2">
         <div class="timeline-line"></div>
         <div
           v-for="(timeline, index) in timeLines"
@@ -33,13 +33,6 @@
           <div class="timeline-content">
             <div class="card shadow-sm">
               <div class="card-body">
-                <!-- <span
-                  class="phase-badge"
-                  :class="getPhaseClass(timeline.phase)"
-                >
-                  {{ timeline.phase }}
-                </span> -->
-
                 <span
                   v-if="timeline.phase == 'contrato'"
                   class="phase-badge"
@@ -48,55 +41,81 @@
                   Contrato
                 </span>
                 <span
-                  v-if="timeline.phase == 'pre-compra'"
+                  v-if="timeline.phase == 'inversión'" 
                   class="phase-badge"
                   :class="getPhaseClass(timeline.phase)"
                 >
-                  Pre-compra
+                  Inversión
                 </span>
 
                 <span
-                  v-if="timeline.phase == 'compra'"
+                  v-if="timeline.phase == 'compra_de_mineral'"
                   class="phase-badge"
                   :class="getPhaseClass(timeline.phase)"
                 >
-                  Compra
+                  Fecha Compra de mineral
                 </span>
 
                 <span
-                  v-if="timeline.phase == 'entrada-al-ingenio'"
+                  v-if="timeline.phase == 'envío'"
                   class="phase-"
                   :class="getPhaseClass(timeline.phase)"
                 >
-                  Entrada al ingenio
+                  Fecha de envio
                 </span>
 
                 <span
-                  v-if="timeline.phase == 'salida-del-ingenio'"
+                  v-if="timeline.phase == 'entrega'"
                   class="phase-badge"
                   :class="getPhaseClass(timeline.phase)"
                 >
-                  Salida del ingenio
+                  Fecha de entrega
                 </span>
 
                 <span
-                  v-if="timeline.phase == 'certificacion'"
+                  v-if="timeline.phase == 'pago'"
                   class="phase-badge"
                   :class="getPhaseClass(timeline.phase)"
                 >
-                  Certificación
+                  Fecha de Pago
+                </span>
+
+                <span
+                  v-if="timeline.phase == 'ganancia'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Fecha de Pago
+                </span>
+
+                <span
+                  v-if="timeline.phase != 'contrato' 
+                  && timeline.phase != 'inversión'
+                  && timeline.phase != 'compra_de_mineral'
+                  && timeline.phase != 'envío'
+                  && timeline.phase != 'entrega'
+                  && timeline.phase != 'pago'
+                  && timeline.phase != 'ganancia'
+                  "
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  {{ timeline.phase }}
                 </span>
 
                 <div class="dates mt-2">
                   <small class="text-muted">
-                    {{ formatDate(timeline.startDate) }} -
-                    {{ formatDate(timeline.endDate) }}
+                    <strong>
+                      {{ formatDate(timeline.startDate) }} -
+                      {{ formatDate(timeline.endDate) }}
+                    </strong>
                   </small>
                 </div>
 
                 <p class="mt-2">{{ timeline.description }}</p>
 
-                <div class="prices mt-2">
+                <div v-if="timeline.priceMineral2 > 0 
+                && timeline.priceMineral1 > 0" class="prices mt-2">
                   <small class="d-block">
                     <strong>Mineral 1:</strong> ${{
                       timeline.priceMineral1
@@ -108,8 +127,11 @@
                     }}
                   </small>
                 </div>
+                <div v-else>
+                  <p>No hay precios de los mienerales!</p>
+                </div>
 
-                <div class="mt-3">
+                <div class="mt-2">
                   <button
                     class="btn btn-warning btn-sm"
                     @click="selectTimeLine(timeline)"
@@ -262,9 +284,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, onUnmounted } from "vue";
 import axios from "axios";
 import { getHeaderRequest } from "@/authService";
+import { eventBus } from "@/eventBus";
 
 const props = defineProps({
   idProject: {
@@ -291,23 +314,22 @@ const selectedTimeLine = ref({});
 
 const phases = [
   "contrato",
-  "pre-compra",
-  "compra",
-  "entrada-al-ingenio",
-  "salida-del-ingenio",
-  "certificacion",
+  "inversión",
+  "compra_de_mineral",
+  "envío",
+  "entrega",
+  "pago",
+  "ganancia"
 ];
 
 const availablePhases = computed(() => {
   // Siempre incluye la fase actual
   const usedPhases = timeLines.value.map((timeline) => timeline.phase);
   const uniqueUsedPhases = [...new Set(usedPhases)];
-
   // Incluye la fase actual en las fases disponibles
   const remainingPhases = phases.filter(
     (phase) => !uniqueUsedPhases.includes(phase)
   );
-
   // Asegúrate de que la fase actual esté siempre disponible
   if (
     selectedTimeLine.value.phase &&
@@ -315,13 +337,18 @@ const availablePhases = computed(() => {
   ) {
     remainingPhases.push(selectedTimeLine.value.phase);
   }
-
   return remainingPhases;
 });
 
 onMounted(() => {
   getTimeLines();
+  eventBus.on('data-updated', getTimeLines);
 });
+
+onUnmounted(() => {
+  eventBus.off('data-updated', getTimeLines); 
+});
+
 
 const getStatusClass = (status) => {
   const statusLower = status.toLowerCase();
@@ -354,12 +381,13 @@ const getStatusIcon = (status) => {
 const getPhaseClass = (phase) => {
   const phaseLower = phase.toLowerCase();
   const phaseClasses = {
-    contrato: "phase-contract",
-    "pre-compra": "phase-prebuying",
-    compra: "phase-buying",
-    "entrada-al-ingenio": "phase-entry",
-    "salida-del-ingenio": "phase-exit",
-    certificacion: "phase-certification",
+    'contrato': "phase-contract",
+    "inversión": "phase-prebuying",
+    'compra_de_mineral': "phase-buying",
+    "envío": "phase-entry",
+    "entrega": "phase-exit",
+    'pago': "phase-certification",
+    'ganancia': "phase-contract",
   };
   return phaseClasses[phaseLower] || "phase-default";
 };
@@ -402,9 +430,7 @@ const createTimeLine = async () => {
     priceMineral1: mineral_1.value,
     priceMineral2: mineral_2.value,
   };
-
   console.log(timeLine.value);
-
   try {
     console.log(baseURL);
     const data = await axios.post(baseURL, timeLine, header);
@@ -458,7 +484,6 @@ const updateTimeLine = async () => {
     var myModalEl = document.getElementById("modalTimeline");
     var modal = bootstrap.Modal.getInstance(myModalEl);
     modal.hide();
-
     getTimeLines();
     reset();
   } catch (error) {
@@ -480,7 +505,7 @@ const reset = () => {
 
  <style scoped>
 .timeline-container {
-  padding: 20px 0;
+  padding: 5px 0;
   width: 100%;
 }
 
@@ -496,7 +521,7 @@ const reset = () => {
 
 .timeline-item {
   position: relative;
-  margin-bottom: 30px;
+  margin-bottom: 1px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -506,11 +531,11 @@ const reset = () => {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: white;
-  border: 2px solid #dee2e6;
+  border: 4px solid #0f7b9c;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -518,7 +543,7 @@ const reset = () => {
 }
 
 .timeline-content {
-  width: 45%;
+  width: 40%;
   position: relative;
 }
 
@@ -531,11 +556,12 @@ const reset = () => {
 }
 
 .phase-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.975rem;
+  font-weight: 700;
   display: inline-block;
+  text-align: center;
 }
 
 /* Estados */
@@ -586,7 +612,7 @@ const reset = () => {
 }
 
 .phase-default {
-  background-color: #6c757d;
+  background-color: #152635;
   color: white;
 }
 

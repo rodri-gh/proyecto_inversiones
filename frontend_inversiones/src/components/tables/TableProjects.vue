@@ -11,8 +11,8 @@
                     <td colspan="5" class="text-center">No hay inversiones registradas</td>
                 </tr>
                 <tr v-for="item in items" :key="item.id">
-                    <td>{{ item.startDate }}</td>
-                    <td>{{ item.endDate }}</td>
+                    <td>{{ formatDate(item.startDate) }}</td>
+                    <td>{{ formatDate(item.endDate) }}</td>
                     <td>{{ item.name }}</td>
                     <td>{{ item.description }}</td>
                     <td>{{ item.investmentGoal }}</td>
@@ -21,7 +21,7 @@
                     <td v-else-if="item.status == 'in_transit'">En curso</td>
                     <td v-else>Cerrado</td>
                     <td>
-                        <span v-if="item.deleted === 1" class="badge bg-success"
+                        <span v-if="item.deleted === 0" class="badge bg-success"
                         >Activo</span
                         >
                         <span v-else class="badge bg-danger">Eliminado</span>
@@ -58,23 +58,32 @@
             </tbody>
         </table>
     </div>
+
 </template>
 
 <script setup>
 import Button from "@/components/base/Button.vue";
 
 defineProps({
-    headers: {
-        type: Array,
-        required: true,
-    },
-    items: {
-        type: Array,
-        required: true,
-    },
-    actions: {
-        type: Object,
-        required: true,
-    },
+  headers: {
+    type: Array,
+    required: true,
+  },
+  items: {
+    type: Array,
+    required: true,
+  },
+  actions: {
+    type: Object,
+    required: true,
+  },
 });
+
+const formatDate = (date) => {
+  const d = new Date(date);
+  const formattedDate = d.toLocaleDateString(); // Ejemplo: "14/12/2024"
+  const formattedTime = d.toLocaleTimeString(); 
+  return formattedDate+', '+formattedTime;
+};
+
 </script>
