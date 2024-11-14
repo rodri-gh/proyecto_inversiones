@@ -37,6 +37,14 @@ ProjectMineral.init(
             type: DataTypes.TINYINT,
             allowNull: false,
             defaultValue: 0
+        },
+        exitPrice: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: true
+        },
+        salePrice: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: true
         }
     },
     {

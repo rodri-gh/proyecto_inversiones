@@ -1,7 +1,7 @@
 import express from 'express';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
-import { ProjectTimeline } from '../models/mainExport.js';
+import { ProjectTimeline, ProjectMineral } from '../models/mainExport.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 import { created } from '../helpers/customMessage.js';
 
@@ -44,8 +44,33 @@ router.get('/project/:id', async (req, res) => {
 router.post('/', async (req, res, next) => {
   const { projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 } = req.body;
   try {
-    await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 });
-    getHandleSuccess(201)(res, created.projectTimeline);
+    const projecMinerals = await ProjectMineral.findAll({ where: { projectId: projectId}});
+    if (phase === 'pago') {
+      const allVerify = projecMinerals.every((mineral) => mineral.salePrice != null && mineral.salePrice > 0);
+
+      if (allVerify) {
+        const createdTimeline = await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 });
+        return getHandleSuccess(201)(res, createdTimeline);
+      } else {
+        return res.status(400).json({ error: 'No se puede agregar esta etapa porque tus minerales deben estar vendidos!' });
+      }
+    }
+
+    if (phase === 'ganancia') {
+      const projectTimelines = await ProjectTimeline.findAll({ where: { projectId } });
+      const phasePago = projectTimelines.some((timeline) => timeline.phase === 'pago');
+
+      if (phasePago) {
+        const createdTimeline = await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 });
+        return getHandleSuccess(201)(res, createdTimeline);
+      } else {
+        return res.status(400).json({ error: 'No se puede agregar esta etapa porque no existe una fase de pago!' });
+      }
+    }
+
+    const createdTimeline = await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 });
+    return getHandleSuccess(201)(res, createdTimeline);
+
   } catch (error) {
     getHandleError(error, res)
   }

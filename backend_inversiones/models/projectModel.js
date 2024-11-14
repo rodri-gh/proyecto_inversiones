@@ -9,6 +9,10 @@ Project.init(
             primaryKey: true,
             autoIncrement: true
         },
+        userId: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
         name: {
             type: DataTypes.STRING,
             allowNull: false
@@ -17,7 +21,7 @@ Project.init(
             type: DataTypes.TEXT,
         },
         investmentGoal: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.DECIMAL,
             allowNull: false
         },
         status: {

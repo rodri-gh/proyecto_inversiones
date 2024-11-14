@@ -60,11 +60,11 @@ router.post('/', async (req, res, next) => {
 
 router.put('/:id', async (req, res, next) => {
   const { id } = req.params;
-  const { email, phone, name, lastName, username, password } = req.body;
+  const { email, phone, name, lastName, username, password, role } = req.body;
   const transaction = await sequelize.transaction();
 
   try {
-    const [updatedUserCount] = await User.update({ email, phone, name, lastName }, {
+    const [updatedUserCount] = await User.update({ email, phone, name, lastName, role }, {
       where: { id },
       returning: true,
       transaction
