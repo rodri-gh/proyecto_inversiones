@@ -58,24 +58,25 @@
             </tbody>
         </table>
     </div>
+
 </template>
 
 <script setup>
 import Button from "@/components/base/Button.vue";
 
 defineProps({
-    headers: {
-        type: Array,
-        required: true,
-    },
-    items: {
-        type: Array,
-        required: true,
-    },
-    actions: {
-        type: Object,
-        required: true,
-    },
+  headers: {
+    type: Array,
+    required: true,
+  },
+  items: {
+    type: Array,
+    required: true,
+  },
+  actions: {
+    type: Object,
+    required: true,
+  },
 });
 
 const formatDate = (date) => {

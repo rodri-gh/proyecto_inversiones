@@ -1,6 +1,6 @@
 import express from 'express';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
-import { Project } from '../models/mainExport.js';
+import { Project, Investment } from '../models/mainExport.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 
@@ -39,6 +39,8 @@ router.post('/', async (req, res, next) => {
     getHandleError(error, res);
   }
 });
+
+
 
 router.put('/:id', async (req, res, next) => {
   const { id } = req.params;
