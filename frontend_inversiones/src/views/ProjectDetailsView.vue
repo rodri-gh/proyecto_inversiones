@@ -3,11 +3,6 @@
     <div class="d-flex flex-column ">
 
       <div class="m-5">
-        <h3>Linea de tiempo Del proyecto</h3>
-        <TimeLine :idProject="idProject" />
-      </div>
-
-      <div class="m-5">
         <h3>Contratos del Poyecto</h3>
         <Contract :idProject="idProject"/>
       </div>
@@ -27,13 +22,19 @@
         <OperatingExpenses :idProject="idProject" />
       </div>
 
+      <div class="m-5">
+        <h3>Linea de tiempo Del proyecto</h3>
+        <TimeLine :idProject="idProject" />
+      </div>
+      
     </div>
 
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
+import { eventBus } from "@/eventBus";
 import TimeLine from "@/components/TimeLine.vue";
 import ProjectMineral from "@/components/ProjectMineral.vue";
 import OperatingExpenses from "@/components/OperatingExpenses.vue";
@@ -47,6 +48,19 @@ const props = defineProps({
   },
 });
 const idProject = ref(props.projectId || route.params.id);
+
+const reloadData = () => {
+  idProject.value = props.projectId;
+};
+
+onMounted(() => {
+  eventBus.on('data-updated', reloadData);
+});
+
+onUnmounted(() => {
+  eventBus.off('data-updated', reloadData);
+});
+
 </script>
 
 <style  scoped>
