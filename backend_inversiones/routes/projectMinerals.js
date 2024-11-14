@@ -34,9 +34,9 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { projectId, mineralId, userId, purchasePrice, prePurchase, estimatedPurchasePrice } = req.body;
+  const { projectId, mineralId, userId, purchasePrice, prePurchase, estimatedPurchasePrice, exitPrice, salePrice } = req.body;
   try {
-    await ProjectMineral.create({ projectId, userId, mineralId, purchasePrice, prePurchase, estimatedPurchasePrice });
+    await ProjectMineral.create({ projectId, userId, mineralId, purchasePrice, prePurchase, estimatedPurchasePrice, exitPrice, salePrice });
     getHandleSuccess(201)(res, "Project mineral created successfully");
   } catch (error) {
     getHandleError(error, res);
@@ -45,11 +45,11 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { projectId, mineralId, userId, purchasePrice, prePurchase, estimatedPurchasePrice } = req.body;
+  const { projectId, mineralId, userId, purchasePrice, prePurchase, estimatedPurchasePrice, exitPrice, salePrice } = req.body;
   try {
     const [updatedCount] = await ProjectMineral.update({ 
       projectId, mineralId, userId, purchasePrice, prePurchase,
-       estimatedPurchasePrice 
+       estimatedPurchasePrice, exitPrice, salePrice
        }, { where: { id } } 
     );
     if (updatedCount === 0) {

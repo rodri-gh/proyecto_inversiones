@@ -6,6 +6,7 @@ import { verifyIfIdExists } from '../helpers/handleId.js';
 
 
 const router = express.Router();
+
 router.get('/', async function (req, res, next) {
   try {
     const projects = await Project.findAll();
@@ -27,30 +28,12 @@ router.get('/:id', function (req, res, next) {
 
 });
 
-router.get('/user/:id', async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const projects = await Project.findAll({
-      include: [{
-        model: Investment,
-        where: { userId: id },
-        required: true
-      }]
-    });
-    getHandleSuccess(200)(res, projects);
-  } catch (error) {
-    getHandleError(error, res);
-  }
-});
-
 router.post('/', async (req, res, next) => {
-  const { name, description, investmentGoal, status, startDate,
-    endDate, projectType, profitPercentage } = req.body;
+  const { userId, name, description, investmentGoal, status, startDate, 
+      endDate, projectType, profitPercentage } = req.body;
   try {
-    await Project.create({
-      name, description, investmentGoal, status,
-      startDate, endDate, projectType, profitPercentage
-    });
+    await Project.create({ userId, name, description, investmentGoal, status,
+         startDate, endDate, projectType, profitPercentage });
     getHandleSuccess(201)(res, "Project created successfully");
   } catch (error) {
     getHandleError(error, res);
@@ -61,13 +44,11 @@ router.post('/', async (req, res, next) => {
 
 router.put('/:id', async (req, res, next) => {
   const { id } = req.params;
-  const { name, description, investmentGoal, status,
+  const { userId, name, description, investmentGoal, status,
     startDate, endDate, projectType, profitPercentage } = req.body;
   try {
-    const [projectCount] = await Project.update({
-      name, description, investmentGoal, status,
-      startDate, endDate, projectType, profitPercentage
-    }, {
+    const [projectCount] = await Project.update({ userId, name, description, investmentGoal, status,
+      startDate, endDate, projectType, profitPercentage }, {
       where: { id }
     });
     verifyIfIdExists(projectCount);
@@ -80,11 +61,15 @@ router.put('/:id', async (req, res, next) => {
 router.patch('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
-    const [projectDeleted] = await Project.update({ deleted: true }, {
-      where: { id }
-    });
-    verifyIfIdExists(projectDeleted);
-    getHandleSuccess(204)(res);
+    const project = await Project.findOne({ where: { id } });
+    if (!project) {
+      return getHandleError(new Error('project not found'), res);
+    }
+    const newDeletedStatus = project.deleted ? 0 : 1;
+
+    await Project.update({ deleted: newDeletedStatus }, { where: { id } });
+
+    getHandleSuccess(200)(res, `User ${newDeletedStatus ? 'deleted' : 'restored'} successfully`);
   } catch (error) {
     getHandleError(error, res);
   }

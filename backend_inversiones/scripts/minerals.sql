@@ -5,7 +5,7 @@
     `id` bigint NOT NULL AUTO_INCREMENT,
     `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
     `description` text COLLATE utf8mb4_general_ci,
-    `investment_goal` bigint NOT NULL,
+    `investment_goal` DECIMAL(15, 3) NOT NULL,
     `status` enum('open','in_transit','closed') COLLATE utf8mb4_general_ci NOT NULL,
     `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
     `profit_percentage` decimal(10,2) DEFAULT NULL,
