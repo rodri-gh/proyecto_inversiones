@@ -49,7 +49,7 @@
                 </span>
 
                 <span
-                  v-if="timeline.phase == 'compra-de-mineral'"
+                  v-if="timeline.phase == 'compra_de_mineral'"
                   class="phase-badge"
                   :class="getPhaseClass(timeline.phase)"
                 >
@@ -91,7 +91,7 @@
                 <span
                   v-if="timeline.phase != 'contrato' 
                   && timeline.phase != 'inversión'
-                  && timeline.phase != 'compra-de-mineral'
+                  && timeline.phase != 'compra_de_mineral'
                   && timeline.phase != 'envío'
                   && timeline.phase != 'entrega'
                   && timeline.phase != 'pago'
@@ -314,11 +314,12 @@ const selectedTimeLine = ref({});
 
 const phases = [
   "contrato",
-  "Inversión",
-  "compra-de-mineral",
+  "inversión",
+  "compra_de_mineral",
   "envío",
   "entrega",
   "pago",
+  "ganancia"
 ];
 
 const availablePhases = computed(() => {
@@ -381,8 +382,8 @@ const getPhaseClass = (phase) => {
   const phaseLower = phase.toLowerCase();
   const phaseClasses = {
     'contrato': "phase-contract",
-    "Inversión": "phase-prebuying",
-    'compra-de-mineral': "phase-buying",
+    "inversión": "phase-prebuying",
+    'compra_de_mineral': "phase-buying",
     "envío": "phase-entry",
     "entrega": "phase-exit",
     'pago': "phase-certification",
