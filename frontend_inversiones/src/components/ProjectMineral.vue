@@ -214,6 +214,7 @@ import Swal from "sweetalert2";
 import { getHeaderRequest } from "@/authService";
 import Input from "./base/Input.vue";
 import Button from "./base/Button.vue";
+import { eventBus } from "@/eventBus";
 import Select from "./base/Select.vue";
 
 const props = defineProps({
@@ -247,7 +248,13 @@ onMounted(() => {
   getprojectMinerals();
   getUsers();
   getMinerals();
+  eventBus.on('data-updated', getprojectMinerals);
 });
+
+onMounted(() => {
+  eventBus.off('data-updated', getprojectMinerals); 
+});
+
 
 const getprojectMinerals = async () => {
   try {
@@ -319,7 +326,6 @@ const deleteProjectMineral = async (id) => {
     if (result.isConfirmed) {
       await axios.patch(baseURL + id);
       await getprojectMinerals();
-
       Swal.fire(
         "¡Eliminado!",
         "El mineral ha sido eliminado del proyecto.",
@@ -365,7 +371,7 @@ const saveProjectMinerals = async () => {
       };
       await axios.post(baseURL, projectMineral);
     }
-    await getprojectMinerals();
+    await getprojectMinerals()
     closeModal();
 
     Swal.fire(

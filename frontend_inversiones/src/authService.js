@@ -48,6 +48,18 @@ export function getHeaderRequest() {
       };
     return header; 
 }
+
+export function getHeaderRequestMultiPartFormData() { 
+    const token = authServiceToken.getToken() || "";
+    const header = {
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+          'Cache-Control': 'no-cache'
+        },
+      };
+    return header; 
+}
     
 export function getUserIdOfLocalStorage() { 
     const user = JSON.parse(localStorage.getItem('user'));
