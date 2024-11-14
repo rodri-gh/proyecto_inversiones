@@ -247,7 +247,7 @@ import TableProjects from "@/components/tables/TableProjects.vue";
 import Modal from "@/components/base/Modal.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import Input from "@/components/base/Input.vue";
-import { getHeaderRequest, getUserIdOfLocalStorage } from "@/authService";
+import { getHeaderRequest, getUserIdOfLocalStorage, getUserRoleOfLocalStorage } from "@/authService";
 import CardsSummary from "@/components/CardsSummary.vue";
 
 const baseURL = "http://localhost:3000/project/";
@@ -269,6 +269,7 @@ const activeUsers = ref([]);
 const inactiveUsers = ref([]);
 const clientUsers = ref([]);
 const userIdoOfProject = getUserIdOfLocalStorage();
+const userRole = getUserRoleOfLocalStorage();
 
 const statusOptions = {
   open: "Abierto",
@@ -305,10 +306,14 @@ const Back = () => {
 const getProjects = async () => {
   try {
     const { data } = await axios.get(baseURL);
-    projects.value = data;
-    activeUsers.value = data.filter((user) => user.status === 'open' || user.status === 'in_transit');
-    inactiveUsers.value = data.filter((user) => user.status === 'closed');
-    clientUsers.value = data.filter((user) => user.deleted === 1);
+    if ( userRole === 'admin' ) {
+      projects.value = data.filter((item) => item.userId === userIdoOfProject);
+    } else {
+      projects.value = data;
+    }
+    activeUsers.value = projects.value.filter((user) => user.status === 'open' || user.status === 'in_transit');
+    inactiveUsers.value = projects.value.filter((user) => user.status === 'closed');
+    clientUsers.value = projects.value.filter((user) => user.deleted === 1);
     getsummaryProjects();
     console.log(projects.value);
   } catch (error) {

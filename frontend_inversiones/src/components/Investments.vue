@@ -78,7 +78,7 @@
     </div>
 </template>
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, onUnmounted } from "vue";
 import axios from "axios";
 import Button from "@/components/base/Button.vue";
 import TableInvestments from "@/components/tables/TableInvestments.vue";
@@ -87,6 +87,7 @@ import Input from "@/components/base/Input.vue";
 import Select from "@/components/base/Select.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import { getHeaderRequest } from "@/authService";
+import { eventBus } from "@/eventBus";
 
 const headers = [
     "Usuario",
@@ -118,6 +119,11 @@ onMounted(() => {
     getInvestments();
     getUsers();
     console.log(props.idProjectInvestment);
+    eventBus.on('data-updated', getInvestments);
+});
+
+onUnmounted(() => {
+  eventBus.off('data-updated', getInvestments); 
 });
 
 const getInvestments = async () => {
