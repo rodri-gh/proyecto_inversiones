@@ -34,7 +34,7 @@ Project.init(
             defaultValue: DataTypes.NOW
         },
         endDate: {
-            type: DataTypes.DECIMAL(10, 2),
+            type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
         },
         projectType: {

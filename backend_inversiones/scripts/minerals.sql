@@ -41,19 +41,25 @@
   ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-  CREATE TABLE IF NOT EXISTS `investments` (
-    `id` bigint NOT NULL AUTO_INCREMENT,
-    `project_id` bigint DEFAULT NULL,
-    `user_id` bigint DEFAULT NULL,
-    `amount` decimal(10,2) NOT NULL,
-    `investment_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    `profit_percentage` decimal(10,2) DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    KEY `project_id_inv` (`project_id`),
-    KEY `user_id_inv` (`user_id`),
-    CONSTRAINT `project_id_inv` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
-    CONSTRAINT `user_id_inv` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `investments` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `contract_id` bigint(20) NOT NULL,
+  `project_id` bigint(20) DEFAULT NULL,
+  `user_id` bigint(20) DEFAULT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `investment_date` timestamp NULL DEFAULT current_timestamp(),
+  `profit_percentage` decimal(10,2) DEFAULT NULL,
+  `currency` varchar(10) NOT NULL DEFAULT 'USD',
+  `status` enum('active','pending','closed') NOT NULL DEFAULT 'active',
+  `earnings` decimal(10,2) DEFAULT 0.00,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `project_id_inv` (`project_id`),
+  KEY `user_id_inv` (`user_id`),
+  KEY `fk_investments_contract_id` (`contract_id`),
+  CONSTRAINT `fk_investments_contract_id` FOREIGN KEY (`contract_id`) REFERENCES `contracts` (`id`),
+  CONSTRAINT `project_id_inv` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
+  CONSTRAINT `user_id_inv` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
   CREATE TABLE IF NOT EXISTS `contracts` (
     `id` bigint NOT NULL AUTO_INCREMENT,
@@ -99,26 +105,27 @@
   ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-CREATE TABLE IF NOT EXISTS `project_minerals` (
+CREATE TABLE `project_minerals` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `project_id` bigint(20) NOT NULL,
   `mineral_id` bigint(20) NOT NULL,
   `user_id` bigint(20) NOT NULL,
-  `stage_id` bigint(20) NOT NULL,
-  `purchase_price` DECIMAL(20,3) NOT NULL,
-  `pre_purchase` DECIMAL(20,3) DEFAULT NULL,
-  `estimated_purchase_price` DECIMAL(20,3) DEFAULT NULL,
-  `exit_price` DECIMAL(20,3) NOT NULL,
-  `sale_price` DECIMAL(20,3) NOT NULL,
+  `purchase_price` decimal(20,3) NOT NULL,
+  `pre_purchase` decimal(20,3) DEFAULT NULL,
+  `estimated_purchase_price` decimal(20,3) DEFAULT NULL,
   `deleted` tinyint(4) NOT NULL DEFAULT 0,
+  `exit_price` decimal(20,3) NOT NULL,
+  `sale_price` decimal(20,3) NOT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'open',
   PRIMARY KEY (`id`),
   KEY `mineral_id` (`mineral_id`),
   KEY `project_id` (`project_id`),
+  KEY `fk_user_id` (`user_id`),
+  CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `id_project` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
-  CONSTRAINT `mineral_id` FOREIGN KEY (`mineral_id`) REFERENCES `minerals` (`id`),
-  CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES users(id);
-  CONSTRAINT fk_stage_id FOREIGN KEY (stage_id) REFERENCES project_stages(id);
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  CONSTRAINT `mineral_id` FOREIGN KEY (`mineral_id`) REFERENCES `minerals` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
 
   CREATE TABLE IF NOT EXISTS `project_timelines` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -219,15 +226,33 @@ CREATE TABLE IF NOT EXISTS `project_minerals` (
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-CREATE TABLE IF NOT EXISTS `project_stages` (
-  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-  `project_id` BIGINT(20) NOT NULL,
-  `stage_name` VARCHAR(255) NOT NULL, -- como precompra compra salida venta Y MAS
-  `start_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-  `end_date` TIMESTAMP DEFAULT NULL, -- puede ser null si la estapa es actual
+CREATE TABLE `stage_project_minerals` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `project_minerals_id` bigint(20) NOT NULL,
+  `stage_name` varchar(255) NOT NULL,
+  `start_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `end_date` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`)
-);
+  UNIQUE KEY `unique_project_mineral_stage_name` (`project_minerals_id`,`stage_name`),
+  CONSTRAINT `fk_project_minerals` FOREIGN KEY (`project_minerals_id`) REFERENCES `project_minerals` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `project_payments` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
+  `project_id` bigint(20) NOT NULL,
+  `amount_invested` decimal(10,2) NOT NULL,
+  `amount_earned` decimal(10,2) NOT NULL,
+  `status` varchar(20) DEFAULT 'pending',
+  `payout_date` timestamp NULL DEFAULT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `project_id` (`project_id`),
+  CONSTRAINT `fk_project_payments_project_id` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
+  CONSTRAINT `fk_project_payments_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 
 INSERT INTO `users` (`id`, `email`, `phone`, `role`, `two_factor_enabled`, `name`, `last_name`, `deleted`) VALUES

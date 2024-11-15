@@ -1,7 +1,7 @@
 import express from 'express';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
-import { Investment, Contract, Project } from '../models/mainExport.js';
+import { Investment, Contract, Project, User } from '../models/mainExport.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 
 
