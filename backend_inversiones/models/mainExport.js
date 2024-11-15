@@ -19,6 +19,7 @@ import FinancialSettings from './financialSettingsModel.js';
 import ProjectPerformance from './projectPerformanceModel.js';
 import ProjectChanges from './projectChangesModel.js';
 import FinancialProjections from './financialProjectionsModel.js';
+import ProjectPayment from './projectPaymentsModel.js';
 
 
 User.hasOne(Account, { foreignKey: 'userId' });
@@ -78,6 +79,13 @@ ProjectChanges.belongsTo(Project, { foreignKey: 'projectId' });
 Project.hasMany(FinancialProjections, { foreignKey: 'projectId' });
 FinancialProjections.belongsTo(Project, { foreignKey: 'projectId' });
 
+Project.hasMany(ProjectPayment, { foreignKey: 'projectId' });
+ProjectPayment.belongsTo(Project, { foreignKey: 'projectId' });
+
+User.hasMany(ProjectPayment, { foreignKey: 'userId' });
+ProjectPayment.belongsTo(User, { foreignKey: 'userId' });
+
+
 
 export {
     User,
@@ -101,4 +109,5 @@ export {
     ProjectPerformance,
     ProjectChanges,
     FinancialProjections,
+    ProjectPayment,
 };

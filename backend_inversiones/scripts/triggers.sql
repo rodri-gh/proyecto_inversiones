@@ -95,4 +95,79 @@ END $$
 
 DELIMITER ;
 
+
+-- para el timeline del phase compra_de_mineral
+DELIMITER $$
+
+CREATE TRIGGER after_project_mineral_insert
+AFTER INSERT ON project_minerals
+FOR EACH ROW
+BEGIN
+	
+    IF ( NEW.purchase_price > 0.00 AND NEW.sale_price <= 0.00 ) OR
+    		(NEW.pre_purchase > 0.00 AND NEW.sale_price <= 0.00)
+    THEN
+        IF NOT EXISTS (
+            SELECT 1
+            FROM project_timelines
+            WHERE project_id = NEW.project_id AND phase = 'compra_de_mineral'
+        ) THEN
+            INSERT INTO project_timelines (project_id, phase, description, price_mineral1, price_mineral2, status)
+            VALUES (NEW.project_id, 'compra_de_mineral', 'Fase de compra de mineral', NEW.purchase_price, NEW.pre_purchase, 'open');
+        END IF;
+    END IF;
+  
+    IF NEW.sale_price > 0.00 AND NEW.purchase_price > 0.00 OR
+    		(NEW.pre_purchase > 0.00 AND NEW.sale_price > 0.00)
+    THEN
+    
+        IF NOT EXISTS (
+            SELECT 1
+            FROM project_minerals
+            WHERE project_id = NEW.project_id AND sale_price <= 0.00 AND deleted = 0
+        ) THEN
+            IF NOT EXISTS (
+                SELECT 1
+                FROM project_timelines
+                WHERE project_id = NEW.project_id AND phase = 'compra_de_mineral' 
+            ) THEN
+                INSERT INTO project_timelines (project_id, phase, description, price_mineral1, price_mineral2, status)
+                VALUES (NEW.project_id, 'compra_de_mineral', 'Fase de compra de mineral', NEW.purchase_price, NEW.pre_purchase, 'closed');
+            ELSE
+                UPDATE project_timelines
+                SET end_date = CURRENT_TIMESTAMP, status = 'closed'
+                WHERE project_id = NEW.project_id AND phase = 'compra_de_mineral';
+            END IF;
+        END IF;
+    END IF;
+END $$
+
+DELIMITER ;
+
+
+-- trigger para insertar un timeline despues de insertar una inversion
+DELIMITER $$
+
+CREATE TRIGGER after_investments_insert
+AFTER INSERT ON investments
+FOR EACH ROW
+BEGIN
+    DECLARE existing_id INT;
+   
+    SELECT id
+    INTO existing_id
+    FROM project_timelines
+    WHERE project_id = NEW.project_id AND phase = 'inversion'
+    LIMIT 1;
+    
+    IF existing_id IS NOT NULL THEN
+        UPDATE project_timelines
+        SET end_date = CURRENT_TIMESTAMP
+        WHERE id = existing_id;
+    ELSE
+        INSERT INTO project_timelines (project_id, phase, start_date, end_date, description, price_mineral1, price_mineral2, status)
+        VALUES (NEW.project_id, 'inversion', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ' ', 0, 0, NEW.status);
+    END IF;
+END $$
+
 DELIMITER ;

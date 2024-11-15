@@ -79,6 +79,7 @@ router.post('/', upload.fields([{ name: 'contractFilePath'}]), async (req, res, 
         const contract = await Contract.create({ projectId, userId,
              investmentAmount, contractCode, startDate, endDate,
               status, contractType, currency, contractFilePath });
+              'SELECT userr fr'
 
         await Investment.create({ contractId: contract.id, 
             projectId: projectId, userId: userId, 
