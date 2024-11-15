@@ -9,6 +9,7 @@ import Select from "@/components/base/Select.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import TableContracts from './tables/TableContracts.vue';
 import { eventBus } from '@/eventBus';
+import Investments from './Investments.vue';
 
 const header = getHeaderRequestMultiPartFormData();
 const contracts = ref([]);
@@ -177,6 +178,7 @@ const previewUrl = computed(() => {
 </script>
 
 <template>
+    <div>
         <div>
             <div>
                 <div class="text-end">
@@ -309,6 +311,7 @@ const previewUrl = computed(() => {
                 </div>
             </Modal>
         </div>
+    </div>
 </template>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container col-md-10 mt-5">
+  <div class="container col-md-11 m-3">
       <div v-if="!showDetails">
         <div>
           <h4 class="card-title text-center">Gestion de proyectos</h4>
@@ -278,13 +278,13 @@ const statusOptions = {
 };
 
 const headers = [
-    "Fecha de Registro",
-    "Fecha Estimada de fin",
+    "Registro",
+    "Finalizacion",
     "Nombre",
     "Descripcion",
     "Meta",
     "Ganancia",
-    "Estado del Proyecto",
+    "Eliminado",
     "Estado",
     "Acciones",
 ];

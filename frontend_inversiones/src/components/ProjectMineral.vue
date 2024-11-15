@@ -231,11 +231,11 @@ const projectMinerals = ref([]);
 const minerals = ref([]);
 const users = ref([]); 
 
-const estimatedPurchasePrice = ref(''); 
-const prePurchase = ref(''); 
-const purchasePrice = ref(''); 
-const exitPrice = ref('');
-const salePrice = ref('');
+const estimatedPurchasePrice = ref(0); 
+const prePurchase = ref(0); 
+const purchasePrice = ref(0); 
+const exitPrice = ref(0);
+const salePrice = ref(0);
 const userId = ref('');
 
 const selectedMinerals = ref([]);

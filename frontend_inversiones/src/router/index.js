@@ -45,7 +45,6 @@ const router = createRouter({
       name: 'projects',
       component: ProjectsView,
       meta: { requiresAuth: true },
-
     },
     {
       path: '/projects/:id',
