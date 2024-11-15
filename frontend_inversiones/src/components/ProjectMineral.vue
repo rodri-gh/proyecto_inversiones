@@ -205,6 +205,7 @@
         </div>
       </div>
     </div>
+ 
 </template>
 
 <script setup>
@@ -218,15 +219,17 @@ import { eventBus } from "@/eventBus";
 import Select from "./base/Select.vue";
 
 const props = defineProps({
-  idProjectMineral: {
-    type: String,
-    required: true,
-  },
+idProjectMineral: {
+  type: String,
+  required: true,
+},
 });
+
 
 const baseURL = "http://localhost:3000/project-minerals/";
 const baseUrlUsers = 'http://localhost:3000/user/'
 
+// Estados reactivos
 const projectMinerals = ref([]);
 const minerals = ref([]);
 const users = ref([]); 
@@ -241,14 +244,16 @@ const userId = ref('');
 const selectedMinerals = ref([]);
 const selectedMineral = ref("");
 const selectedProjectMineral = ref({});
-const isEditing = ref(false); // Indica si se está editando o no
+const isEditing = ref(false);
 const header = getHeaderRequest();
+
 
 onMounted(() => {
   getprojectMinerals();
   getUsers();
   getMinerals();
   eventBus.on('data-updated', getprojectMinerals);
+
 });
 
 onMounted(() => {
@@ -268,6 +273,7 @@ const getprojectMinerals = async () => {
 };
 
 const getMinerals = async () => {
+
   try {
     const data = await axios.get("http://localhost:3000/mineral/", header);
     minerals.value = data.data;
@@ -296,33 +302,34 @@ const availableMinerals = computed(() => {
       !selectedMinerals.value.some((selected) => selected.id === mineral.id)
   );
 });
-
 const addMineral = () => {
-  if (selectedMineral.value && selectedMinerals.value.length < 2) {
-    selectedMinerals.value.push(selectedMineral.value);
-    selectedMineral.value = "";
-  }
+if (selectedMineral.value && selectedMinerals.value.length < 2) {
+  selectedMinerals.value.push(selectedMineral.value);
+  selectedMineral.value = "";
+}
 };
-
 const removeMineral = (mineral) => {
-  selectedMinerals.value = selectedMinerals.value.filter(
-    (m) => m.id !== mineral.id
-  );
+selectedMinerals.value = selectedMinerals.value.filter(
+  m => m.id !== mineral.id
+);
 };
 
-const deleteProjectMineral = async (id) => {
-  try {
-    const result = await Swal.fire({
-      title: "¿Estás seguro?",
-      text: "¿Deseas eliminar este mineral del proyecto?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    });
-
+// Métodos de acciones principales
+const toggleProjectMineralStatus = async (projectMineral) => {
+try {
+  const newStatus = !projectMineral.isActive;
+  const message = newStatus ? 'activar' : 'desactivar';
+  
+  const result = await Swal.fire({
+    title: '¿Estás seguro?',
+    text: `¿Deseas ${message} este mineral del proyecto?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: `Sí, ${message}`,
+    cancelButtonText: 'Cancelar'
+  });
     if (result.isConfirmed) {
       await axios.patch(baseURL + id);
       await getprojectMinerals();
@@ -336,9 +343,13 @@ const deleteProjectMineral = async (id) => {
     console.error("Error al eliminar:", error);
     Swal.fire("Error", "No se pudo eliminar el mineral.", "error");
   }
+} catch (error) {
+  handleError(error, `Error al ${message} el mineral`);
+}
 };
 
 const saveProjectMinerals = async () => {
+
   console.log(baseURL+selectedProjectMineral.value.id); 
   try {
     if (isEditing.value) {
@@ -382,14 +393,12 @@ const saveProjectMinerals = async () => {
       "success"
     );
   } catch (error) {
-    console.error("Error al guardar minerales:", error);
-    Swal.fire("Error", "No se pudieron guardar los cambios.", "error");
+    handleError(error, 'Error al guardar minerales');
   }
 };
 
 const selectProjectMineral = (projectMineral) => {
   isEditing.value = true;
-  
   selectedProjectMineral.value = projectMineral;
   estimatedPurchasePrice.value = projectMineral.estimatedPurchasePrice;
   prePurchase.value = projectMineral.prePurchase;
@@ -405,23 +414,30 @@ const selectProjectMineral = (projectMineral) => {
     selectedMinerals.value = [mineralToEdit];
   }
 
-  const modalEl = document.getElementById("modalMineral");
-  const modal = new bootstrap.Modal(modalEl);
-  modal.show();
+const modalEl = document.getElementById('modalMineral');
+const modal = new bootstrap.Modal(modalEl);
+modal.show();
+};
+
+// Métodos de utilidad
+const handleError = (error, defaultMessage) => {
+console.error(error);
+const errorMessage = error.response?.data?.message || defaultMessage;
+Swal.fire('Error', errorMessage, 'error');
 };
 
 const resetModal = () => {
-  selectedMinerals.value = [];
-  selectedMineral.value = "";
-  isEditing.value = false;
-  selectedProjectMineral.value = {};
+selectedMinerals.value = [];
+selectedMineral.value = "";
+isEditing.value = false;
+selectedProjectMineral.value = {};
 };
 
 const closeModal = () => {
-  const modalEl = document.getElementById("modalMineral");
-  const modal = bootstrap.Modal.getInstance(modalEl);
-  modal.hide();
-  resetModal();
+const modalEl = document.getElementById('modalMineral');
+const modal = bootstrap.Modal.getInstance(modalEl);
+modal.hide();
+resetModal();
 };
 
 const selectedUser = computed(() => {
@@ -430,4 +446,7 @@ const selectedUser = computed(() => {
 </script>
 
 <style scoped>
+.table-secondary {
+opacity: 0.7;
+}
 </style>
