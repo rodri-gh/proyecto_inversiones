@@ -1,5 +1,5 @@
 <script setup>
-import { computed, markRaw, ref } from "vue";
+import { computed, markRaw, ref, onMounted } from "vue";
 import { getUserRoleOfLocalStorage } from "@/authService";
 import MyProfile from "./MyProfile.vue";
 import ProjectsView from "@/views/ProjectsView.vue";
@@ -18,6 +18,25 @@ import FinanceView from "@/views/FinanceView.vue";
 import AnalysisAndReportsView from "@/views/AnalysisAndReportsView.vue";
 import ProjectsUserView from "@/views/ProjectsUserView.vue";
 import InvestmentsUserView from "@/views/InvestmentsUserView.vue";
+import axios from "axios";
+
+const baseURL = "http://localhost:3000/site-setting";
+
+const settings = ref([]);
+
+onMounted(() => {
+  getSettings();
+});
+
+const getSettings = async () => {
+  try {
+    const response = await axios.get(baseURL);
+    settings.value = response.data[0];
+    console.log("Setting:", settings.value);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const activeComponent = ref(markRaw(MyProfile));
 const activeLink = ref("Mi Perfil");
@@ -127,11 +146,13 @@ const componentslinks = computed(() => {
     >
       <a class="navbar-brand" href="#">
         <img
-          src="https://banner2.cleanpng.com/20180331/hre/avishui7k.webp"
+          :src="settings.logo"
           alt="Logo"
-          class="brand"
+          class="brand me-1 navbar-logo"
+          width="100"
+          height="50"
         />
-        <b>Minerales</b>
+        <b>{{ settings.name }}</b>
       </a>
       <button
         class="navbar-toggler"

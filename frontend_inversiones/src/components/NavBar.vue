@@ -1,7 +1,26 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { closeSession, getUserRoleOfLocalStorage } from "../authService";
 import { RouterLink, useRouter } from "vue-router";
+import axios from "axios";
+
+const baseURL = "http://localhost:3000/site-setting";
+
+const settings = ref([]);
+
+onMounted(() => {
+  getSettings();
+});
+
+const getSettings = async () => {
+  try {
+    const response = await axios.get(baseURL);
+    settings.value = response.data[0];
+    console.log("Setting:", settings.value);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const route = useRouter();
 
@@ -53,13 +72,13 @@ const navLinks = computed(() => {
       <div class="navbar-container">
         <div class="navbar-left">
           <img
-            src="https://i.pinimg.com/originals/b4/25/66/b4256667e1af5e793841db4165ad470a.png"
+            :src="settings.logo"
             width="100"
             height="50"
             alt="Logo"
             class="navbar-logo"
           />
-          <a class="navbar-brand mx-1" href="#">Minerales</a>
+          <a class="navbar-brand mx-1" href="#">{{ settings.name }}</a>
         </div>
         <button
           class="navbar-toggler"
