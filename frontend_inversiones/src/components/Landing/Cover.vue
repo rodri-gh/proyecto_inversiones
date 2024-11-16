@@ -1,12 +1,32 @@
 <template>
   <div class="fondo">
-    <h1>Cotiza e invierte Aqui</h1>
-    <p>Ahora puedes invertir hasta en 2 minerales y en diferentes proyectos</p>
+    <h1>{{ settings.homeTitle }}</h1>
+    <p>{{ settings.homeText }}</p>
     <button class="button-config">Comienza Aqui!</button>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+
+const baseURL = "http://localhost:3000/site-setting";
+
+const settings = ref([]);
+
+onMounted(() => {
+  getSettings();
+});
+
+const getSettings = async () => {
+  try {
+    const response = await axios.get(baseURL);
+    settings.value = response.data[0];
+    console.log("Setting:", settings.value);
+  } catch (error) {
+    console.error(error);
+  }
+};
 </script>
 
 <style  scoped>

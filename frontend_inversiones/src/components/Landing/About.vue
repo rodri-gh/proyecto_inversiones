@@ -4,23 +4,12 @@
       <div class="col-md-1"></div>
 
       <div class="col-md-5">
-        <h1>Sobre nosotros</h1>
-        <h7>
-          En el fascinante universo de los minerales, cada uno cuenta una
-          historia. Desde ek vrillo deslumbrante de la plata hasta el calido
-          abrazo del cobre, cada mineral tiene su propio caracter y encanto.
-          Preparate para un viaje que hara que tu corazon lata mas rapido! Nos
-          apasiona compartir el conocimiento sobre estos tesoros de la Tierra.
-          Aqui no solo aprenderas sobre sus propiedades, sino que tambien
-          descubriras como se utilizan en la vida cotidiana. Si incluso en tu
-          joyeria favorita! Asi que, si pensabas que los minerales eran solo
-          rocas aburridas, piensalo de nuevo. Estamos aqui para romper esos
-          mitos y mostrarte el lado divertido y colorido de la geologia!
-        </h7>
+        <h1>{{ settings.aboutTitle }}</h1>
+        <h7>{{ settings.aboutText }} </h7>
       </div>
       <div class="col-md-6 img-about">
         <img
-          src="@/assets/aboutMinerals.png"
+          :src="settings.aboutImage"
           alt="minerales"
           width="auto"
           height="auto"
@@ -31,6 +20,26 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+
+const baseURL = "http://localhost:3000/site-setting";
+
+const settings = ref([]);
+
+onMounted(() => {
+  getSettings();
+});
+
+const getSettings = async () => {
+  try {
+    const response = await axios.get(baseURL);
+    settings.value = response.data[0];
+    console.log("Setting:", settings.value);
+  } catch (error) {
+    console.error(error);
+  }
+};
 </script>
 
 <style  scoped>

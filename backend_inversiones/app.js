@@ -27,6 +27,7 @@ import mineralPriceHistoryRouter from './routes/mineralPriceHistory.js';
 import projectChangesRouter from './routes/projectChanges.js';
 import projectPerformanceRouter from './routes/projectPerformance.js';
 import userActivitylogRouter from './routes/userActivitylog.js';
+import siteSettingRouter from './routes/siteSettings.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -65,5 +66,7 @@ app.use('/mineralPriceHistory', mineralPriceHistoryRouter);
 app.use('/projectChanges', projectChangesRouter);
 app.use('/projectPerformance', projectPerformanceRouter);
 app.use('/userActivitylog', userActivitylogRouter);
+app.use('/site-setting', siteSettingRouter);
+
 
 export default app;
