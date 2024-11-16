@@ -48,7 +48,7 @@
                             } btn-sm m-1`"
                         />
                         <Button
-                            @click="() => actions.view(item.id)"
+                            @click="() => actions.view(item)"
                             buttonClass="btn btn-info btn-sm m-1"
                             icon="fa fa-eye"
                         />

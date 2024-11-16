@@ -152,9 +152,9 @@
         > 
 
           <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-12">
                   <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-6 mt-3">
                           <Input
                               id="name"
                               label="Nombre"
@@ -162,7 +162,7 @@
                               v-model="name"
                           />
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 mt-3">
                           <Input
                               id="description"
                               label="Descripcion"
@@ -170,7 +170,7 @@
                               v-model="description"
                           />
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 mt-3">
                           <Input
                               id="startDate"
                               label="Fecha de inicio"
@@ -178,7 +178,7 @@
                               v-model="startDate"
                           />
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-6 mt-3">
                           <Input
                               id="endDate"
                               label="Fecha estimada de fin"
@@ -186,23 +186,23 @@
                               v-model="endDate"
                           />
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-6 mt-3">
                           <Input
                               id="investmentGoal"
-                              label="meta de inversion"
+                              label="Meta de inversion"
                               type="number"
                               v-model="investmentGoal"
                           />
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-6 mt-3">
                           <Input
                               id="profitPercentage"
-                              label="Porcentange de ganancia"
+                              label="Porcentange de ganancia Estimada"
                               type="number"
                               v-model="profitPercentage"
                           />
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-6 mt-3">
                           <Input
                               id="status"
                               label="Estado"
@@ -210,13 +210,16 @@
                               v-model="status"
                           />
                       </div>
-                      <div class="col-md-6">
-                          <Input
+                      <div class="col-md-6 mt-3">
+                        <br>
+                        <label for="">Tipo de Pojecto</label>
+                        <p><strong>Minero</strong></p>
+                         <!--<Input
                               id="projectType"
                               label="Tipo de projecto"
                               type="text"
                               v-model="projectType"
-                          />
+                          /> --> 
                       </div>
                   </div>
                   
@@ -233,7 +236,7 @@
         >
           Atras
         </button>
-        <ProjectDetailsView :projectId="idProject" />
+        <ProjectDetailsView :projectId="idProject"/>
       </div>
  </div>
 </template>
@@ -258,7 +261,7 @@ const investmentGoal = ref(0);
 const status = ref("open");
 const startDate = ref('');
 const endDate = ref('');
-const projectType = ref('');
+const projectType = ref('Minero');
 const profitPercentage = ref(0);
 const showDetails = ref(false);
 const selectedProject = ref({});
@@ -294,7 +297,7 @@ onMounted(() => {
 });
 
 const showProjectDetails = (project) => {
-  idProject.value = project;
+  idProject.value = project.id;
   showDetails.value = true;
 };
 

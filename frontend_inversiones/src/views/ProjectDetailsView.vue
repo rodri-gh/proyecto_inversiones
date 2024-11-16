@@ -42,7 +42,7 @@
 
         <div v-if="selectedTab === 'Inversiones'">
           <h3>Contratos del Proyecto</h3>
-          <Contract :idProject="idProject" />
+          <Contract :idProject="idProject" :project="project"/>
           <h4>Inversiones del Proyecto</h4>
           <Investments :idProjectInvestment="idProject" />
         </div>
@@ -92,7 +92,7 @@ const props = defineProps({
   projectId: {
     type: Number,
     required: true,
-  },
+  }
 });
 
 const idProject = ref(props.projectId || route.params.id);
@@ -163,11 +163,7 @@ const formatDate = (date) => {
 }
 .project-intro {
   padding: 10px;
-  border-radius: 10px;
-  background-color: #f9f9f9;
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 50px;
 }
 
 .project-title {

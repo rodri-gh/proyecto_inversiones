@@ -92,7 +92,7 @@
               <div class="col-md-6">
                       <Select
                           :options="users"
-                          label="Usuario"
+                          label="Usuario Comprador"
                           value-key="id"
                           label-key="name"
                           v-model="userId"
@@ -343,9 +343,6 @@ try {
     console.error("Error al eliminar:", error);
     Swal.fire("Error", "No se pudo eliminar el mineral.", "error");
   }
-} catch (error) {
-  handleError(error, `Error al ${message} el mineral`);
-}
 };
 
 const saveProjectMinerals = async () => {

@@ -9,7 +9,17 @@ import Select from "@/components/base/Select.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import TableContracts from './tables/TableContracts.vue';
 import { eventBus } from '@/eventBus';
-import Investments from './Investments.vue';
+
+const props = defineProps({
+    idProject: {
+        type: String,
+        required: true,
+    },
+    project: {
+        type: Object, 
+        required: true,
+    }
+});
 
 const header = getHeaderRequestMultiPartFormData();
 const contracts = ref([]);
@@ -20,9 +30,9 @@ const baseURL = "http://localhost:3000/contract/";
 const userId = ref("");
 const investmentAmount = ref('');
 const contractCode = ref('');
-const startDate = ref('');
-const endDate = ref('');
-const status = ref('');
+const startDate = props.project.startDate;
+const endDate = props.project.endDate;
+const status = ref('open');
 const contractType = ref('');
 const currency = ref('');
 const contractFilePath = ref(null);
@@ -39,13 +49,6 @@ const headers = [
     "moneda",
     'Acciones',
 ];
-
-const props = defineProps({
-    idProject: {
-        type: String,
-        required: true,
-    },
-});
 
 const getContracts = async () => {
     try { 
@@ -86,8 +89,6 @@ const selectContract = (contract) => {
   userId.value = contract.userId;
   investmentAmount.value = contract.investmentAmount;
   contractCode.value = contract.contractCode;
-  startDate.value = contract.startDate;
-  endDate.value = contract.endDate;
   status.value = contract.status;
   contractType.value = contract.contractType;
   currency.value = contract.currency;
@@ -121,7 +122,7 @@ const saveContract = async () => {
         updateData();
         reset();
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 };
 
@@ -131,8 +132,8 @@ const createFormData = () => {
     formData.append("userId", userId.value);
     formData.append("investmentAmount", investmentAmount.value);
     formData.append("contractCode", contractCode.value);
-    formData.append("startDate", startDate.value);
-    formData.append("endDate", endDate.value);
+    formData.append("startDate", startDate);
+    formData.append("endDate", endDate);
     formData.append("status", status.value);
     formData.append("contractType", contractType.value);
     formData.append("currency", currency.value);
@@ -243,32 +244,27 @@ const previewUrl = computed(() => {
                                 />
                             </div>
                             <div class="col-md-3">
-                                <Input
+                                <label for=""> Fecha de Inicio</label>
+                                <p><strong>{{ startDate }}</strong></p>
+                                <!--<Input
                                     id="startDate"
                                     label="Fecha de inicio"
                                     type="date"
                                     v-model="startDate"
-                                />
+                                /> -->
                             </div>
                             <div class="col-md-3">
-                                <Input
+                                <label for=""> Fecha de Fin</label>
+                                <p><strong> {{ endDate }}</strong></p>
+                                <!--<Input
                                     id="endDate"
                                     label="Fecha de finalizacion"
                                     type="date"
                                     v-model="endDate"
-                                />
+                                /> -->
                             </div>
                         </div>
                         <div class="row m-4">
-                            <div class="col-md-3">
-                                <label for="" class="form-label">Estado</label>
-                                <select class="form-select form-select" v-model="status" id="status">
-                                    <option value="">Seleccione un estado</option>
-                                    <option value="active">Active</option>
-                                    <option value="pending">pending</option>
-                                    <option value="finalized">finalized</option>
-                                </select>
-                            </div>
                             <div class="col-md-3">
                                 <label for="" class="form-label">Tipo de contrato</label>
                                 <select class="form-select form-select" v-model="contractType" id="contractType">
