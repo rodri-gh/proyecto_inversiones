@@ -151,6 +151,30 @@ onMounted(() => {
     quillEditor.root.innerHTML = content.value;
   }
 });
+const style = document.createElement('style');
+  style.innerHTML = `
+    .ql-editor h1 {
+      font-size: 2em;
+      color: #2c3e50;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 0.5em;
+      margin-bottom: 0.5em;
+    }
+    .ql-editor h2 {
+      font-size: 1.5em;
+      color: #34495e;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.3em;
+      margin-bottom: 0.3em;
+    }
+  `;
+  document.head.appendChild(style);
+
+  if (content.value) {
+    quillEditor.root.innerHTML = content.value;
+  }
+
+  
 
 const getPosts = async () => {
   try {

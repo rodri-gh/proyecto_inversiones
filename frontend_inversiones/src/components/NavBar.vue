@@ -1,5 +1,7 @@
 <script setup>
-import { computed, ref, onMounted } from "vue";
+
+import { computed, ref, onMounted, onUnmounted } from "vue";
+
 import { closeSession, getUserRoleOfLocalStorage } from "../authService";
 import { RouterLink, useRouter } from "vue-router";
 import axios from "axios";
@@ -23,10 +25,41 @@ const getSettings = async () => {
 };
 
 const route = useRouter();
-
 const isRootRoute = computed(() => route.currentRoute.value.path === "/");
-
 const isLoggedIn = ref(!!localStorage.getItem("token"));
+const isMobileMenuOpen = ref(false);
+const lastScrollPosition = ref(0);
+const isNavbarVisible = ref(true);
+const scrollTimeout = ref(null);
+
+// Control de scroll mejorado para evitar desaparición repentina
+const handleScroll = () => {
+  // Limpiar el timeout anterior si existe
+  if (scrollTimeout.value) {
+    clearTimeout(scrollTimeout.value);
+  }
+
+  const currentScrollPosition = window.scrollY;
+  if (currentScrollPosition < 0) return;
+  
+  lastScrollPosition.value = currentScrollPosition;
+};
+
+// Asegurar que el navbar sea visible al hacer hover
+const handleNavHover = () => {
+  isNavbarVisible.value = true;
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+  if (scrollTimeout.value) {
+    clearTimeout(scrollTimeout.value);
+  }
+});
 
 const scrollToSection = (sectionId) => {
   const section = document.getElementById(sectionId);
@@ -37,6 +70,7 @@ const scrollToSection = (sectionId) => {
       top: sectionTop - offset,
       behavior: "smooth",
     });
+    isMobileMenuOpen.value = false; // Cerrar menú móvil después de click
   }
 };
 
@@ -45,32 +79,36 @@ const logOut = () => {
   isLoggedIn.value = false;
 };
 
-const navLinks = computed(() => {
-  var user = JSON.parse(localStorage.getItem("user"));
-  var userRole = getUserRoleOfLocalStorage();
-  let links = [
-    { name: "Marketplace", path: "/marketplace" },
-    { name: "Panel de control", path: "/dashboard" },
-  ];
-  if (userRole == "super_user") {
-    /*     links.push({ name: "Analisis y Reportes", path: "/analysisAndReports" }); */
-    /*  links.push({ name: "Finanzas", path: "/finance" }); */
-  } else if (userRole == "admin") {
-    /*  links.push({ name: "Analisis y Reportes", path: "/analysisAndReports" });
-    links.push({ name: "Finanzas", path: "/finance" }); */
-  } else if (userRole == "client") {
-    //aqui se puede aumentar en el navbar rutas para clientes
-  }
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
 
+const navLinks = computed(() => {
+  const userRole = getUserRoleOfLocalStorage();
+  let links = [
+    { name: "Marketplace", path: "/marketplace", icon: "🏪" },
+    { name: "Panel de control", path: "/dashboard", icon: "📊" },
+  ];
+  
+  if (userRole === "super_user" || userRole === "admin") {
+    links.push(
+      { name: "Análisis", path: "/analysisAndReports", icon: "📈" },
+      { name: "Finanzas", path: "/finance", icon: "💰" }
+    );
+  }
+  
   return links;
 });
 </script>
 
 <template>
-  <div class="nav-wrapper">
+  <div class="nav-wrapper" 
+       :class="{ 'nav-hidden': !isNavbarVisible }"
+       @mouseenter="handleNavHover">
     <nav class="navbar navbar-expand-lg floating-nav">
       <div class="navbar-container">
         <div class="navbar-left">
+
           <img
             :src="settings.logo"
             width="100"
@@ -79,55 +117,73 @@ const navLinks = computed(() => {
             class="navbar-logo"
           />
           <a class="navbar-brand mx-1" href="#">{{ settings.name }}</a>
-        </div>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav navbar-center">
-            <li v-if="isRootRoute" class="nav-item">
-              <a class="nav-link" @click="scrollToSection('home')">Inicio</a>
-            </li>
-            <template v-if="isLoggedIn">
-              <li v-for="link in navLinks" :key="link.name" class="nav-item">
-                <router-link class="nav-link" :to="link.path">
-                  {{ link.name }}
-                </router-link>
-              </li>
-            </template>
-            <li v-if="isRootRoute" class="nav-item">
-              <a class="nav-link" @click="scrollToSection('about')"
-                >Acerca de</a
-              >
-            </li>
 
-            <li v-if="isRootRoute" class="nav-item">
-              <a class="nav-link" @click="scrollToSection('faq')">FAQ</a>
-            </li>
-            <li v-if="isRootRoute" class="nav-item">
-              <a class="nav-link" @click="scrollToSection('contact')"
-                >Contacto</a
-              >
-            </li>
-            <li v-if="isRootRoute" class="nav-item">
-              <a class="nav-link" @click="scrollToSection('blog')">Blog</a>
-            </li>
-          </ul>
+        </div>
+
+        <button class="navbar-toggler" :class="{ 'is-active': isMobileMenuOpen }" @click="toggleMobileMenu" aria-label="Toggle navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="navbar-collapse" :class="{ 'show': isMobileMenuOpen }" id="navbarNav">
+          <div class="navbar-content">
+            <ul class="navbar-nav">
+              <li v-if="isRootRoute" class="nav-item">
+                <a class="nav-link" @click="scrollToSection('home')">
+                  <span class="icon">🏠</span>
+                  <span>Inicio</span>
+                </a>
+              </li>
+
+              <template v-if="isLoggedIn">
+                <li v-for="link in navLinks" :key="link.name" class="nav-item">
+                  <router-link class="nav-link" :to="link.path">
+                    <span class="icon">{{ link.icon }}</span>
+                    <span>{{ link.name }}</span>
+                  </router-link>
+                </li>
+              </template>
+
+              <li v-if="isRootRoute" class="nav-item">
+                <a class="nav-link" @click="scrollToSection('about')">
+                  <span class="icon">ℹ️</span>
+                  <span>Acerca de</span>
+                </a>
+              </li>
+
+              <li v-if="isRootRoute" class="nav-item">
+                <a class="nav-link" @click="scrollToSection('faq')">
+                  <span class="icon">❓</span>
+                  <span>FAQ</span>
+                </a>
+              </li>
+
+              <li v-if="isRootRoute" class="nav-item">
+                <a class="nav-link" @click="scrollToSection('contact')">
+                  <span class="icon">📞</span>
+                  <span>Contacto</span>
+                </a>
+              </li>
+
+              <li v-if="isRootRoute" class="nav-item">
+                <a class="nav-link" @click="scrollToSection('blog')">
+                  <span class="icon">📝</span>
+                  <span>Blog</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
           <div class="navbar-right">
-            <button v-if="isLoggedIn" class="logout-button" @click="logOut()">
-              Cerrar Sesion
+            <button v-if="isLoggedIn" class="auth-button logout-button" @click="logOut()">
+              <span class="icon">🚪</span>
+              <span>Cerrar Sesión</span>
             </button>
-            <RouterLink v-else class="logout-button" to="/login"
-              >Iniciar Sesion</RouterLink
-            >
+            <RouterLink v-else class="auth-button login-button" to="/login">
+              <span class="icon">🔑</span>
+              <span>Iniciar Sesión</span>
+            </RouterLink>
           </div>
         </div>
       </div>
@@ -141,18 +197,31 @@ const navLinks = computed(() => {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 80%;
+  width: 90%; 
   z-index: 1000;
   padding-top: 15px;
+  transition: transform 0.3s ease-in-out;
 }
+
+.nav-hidden {
+  transform: translate(-50%, -100%);
+}
+
 .floating-nav {
   background-color: var(--navbar-bg) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   border-radius: 80px;
   margin: 0 auto;
   width: 100%;
-  max-width: 1200px;
-  opacity: 0.9;
+  max-width: auto;
+  opacity: 0.95;
+  /* transition: all 0.3s ease; */
+}
+
+.floating-nav:hover {
+  opacity: 1;
+  /* transform: translateY(-2px); */
 }
 
 .navbar-container {
@@ -160,84 +229,342 @@ const navLinks = computed(() => {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 0.5rem;
+  padding: 0.5rem 1.5rem;
+  flex-wrap: nowrap; 
 }
 
-.navbar-left {
+.navbar-content {
   display: flex;
   align-items: center;
+  justify-content: center; 
+  flex: 1; 
+  min-width: 0; 
 }
 
-.navbar-center {
-  display: flex;
-  justify-content: center;
-  flex-grow: 1;
-}
-
-.navbar-right {
+.logo-link {
   display: flex;
   align-items: center;
+  text-decoration: none;
+  transition: transform 0.3s ease;
 }
+
+.logo-link:hover {
+  transform: scale(1.05);
+}
+
 .navbar-logo {
   border-radius: 70px;
+  transition: transform 0.3s ease;
+}
+
+.navbar-brand {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-left: 1rem;
+  font-size: 1.25rem;
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex-wrap: nowrap; 
+  overflow-x: auto; 
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+}
+.navbar-nav::-webkit-scrollbar {
+  display: none; 
+}
+
+.nav-link {
+  white-space: nowrap; 
+  padding: 0.5rem 0.75rem; 
+}
+.navbar-right {
+  margin-left: auto;
+  flex-shrink: 0; 
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: 18px;
+  transition: all 0.3s ease;
+}
+
+.nav-link .icon {
+  margin-right: 0.5rem;
+  font-size: 1.1em;
+}
+
+.nav-link:hover {
+  background-color: var(--navbar-bg-hover);
+  transform: translateY(-2px);
+}
+
+.auth-button {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 70px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
 
 .logout-button {
   background-color: var(--button-primary);
   color: white;
+}
+
+.login-button {
+  background-color: #e6743c;
+  color: white;
+}
+
+.auth-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.auth-button .icon {
+  margin-right: 0.5rem;
+}
+
+/* Estilos del botón hamburguesa */
+.navbar-toggler {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
   border: none;
-  border-radius: 70px;
-  padding: 10px 20px;
-  font-size: 16px;
-  height: 50px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  text-decoration: none;
-  line-height: 1.6;
+  padding: 0;
+  z-index: 10;
+  margin-right: 10px;
 }
 
-.logout-button:hover {
-  background-color: var(--button-primary-hover);
+.navbar-toggler span {
+  width: 2rem;
+  height: 0.25rem;
+  background: var(--text-primary);
+  /* border-radius: 10px; */
+  transition: all 0.3s linear;
+  position: relative;
+  transform-origin: 1px;
+  
 }
 
-.nav-link {
-  cursor: pointer;
-}
-.nav-item {
-  transition: background-color 0.3s ease, border-radius 0.3s ease;
+.navbar-toggler.is-active span:first-child {
+  transform: rotate(45deg);
 }
 
-.nav-item:hover {
-  background-color: var(--navbar-bg-hover);
-  border-radius: 18px;
-}
-li {
-  padding: 0 10px;
+.navbar-toggler.is-active span:nth-child(2) {
+  opacity: 0;
 }
 
-@media (max-width: 991px) {
-  .navbar-container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.navbar-toggler.is-active span:last-child {
+  transform: rotate(-45deg);
+}
 
-  .navbar-center {
-    justify-content: flex-start;
-  }
-
-  .navbar-right {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-  }
-  .navbar-left {
-    display: none;
+@media (max-width: 1260px) {
+  .nav-wrapper {
+    width: 95%;
+    padding-top: 10px;
   }
 
   .floating-nav {
-    max-width: 100%;
     border-radius: 25px;
   }
+
+  .navbar-container {
+    padding: 0.5rem;
+    position: relative; 
+  }
+
+  .navbar-toggler {
+    display: flex;
+    margin-left: auto;
+    z-index: 1001;
+  }
+
+  /* Contenedor del menú desplegable */
+  .navbar-collapse {
+    display: none; 
+    position: absolute;
+    top: calc(100% + 10px); 
+    left: 0;
+    right: 0;
+    background-color: var(--navbar-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  /* Cuando el menú está activo */
+  .navbar-collapse.show {
+    display: block !important; 
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Contenedor del contenido del navbar */
+  .navbar-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  /* Lista de navegación */
+  .navbar-nav {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    gap: 0.5rem;
+  }
+
+  /* Elementos de navegación */
+  .nav-item {
+    width: 100%;
+    margin: 0;
+  }
+
+  /* Enlaces de navegación */
+  .nav-link {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: background-color 0.2s ease;
+  }
+
+  .nav-link:hover {
+    background-color: var(--navbar-bg-hover);
+  }
+
+  /* Contenedor de los botones de autenticación */
+  .navbar-right {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  /* Botones de autenticación */
+  .auth-button {
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+
+  /* Ajustes del logo */
+  .navbar-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo-link {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Animación para el menú desplegable */
+  .navbar-collapse {
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .navbar-collapse.show {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+
+/* Estilos específicos para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .nav-wrapper {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .navbar-collapse {
+    position: fixed;
+    top: 80px;
+    left: 10px;
+    right: 10px;
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+    margin: 0;
+  }
+
+  .navbar-brand {
+    font-size: 1rem;
+  }
+
+  .navbar-logo {
+    width: 80px;
+    height: 40px;
+  }
+}
+
+/* Transiciones y animaciones */
+.nav-hidden {
+  transform: translate(-50%, -100%);
+}
+
+/* Animación del menú desplegable */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar-collapse.show {
+  animation: slideIn 0.3s ease forwards;
+}
+
+/* Mejora de la visibilidad del contenido */
+.nav-link {
+  color: var(--text-primary);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-link .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
 }
 </style>

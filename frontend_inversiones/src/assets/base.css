@@ -30,8 +30,10 @@ Diseño del sitio:
     --shadow-color: rgba(0, 0, 0, 0.1);
     --button-primary: #f05c17;
     --button-primary-hover: #e6743c;
-    --navbar-bg: #d8d8d8;
-    --navbar-bg-hover: #fcfcfc;
+    --navbar-bg: rgba(255, 255, 255, 0.8);
+    --navbar-bg-hover: rgba(0, 0, 0, 0.05);
+    --text-primary: #333;
+  
 }
 
 /* Estilos de los botones de acción */
@@ -149,3 +151,7 @@ Diseño del sitio:
 .bg-danger {
     background-color: var(--pending-color) !important;
 }
+.login-button {
+    background-color: #e6743c;
+    color: white;
+  }

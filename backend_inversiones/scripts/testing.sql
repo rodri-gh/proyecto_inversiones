@@ -23,3 +23,9 @@ SELECT 'Proyecto', 'Descripción del proyecto', 10000, 'open', 'minero', 10.50
 FROM (SELECT 1) AS numbers;
 
 
+-- no puede haber dos projectos_timelines con el mismo valor de pase al mismo
+--                tiempo los dos con el mismo valor en project_id
+ALTER TABLE `project_timelines`
+ADD CONSTRAINT `unique_project_phase` UNIQUE (`project_id`, `phase`);
+
+
