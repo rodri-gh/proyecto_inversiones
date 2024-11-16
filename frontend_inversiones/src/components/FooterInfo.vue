@@ -76,7 +76,7 @@ const getSettings = async () => {
               <a href="#">WhatsApp: {{ settings.whatsapp }}</a>
             </li>
             <li>
-              <a href="mailto: info@mineralesfascinantes.com"
+              <a :href="'mailto:' + settings.email"
                 >Email: {{ settings.email }}</a
               >
             </li>

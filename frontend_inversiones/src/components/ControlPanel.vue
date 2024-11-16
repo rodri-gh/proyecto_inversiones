@@ -18,6 +18,7 @@ import FinanceView from "@/views/FinanceView.vue";
 import AnalysisAndReportsView from "@/views/AnalysisAndReportsView.vue";
 import ProjectsUserView from "@/views/ProjectsUserView.vue";
 import InvestmentsUserView from "@/views/InvestmentsUserView.vue";
+import SettingsLanding from "./SettingsLanding.vue";
 import axios from "axios";
 
 const baseURL = "http://localhost:3000/site-setting";
@@ -87,10 +88,6 @@ const componentslinks = computed(() => {
     });
     links.push({ name: "Reportes", component: AnalysisAndReportsView });
     links.push({ name: "Finanzas", component: FinanceView, divider: true });
-    links.push({ name: "Categorias Post", component: CategoryPostView });
-    links.push({ name: "Posts", component: PostsView });
-    links.push({ name: "FAQs", component: FaqAdmin });
-
     links.push({
       divider: true,
       title: "Administrar Web",
@@ -109,6 +106,11 @@ const componentslinks = computed(() => {
     links.push({
       name: "FAQs",
       component: FaqAdmin,
+      isDividerWithTitle: false,
+    });
+    links.push({
+      name: "Ajustes de la Web",
+      component: SettingsLanding,
       isDividerWithTitle: false,
     });
 
