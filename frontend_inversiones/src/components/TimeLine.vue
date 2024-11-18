@@ -419,7 +419,15 @@ const createTimeLine = async () => {
     priceMineral1: mineral_1.value,
     priceMineral2: mineral_2.value,
   };
-  console.log(timeLine.value);
+  console.log(props.idProject);
+  console.log(phase.value);
+  console.log(startDate.value);
+  console.log(endDate.value);
+  console.log(status.value);
+  console.log(description.value);
+  console.log(mineral_1.value);
+  console.log(mineral_2.value);
+  console.log(timeLine);
   try {
     console.log(baseURL);
     const data = await axios.post(baseURL, timeLine, header);
