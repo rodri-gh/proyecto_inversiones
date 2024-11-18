@@ -158,8 +158,8 @@ const headers = [
   "Fecha Estimada de fin",
   "Nombre",
   "Descripcion",
-  "Meta",
-  "Ganancia",
+  /*   "Meta",
+  "Ganancia", */
   "Estado del Proyecto",
 ];
 

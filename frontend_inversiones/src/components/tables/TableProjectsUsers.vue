@@ -15,8 +15,8 @@
           <td>{{ item.endDate }}</td>
           <td>{{ item.name }}</td>
           <td>{{ item.description }}</td>
-          <td>{{ item.investmentGoal }}</td>
-          <td>{{ item.profitPercentage }}</td>
+          <!--   <td>{{ item.investmentGoal }}</td>
+          <td>{{ item.profitPercentage }}</td> -->
           <td v-if="item.status == 'open'">Abierto</td>
           <td v-else-if="item.status == 'in_transit'">En curso</td>
           <td v-else>Cerrado</td>
