@@ -75,11 +75,11 @@ const componentslinks = computed(() => {
       component: MineralsView,
       isDividerWithTitle: false,
     });
-    /* links.push({
+    links.push({
       name: "Solicitudes de retiro",
       component: WithdrawalRequestsView,
       isDividerWithTitle: false,
-    }); */
+    });
 
     links.push({
       name: "Responder Contacto",
