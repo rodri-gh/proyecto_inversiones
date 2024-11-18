@@ -5,7 +5,7 @@ import axios from "axios";
 import { ref, onMounted } from "vue";
 import Button from "@/components/base/Button.vue";
 import InputFile from "@/components/base/InputFile.vue";
-import TableWithdrawal from "./tables/TableWithdrawal.vue";
+import TableWithdrawalUsers from "./tables/TableWithdrawalUsers.vue";
 import CardsSummary from "@/components/CardsSummary.vue";
 
 const baseUrl = "http://localhost:3000/withdrawal-request/user/";
@@ -30,7 +30,13 @@ const inputFileRef = ref(null);
 const userId = getUserIdOfLocalStorage();
 const header = getHeaderRequest();
 
-const headers = ["Id del proyecto", "Cantidad", "Estado"];
+const headers = [
+  "Proyecto",
+  "Cantidad",
+  "Fecha de Solicitud",
+  "Fecha de Aprobacion",
+  "Estado",
+];
 
 onMounted(() => {
   getWithdrawalRequests();
@@ -51,6 +57,8 @@ const getWithdrawalRequests = async () => {
       rejectedRequests.value = withdrawalRequests.value.filter(
         (req) => req.status === "rejected"
       );
+
+      console.log("Solicitudes de retiro:", withdrawalRequests.value);
       updateSummaryRequests();
     } else {
       console.error("La respuesta de la API no es un array:", response.data);
@@ -205,16 +213,16 @@ const resetForm = () => {
 
     <div class="tab-content" id="withdrawalTabsContent">
       <div class="tab-pane fade show active" id="all" role="tabpanel">
-        <TableWithdrawal :headers="headers" :items="withdrawalRequests" />
+        <TableWithdrawalUsers :headers="headers" :items="withdrawalRequests" />
       </div>
       <div class="tab-pane fade" id="pending" role="tabpanel">
-        <TableWithdrawal :headers="headers" :items="pendingRequests" />
+        <TableWithdrawalUsers :headers="headers" :items="pendingRequests" />
       </div>
       <div class="tab-pane fade" id="approved" role="tabpanel">
-        <TableWithdrawal :headers="headers" :items="approvedRequests" />
+        <TableWithdrawalUsers :headers="headers" :items="approvedRequests" />
       </div>
       <div class="tab-pane fade" id="rejected" role="tabpanel">
-        <TableWithdrawal :headers="headers" :items="rejectedRequests" />
+        <TableWithdrawalUsers :headers="headers" :items="rejectedRequests" />
       </div>
     </div>
 
