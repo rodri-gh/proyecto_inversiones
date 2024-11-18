@@ -15,6 +15,26 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+router.get('/:id', async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const investments = await Investment.findAll({ where: { userId: id }});
+    getHandleSuccess(200)(res, investments);
+  } catch (error) {
+    getHandleError(error, res)
+  }
+});
+
+router.get('/formData/:id', async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const investments = await Investment.findAll({ where: { userId: id}});
+    getHandleSuccess(200)(res, investments);
+  } catch (error) {
+    getHandleError(error, res)
+  }
+});
+
 router.get('/user/:id', async (req, res, next) => {
   const { id } = req.params;
   try {

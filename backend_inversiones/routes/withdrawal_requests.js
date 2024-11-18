@@ -19,9 +19,14 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
+<<<<<<< HEAD
 
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     cb(null, uniqueSuffix + path.extname(file.originalname));
+=======
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, uniqueSuffix + path.extname(file.originalname));
+>>>>>>> ed44825 (++)
   }
 });
 
@@ -65,9 +70,22 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+<<<<<<< HEAD
 
 
 router.patch('/status/:id', async (req, res) => {
+=======
+router.get('/pending', async (req, res, next) => {
+  try {
+    const withdrawalRequests = await WithdrawalRequest.findAll({ where: { status:'pending' }});
+    getHandleSuccess(200)(res, withdrawalRequests);
+  } catch (error) {
+    getHandleError(error, res);
+  }
+});
+
+router.get('/:id', async (req, res, next) => {
+>>>>>>> ed44825 (++)
   const { id } = req.params;
   const { status } = req.body;
 
@@ -142,21 +160,21 @@ router.get('/user/:id', async function (req, res, next) {
   }
 });
 
-router.post('/', upload.fields([{ name: 'photo_document' }, { name: 'selfie_photo' }]), async function (req, res, next) {
-  const { investment_id, user_id, request_amount, commission_apply, receive_amount, status } = req.body;
-  const photo_document = req.files['photo_document'] ? req.files['photo_document'][0].filename : null;
-  const selfie_photo = req.files['selfie_photo'] ? req.files['selfie_photo'][0].filename : null;
+router.post('/', upload.fields([{ name: 'photoDocument' }, { name: 'selfiePhoto' }]), async function (req, res, next) {
+  const { investmentId, userId, requestAmount, commissionApply, receiveAmount, status } = req.body;
+  const photoDocument = req.files['photoDocument'] ? req.files['photoDocument'][0].filename : null;
+  const selfiePhoto = req.files['selfiePhoto'] ? req.files['selfiePhoto'][0].filename : null;
   const projectStatus = status || 'pending';
 
   try {
     const newRequest = await WithdrawalRequest.create({
-      investment_id,
-      user_id,
-      requestAmount: request_amount,
-      commissionApply: commission_apply,
-      receiveAmount: receive_amount,
-      photoDocument: photo_document,
-      selfiePhoto: selfie_photo,
+      investmentId: investmentId,
+      userId: userId,
+      requestAmount: requestAmount,
+      commissionApply: commissionApply,
+      receiveAmount: receiveAmount,
+      photoDocument: photoDocument,
+      selfiePhoto: selfiePhoto,
       status: projectStatus
     });
     res.status(201).json({

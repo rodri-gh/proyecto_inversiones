@@ -3,6 +3,7 @@ import { getHandleSuccess } from '../helpers/handleSuccess.js';
 import { Project, Investment, FinancialTransactions, OperatingExpense} from '../models/mainExport.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { Sequelize } from 'sequelize';
+import { sequelize } from '../database/connection.js';
 
 const router = express.Router();
 router.get('/projectsStatus', async (req, res, next) => {
@@ -104,6 +105,20 @@ router.get('/totalInvestmentVsReturn/:id', async (req, res, next) => {
     } catch (error) {
         console.log(error);
       getHandleError(error, res)
+    }
+  });
+
+  router.get('/getMovementsFromLast7Days', async (req, res, next) => {
+    try {
+      const results = await sequelize.query('CALL getMovementsFromLast7Days()');
+      console.log(results);
+      if (results.length === 0) {
+        console.log('Not found movements of the last 7 days.');
+      }
+      getHandleSuccess(200)(res, results);
+    } catch (error) {
+      console.error('Error to run store Procedure:', error);
+      getHandleError(error, res);
     }
   });
 

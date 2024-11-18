@@ -10,6 +10,14 @@ WithdrawalRequest.init({
     primaryKey: true,
     autoIncrement: true
   },
+  investmentId: {
+    type: DataTypes.BIGINT,
+    allowNull: false
+  },
+  userId: {
+    type: DataTypes.BIGINT,
+    allowNull: false
+  },
   requestAmount: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true
