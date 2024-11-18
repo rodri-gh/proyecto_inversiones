@@ -13,7 +13,6 @@ import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue'
 import UserHomeView from '@/views/UserHomeView.vue'
 import MovementsView from '@/views/MovementsView.vue'
 import ControlPanel from '@/components/ControlPanel.vue'
-import InvestmentsOfUser from '@/components/InvestmentsOfUser.vue'
 import AnalysisAndReportsView from '@/views/AnalysisAndReportsView.vue'
 import FinanceView from '@/views/FinanceView.vue'
 
@@ -45,7 +44,6 @@ const router = createRouter({
       name: 'projects',
       component: ProjectsView,
       meta: { requiresAuth: true },
-
     },
     {
       path: '/projects/:id',
@@ -132,12 +130,6 @@ const router = createRouter({
       path: "/dashboard",
       name: "dashboard",
       component: ControlPanel,
-      meta: { requiresAuth: true }
-    },
-    {
-      path: "/investmentOfUser",
-      name: "investmentOfUser",
-      component: InvestmentsOfUser,
       meta: { requiresAuth: true }
     },
     {

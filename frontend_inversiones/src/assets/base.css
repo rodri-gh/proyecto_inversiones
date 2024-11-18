@@ -20,8 +20,8 @@ Diseño del sitio:
 
 /* Colores personalizados */
 :root {
-    --primary-color: #ff9900; /* Botón de acción */
-    --primary-light: #ffa927; /* Botón de acción en modo oscuro */
+    --primary-color: #ff8800; /* Botón de acción */
+    --primary-light: #ffa127; /* Botón de acción en modo oscuro */
     --secondary-color: #b1b1b1; /* Fondo de barra de navegación */
     --text-color: #333333; /* Color del texto */
     --pending-color: #ff3300; /* Etiqueta de estado pendiente */

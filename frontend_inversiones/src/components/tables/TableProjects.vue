@@ -17,14 +17,13 @@
                     <td>{{ item.description }}</td>
                     <td>{{ item.investmentGoal }}</td>
                     <td>{{ item.profitPercentage }}</td>
-                    <td v-if="item.status == 'open'">Abierto</td>
-                    <td v-else-if="item.status == 'in_transit'">En curso</td>
-                    <td v-else>Cerrado</td>
+                    <td v-if="item.deleted == 0">No</td>
+                    <td v-else>Si</td>
                     <td>
-                        <span v-if="item.deleted === 0" class="badge bg-success"
-                        >Activo</span
+                        <span v-if="item.status === 'open'" class="badge bg-success"
+                        >Abierto</span
                         >
-                        <span v-else class="badge bg-danger">Eliminado</span>
+                        <span v-else class="badge bg-danger">Cerrado</span>
                     </td>
                     <td>
                         <Button
@@ -49,7 +48,7 @@
                             } btn-sm m-1`"
                         />
                         <Button
-                            @click="() => actions.view(item.id)"
+                            @click="() => actions.view(item)"
                             buttonClass="btn btn-info btn-sm m-1"
                             icon="fa fa-eye"
                         />
