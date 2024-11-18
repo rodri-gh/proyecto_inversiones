@@ -41,7 +41,7 @@
                   Contrato
                 </span>
                 <span
-                  v-if="timeline.phase == 'inversión'" 
+                  v-if="timeline.phase == 'inversion'" 
                   class="phase-badge"
                   :class="getPhaseClass(timeline.phase)"
                 >
@@ -57,8 +57,8 @@
                 </span>
 
                 <span
-                  v-if="timeline.phase == 'envío'"
-                  class="phase-"
+                  v-if="timeline.phase == 'envio'"
+                  class="phase-badge"
                   :class="getPhaseClass(timeline.phase)"
                 >
                   Fecha de envio
@@ -73,34 +73,19 @@
                 </span>
 
                 <span
+                  v-if="timeline.phase == 'ganancia'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Fecha de Ganancia
+                </span>
+
+                <span
                   v-if="timeline.phase == 'pago'"
                   class="phase-badge"
                   :class="getPhaseClass(timeline.phase)"
                 >
                   Fecha de Pago
-                </span>
-
-                <span
-                  v-if="timeline.phase == 'ganancia'"
-                  class="phase-badge"
-                  :class="getPhaseClass(timeline.phase)"
-                >
-                  Fecha de Pago
-                </span>
-
-                <span
-                  v-if="timeline.phase != 'contrato' 
-                  && timeline.phase != 'inversión'
-                  && timeline.phase != 'compra_de_mineral'
-                  && timeline.phase != 'envío'
-                  && timeline.phase != 'entrega'
-                  && timeline.phase != 'pago'
-                  && timeline.phase != 'ganancia'
-                  "
-                  class="phase-badge"
-                  :class="getPhaseClass(timeline.phase)"
-                >
-                  {{ timeline.phase }}
                 </span>
 
                 <div class="dates mt-2">
@@ -314,22 +299,25 @@ const selectedTimeLine = ref({});
 
 const phases = [
   "contrato",
-  "inversión",
+  "inversion",
   "compra_de_mineral",
-  "envío",
+  "envio",
   "entrega",
-  "pago",
-  "ganancia"
+  "ganancia",
+  "pago"
 ];
 
 const availablePhases = computed(() => {
   // Siempre incluye la fase actual
   const usedPhases = timeLines.value.map((timeline) => timeline.phase);
+  console.log(usedPhases);
   const uniqueUsedPhases = [...new Set(usedPhases)];
+  console.log(uniqueUsedPhases);
   // Incluye la fase actual en las fases disponibles
   const remainingPhases = phases.filter(
     (phase) => !uniqueUsedPhases.includes(phase)
   );
+  console.log(remainingPhases);
   // Asegúrate de que la fase actual esté siempre disponible
   if (
     selectedTimeLine.value.phase &&
@@ -337,6 +325,7 @@ const availablePhases = computed(() => {
   ) {
     remainingPhases.push(selectedTimeLine.value.phase);
   }
+  console.log(remainingPhases);
   return remainingPhases;
 });
 
@@ -382,12 +371,12 @@ const getPhaseClass = (phase) => {
   const phaseLower = phase.toLowerCase();
   const phaseClasses = {
     'contrato': "phase-contract",
-    "inversión": "phase-prebuying",
+    "inversion": "phase-prebuying",
     'compra_de_mineral': "phase-buying",
-    "envío": "phase-entry",
+    "envio": "phase-entry",
     "entrega": "phase-exit",
-    'pago': "phase-certification",
-    'ganancia': "phase-contract",
+    'ganancia': "phase-certification",
+    'pago': "phase-contract",
   };
   return phaseClasses[phaseLower] || "phase-default";
 };
@@ -411,9 +400,9 @@ const getTimeLines = async () => {
     console.log(baseURL+"project/" + props.idProject);
     const data = await axios.get(baseURL+"project/" + props.idProject, header);
     console.log(data.data)
-    timeLines.value = data.data.sort(
-      (a, b) => new Date(a.startDate) - new Date(b.startDate)
-    );
+    timeLines.value = data.data
+      .filter((item) => phases.includes(item.phase))
+      .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
   } catch (error) {
     console.error(error);
   }
@@ -430,7 +419,15 @@ const createTimeLine = async () => {
     priceMineral1: mineral_1.value,
     priceMineral2: mineral_2.value,
   };
-  console.log(timeLine.value);
+  console.log(props.idProject);
+  console.log(phase.value);
+  console.log(startDate.value);
+  console.log(endDate.value);
+  console.log(status.value);
+  console.log(description.value);
+  console.log(mineral_1.value);
+  console.log(mineral_2.value);
+  console.log(timeLine);
   try {
     console.log(baseURL);
     const data = await axios.post(baseURL, timeLine, header);

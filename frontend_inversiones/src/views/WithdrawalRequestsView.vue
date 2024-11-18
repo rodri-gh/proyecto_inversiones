@@ -87,19 +87,14 @@
 
 
 <script setup>
-
-
-
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import Button from "@/components/base/Button.vue";
-import TableMinerals from "@/components/tables/TableMinerals.vue";
 import Modal from "@/components/base/Modal.vue";
 import Input from "@/components/base/Input.vue";
-import InputTextArea from "@/components/base/InputTextArea.vue";
 import InputFile from "@/components/base/InputFile.vue";
 import { openModal, closeModal } from "@/utils/modal";
-import { getHeaderRequest } from "@/authService";
+import { getHeaderRequest, getUserIdOfLocalStorage } from "@/authService";
 
 const withdrawals = ref([]);
 const requestAmount = ref("");
@@ -110,8 +105,11 @@ const selectedMineral = ref({});
 const previewUrl = ref(null);
 const baseURL = "http://localhost:3000/withdrawal-request/";
 const header = getHeaderRequest();
+const userId = getUserIdOfLocalStorage();
 
-
+onMounted(() => {
+    fetchWithdrawals();
+})
 
 const fetchWithdrawals = async () => {
     try {
@@ -125,18 +123,14 @@ const fetchWithdrawals = async () => {
     }
 };
 
-
-
 const updateWithdrawal = async () => {
     if (!selectedWithdrawal.value || !selectedWithdrawal.value.id) {
         console.error("No hay una solicitud de retiro seleccionada o el ID es inválido.");
         return;
     }
-
     const requestData = {
         requestAmount: requestAmount.value,
     };
-
     try {
         await axios.put(
             `http://localhost:3000/withdrawal/${selectedWithdrawal.value.id}`,
@@ -159,7 +153,7 @@ const updateWithdrawal = async () => {
 
 const deleteWithdrawal = async (id) => {
     try {
-        await axios.patch(`http://localhost:3000/withdrawal_request/${id}`);
+        await axios.patch(`http://localhost:3000/withdrawal-request/${id}`);
         withdrawals.value = withdrawals.value.filter((w) => w.deleted == 1); // Eliminar de la lista
         fetchWithdrawals();
     } catch (error) {
@@ -171,7 +165,6 @@ const selectWithdrawal = (withdrawal) => {
     selectedWithdrawal.value = withdrawal;
     requestAmount.value = withdrawal.requestAmount;
 };
-
 
 //revisando si funcionan las imagenes 
 const previewImage = (event) => {
@@ -191,7 +184,6 @@ const previewImage = (event) => {
         console.error("No se pudo leer el archivo.");
     }
 };
-
 
 const selectMineral = (mineral) => {
   selectedMineral.value = mineral;
@@ -223,10 +215,10 @@ const saveMineral = async () => {
     });
  
     closeModal("modalMineral");
-    getMinerals();
+    fetchWithdrawals();
     reset();
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -238,30 +230,21 @@ const reset = () => {
   selectedMineral.value = {};
 };
 
-fetchWithdrawals(); 
-
 const createFormData = () => {
-const formData = new FormData(); 
-    formData.append("investment_id", 1);/////// predeterminado  (enlazar )
-    formData.append("user_id", 1); 
-
-    console.log(parseFloat(requestAmount.value));
-
-
-
-    formData.append("requestAmount", requestAmount.value);
-    formData.append("commission_apply", requestAmount.value);
-    formData.append("receive_amount", requestAmount.value);
-    
-    if (photoDocument.value) {
-        formData.append("photoDocument", photoDocument.value);
-    }
-    if (selfiePhoto.value) {
-        formData.append("selfiePhoto", selfiePhoto.value);
-    }
-return formData;
+    const formData = new FormData(); 
+        formData.append("investmentId", 44);/////// predeterminado  (enlazar )
+        formData.append("userId", userId); 
+        formData.append("requestAmount", requestAmount.value);
+        formData.append("commissionApply", requestAmount.value);
+        formData.append("receiveAmount", requestAmount.value);
+        if (photoDocument.value) {
+            formData.append("photoDocument", photoDocument.value);
+        }
+        if (selfiePhoto.value) {
+            formData.append("selfiePhoto", selfiePhoto.value);
+        }
+    return formData;
 };
-
 
 const handleImageChange = (file) => {
   photoDocument.value = file;
@@ -272,12 +255,7 @@ const handleImageChange = (file) => {
     previewUrl.value = null;
   }
 };
-
-
-
-
 </script>
 
 <style scoped>
-
 </style>

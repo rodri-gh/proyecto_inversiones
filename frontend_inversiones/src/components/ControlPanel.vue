@@ -3,11 +3,9 @@ import { computed, markRaw, ref, onMounted } from "vue";
 import { getUserRoleOfLocalStorage } from "@/authService";
 import MyProfile from "./MyProfile.vue";
 import ProjectsView from "@/views/ProjectsView.vue";
-import InvestmentsOfUser from "./InvestmentsOfUser.vue";
 import UserWithdrawalRequests from "./UserWithdrawalRequests.vue";
 import WithdrawalRequestsView from "@/views/WithdrawalRequestsView.vue";
 import ConfigurationAndSecurity from "./Dashboard/ConfigurationAndSecurity.vue";
-import Start from "./Dashboard/Start.vue";
 import ContactView from "@/views/ContactView.vue";
 import UsersView from "@/views/UsersView.vue";
 import MineralsView from "@/views/MineralsView.vue";
@@ -19,7 +17,9 @@ import AnalysisAndReportsView from "@/views/AnalysisAndReportsView.vue";
 import ProjectsUserView from "@/views/ProjectsUserView.vue";
 import InvestmentsUserView from "@/views/InvestmentsUserView.vue";
 import SettingsLanding from "./SettingsLanding.vue";
+import UserSummary from "./UserSummary.vue";
 import axios from "axios";
+import Balances from "./Balances.vue";
 
 const baseURL = "http://localhost:3000/site-setting";
 
@@ -57,9 +57,9 @@ const componentslinks = computed(() => {
       isDividerWithTitle: true,
     },
     { name: "Mi Perfil", component: MyProfile, isDividerWithTitle: false },
+    { name: "Inicio", component: UserSummary, isDividerWithTitle: false },
   ];
   if (userRole == "super_user" || userRole == "admin") {
-    links.push({ name: "Inicio", component: Start, isDividerWithTitle: false });
     links.push({
       name: "Gestion de Usuarios",
       component: UsersView,
@@ -121,13 +121,18 @@ const componentslinks = computed(() => {
     }); */
   } else if (userRole == "client") {
     links.push({
-      name: "Projectos",
-      component: ProjectsUserView,
+      name: "Balances",
+      component: Balances,
       isDividerWithTitle: false,
     });
     links.push({
       name: "Inversiones",
       component: InvestmentsUserView,
+      isDividerWithTitle: false,
+    });
+    links.push({
+      name: "Projectos",
+      component: ProjectsUserView,
       isDividerWithTitle: false,
     });
     links.push({

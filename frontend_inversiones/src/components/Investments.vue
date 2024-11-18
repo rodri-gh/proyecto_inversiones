@@ -127,6 +127,7 @@ onUnmounted(() => {
 });
 
 const getInvestments = async () => {
+    console.log('lleguee a inversiones');
     try {
         const data = await axios.get(baseURL + "project/" + props.idProjectInvestment, header);
         investments.value = data.data;
@@ -136,6 +137,7 @@ const getInvestments = async () => {
 };
 
 const getUsers = async () => {
+    console.log
     try {
         const data = await axios.get("http://localhost:3000/user", header);
         users.value = data.data;
