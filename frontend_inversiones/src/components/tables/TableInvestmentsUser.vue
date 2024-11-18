@@ -12,8 +12,8 @@
             No hay inversiones registradas
           </td>
         </tr>
-        <tr v-for="item in items" :key="item.id">
-          <td>{{ item.investmentDate }}</td>
+        <tr v-for="item in paginatedItems" :key="item.id">
+          <td>{{ formatDate(item.investmentDate) }}</td>
           <td>{{ item.amount }}</td>
           <td>{{ item.currency }}</td>
           <td>{{ item.profitPercentage }}%</td>
@@ -35,7 +35,7 @@
             />
           </td>
         </tr>
-        <!-- Fila del total -->
+
         <tr v-if="showTotal" class="table-info">
           <td colspan="1"><strong>Total Inversiones</strong></td>
           <td colspan="3">
@@ -49,11 +49,45 @@
         </tr>
       </tbody>
     </table>
+
+    <nav
+      aria-label="Page navigation"
+      class="d-flex justify-content-center mt-3"
+    >
+      <ul class="pagination">
+        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+          <a
+            class="page-link"
+            href="#"
+            @click.prevent="changePage(currentPage - 1)"
+            >Anterior</a
+          >
+        </li>
+        <li
+          v-for="page in totalPages"
+          :key="page"
+          class="page-item"
+          :class="{ active: page === currentPage }"
+        >
+          <a class="page-link" href="#" @click.prevent="changePage(page)">{{
+            page
+          }}</a>
+        </li>
+        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+          <a
+            class="page-link"
+            href="#"
+            @click.prevent="changePage(currentPage + 1)"
+            >Siguiente</a
+          >
+        </li>
+      </ul>
+    </nav>
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import Button from "@/components/base/Button.vue";
 
 const props = defineProps({
@@ -75,6 +109,23 @@ const props = defineProps({
   },
 });
 
+const itemsPerPage = 10;
+const currentPage = ref(1);
+
+const totalPages = computed(() => Math.ceil(props.items.length / itemsPerPage));
+
+const paginatedItems = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return props.items.slice(start, end);
+});
+
+const changePage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+};
+
 const calculateTotal = computed(() => {
   const total = props.items.reduce(
     (sum, item) => sum + parseFloat(item.amount),
@@ -82,6 +133,10 @@ const calculateTotal = computed(() => {
   );
   return total.toFixed(2);
 });
+
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString();
+};
 
 const calculateTotalEarnings = computed(() => {
   const totalEarnings = props.items.reduce(
@@ -92,3 +147,19 @@ const calculateTotalEarnings = computed(() => {
   return totalEarnings.toFixed(2);
 });
 </script>
+
+<style scoped>
+.pagination .page-link {
+  color: var(--primary-color);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+}
+</style>
