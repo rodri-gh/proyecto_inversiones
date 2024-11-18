@@ -16,6 +16,16 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+router.get('/pending', async (req, res, next) => {
+  try {
+    const contacts = await Contact.findAll({ where: { answer: 'pending' } });
+    verifyIfIdExists(contacts);
+    getHandleSuccess(200)(res, contacts)
+  } catch (error) {
+    getHandleError(error, res)
+  }
+});
+
 router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {

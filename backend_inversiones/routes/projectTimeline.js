@@ -119,6 +119,7 @@ async function paymentsToInvestors(investments, totalInvestment, netProfit) {
 
 async function depositPayment(userId, projectId, amountInvested, amountEarned, ) {
   await ProjectPayment.create({userId, projectId, amountInvested, amountEarned});
+  // arreglar 
   await Project.update({ userId, status:'closed' }, {
     where: { id: projectId }
   });
