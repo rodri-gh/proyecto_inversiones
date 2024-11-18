@@ -12,7 +12,7 @@
             No hay solicitudes de retiro
           </td>
         </tr>
-        <tr v-for="item in items" :key="item.id">
+        <tr v-for="item in paginatedItems" :key="item.id">
           <td>{{ item.investment.project.name }}</td>
           <td>{{ item.user.name }}</td>
           <td>
@@ -47,10 +47,46 @@
         </tr>
       </tbody>
     </table>
+
+    <nav
+      aria-label="Page navigation"
+      class="d-flex justify-content-center mt-3"
+    >
+      <ul class="pagination">
+        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+          <a
+            class="page-link"
+            href="#"
+            @click.prevent="changePage(currentPage - 1)"
+            >Anterior</a
+          >
+        </li>
+        <li
+          v-for="page in totalPages"
+          :key="page"
+          class="page-item"
+          :class="{ active: page === currentPage }"
+        >
+          <a class="page-link" href="#" @click.prevent="changePage(page)">{{
+            page
+          }}</a>
+        </li>
+        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+          <a
+            class="page-link"
+            href="#"
+            @click.prevent="changePage(currentPage + 1)"
+            >Siguiente</a
+          >
+        </li>
+      </ul>
+    </nav>
   </div>
 </template>
 
 <script setup>
+import { computed, ref } from "vue";
+
 const props = defineProps({
   headers: {
     type: Array,
@@ -65,6 +101,23 @@ const props = defineProps({
     required: true,
   },
 });
+
+const itemsPerPage = 10;
+const currentPage = ref(1);
+
+const totalPages = computed(() => Math.ceil(props.items.length / itemsPerPage));
+
+const paginatedItems = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return props.items.slice(start, end);
+});
+
+const changePage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+};
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString();
@@ -88,3 +141,19 @@ const getStatusText = (status) => {
   return texts[status] || status;
 };
 </script>
+
+<style scoped>
+.pagination .page-link {
+  color: var(--primary-color);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+}
+</style>
