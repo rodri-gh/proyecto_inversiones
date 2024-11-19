@@ -13,7 +13,6 @@
     PRIMARY KEY (`id`) USING BTREE
   ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
   CREATE TABLE IF NOT EXISTS `users` (
     `id` bigint NOT NULL AUTO_INCREMENT,
     `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
@@ -28,7 +27,6 @@
     UNIQUE KEY `phone` (`phone`)
   ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
   CREATE TABLE IF NOT EXISTS `accounts` (
     `id` bigint NOT NULL AUTO_INCREMENT,
     `user_id` bigint NOT NULL DEFAULT '0',
@@ -39,7 +37,6 @@
     KEY `FK_account_users` (`user_id`),
     CONSTRAINT `FK_account_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
   ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 CREATE TABLE `investments` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -79,7 +76,6 @@ CREATE TABLE `investments` (
     CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
   CREATE TABLE IF NOT EXISTS `minerals` (
     `id` bigint NOT NULL AUTO_INCREMENT,
     `name` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
@@ -90,7 +86,6 @@ CREATE TABLE `investments` (
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE KEY `name` (`name`)
   ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
   CREATE TABLE IF NOT EXISTS `operating_expenses` (
     `id` bigint NOT NULL AUTO_INCREMENT,
@@ -103,7 +98,6 @@ CREATE TABLE `investments` (
     KEY `project_id` (`project_id`),
     CONSTRAINT `project_id_fk_5` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
   ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 CREATE TABLE `project_minerals` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -125,7 +119,6 @@ CREATE TABLE `project_minerals` (
   CONSTRAINT `id_project` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
   CONSTRAINT `mineral_id` FOREIGN KEY (`mineral_id`) REFERENCES `minerals` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
-
 
   CREATE TABLE IF NOT EXISTS `project_timelines` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -209,7 +202,6 @@ CREATE TABLE `project_minerals` (
     `id` INT NOT NULL AUTO_INCREMENT, 
     `investment_id` BIGINT NOT NULL, 
     `user_id` BIGINT NOT NULL, 
-    -- `type` ENUM('ganancias', 'type2', 'type3') NOT NULL,  el ipo de solicitud (ajustar los valores según lo que nesesitemos)
     `request_amount` DECIMAL(10,2) NOT NULL,
     `commission_apply` DECIMAL(10,2) NOT NULL, 
     `receive_amount` DECIMAL(10,2) NOT NULL,
@@ -224,7 +216,6 @@ CREATE TABLE `project_minerals` (
     CONSTRAINT `fk_investment` FOREIGN KEY (`investment_id`) REFERENCES `investments` (`id`), 
     CONSTRAINT `fk_user_withdrawal` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) 
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 CREATE TABLE `stage_project_minerals` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -253,6 +244,24 @@ CREATE TABLE `project_payments` (
   CONSTRAINT `fk_project_payments_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `financial_transactions` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
+  `project_id` bigint(20) DEFAULT NULL,
+  `transaction_type` enum('deposit','withdrawal','commission','income','expense') NOT NULL,
+  `amount` decimal(20,3) NOT NULL,
+  `transaction_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `description` text NOT NULL,
+  `status` enum('completed','pending','failed') NOT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_project_id` (`project_id`),
+  KEY `idx_status` (`status`),
+  CONSTRAINT `fk_financial_transactions_project_id` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
+  CONSTRAINT `fk_financial_transactions_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
 
 
 INSERT INTO `users` (`id`, `email`, `phone`, `role`, `two_factor_enabled`, `name`, `last_name`, `deleted`) VALUES
@@ -267,11 +276,10 @@ INSERT INTO `minerals` (`id`, `name`, `price`, `description`, `image`, `deleted`
 	(3, 'Plomo', 95.690000, 'Descripción del plomo', '1729202497906.jpeg', 1),
 	(4, 'Cobre', 25.630000, 'Descripción del cobre', '1729202520309.jpeg', 0);
 
-
 INSERT INTO `projects` (`id`, `name`, `description`, `investment_goal`, `status`, `created_at`, `profit_percentage`, `deleted`) VALUES
 	(1, 'Hiram Craft', 'Mollit quae ut autem', 80, 'closed', '2024-10-18 14:31:58', 50.00, 0),
 	(2, 'Chester Scott', 'Est autem et except', 97, 'open', '2024-10-18 15:22:37', 85.00, 1);
 
 INSERT INTO `operating_expenses` (`id`, `name`, `description`, `expenses`, `project_id`, `deleted`) VALUES
 	(1, 'gatos 1', 'dsada', 58.00, 1, 1),
-	(2, 'gatos 2', 'dsada', 90.00, 1, 1);
+	(2, 'gatos 2', 'dsada', 90.00, 1, 1); 

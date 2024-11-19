@@ -49,7 +49,7 @@ router.get('/', async (req, res, next) => {
 // Crear configuración del sitio
 router.post('/', upload.fields([{ name: 'logo' }, { name: 'about_image' }]), async (req, res, next) => {
   const {
-    name, homeTitle, homeText, aboutTitle, aboutText, facebook, instagram, tiktok, x,
+    appCommission, name, homeTitle, homeText, aboutTitle, aboutText, facebook, instagram, tiktok, x,
     phone, whatsapp, email, address, businessHours, dataPolicyLink, termsConditionsLink
   } = req.body;
 
@@ -58,7 +58,7 @@ router.post('/', upload.fields([{ name: 'logo' }, { name: 'about_image' }]), asy
 
   try {
     await SiteSetting.create({
-      logo, name, homeTitle, homeText, aboutTitle, aboutText, aboutImage,
+      appCommission, logo, name, homeTitle, homeText, aboutTitle, aboutText, aboutImage,
       facebook, instagram, tiktok, x, phone, whatsapp, email, address, businessHours,
       dataPolicyLink, termsConditionsLink
     });
@@ -72,7 +72,7 @@ router.post('/', upload.fields([{ name: 'logo' }, { name: 'about_image' }]), asy
 router.put('/:id', upload.fields([{ name: 'logo' }, { name: 'about_image' }]), async (req, res, next) => {
   const { id } = req.params;
   const {
-    name, homeTitle, homeText, aboutTitle, aboutText, facebook, instagram, tiktok, x,
+    appCommission, name, homeTitle, homeText, aboutTitle, aboutText, facebook, instagram, tiktok, x,
     phone, whatsapp, email, address, businessHours, dataPolicyLink, termsConditionsLink
   } = req.body;
 
@@ -119,7 +119,7 @@ router.put('/:id', upload.fields([{ name: 'logo' }, { name: 'about_image' }]), a
 
     await SiteSetting.update(
       {
-        logo, name, homeTitle, homeText, aboutTitle, aboutText, aboutImage,
+        appCommission, logo, name, homeTitle, homeText, aboutTitle, aboutText, aboutImage,
         facebook, instagram, tiktok, x, phone, whatsapp, email, address, businessHours,
         dataPolicyLink, termsConditionsLink
       },

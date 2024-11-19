@@ -21,6 +21,10 @@ ProjectMineral.init(
             type: DataTypes.BIGINT,
             allowNull: false
         },
+        operatingExpenseId: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
         purchasePrice: {
             type: DataTypes.DECIMAL(20, 2),
             allowNull: false

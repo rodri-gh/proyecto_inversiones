@@ -49,6 +49,14 @@ const getFinancialSummary = async () => {
         <h3 class="">Resumen para tu rol: <strong>{{ userRole }}</strong></h3>
         <div v-if="userRole === 'super_user'">
             <div class="card mb-4 shadow-sm">
+                    <div class="card-header">
+                        <h5><i class="bi bi-bar-chart"></i> Gráficos de Actividad</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted"> gráficos de actividad.</p>
+                    </div>
+            </div>
+            <div class="card mb-4 shadow-sm">
                 <div class="card-header">
                     <h5><i class="bi bi-person-badge"></i> Solicitudes de Contactos Pendientes</h5>
                 </div>
@@ -99,14 +107,6 @@ const getFinancialSummary = async () => {
                         </ul>
                     </div>
                     <div v-else class="text-muted">No hay movimientos recientes.</div>
-                </div>
-            </div>
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header">
-                    <h5><i class="bi bi-bar-chart"></i> Gráficos de Actividad</h5>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">Aquí aparecerán los gráficos de actividad.</p>
                 </div>
             </div>
         </div>
