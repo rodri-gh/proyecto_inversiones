@@ -7,53 +7,42 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-if="items.length == 0">
-          <td colspan="5" class="text-center">
-            No hay inversiones registradas
+        <tr v-if="items.length === 0">
+          <td :colspan="headers.length" class="text-center">
+            No hay solicitudes de retiro
           </td>
         </tr>
         <tr v-for="item in paginatedItems" :key="item.id">
-          <td>{{ formatDate(item.startDate) }}</td>
-          <td>{{ formatDate(item.endDate) }}</td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.description }}</td>
-          <td>{{ item.investmentGoal }}</td>
-          <td>{{ item.profitPercentage }}</td>
-          <td v-if="item.deleted == 0">No</td>
-          <td v-else>Si</td>
+          <td>{{ item.investment.project.name }}</td>
+          <td>{{ item.user.name }}</td>
           <td>
-            <span v-if="item.status === 'open'" class="badge bg-success"
-              >Abierto</span
-            >
-            <span v-else class="badge bg-danger">Cerrado</span>
+            {{
+              parseFloat(item.investment.amount) +
+              parseFloat(item.investment.earnings)
+            }}
+          </td>
+          <td>{{ formatDate(item.requestDate) }}</td>
+          <td>{{ item.approvalDate ? formatDate(item.approvalDate) : "-" }}</td>
+          <td>
+            <span :class="getStatusBadgeClass(item.status)">
+              {{ getStatusText(item.status) }}
+            </span>
           </td>
           <td>
-            <Button
-              @click="() => actions.edit(item)"
-              icon="fa fa-edit"
-              buttonClass="btn-warning btn-sm m-1"
-            />
-            <Button
-              v-if="item.deleted == 1"
-              @click="() => actions.delete(item.id)"
-              :icon="item.deleted ? 'fa fa-check' : 'fa fa-trash'"
-              :buttonClass="`btn-${
-                item.deleted ? 'restore' : 'delete'
-              } btn-sm m-1`"
-            />
-            <Button
-              v-if="item.deleted == 0"
-              @click="() => actions.delete(item.id)"
-              :icon="item.deleted ? 'fa fa-check' : 'fa fa-trash'"
-              :buttonClass="`btn-${
-                item.deleted ? 'restore' : 'delete'
-              } btn-sm m-1`"
-            />
-            <Button
-              @click="() => actions.view(item)"
-              buttonClass="btn btn-info btn-sm m-1"
-              icon="fa fa-eye"
-            />
+            <button
+              v-if="item.status === 'pending'"
+              class="btn btn-success btn-sm m-1"
+              @click="() => actions.approve(item.id)"
+            >
+              <i class="fa fa-check"></i>
+            </button>
+            <button
+              v-if="item.status === 'pending'"
+              class="btn btn-danger btn-sm m-1"
+              @click="() => actions.reject(item.id)"
+            >
+              <i class="fa fa-times"></i>
+            </button>
           </td>
         </tr>
       </tbody>
@@ -97,7 +86,6 @@
 
 <script setup>
 import { computed, ref } from "vue";
-import Button from "@/components/base/Button.vue";
 
 const props = defineProps({
   headers: {
@@ -132,10 +120,25 @@ const changePage = (page) => {
 };
 
 const formatDate = (date) => {
-  const d = new Date(date);
-  const formattedDate = d.toLocaleDateString();
-  const formattedTime = d.toLocaleTimeString();
-  return formattedDate + ", " + formattedTime;
+  return new Date(date).toLocaleDateString();
+};
+
+const getStatusBadgeClass = (status) => {
+  const classes = {
+    pending: "badge bg-warning",
+    approved: "badge bg-success",
+    rejected: "badge bg-danger",
+  };
+  return classes[status] || "badge bg-secondary";
+};
+
+const getStatusText = (status) => {
+  const texts = {
+    pending: "Pendiente",
+    approved: "Aprobado",
+    rejected: "Rechazado",
+  };
+  return texts[status] || status;
 };
 </script>
 

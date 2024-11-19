@@ -28,12 +28,29 @@ router.get('/:id', async function (req, res, next) {
 
 });
 
-router.post('/', async (req, res, next) => {
-  const { userId, name, description, investmentGoal, status, startDate, 
-      endDate, projectType, profitPercentage } = req.body;
+router.get('/user/:id', async function (req, res, next) {
+  const { id } = req.params;
   try {
-    await Project.create({ userId, name, description, investmentGoal, status,
-         startDate, endDate, projectType, profitPercentage });
+    const projects = await Project.findAll({
+      where: {
+        userId: id
+      },
+      order: [['startDate', 'DESC']]
+    });
+    getHandleSuccess(200)(res, projects);
+  } catch (error) {
+    getHandleError(error, res);
+  }
+});
+
+router.post('/', async (req, res, next) => {
+  const { userId, name, description, investmentGoal, status, startDate,
+    endDate, projectType, profitPercentage } = req.body;
+  try {
+    await Project.create({
+      userId, name, description, investmentGoal, status,
+      startDate, endDate, projectType, profitPercentage
+    });
     getHandleSuccess(201)(res, "Project created successfully");
   } catch (error) {
     getHandleError(error, res);
@@ -47,8 +64,10 @@ router.put('/:id', async (req, res, next) => {
   const { userId, name, description, investmentGoal, status,
     startDate, endDate, projectType, profitPercentage } = req.body;
   try {
-    const [projectCount] = await Project.update({ userId, name, description, investmentGoal, status,
-      startDate, endDate, projectType, profitPercentage }, {
+    const [projectCount] = await Project.update({
+      userId, name, description, investmentGoal, status,
+      startDate, endDate, projectType, profitPercentage
+    }, {
       where: { id }
     });
     verifyIfIdExists(projectCount);
