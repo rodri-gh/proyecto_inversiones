@@ -44,13 +44,16 @@ router.get('/project/:id', async (req, res) => {
 router.post('/', async (req, res, next) => {
   const { projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 } = req.body;
   try {
-    const projecMinerals = await ProjectMineral.findAll({ where: { projectId: projectId}});
+    const projecMinerals = await ProjectMineral.findAll({ where: { projectId: projectId, deleted: 0}});
     if (phase === 'ganancia') {
+      console.log('entre al pase de ganancia');
       const allVerify = projecMinerals.every((mineral) => mineral.salePrice != null && mineral.salePrice > 0);
+      console.log('despues de verificar los prices ');
       if (allVerify) {
         const createdTimeline = await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 });
         return getHandleSuccess(201)(res, createdTimeline);
       } else {
+        console.log('los minerales del projecto deben estar vendidos!');
         return res.status(400).json({ error: 'No se puede agregar esta etapa porque tus minerales deben estar vendidos!' });
       }
     }
@@ -66,7 +69,6 @@ router.post('/', async (req, res, next) => {
         return res.status(400).json({ error: 'No se puede agregar esta etapa porque no existe una fase de pago!' });
       }
     }
-
     const createdTimeline = await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 });
     return getHandleSuccess(201)(res, createdTimeline);
 

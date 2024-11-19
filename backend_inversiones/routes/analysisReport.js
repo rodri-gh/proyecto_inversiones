@@ -122,6 +122,38 @@ router.get('/totalInvestmentVsReturn/:id', async (req, res, next) => {
     }
   });
 
+  router.get('/GetUserFinancialSummary/:id', async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      const results = await sequelize.query(`CALL GetUserFinancialSummary(${id})`);
+      console.log(results);
+      if (results.length === 0) {
+        console.log('Not found balances .');
+      }
+      getHandleSuccess(200)(res, results);
+    } catch (error) {
+      console.error('Error to run store Procedure:', error);
+      getHandleError(error, res);
+    }
+  });
+
+  router.get('/GetUserClientSummary/:id', async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      const results = await sequelize.query(`CALL GetUserClientSummary(${id})`);
+      console.log(results);
+      if (results.length === 0) {
+        console.log('Not found balances .');
+      }
+      getHandleSuccess(200)(res, results);
+    } catch (error) {
+      console.error('Error to run store Procedure:', error);
+      getHandleError(error, res);
+    }
+  });
+
+
+
 export default router;
 
 
