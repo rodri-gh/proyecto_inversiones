@@ -10,6 +10,10 @@ SiteSetting.init(
       primaryKey: true,
       autoIncrement: true
     },
+    appCommission: {
+      type: DataTypes.DECIMAL(3, 2),
+      allowNull: false
+    },
     logo: {
       type: DataTypes.STRING,
       allowNull: false,

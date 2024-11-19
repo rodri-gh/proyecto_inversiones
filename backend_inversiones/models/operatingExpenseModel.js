@@ -28,7 +28,7 @@ OperatingExpense.init(
         deleted: {
             type: DataTypes.TINYINT,
             allowNull: false,
-            defaultValue: 1
+            defaultValue: 0
         }
     },
     {

@@ -2,6 +2,7 @@ import express from 'express';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { ProjectTimeline, ProjectMineral, OperatingExpense, Investment, ProjectPayment, Project } from '../models/mainExport.js';
+import SiteSetting from '../models/siteSettingModel.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 import { created } from '../helpers/customMessage.js';
 
@@ -93,16 +94,20 @@ router.put('/:id', async (req, res, next) => {
 
 async function calculateReturnOnInvestment(idProject, projecMinerals) {
   const opertingExpense = await OperatingExpense.findAll({ where: { projectId: idProject}});
+  const siteSetings = await SiteSetting.findOne({ where: { id: 1 }});
+  const appCommission = (siteSetings.appCommission) / 100;
   const investments = await Investment.findAll({ where: { projectId: idProject}});
   const totalInvestment = investments.reduce((acc, item) => acc + (parseFloat(item.amount) || 0), 0);
-  console.log(totalInvestment);
+  console.log("inversiones totales"+totalInvestment);
   const totalOperatingExpense = opertingExpense.reduce((acc, item) => acc + (parseFloat(item.expenses) || 0), 0);
-  console.log(totalOperatingExpense);
+  console.log("gastos opera total "+totalOperatingExpense);
   const totalSalePrice = projecMinerals.reduce((acc, item) => acc + (parseFloat(item.salePrice) || 0), 0);
-  console.log(totalSalePrice);
-  const netProfit = totalSalePrice - totalOperatingExpense; 
+  console.log("venta total "+totalSalePrice);
+  var netProfit = totalSalePrice - totalOperatingExpense;
+  netProfit = netProfit - (netProfit*appCommission);
+  console.log("ganan total "+netProfit);
   const investmentReturn = (netProfit/totalInvestment) * 100; 
-  console.log(investmentReturn);
+  console.log("ROI retorno de inversion "+investmentReturn);
   await paymentsToInvestors(investments, totalInvestment, netProfit);
   return;
 }
@@ -113,7 +118,7 @@ async function paymentsToInvestors(investments, totalInvestment, netProfit) {
       var projectId = item.projectId;
       var userInvestment = item.amount;
       var paymentToInvestor = (userInvestment/totalInvestment) * netProfit;
-      console.log(paymentToInvestor);
+      console.log('pago al inversor '+' :'+userId+' :'+paymentToInvestor);
       await depositPayment(userId, projectId, userInvestment, paymentToInvestor);
     }
   return;

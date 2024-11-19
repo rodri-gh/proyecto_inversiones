@@ -9,7 +9,7 @@
             text="Nuevo"
             icon="fa fa-plus"
             @click="resetModal"
-            :disabled="projectMinerals.length >= 4"
+            :disabled="projectMinerals.length >= 2"
           />
         </div>
 
@@ -224,6 +224,7 @@ import Input from "./base/Input.vue";
 import Button from "./base/Button.vue";
 import { eventBus } from "@/eventBus";
 import Select from "./base/Select.vue";
+import OperatingExpenses from "./OperatingExpenses.vue";
 
 const props = defineProps({
   idProjectMineral: {
@@ -267,8 +268,7 @@ onMounted(() => {
 const getprojectMinerals = async () => {
   try {
     const data = await axios.get(baseURL + props.idProjectMineral, header);
-    //projectMinerals.value = data.data;
-    projectMinerals.value = data.data.filter((user) => user.deleted === 0);
+    projectMinerals.value = data.data.filter((item) => item.deleted === 0);
     console.log(data.data);
   } catch (error) {
     console.error(error);
@@ -353,11 +353,11 @@ const saveProjectMinerals = async () => {
       ? `${baseURL}${selectedProjectMineral.value.id}`
       : baseURL;
 
-  
   const projectMineral = {
         projectId: props.idProjectMineral,
         mineralId: selectedMineral.value.id,
         userId: userId.value,
+        operatingExpenseId: selectedProjectMineral.value.operatingExpenseId,
         purchasePrice: purchasePrice.value,
         prePurchase: prePurchase.value,
         estimatedPurchasePrice: estimatedPurchasePrice.value,
@@ -393,11 +393,12 @@ const saveProjectMinerals = async () => {
 
 const deleteProjectMineral = async (id) => { 
   try {
-    const response = axios.patch(baseURL+id, header);
-    console.log('elemento eliminado!')
+    const response = await axios.patch(baseURL+id, header);
     getprojectMinerals();
+    Swal.fire("Eliminado", "El mineral se eliminó correctamente.", "success");
   } catch (e) { 
     console.error(e);
+    Swal.fire("Error", "No se pudo eliminar el mineral.", "error");
   }
 } 
 
