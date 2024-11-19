@@ -1,9 +1,9 @@
 import express from 'express';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
-import { Mineral, ProjectMineral } from '../models/mainExport.js';
+import { Mineral, ProjectMineral, OperatingExpense } from '../models/mainExport.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
-
+import sequelize from '../database/connection.js';
 
 const router = express.Router();
 router.get('/', (req, res) => {
@@ -35,28 +35,24 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const { projectId, mineralId, userId, purchasePrice, prePurchase, estimatedPurchasePrice, exitPrice, salePrice } = req.body;
+  const transaction = await sequelize.transaction();
   try {
-    await ProjectMineral.create({ projectId, userId, mineralId, purchasePrice, prePurchase, estimatedPurchasePrice, exitPrice, salePrice });
+    const operatingExpense = await OperatingExpense.create({
+      name: 'gasto de mineral', 
+      description: 'se gasto en pago mineral', 
+      expenses: purchasePrice ?? 0, 
+      projectId: projectId
+    }, 
+    {transaction});
+    console.log(operatingExpense.id);
+    const project = await ProjectMineral.create({ projectId, mineralId, userId,
+       operatingExpenseId: operatingExpense.id, purchasePrice, prePurchase, 
+       estimatedPurchasePrice, exitPrice, salePrice }, 
+      { transaction });
+    await transaction.commit();
     getHandleSuccess(201)(res, "Project mineral created successfully");
   } catch (error) {
-    getHandleError(error, res);
-  }
-});
-
-router.put('/:id', async (req, res) => {
-  const { id } = req.params;
-  const { projectId, mineralId, userId, purchasePrice, prePurchase, estimatedPurchasePrice, exitPrice, salePrice } = req.body;
-  try {
-    const [updatedCount] = await ProjectMineral.update({ 
-      projectId, mineralId, userId, purchasePrice, prePurchase,
-       estimatedPurchasePrice, exitPrice, salePrice
-       }, { where: { id } } 
-    );
-    if (updatedCount === 0) {
-      return res.status(404).json({ error: 'No se encontró el registro con el ID proporcionado.' });
-    }
-    getHandleSuccess(201)(res, "Project mineral updated successfully");
-  } catch (error) {
+    await transaction.rollback();
     console.error(error);
     getHandleError(error, res);
   }
@@ -64,29 +60,47 @@ router.put('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { projectId, mineralId } = req.body;
+  const { projectId, mineralId, userId, operatingExpenseId ,purchasePrice, prePurchase, estimatedPurchasePrice, exitPrice, salePrice } = req.body;
+  const transaction = sequelize.transaction();
   try {
-    const [projectMineralCount] = await ProjectMineral.update({ projectId, mineralId }, {
-      where: { id },
-    });
-    verifyIfIdExists(projectMineralCount);
-    getHandleSuccess(204)(res);
+    const [updatedCount] = await ProjectMineral.update({ 
+      projectId, mineralId, userId, operatingExpenseId, purchasePrice, prePurchase,
+       estimatedPurchasePrice, exitPrice, salePrice
+       }, { where: { id } }, {transaction} 
+    );
+    const operatingExpense = await OperatingExpense.update({
+      name: 'gasto de mineral', 
+      description: 'se gasto en mineral', 
+      expenses: purchasePrice ?? 0, 
+      projectId: projectId
+    }, { where : { id: operatingExpenseId }}, {transaction});
+    if (updatedCount === 0) {
+      return res.status(404).json({ error: 'No se encontró el registro con el ID proporcionado.' });
+    }
+    await transaction.commit();
+    getHandleSuccess(201)(res, "Project mineral updated successfully");
   } catch (error) {
+    await transaction.rollback();
+    console.error(error);
     getHandleError(error, res);
   }
 });
 
-router.patch('/:id', (req, res) => {
+router.patch('/:id', async (req, res) => {
   const { id } = req.params;
+  const transaction = sequelize.transaction(); 
   try {
     const projectMineralDeleted = ProjectMineral.update({ deleted: true }, {
-      where: { id },
-    });
+      where: { id: id },
+    }, { transaction});
+    const operatingExpense = await OperatingExpense.update({ deleted : true}, 
+      { where: { id: projectMineralDeleted.id}}, { transaction});
     verifyIfIdExists(projectMineralDeleted);
     getHandleSuccess(204)(res);
   } catch (error) {
     getHandleError(error, res);
   }
 });
+
 
 export default router;

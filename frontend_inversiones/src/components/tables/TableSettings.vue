@@ -56,6 +56,7 @@ const filteredItems = computed(() => {
 
 const getFieldLabel = (key) => {
   const labels = {
+    appCommission: "Comision  %",
     logo: "Logo",
     name: "Nombre de la página",
     homeTitle: "Título de Inicio",

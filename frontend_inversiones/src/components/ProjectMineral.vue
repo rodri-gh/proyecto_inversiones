@@ -9,7 +9,7 @@
             text="Nuevo"
             icon="fa fa-plus"
             @click="resetModal"
-            :disabled="projectMinerals.length >= 4"
+            :disabled="projectMinerals.length >= 2"
           />
         </div>
 
@@ -118,15 +118,12 @@
               <div class="col-6">
                 <div class="mb-3">
                   <label for="mineral" class="form-label">
-                    Selecciona minerales (máximo 2)
-                    <span class="text-muted">
-                      ({{ selectedMinerals.length }}/2)
-                    </span>
+                    Selecciona un mineral
                   </label>
                   <select
                     class="form-select"
                     id="mineral"
-                    :disabled="selectedMinerals.length >= 2"
+                    :disabled="selectedMinerals.length >= 1"
                     v-model="selectedMineral"
                     @change="addMineral"
                   >
@@ -142,7 +139,7 @@
                 </div>
 
                 <div v-if="selectedMinerals.length > 0">
-                  <h6>Minerales seleccionados:</h6>
+                  <h6>Mineral seleccionado:</h6>
                   <ul class="list-group">
                     <li
                       v-for="mineral in selectedMinerals"
@@ -227,6 +224,7 @@ import Input from "./base/Input.vue";
 import Button from "./base/Button.vue";
 import { eventBus } from "@/eventBus";
 import Select from "./base/Select.vue";
+import OperatingExpenses from "./OperatingExpenses.vue";
 
 const props = defineProps({
   idProjectMineral: {
@@ -270,8 +268,7 @@ onMounted(() => {
 const getprojectMinerals = async () => {
   try {
     const data = await axios.get(baseURL + props.idProjectMineral, header);
-    //projectMinerals.value = data.data;
-    projectMinerals.value = data.data.filter((user) => user.deleted === 0);
+    projectMinerals.value = data.data.filter((item) => item.deleted === 0);
     console.log(data.data);
   } catch (error) {
     console.error(error);
@@ -310,13 +307,13 @@ const availableMinerals = computed(() => {
 const addMineral = () => {
   if (selectedMineral.value && selectedMinerals.value.length < 2) {
     selectedMinerals.value.push(selectedMineral.value);
-    selectedMineral.value = "";
   }
 };
 const removeMineral = (mineral) => {
   selectedMinerals.value = selectedMinerals.value.filter(
     (m) => m.id !== mineral.id
   );
+  selectedMineral.value = "";
 };
 
 // Métodos de acciones principales
@@ -351,52 +348,59 @@ const toggleProjectMineralStatus = async (projectMineral) => {
 };
 
 const saveProjectMinerals = async () => {
-  console.log(baseURL + selectedProjectMineral.value.id);
-  try {
-    if (isEditing.value) {
-      console.log(selectedProjectMineral.value.id);
-      //Si estamos editando, eliminamos el mineral actual
-      await axios.patch(baseURL + selectedProjectMineral.value.id);
-    }
-    // Verificamos que no excedamos el límite de 2 minerales
-    const currentMinerals = projectMinerals.value.length;
-    const newMineralsCount = selectedMinerals.value.length;
-    if (!isEditing.value && currentMinerals + newMineralsCount > 2) {
-      Swal.fire(
-        "Error",
-        "No se pueden agregar más de 2 minerales por proyecto.",
-        "error"
-      );
-      return;
-    }
-    // Guardamos los nuevos minerales
-    for (const mineral of selectedMinerals.value) {
-      const projectMineral = {
+  const method = selectedProjectMineral.value.id ? "put" : "post";
+  const url = selectedProjectMineral.value.id
+      ? `${baseURL}${selectedProjectMineral.value.id}`
+      : baseURL;
+
+  const projectMineral = {
         projectId: props.idProjectMineral,
-        mineralId: mineral.id,
+        mineralId: selectedMineral.value.id,
         userId: userId.value,
+        operatingExpenseId: selectedProjectMineral.value.operatingExpenseId,
         purchasePrice: purchasePrice.value,
         prePurchase: prePurchase.value,
         estimatedPurchasePrice: estimatedPurchasePrice.value,
         exitPrice: exitPrice.value,
         salePrice: salePrice.value,
       };
-      await axios.post(baseURL, projectMineral);
-    }
-    await getprojectMinerals();
-    closeModal();
-
+  const currentMinerals = projectMinerals.value.length;
+  const newMineralsCount = selectedMinerals.value.length;
+  if (!isEditing.value && currentMinerals + newMineralsCount > 2) {
     Swal.fire(
-      "¡Éxito!",
-      isEditing.value
-        ? "Mineral actualizado correctamente."
-        : "Minerales agregados correctamente.",
-      "success"
+      "Error",
+      "No se pueden agregar más de 2 minerales por proyecto.",
+      "error"
     );
-  } catch (error) {
-    handleError(error, "Error al guardar minerales");
+    return;
   }
+  try {
+        await axios[method](url, projectMineral, header);
+        await getprojectMinerals();
+        closeModal();
+
+        Swal.fire(
+          "¡Éxito!",
+          isEditing.value
+            ? "Mineral actualizado correctamente."
+            : "Minerales agregados correctamente.",
+          "success"
+        );
+    } catch (error) {
+        console.log(error);
+    }
 };
+
+const deleteProjectMineral = async (id) => { 
+  try {
+    const response = await axios.patch(baseURL+id, header);
+    getprojectMinerals();
+    Swal.fire("Eliminado", "El mineral se eliminó correctamente.", "success");
+  } catch (e) { 
+    console.error(e);
+    Swal.fire("Error", "No se pudo eliminar el mineral.", "error");
+  }
+} 
 
 const selectProjectMineral = (projectMineral) => {
   isEditing.value = true;
@@ -413,7 +417,6 @@ const selectProjectMineral = (projectMineral) => {
   if (mineralToEdit) {
     selectedMinerals.value = [mineralToEdit];
   }
-
   const modalEl = document.getElementById("modalMineral");
   const modal = new bootstrap.Modal(modalEl);
   modal.show();
@@ -431,6 +434,7 @@ const resetModal = () => {
   selectedMineral.value = "";
   isEditing.value = false;
   selectedProjectMineral.value = {};
+  selectedMineral.value = "";
 };
 
 const closeModal = () => {
@@ -443,6 +447,7 @@ const closeModal = () => {
 const selectedUser = computed(() => {
   return users.value.find((user) => String(user.id) === String(userId.value));
 });
+
 </script>
 
 <style scoped>

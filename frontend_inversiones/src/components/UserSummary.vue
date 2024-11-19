@@ -1,5 +1,5 @@
 <script setup>
-import { getHeaderRequest, getUserRoleOfLocalStorage } from '@/authService';
+import { getHeaderRequest, getUserIdOfLocalStorage, getUserRoleOfLocalStorage } from '@/authService';
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
 
@@ -9,15 +9,15 @@ const header = getHeaderRequest();
 const contacsPending = ref([]);
 const withdrawalRequestsPending = ref([]);
 const movements7days = ref([]);
+const userId = getUserIdOfLocalStorage();
 
 onMounted(() => { 
-    console.log('holaa');
     getNotifications();
+    getFinancialSummary()
 })
 
 const getNotifications = async () => { 
     try{ 
-        console.log('holaa');
         const responseContacts = await axios.get('http://localhost:3000/contact/pending', header); 
         const responseWithdrawal = await axios.get('http://localhost:3000/withdrawal-request/pending', header);
         const lastMovements7days = await axios.get('http://localhost:3000/analysis-report/getMovementsFromLast7Days', header);
@@ -31,34 +31,84 @@ const getNotifications = async () => {
         console.error(e);
     }
 }
+
+const getFinancialSummary = async () => {
+    try {
+        const response = await axios.get(`http://localhost:3000/analysis-report/GetUserClientSummary/${userId}`, header);
+        console.log(response.data);
+
+        // Asignar datos a variables reactivas
+    } catch (e) {
+        console.error(e);
+    }
+};
 </script>
 
 <template>
     <div>
-        <h4>Resumen para tu rol: {{ userRole }}</h4>
+        <h3 class="">Resumen para tu rol: <strong>{{ userRole }}</strong></h3>
         <div v-if="userRole === 'super_user'">
-            <!--saccar de la tabla de contactos en estado pendiente-->
-            <!-- sacar de la tabla de solicitudes de retiro en estado pendiente-->
-            <div class="mt-5">
-                <h6>----- Solicitudes de CONTACTOS pendientes</h6>
-                <div v-for="item in contacsPending" :key="item">
-                    <p>Contacto: {{ item.name }} {{ item.lastname }} - {{ item.answer }}</p>
+            <div class="card mb-4 shadow-sm">
+                    <div class="card-header">
+                        <h5><i class="bi bi-bar-chart"></i> Gráficos de Actividad</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted"> gráficos de actividad.</p>
+                    </div>
+            </div>
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h5><i class="bi bi-person-badge"></i> Solicitudes de Contactos Pendientes</h5>
                 </div>
-                <h6>----- Solicitudes de RETIRO pendientes</h6>
-                <div v-for="item in withdrawalRequestsPending" :key="item">
-                    <p>Contacto: usuario Id:{{ item.id }} - {{ item.status }}</p>
+                <div class="card-body">
+                    <div v-if="contacsPending.length">
+                        <ul class="list-group">
+                            <li v-for="item in contacsPending" :key="item" class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{{ item.name }} {{ item.lastname }}</span>
+                                <span class="badge bg-warning text-dark">{{ item.answer }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div v-else class="text-muted">No hay contactos pendientes.</div>
                 </div>
             </div>
-            <div class="mt-5">
-                <h6>---- Ultimos movimientos </h6>
-                <div v-for="item in movements7days" :key="item">
-                    <p> {{ item.tipo }} - {{ item.descripcion }} - {{ item.amount }} - {{ item.fecha }}</p>
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h5><i class="bi bi-cash-stack"></i> Solicitudes de Retiro Pendientes</h5>
+                </div>
+                <div class="card-body">
+                    <div v-if="withdrawalRequestsPending.length">
+                        <ul class="list-group">
+                            <li v-for="item in withdrawalRequestsPending" :key="item" class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>ID Usuario: {{ item.id }}</span>
+                                <span class="badge bg-info text-dark">{{ item.status }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div v-else class="text-muted">No hay solicitudes de retiro pendientes.</div>
                 </div>
             </div>
-            <div class="mt-5">
-                <h6>Graficos de actividad</h6>
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h5><i class="bi bi-clock-history"></i> Últimos Movimientos</h5>
+                </div>
+                <div class="card-body">
+                    <div v-if="movements7days.length">
+                        <ul class="list-group">
+                            <li v-for="item in movements7days" :key="item" class="list-group-item">
+                                <div>
+                                    <strong>{{ item.tipo }}</strong> - {{ item.descripcion }}
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">{{ item.fecha }}</span>
+                                    <span class="text-success"><strong>{{ item.amount }}</strong></span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div v-else class="text-muted">No hay movimientos recientes.</div>
+                </div>
             </div>
-            
         </div>
         <div v-if="userRole === 'admin'">
             <p>Resumen Operacional:

@@ -98,7 +98,7 @@ const getOperatingExpenses = async () => {
       console.log(baseURL+"project/")
       console.log(props.idProject)
       const data = await axios.get(baseURL + "project/" + props.idProject, header);
-      operatingExpenses.value = data.data;
+      operatingExpenses.value = data.data.filter((item) => item.deleted === 0);
   } catch (error) {
       console.error(error);
   }

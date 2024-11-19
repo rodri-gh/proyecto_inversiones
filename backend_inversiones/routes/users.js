@@ -30,7 +30,8 @@ router.get('/:id', async (req, res, next) => {
       include: [{
         model: Account,
         attributes: ['username', 'password']
-      }]
+      }
+    ]
     });
     verifyIfIdExists(user);
     getHandleSuccess(200)(res, user);
