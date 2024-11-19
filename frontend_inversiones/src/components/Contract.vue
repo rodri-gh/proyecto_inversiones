@@ -209,7 +209,7 @@ const previewUrl = computed(() => {
                 @onSave="saveContract()"
             >
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <Select
                             :options="users"
                             label="Usuario"
@@ -219,15 +219,24 @@ const previewUrl = computed(() => {
                             select-class="col-8"
                         />  
                         <div class="mt-4">
-                            <h5>Datos del Usuario Seleccionado:</h5>
+                            <h6>Datos del Usuario Seleccionado:</h6>
                             <p><strong>Nombre:</strong> {{ selectedUser?.name || "Seleccione un usuario" }}</p>
                             <p><strong>Email:</strong> {{ selectedUser?.email || "Seleccione un usuario" }}</p>
                             <p><strong>Teléfono:</strong> {{ selectedUser?.phone || "Seleccione un usuario" }}</p>
                         </div>
                     </div>
-                    <div class="col-md-9">
-                        <div class="row m-4">
-                            <div class="col-md-3">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for=""> Fecha de Inicio</label>
+                                <p><strong>{{ startDate }}</strong></p>
+
+                            </div>
+                            <div class="col-md-6">
+                                <label for=""> Fecha de Fin</label>
+                                <p><strong> {{ endDate }}</strong></p>
+                            </div>
+                            <div class="col-md-6 mt-3">
                                 <Input
                                     id="investmentAmount"
                                     label="Cantidad de inversion"
@@ -235,37 +244,17 @@ const previewUrl = computed(() => {
                                     v-model="investmentAmount"
                                 />
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6 mt-3">
                                 <Input
                                     id="contractCode"
-                                    label="codigo de contrato para almacen"
+                                    label="codigo para almacen"
                                     type="number"
                                     v-model="contractCode"
                                 />
                             </div>
-                            <div class="col-md-3">
-                                <label for=""> Fecha de Inicio</label>
-                                <p><strong>{{ startDate }}</strong></p>
-                                <!--<Input
-                                    id="startDate"
-                                    label="Fecha de inicio"
-                                    type="date"
-                                    v-model="startDate"
-                                /> -->
-                            </div>
-                            <div class="col-md-3">
-                                <label for=""> Fecha de Fin</label>
-                                <p><strong> {{ endDate }}</strong></p>
-                                <!--<Input
-                                    id="endDate"
-                                    label="Fecha de finalizacion"
-                                    type="date"
-                                    v-model="endDate"
-                                /> -->
-                            </div>
                         </div>
-                        <div class="row m-4">
-                            <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-md-6 mt-3">
                                 <label for="" class="form-label">Tipo de contrato</label>
                                 <select class="form-select form-select" v-model="contractType" id="contractType">
                                     <option value="">Selecione una tasa</option>
@@ -273,7 +262,7 @@ const previewUrl = computed(() => {
                                     <option value="variable_rate">tasa variable</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6 mt-3">
                                 <label for="" class="form-label">Moneda</label>
                                 <select class="form-select form-select" v-model="currency" id="currency">
                                     <option value="">Selecione una Moneda</option>
@@ -281,8 +270,8 @@ const previewUrl = computed(() => {
                                     <option value="BS">Bolivianos</option>
                                 </select>
                             </div>
-                            <div class="col-md-3"> 
-                                <label for="" class="form-label">PDF escaneado del contrato</label>
+                            <div class="col-md-12 mt-3"> 
+                                <label for="" class="form-label">PDF Escaneado del contrato</label>
                                 <input 
                                 type="file" 
                                 id="contractFilePath" 
@@ -311,4 +300,12 @@ const previewUrl = computed(() => {
 </template>
 
 <style scoped>
+input {
+  width: 100%;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 50px;
+  outline: none;
+}
 </style>
