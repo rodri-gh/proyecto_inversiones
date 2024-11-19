@@ -131,7 +131,7 @@ const componentslinks = computed(() => {
       isDividerWithTitle: false,
     });
     links.push({
-      name: "Projectos",
+      name: "Proyectos",
       component: ProjectsUserView,
       isDividerWithTitle: false,
     });

@@ -1,6 +1,6 @@
 import express from 'express';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
-import { Project, Investment } from '../models/mainExport.js';
+import { Project, Investment, Contract, ProjectMineral, ProjectTimeline } from '../models/mainExport.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 
@@ -28,16 +28,24 @@ router.get('/:id', async function (req, res, next) {
 
 });
 
-router.get('/user/:id', async function (req, res, next) {
+router.get('/user/:id', async function (req, res) {
   const { id } = req.params;
   try {
-    const projects = await Project.findAll({
-      where: {
-        userId: id
-      },
-      order: [['startDate', 'DESC']]
+    const investments = await Investment.findAll({
+      where: { userId: id },
+      include: [
+        {
+          model: Project,
+        }
+      ]
     });
-    getHandleSuccess(200)(res, projects);
+
+    const projects = investments.map(investment => investment.project);
+    const uniqueProjects = projects.filter((project, index, self) =>
+      index === self.findIndex((p) => p.id === project.id)
+    );
+
+    getHandleSuccess(200)(res, uniqueProjects);
   } catch (error) {
     getHandleError(error, res);
   }
