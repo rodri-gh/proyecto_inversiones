@@ -26,14 +26,14 @@
 const props = defineProps({
   modelValue: { type: [String, Number], required: true },
   options: { type: Array, required: true },
-  label: { type: String, default: "Selecciona una opción" },
+  label: { type: String, default: "Selecciona" },
   valueKey: { type: String, required: true },
   labelKey: { type: String, required: true },
-  defaultOptionText: { type: String, default: "Seleccione una opción" },
+  defaultOptionText: { type: String, default: "Selecciona" },
   defaultOptionValue: { type: [String, Number], default: "" },
   id: { type: String, default: "customSelect" },
   selectClass: { type: String, default: "" },
-  emptyMessage: { type: String, default: "No hay opciones disponibles" },
+  emptyMessage: { type: String, default: "No hay opciones" },
 });
 
 const emit = defineEmits(["update:modelValue"]);

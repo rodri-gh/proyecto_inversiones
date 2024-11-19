@@ -17,6 +17,15 @@
       @onClose="reset()"
       @onSave="updateSettings()"
     >
+      <template v-if="selectedField === 'appCommission'">
+        <Input
+          id="appCommission"
+          label="Comision Para la App en %"
+          v-model="tempSettings.appCommission"
+          type="number"
+          placeholder="Ingrese la comision"
+        />
+      </template>
       <template v-if="selectedField === 'name'">
         <Input
           id="name"
