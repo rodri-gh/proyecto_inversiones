@@ -512,7 +512,7 @@ const reset = () => {
   transform: translateX(-50%);
   width: 2px;
   height: 100%;
-  background-color: #e9ecef;
+  background-color: #a59d9a;
   top: 0;
 }
 
@@ -532,7 +532,7 @@ const reset = () => {
   height: 40px;
   border-radius: 50%;
   background: white;
-  border: 4px solid #0f7b9c;
+  border: 4px solid #1e5363;
   display: flex;
   align-items: center;
   justify-content: center;

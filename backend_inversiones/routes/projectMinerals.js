@@ -61,7 +61,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { projectId, mineralId, userId, operatingExpenseId ,purchasePrice, prePurchase, estimatedPurchasePrice, exitPrice, salePrice } = req.body;
-  const transaction = sequelize.transaction();
+  const transaction = await sequelize.transaction();
   try {
     const [updatedCount] = await ProjectMineral.update({ 
       projectId, mineralId, userId, operatingExpenseId, purchasePrice, prePurchase,
@@ -88,16 +88,21 @@ router.put('/:id', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
   const { id } = req.params;
-  const transaction = sequelize.transaction(); 
+  const transaction = await sequelize.transaction(); 
   try {
-    const projectMineralDeleted = ProjectMineral.update({ deleted: true }, {
-      where: { id: id },
+    const projectMineralDeleted = await ProjectMineral.update({ deleted: 1 }, {
+      where: { id },
     }, { transaction});
-    const operatingExpense = await OperatingExpense.update({ deleted : true}, 
-      { where: { id: projectMineralDeleted.id}}, { transaction});
+    const projectMineralUpdated = await ProjectMineral.findOne({ where: { id }})
+    const operatingExpense = await OperatingExpense.update({ deleted : 1}, 
+      { where: { id: projectMineralUpdated.operatingExpenseId}}, { transaction});
     verifyIfIdExists(projectMineralDeleted);
+    verifyIfIdExists(operatingExpense);
+    await transaction.commit();
     getHandleSuccess(204)(res);
   } catch (error) {
+    await transaction.rollback();
+    console.error(error);
     getHandleError(error, res);
   }
 });

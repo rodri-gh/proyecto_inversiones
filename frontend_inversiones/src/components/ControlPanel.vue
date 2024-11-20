@@ -4,23 +4,22 @@ import { getUserRoleOfLocalStorage } from "@/authService";
 import MyProfile from "./MyProfile.vue";
 import ProjectsView from "@/views/ProjectsView.vue";
 import UserWithdrawalRequests from "./UserWithdrawalRequests.vue";
-import WithdrawalRequestsView from "@/views/WithdrawalRequestsView.vue";
-import ConfigurationAndSecurity from "./Dashboard/ConfigurationAndSecurity.vue";
-import ContactView from "@/views/ContactView.vue";
 import UsersView from "@/views/UsersView.vue";
 import MineralsView from "@/views/MineralsView.vue";
-import CategoryPostView from "@/views/CategoryPostView.vue";
-import PostsView from "../views/PostsView.vue";
-import FaqAdmin from "../components/FaqAdmin.vue";
-import FinanceView from "@/views/FinanceView.vue";
-import AnalysisAndReportsView from "@/views/AnalysisAndReportsView.vue";
 import ProjectsUserView from "@/views/ProjectsUserView.vue";
 import InvestmentsUserView from "@/views/InvestmentsUserView.vue";
 import SettingsLanding from "./SettingsLanding.vue";
 import UserSummary from "./UserSummary.vue";
 import axios from "axios";
 import Balances from "./Balances.vue";
+
 import ReportClienteView from "@/views/ReportClienteView.vue";
+
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import Applications from "./Applications.vue";
+import WebResources from "./WebResources.vue";
+
+
 
 const baseURL = "http://localhost:3000/site-setting";
 
@@ -52,11 +51,6 @@ const componentslinks = computed(() => {
   const userRole = getUserRoleOfLocalStorage();
   let links = [
     { name: "Ir a web", path: "/", divider: true, isDividerWithTitle: false },
-    {
-      divider: true,
-      title: "Menu Principal",
-      isDividerWithTitle: true,
-    },
     { name: "Mi Perfil", component: MyProfile, isDividerWithTitle: false },
     { name: "Inicio", component: UserSummary, isDividerWithTitle: false },
   ];
@@ -77,36 +71,15 @@ const componentslinks = computed(() => {
       isDividerWithTitle: false,
     });
     links.push({
-      name: "Solicitudes de retiro",
-      component: WithdrawalRequestsView,
+      name: "Solicitudes",
+      component: Applications,
       isDividerWithTitle: false,
     });
-
+    //links.push({ name: "Reportes", component: AnalysisAndReportsView });
+    //links.push({ name: "Finanzas", component: FinanceView, divider: true });
     links.push({
-      name: "Responder Contacto",
-      component: ContactView,
-      isDividerWithTitle: false,
-    });
-    links.push({ name: "Reportes", component: AnalysisAndReportsView });
-    links.push({ name: "Finanzas", component: FinanceView, divider: true });
-    links.push({
-      divider: true,
-      title: "Administrar Web",
-      isDividerWithTitle: true,
-    });
-    links.push({
-      name: "Categorias Post",
-      component: CategoryPostView,
-      isDividerWithTitle: false,
-    });
-    links.push({
-      name: "Posts",
-      component: PostsView,
-      isDividerWithTitle: false,
-    });
-    links.push({
-      name: "FAQs",
-      component: FaqAdmin,
+      name: "Recursos Web",
+      component: WebResources,
       isDividerWithTitle: false,
     });
     links.push({
@@ -114,12 +87,6 @@ const componentslinks = computed(() => {
       component: SettingsLanding,
       isDividerWithTitle: false,
     });
-
-    /*     links.push({
-      name: "Administrar Web",
-      component: ContactView,
-      isDividerWithTitle: false,
-    }); */
   } else if (userRole == "client") {
     links.push({
       name: "Balances",
@@ -149,12 +116,29 @@ const componentslinks = computed(() => {
   }
   return links;
 });
+
+const iconMap = {
+  "Gestion de Usuarios": "fas fa-users",
+  "Proyectos": "fas fa-cubes",
+  "Minerales": "fas fa-gem",
+  "Finanzas": "fas fa-dollar-sign",
+  "FAQs": "fas fa-question-circle",
+  "Ajustes de la Web": "fas fa-cog",
+  "Ir a web": "fas fa-globe",
+  "Mi Perfil": "fas fa-id-badge",
+  "Inicio": "fas fa-file-alt",
+  "Solicitudes": "fas fa-paper-plane",
+  "Recursos Web": "fas fa-book-open",
+  "Balances": "fas fa-wallet",
+  "Inversiones": "fas fa-chart-pie",
+  "Solicitudes de Retiro": "fas fa-piggy-bank",
+};
 </script>
 
 <template>
-  <div>
+  <div class="content-div">
     <nav
-      class="navbar navbar-expand-lg navbar-light px-3"
+      class="navbar navbar-expand-lg navbar-light px-3 shadow"
       style="background-color: var(--secondary-color)"
     >
       <a class="navbar-brand" href="#">
@@ -191,7 +175,7 @@ const componentslinks = computed(() => {
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-2 sidebar">
+        <div class="col-md-2 sidebar shadow">
           <div v-for="(link, index) in componentslinks" :key="index">
             <div v-if="link.isDividerWithTitle" class="section-divider">
               {{ link.title }}
@@ -200,24 +184,28 @@ const componentslinks = computed(() => {
             <router-link
               v-else-if="link.name === 'Ir a web'"
               :to="link.path"
-              :class="{ activeSideBar: activeLink === link.name }"
+              :class="{ activeSideBar: activeLink === link.name } "
+              class="sidebar-link"
             >
-              {{ link.name }}
+              <i :class="iconMap[link.name]" class="icon-large"></i>
+              <span>{{ link.name }}</span>
             </router-link>
             <a
               v-else-if="link.component"
               href="#"
               @click="showComponent(link.component, link.name)"
               :class="{ activeSideBar: activeLink === link.name }"
+              class="sidebar-link"
             >
-              {{ link.name }}
+              <i :class="iconMap[link.name]" class="icon-large"></i>
+              <span>{{ link.name }}</span>
             </a>
           </div>
         </div>
 
         <div class="col-md-10">
           <div class="container">
-            <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="mt-4">
               <component :is="activeComponent" />
             </div>
           </div>
@@ -228,17 +216,19 @@ const componentslinks = computed(() => {
 </template>
 
 <style scoped>
+.content-div { 
+  background-color: rgb(240, 240, 240);
+}
 .sidebar a.activeSideBar {
   font-weight: bold;
   color: var(--primary-color);
 }
 
 .sidebar {
-  background-color: #f3f3f3;
   color: var(--text-color);
-  min-height: 100vh;
   padding-top: 20px;
   border-right: var(--secondary-color) 1px solid;
+  background: linear-gradient(135deg, #ffa726, #fb8c00); 
 }
 .sidebar a {
   color: var(--text-color);
@@ -288,5 +278,15 @@ const componentslinks = computed(() => {
   padding-bottom: 8px;
   font-size: 0.9em;
   letter-spacing: 1px;
+}
+
+.icon-large {
+  font-size: 3rem;
+}
+
+.sidebar-link {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center;
 }
 </style>

@@ -15,27 +15,29 @@
       <div class="tab-content mt-3">
         <div v-if="selectedTab === 'Inicio'">
           <div class="project-intro">
-            <h2 class="project-title">Proyecto: {{ project.name }}</h2>
+            <h3>Proyecto: {{ project.name }}</h3>
             <div class="project-image">
               <img src="@/assets/iconMineralProject.png" alt="Imagen del Proyecto" />
             </div>
 
             <div class="project-summary">
-              <p>{{ project.description }}</p>
               <div class="project-details">
-                <div class="detail-item">
+                <div class="detail-item shadow">
                   <strong>Objetivo de Inversión:</strong> ${{ project.investmentGoal }} 
                 </div>
-                <div class="detail-item">
+                <div class="detail-item shadow">
                   <strong>Estado:</strong> {{ project.status }}
                 </div>
-                <div class="detail-item">
+                <div class="detail-item shadow">
                   <strong>Duración:</strong> {{ formatDate(project.startDate) }} - {{ formatDate(project.endDate) }}
                 </div>
-                <div class="detail-item">
+                <div class="detail-item shadow">
                   <strong>Rentabilidad Esperada:</strong> {{ project.profitPercentage }}%
                 </div>
               </div>
+              <br>
+              <br>
+              <p><strong>Descripcion:</strong> {{ project.description }}</p>
             </div>
           </div>
         </div>
@@ -183,7 +185,7 @@ const formatDate = (date) => {
   padding: 10px 20px;
   border: none;
   border-radius: 30px !important;
-  background-color: #f0f0f0;
+  background-color: #ffffff;
   cursor: pointer;
   border-radius: 5px;
 }
@@ -195,7 +197,8 @@ const formatDate = (date) => {
 }
 
 .navbar-tabs button:hover {
-  background-color: #e0e0e0;
+  background-color: #879dda;
+  color: #04090e;
   border-radius: 10px;
 }
 
@@ -227,7 +230,7 @@ const formatDate = (date) => {
 }
 
 .detail-item {
-  background-color: #e0e0e0;
+  background-color: #ffffff;
   padding: 20px;
   border-radius: 50px;
   width: 200px;
