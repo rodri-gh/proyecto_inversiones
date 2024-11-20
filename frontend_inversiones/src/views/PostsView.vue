@@ -106,11 +106,11 @@ import TablePosts from "@/components/tables/TablePosts.vue";
 
 const headers = ["Titulo", "Resumen", "Estado", "Acciones"];
 
-const categoryURL = "http://localhost:3000/category-post/";
+const categoryURL = "https://apiminerales.pruebasdeploy.online/category-post/";
 
 const categoryPosts = ref([]);
 
-const baseURL = "http://localhost:3000/post/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/post/";
 
 const posts = ref([]);
 
@@ -151,8 +151,8 @@ onMounted(() => {
     quillEditor.root.innerHTML = content.value;
   }
 });
-const style = document.createElement('style');
-  style.innerHTML = `
+const style = document.createElement("style");
+style.innerHTML = `
     .ql-editor h1 {
       font-size: 2em;
       color: #2c3e50;
@@ -168,13 +168,11 @@ const style = document.createElement('style');
       margin-bottom: 0.3em;
     }
   `;
-  document.head.appendChild(style);
+document.head.appendChild(style);
 
-  if (content.value) {
-    quillEditor.root.innerHTML = content.value;
-  }
-
-  
+if (content.value) {
+  quillEditor.root.innerHTML = content.value;
+}
 
 const getPosts = async () => {
   try {

@@ -4,110 +4,110 @@
       Lista de Usuarios que requieren información
     </h4>
     <br />
-    <CardsSummary :items="summaryContacts"/>
+    <CardsSummary :items="summaryContacts" />
     <ul class="nav nav-tabs" id="userTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link active"
-            id="all-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#all"
-            type="button"
-            role="tab"
-            aria-controls="all"
-            aria-selected="true"
-          >
-            Todos
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="active-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#active"
-            type="button"
-            role="tab"
-            aria-controls="active"
-            aria-selected="false"
-          >
-            Respondidos
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="inactive-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#inactive"
-            type="button"
-            role="tab"
-            aria-controls="inactive"
-            aria-selected="false"
-          >
-            Pendientes
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="clients-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#clients"
-            type="button"
-            role="tab"
-            aria-controls="clients"
-            aria-selected="false"
-          >
-            Eliminados
-          </button>
-        </li>
-      </ul>
-      <div class="tab-content" id="userTabsContent">
-        <div
-          class="tab-pane fade show active"
-          id="all"
-          role="tabpanel"
-          aria-labelledby="all-tab"
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link active"
+          id="all-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#all"
+          type="button"
+          role="tab"
+          aria-controls="all"
+          aria-selected="true"
         >
-          <TableContacts
-                :headers="headers"
-                :items="contacts"
-                :actions="{
-                  answer: answerContact,
-                  delete: deleteContact,
-                }"
-              />
-        </div>
-        <div
-          class="tab-pane fade"
-          id="active"
-          role="tabpanel"
-          aria-labelledby="active-tab"
+          Todos
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="active-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#active"
+          type="button"
+          role="tab"
+          aria-controls="active"
+          aria-selected="false"
         >
-          <TableContacts
-            :headers="headers"
-            :items="activeUsers"
-            :actions="{
-              answer: answerContact,
-              delete: deleteContact,
-            }"
-          />
-        </div>
-        <div
-          class="tab-pane fade"
-          id="inactive"
-          role="tabpanel"
-          aria-labelledby="inactive-tab"
+          Respondidos
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="inactive-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#inactive"
+          type="button"
+          role="tab"
+          aria-controls="inactive"
+          aria-selected="false"
         >
-          <TableContacts
-              :headers="headers"
-              :items="inactiveUsers"
-              :actions="{
-                answer: answerContact,
-                delete: deleteContact,
-              }"
-            />
+          Pendientes
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="clients-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#clients"
+          type="button"
+          role="tab"
+          aria-controls="clients"
+          aria-selected="false"
+        >
+          Eliminados
+        </button>
+      </li>
+    </ul>
+    <div class="tab-content" id="userTabsContent">
+      <div
+        class="tab-pane fade show active"
+        id="all"
+        role="tabpanel"
+        aria-labelledby="all-tab"
+      >
+        <TableContacts
+          :headers="headers"
+          :items="contacts"
+          :actions="{
+            answer: answerContact,
+            delete: deleteContact,
+          }"
+        />
+      </div>
+      <div
+        class="tab-pane fade"
+        id="active"
+        role="tabpanel"
+        aria-labelledby="active-tab"
+      >
+        <TableContacts
+          :headers="headers"
+          :items="activeUsers"
+          :actions="{
+            answer: answerContact,
+            delete: deleteContact,
+          }"
+        />
+      </div>
+      <div
+        class="tab-pane fade"
+        id="inactive"
+        role="tabpanel"
+        aria-labelledby="inactive-tab"
+      >
+        <TableContacts
+          :headers="headers"
+          :items="inactiveUsers"
+          :actions="{
+            answer: answerContact,
+            delete: deleteContact,
+          }"
+        />
         <div
           class="tab-pane fade"
           id="clients"
@@ -115,13 +115,13 @@
           aria-labelledby="clients-tab"
         >
           <TableContacts
-                  :headers="headers"
-                  :items="clientUsers"
-                  :actions="{
-                    answer: answerContact,
-                    delete: deleteContact,
-                  }"
-                />
+            :headers="headers"
+            :items="clientUsers"
+            :actions="{
+              answer: answerContact,
+              delete: deleteContact,
+            }"
+          />
         </div>
       </div>
     </div>
@@ -149,9 +149,9 @@ const headers = [
   "Acciones",
 ];
 
-const baseURL = "http://localhost:3000/contact/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/contact/";
 const contacts = ref([]);
-const summaryContacts = ref([]); 
+const summaryContacts = ref([]);
 const activeUsers = ref([]);
 const inactiveUsers = ref([]);
 const clientUsers = ref([]);
@@ -165,8 +165,8 @@ const getContacts = async () => {
   try {
     const { data } = await axios.get(baseURL);
     contacts.value = data;
-    activeUsers.value = data.filter((user) => user.answer === 'answered');
-    inactiveUsers.value = data.filter((user) => user.answer === 'pending');
+    activeUsers.value = data.filter((user) => user.answer === "answered");
+    inactiveUsers.value = data.filter((user) => user.answer === "pending");
     clientUsers.value = data.filter((user) => user.deleted === 1);
     getsummaryContacts();
     console.log("Contactos data:", contacts.value);
@@ -178,31 +178,31 @@ const getContacts = async () => {
 const getsummaryContacts = () => {
   if (contacts.value.length > 0) {
     let userTotals = contacts.value.length;
-    let contactAnswered = 0; 
+    let contactAnswered = 0;
     let contactNotAnswered = 0;
     let contactDeleted = 0;
-    for (var item of contacts.value){ 
-      if (item.answer === 'answered') { 
-        contactAnswered++; 
+    for (var item of contacts.value) {
+      if (item.answer === "answered") {
+        contactAnswered++;
       }
-      if (item.answer === 'pending') { 
-        contactNotAnswered++; 
+      if (item.answer === "pending") {
+        contactNotAnswered++;
       }
-      if (item.deleted === 1) { 
-        contactDeleted++; 
+      if (item.deleted === 1) {
+        contactDeleted++;
       }
     }
     summaryContacts.value = [
-      { key: 'Totales', value: userTotals },
-      { key: 'Respondidos', value: contactAnswered },
-      { key: 'Por Responder', value: contactNotAnswered },
-      { key: 'Eliminados', value: contactDeleted },
-    ]
-    console.log(summaryContacts.value); 
-  } else { 
-    console.log('el array de contacts para cards sumary esta vacio'); 
+      { key: "Totales", value: userTotals },
+      { key: "Respondidos", value: contactAnswered },
+      { key: "Por Responder", value: contactNotAnswered },
+      { key: "Eliminados", value: contactDeleted },
+    ];
+    console.log(summaryContacts.value);
+  } else {
+    console.log("el array de contacts para cards sumary esta vacio");
   }
-}
+};
 
 const deleteContact = async (contact_id) => {
   try {

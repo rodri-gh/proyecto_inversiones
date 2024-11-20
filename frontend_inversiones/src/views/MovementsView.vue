@@ -16,7 +16,7 @@ const headers = [
   "Estado",
 ];
 
-const baseURL = "http://localhost:3000/movements/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/movements/";
 
 const movements = ref([]);
 const description = ref("");
@@ -34,10 +34,10 @@ onMounted(() => {
 
 const getMovements = async () => {
   try {
-    const token = localStorage.getItem('token'); 
+    const token = localStorage.getItem("token");
     const { data } = await axios.get(baseURL, {
       headers: {
-        Authorization: `Bearer ${token}`, 
+        Authorization: `Bearer ${token}`,
       },
     });
     movements.value = data.data;
@@ -55,19 +55,21 @@ const selectMineral = (mineral) => {
 };
 
 const saveMineral = async () => {
-  const method = selectedMineral.value && selectedMineral.value.movement_id ? "put" : "post";
-  const url = selectedMineral.value && selectedMineral.value.movement_id
-    ? `${baseURL}${selectedMineral.value.movement_id}`
-    : baseURL;
+  const method =
+    selectedMineral.value && selectedMineral.value.movement_id ? "put" : "post";
+  const url =
+    selectedMineral.value && selectedMineral.value.movement_id
+      ? `${baseURL}${selectedMineral.value.movement_id}`
+      : baseURL;
 
   const dataPayload = createData();
   try {
-    const token = localStorage.getItem('token'); 
+    const token = localStorage.getItem("token");
 
     await axios[method](url, dataPayload, {
-    headers: {
-        Authorization: `Bearer ${token}`
-        },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     closeModal("modalMineral");
@@ -84,18 +86,18 @@ const createData = () => {
     description: description.value,
     type: type.value,
     amount: amount.value,
-    request_date: new Date().toISOString().split('T')[0],
+    request_date: new Date().toISOString().split("T")[0],
     state: 1,
   };
   return data;
 };
 
 const deleteMineral = async (id) => {
-  const token = localStorage.getItem('token'); 
+  const token = localStorage.getItem("token");
   try {
     const { data } = await axios.delete(baseURL + id, {
       headers: {
-        Authorization: `Bearer ${token}`, 
+        Authorization: `Bearer ${token}`,
       },
     });
     getMovements();
@@ -106,9 +108,9 @@ const deleteMineral = async (id) => {
 
 const reset = () => {
   description.value = "";
-    type.value = "";
-    amount.value = "";
-    request_date.value = "";
+  type.value = "";
+  amount.value = "";
+  request_date.value = "";
   disbursement_date.value = "";
   state.value = "";
 };
@@ -154,12 +156,12 @@ const reset = () => {
         placeholder="Ingrese la descripcion"
       />
 
-      <label :for="id" class="form-label">Tipo</label> <br>
+      <label :for="id" class="form-label">Tipo</label> <br />
       <select
         id="type"
         label="Tipo"
         v-model="type"
-        type="text" 
+        type="text"
         placeholder="Ingrese el tipo"
       >
         <option value="income">Ingreso</option>

@@ -89,18 +89,15 @@
 </template>
 
 <script setup>
-
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 import TableWithdrawals from "@/components/tables/TableWithdrawals.vue";
 import CardsSummary from "@/components/CardsSummary.vue";
 
-
 const withdrawals = ref([]);
 const summaryWithdrawals = ref([]);
-const baseURL = "http://localhost:3000/withdrawal-request/";
-
+const baseURL = "https://apiminerales.pruebasdeploy.online/withdrawal-request/";
 
 const headers = [
   "Proyecto",
@@ -118,14 +115,12 @@ onMounted(() => {
 
 const getWithdrawals = async () => {
   try {
-
     const { data } = await axios.get(baseURL);
     withdrawals.value = data;
     console.log("Withdrawals:", withdrawals.value);
     updateSummary();
   } catch (error) {
     console.error("Error fetching withdrawals:", error);
-
   }
 };
 
@@ -159,7 +154,6 @@ const approveWithdrawal = async (id) => {
       confirmButtonText: "Sí, aprobar",
       cancelButtonText: "Cancelar",
     });
-
 
     if (result.isConfirmed) {
       await axios.patch(`${baseURL}status/${id}`, {
@@ -227,5 +221,4 @@ const actions = {
 .tab-content > .active {
   display: block;
 }
-
 </style>

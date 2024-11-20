@@ -8,8 +8,10 @@ import InputFile from "@/components/base/InputFile.vue";
 import TableWithdrawalUsers from "./tables/TableWithdrawalUsers.vue";
 import CardsSummary from "@/components/CardsSummary.vue";
 
-const baseUrl = "http://localhost:3000/withdrawal-request/user/";
-const investmentsUrl = "http://localhost:3000/investment/user/";
+const baseUrl =
+  "https://apiminerales.pruebasdeploy.online/withdrawal-request/user/";
+const investmentsUrl =
+  "https://apiminerales.pruebasdeploy.online/investment/user/";
 
 const withdrawalRequests = ref([]);
 const pendingRequests = ref([]);
@@ -122,11 +124,15 @@ const submitRequest = async () => {
   }
 
   try {
-    await axios.post("http://localhost:3000/withdrawal-request", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    await axios.post(
+      "https://apiminerales.pruebasdeploy.online/withdrawal-request",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     closeModal("modalRequest");
     resetForm();
     getWithdrawalRequests();

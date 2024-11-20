@@ -1,55 +1,54 @@
 <template>
   <div class="main-container">
     <div class="background"></div>
-      <div class="login-card mt-5">
-        <div class="header-image">
-          <img src="@/assets/minerals.png" alt="">
+    <div class="login-card mt-5">
+      <div class="header-image">
+        <img src="@/assets/minerals.png" alt="" />
+      </div>
+      <div class="logo">Minerales</div>
+      <div class="login-form">
+        <div>
+          <Input
+            id="username"
+            v-model="username"
+            type="text"
+            label="Nombre de usuario"
+            class="label"
+          />
         </div>
-        <div class="logo">Minerales</div>
-        <div class="login-form">
-          <div>
-            <Input
-              id="username"
-              v-model="username"
-              type="text"
-              label="Nombre de usuario"
-              class="label"
-
-            />
-          </div>
-          <div>
-            <Input
-              id="password"
-              v-model="password"
-              type="password"
-              label="Contraseña"
-              class="label"
-            />
-          </div>
-          <div>
-            <Switch
-              :checked="shouldReceiveNewsletter"
-              @toggle="toggle"
-              label="Recuérdame"
-            />
-          </div>
-          <!-- 
+        <div>
+          <Input
+            id="password"
+            v-model="password"
+            type="password"
+            label="Contraseña"
+            class="label"
+          />
+        </div>
+        <div>
+          <Switch
+            :checked="shouldReceiveNewsletter"
+            @toggle="toggle"
+            label="Recuérdame"
+          />
+        </div>
+        <!-- 
           <div class="mb-3 col-md-12 mt-4 text-center fw-bold">
             <a class="nav-link forgot" href="#">¿Olvidaste tu contraseña?</a>
           </div> -->
-          <div class="mb-3 col-md-12">
-            <Button
-              text="Ingresar"
-              @click="iniciarSesion()"
-              class="sign-in-btn"
-            />
-          </div>
-          <!--  <div class="mb-3 col-md-12">
+        <div class="mb-3 col-md-12">
+          <Button
+            text="Ingresar"
+            @click="iniciarSesion()"
+            class="sign-in-btn"
+          />
+        </div>
+        <!--  <div class="mb-3 col-md-12">
             <button class="btn btn-outline-secondary w-100 google">
               Ingresar con Google
             </button>
           </div> -->
-          <!--  <div
+        <!--  <div
             class="d-flex justify-content-center mb-3 col-md-12 mt-4 text-center"
           >
             <span class="mx-2"> ¿No tienes cuenta?</span>
@@ -58,8 +57,8 @@
               Regístrate gratis
             </a>
           </div> -->
-        </div>
       </div>
+    </div>
   </div>
 </template>
 
@@ -75,8 +74,8 @@ import Button from "@/components/base/Button.vue";
 import { getHeaderRequest } from "@/authService";
 
 const router = useRouter();
-const baseUrl = "http://localhost:3000/auth/login";
-const baseUrGetUser = "http://localhost:3000/user/";
+const baseUrl = "https://apiminerales.pruebasdeploy.online/auth/login";
+const baseUrGetUser = "https://apiminerales.pruebasdeploy.online/user/";
 
 const username = ref("");
 const password = ref("");
@@ -105,11 +104,11 @@ const iniciarSesion = async () => {
   try {
     const data = await axios.post(baseUrl, datos);
     const userId = data.data.account.userId;
-    const dataUser = await axios.get(baseUrGetUser+userId, header);
+    const dataUser = await axios.get(baseUrGetUser + userId, header);
     console.log(dataUser.data.id);
     data.data.account.role = dataUser.data.role;
     data.data.account.user_id = dataUser.data.id;
-    console.log(data.data.account); 
+    console.log(data.data.account);
     if (data.data.token) {
       localStorage.setItem("token", data.data.token);
       localStorage.setItem("user", JSON.stringify(data.data.account));
@@ -143,7 +142,8 @@ const limpiar = () => {
   font-family: "Bai Jamjuree", sans-serif;
 }
 
-body, html {
+body,
+html {
   height: 100%;
   display: flex;
   align-items: center;
@@ -151,7 +151,7 @@ body, html {
   overflow: hidden;
 }
 
-.main-container{
+.main-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -215,7 +215,7 @@ body, html {
   position: relative;
 }
 
-.label{
+.label {
   font-size: 16px;
 }
 

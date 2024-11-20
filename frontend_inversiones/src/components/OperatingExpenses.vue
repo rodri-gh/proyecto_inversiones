@@ -1,49 +1,39 @@
 <template>
   <div>
-      <div>
-            <div class="text-end">
-                <Button
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalOperatingExpense"
-                    text="Nuevo"
-                    icon="fa fa-plus" 
-                />
-            </div>
-            <TableOperatingExpenses
-                :headers="headers"
-                :items="operatingExpenses"
-                :actions="{
-                    edit: selectOperatingExpense,
-                    delete: deleteOperatingExpense,
-                }"
-            />
+    <div>
+      <div class="text-end">
+        <Button
+          data-bs-toggle="modal"
+          data-bs-target="#modalOperatingExpense"
+          text="Nuevo"
+          icon="fa fa-plus"
+        />
       </div>
-      <Modal
-          modalId="modalOperatingExpense"
-          title="Datos del Gasto Operativo"
-          :showSaveButton="!selectedOperatingExpense?.id"
-          :showUpdateButton="Boolean(selectedOperatingExpense?.id)"
-          @onClose="reset()"
-          @onSave="saveOperatingExpense()"
-      >
-          <Input
-              id="name"
-              v-model="name"
-              label="Nombre"
-              type="text"
-          />
-          <InputTextArea
-              id="description"
-              v-model="description"
-              label="Descripción"
-          />
-          <Input
-              id="expenses"
-              type="number"
-              v-model="expenses"
-              label="Gastos"
-          />
-      </Modal>
+      <TableOperatingExpenses
+        :headers="headers"
+        :items="operatingExpenses"
+        :actions="{
+          edit: selectOperatingExpense,
+          delete: deleteOperatingExpense,
+        }"
+      />
+    </div>
+    <Modal
+      modalId="modalOperatingExpense"
+      title="Datos del Gasto Operativo"
+      :showSaveButton="!selectedOperatingExpense?.id"
+      :showUpdateButton="Boolean(selectedOperatingExpense?.id)"
+      @onClose="reset()"
+      @onSave="saveOperatingExpense()"
+    >
+      <Input id="name" v-model="name" label="Nombre" type="text" />
+      <InputTextArea
+        id="description"
+        v-model="description"
+        label="Descripción"
+      />
+      <Input id="expenses" type="number" v-model="expenses" label="Gastos" />
+    </Modal>
   </div>
 </template>
 
@@ -59,22 +49,16 @@ import { openModal, closeModal } from "@/utils/modal";
 import { getHeaderRequest } from "@/authService";
 import { eventBus } from "@/eventBus";
 
-const headers = [
-  "Nombre",
-  "Descripción",
-  "Gastos",
-  "Estado",
-  "Acciones",
-];
+const headers = ["Nombre", "Descripción", "Gastos", "Estado", "Acciones"];
 
 const props = defineProps({
   idProject: {
-      type: String,
-      required: true,
+    type: String,
+    required: true,
   },
 });
 
-const baseURL = "http://localhost:3000/operating-expenses/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/operating-expenses/";
 const operatingExpenses = ref([]);
 const name = ref("");
 const description = ref("");
@@ -85,22 +69,25 @@ const header = getHeaderRequest();
 onMounted(() => {
   getOperatingExpenses();
   console.log("Imprimiendo el prop operatingExpenses: ", props.idProject);
-  eventBus.on('data-updated', getOperatingExpenses);
+  eventBus.on("data-updated", getOperatingExpenses);
 });
 
 onUnmounted(() => {
-  eventBus.off('data-updated', getOperatingExpenses); 
+  eventBus.off("data-updated", getOperatingExpenses);
 });
 
 const getOperatingExpenses = async () => {
   try {
-      console.log(baseURL+"project/");
-      console.log(props.idProject);
-      const data = await axios.get(baseURL + "project/" + props.idProject, header);
-      console.log(data.data);
-      operatingExpenses.value = data.data.filter((item) => item.deleted === 0);
+    console.log(baseURL + "project/");
+    console.log(props.idProject);
+    const data = await axios.get(
+      baseURL + "project/" + props.idProject,
+      header
+    );
+    console.log(data.data);
+    operatingExpenses.value = data.data.filter((item) => item.deleted === 0);
   } catch (error) {
-      console.error(error);
+    console.error(error);
   }
 };
 
@@ -109,24 +96,24 @@ const selectOperatingExpense = (operatingExpense) => {
   name.value = operatingExpense.name;
   description.value = operatingExpense.description;
   expenses.value = operatingExpense.expenses;
-  
+
   openModal("modalOperatingExpense");
 };
 
 const saveOperatingExpense = async () => {
   const method = selectedOperatingExpense.value.id ? "put" : "post";
   const url = selectedOperatingExpense.value.id
-      ? `${baseURL}${selectedOperatingExpense.value.id}`
-      : baseURL;
+    ? `${baseURL}${selectedOperatingExpense.value.id}`
+    : baseURL;
   const formData = createFormData();
 
   try {
-      await axios[method](url, formData, header);
-      closeModal("modalOperatingExpense");
-      getOperatingExpenses();
-      reset();
+    await axios[method](url, formData, header);
+    closeModal("modalOperatingExpense");
+    getOperatingExpenses();
+    reset();
   } catch (error) {
-      console.log(error);
+    console.log(error);
   }
 };
 
@@ -141,11 +128,11 @@ const createFormData = () => {
 
 const deleteOperatingExpense = async (id) => {
   try {
-      const { data } = await axios.patch(baseURL + id);
-      console.log(data);
-      getOperatingExpenses();
+    const { data } = await axios.patch(baseURL + id);
+    console.log(data);
+    getOperatingExpenses();
   } catch (error) {
-      console.error(error);
+    console.error(error);
   }
 };
 const reset = () => {

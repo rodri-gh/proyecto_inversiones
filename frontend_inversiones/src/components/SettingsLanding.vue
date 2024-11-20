@@ -216,7 +216,7 @@ import { openModal, closeModal } from "@/utils/modal";
 
 const headers = ["Campo", "Valor", "Acciones"];
 
-const baseURL = "http://localhost:3000/site-setting";
+const baseURL = "https://apiminerales.pruebasdeploy.online/site-setting";
 
 const settings = ref({});
 const tempSettings = ref({});

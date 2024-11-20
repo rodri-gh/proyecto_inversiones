@@ -2,12 +2,11 @@
   <div class="container py-5">
     <!-- Back Button -->
     <div class="mb-4">
-      <router-link 
-        to="/user-home" 
+      <router-link
+        to="/user-home"
         class="btn btn-primary d-flex align-items-center gap-2"
         style="width: fit-content"
       >
-        
         Volver al inicio
       </router-link>
     </div>
@@ -35,9 +34,9 @@
       <!-- Tab Navigation -->
       <div class="tab-scroll-container">
         <ul class="nav nav-tabs custom-tabs" id="postTabs" role="tablist">
-          <li 
-            v-for="(section, index) in contentSections" 
-            :key="index" 
+          <li
+            v-for="(section, index) in contentSections"
+            :key="index"
             class="nav-item"
             role="presentation"
           >
@@ -57,9 +56,12 @@
           </li>
         </ul>
       </div>
-      
+
       <!-- Tab Content -->
-      <div class="tab-content p-4 bg-white shadow-sm rounded-bottom" id="postTabContent">
+      <div
+        class="tab-content p-4 bg-white shadow-sm rounded-bottom"
+        id="postTabContent"
+      >
         <div
           v-for="(section, index) in contentSections"
           :key="index"
@@ -86,11 +88,11 @@ const router = useRouter();
 const post = ref({});
 const contentSections = ref([]);
 
-const baseURL = "http://localhost:3000/post/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/post/";
 
 const parseContent = (content) => {
   const parser = new DOMParser();
-  const doc = parser.parseFromString(content, 'text/html');
+  const doc = parser.parseFromString(content, "text/html");
   const sections = [];
   let currentSection = null;
   let currentContent = [];
@@ -99,12 +101,12 @@ const parseContent = (content) => {
   const elements = Array.from(doc.body.children);
 
   elements.forEach((element) => {
-    if (element.tagName === 'H1' || element.tagName === 'H2') {
+    if (element.tagName === "H1" || element.tagName === "H2") {
       // If we have a previous section, save it
       if (currentSection) {
         sections.push({
           title: currentSection,
-          content: currentContent.join('')
+          content: currentContent.join(""),
         });
       }
       // Start new section
@@ -120,7 +122,7 @@ const parseContent = (content) => {
   if (currentSection) {
     sections.push({
       title: currentSection,
-      content: currentContent.join('')
+      content: currentContent.join(""),
     });
   }
 
@@ -192,18 +194,17 @@ onMounted(() => {
   transition: all 0.2s ease-in-out;
   margin-right: 4px;
   background-color: #f8f9fa;
-  
 }
 
 .nav-tabs .nav-link:hover {
-  border-color: #FFA500;
-  color: #FFA500;
+  border-color: #ffa500;
+  color: #ffa500;
 }
 
 .nav-tabs .nav-link.active {
-  color: #FFA500;
+  color: #ffa500;
   background-color: #fff;
-  border-color: #FFA500 #FFA500 #fff;
+  border-color: #ffa500 #ffa500 #fff;
   border-top-width: 2px;
   border-right-width: 2px;
   border-left-width: 2px;
@@ -211,7 +212,7 @@ onMounted(() => {
 }
 
 .tab-content {
-  border: 2px solid #FFA500;
+  border: 2px solid #ffa500;
   border-top: none;
   border-radius: 0 0 0.5rem 0.5rem;
 }
@@ -249,12 +250,12 @@ onMounted(() => {
 }
 
 .tab-scroll-container::-webkit-scrollbar-thumb {
-  background: #FFA500;
+  background: #ffa500;
   border-radius: 3px;
 }
 
 .tab-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #FF8C00;
+  background: #ff8c00;
 }
 
 /* Responsive adjustments */

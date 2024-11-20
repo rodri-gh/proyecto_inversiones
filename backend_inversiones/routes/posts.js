@@ -33,7 +33,7 @@ router.get('/', async (req, res, next) => {
     const posts = await Post.findAll();
     posts.forEach(post => {
       if (post.cover_image) {
-        post.cover_image = `http://localhost:3000/images/posts/${post.cover_image}`;
+        post.cover_image = `https://apiminerales.pruebasdeploy.online/images/posts/${post.cover_image}`;
       }
     });
     getHandleSuccess(200)(res, posts);
@@ -50,7 +50,7 @@ router.get('/:id', async (req, res, next) => {
       return getHandleError(new Error('Post not found'), res);
     }
     if (post.cover_image) {
-      post.cover_image = `http://localhost:3000/images/posts/${post.cover_image}`;
+      post.cover_image = `https://apiminerales.pruebasdeploy.online/images/posts/${post.cover_image}`;
     }
     getHandleSuccess(200)(res, post);
   } catch (error) {

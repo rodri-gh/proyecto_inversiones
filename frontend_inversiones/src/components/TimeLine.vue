@@ -24,10 +24,7 @@
             'timeline-right': index % 2 !== 0,
           }"
         >
-          <div
-            class="timeline-point"
-            :class="getStatusClass(timeline.status)"
-          >
+          <div class="timeline-point" :class="getStatusClass(timeline.status)">
             <i :class="getStatusIcon(timeline.status)"></i>
           </div>
           <div class="timeline-content">
@@ -41,7 +38,7 @@
                   Contrato
                 </span>
                 <span
-                  v-if="timeline.phase == 'inversion'" 
+                  v-if="timeline.phase == 'inversion'"
                   class="phase-badge"
                   :class="getPhaseClass(timeline.phase)"
                 >
@@ -99,17 +96,17 @@
 
                 <p class="mt-2">{{ timeline.description }}</p>
 
-                <div v-if="timeline.priceMineral2 > 0 
-                && timeline.priceMineral1 > 0" class="prices mt-2">
+                <div
+                  v-if="
+                    timeline.priceMineral2 > 0 && timeline.priceMineral1 > 0
+                  "
+                  class="prices mt-2"
+                >
                   <small class="d-block">
-                    <strong>Mineral 1:</strong> ${{
-                      timeline.priceMineral1
-                    }}
+                    <strong>Mineral 1:</strong> ${{ timeline.priceMineral1 }}
                   </small>
                   <small class="d-block">
-                    <strong>Mineral 2:</strong> ${{
-                      timeline.priceMineral2
-                    }}
+                    <strong>Mineral 2:</strong> ${{ timeline.priceMineral2 }}
                   </small>
                 </div>
                 <div v-else>
@@ -281,7 +278,7 @@ const props = defineProps({
   },
 });
 
-const baseURL = "http://localhost:3000/project-timeline/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/project-timeline/";
 
 const timeLines = ref([]);
 
@@ -304,7 +301,7 @@ const phases = [
   "envio",
   "entrega",
   "ganancia",
-  "pago"
+  "pago",
 ];
 
 const availablePhases = computed(() => {
@@ -331,13 +328,12 @@ const availablePhases = computed(() => {
 
 onMounted(() => {
   getTimeLines();
-  eventBus.on('data-updated', getTimeLines);
+  eventBus.on("data-updated", getTimeLines);
 });
 
 onUnmounted(() => {
-  eventBus.off('data-updated', getTimeLines); 
+  eventBus.off("data-updated", getTimeLines);
 });
-
 
 const getStatusClass = (status) => {
   const statusLower = status.toLowerCase();
@@ -370,13 +366,13 @@ const getStatusIcon = (status) => {
 const getPhaseClass = (phase) => {
   const phaseLower = phase.toLowerCase();
   const phaseClasses = {
-    'contrato': "phase-contract",
-    "inversion": "phase-prebuying",
-    'compra_de_mineral': "phase-buying",
-    "envio": "phase-entry",
-    "entrega": "phase-exit",
-    'ganancia': "phase-certification",
-    'pago': "phase-contract",
+    contrato: "phase-contract",
+    inversion: "phase-prebuying",
+    compra_de_mineral: "phase-buying",
+    envio: "phase-entry",
+    entrega: "phase-exit",
+    ganancia: "phase-certification",
+    pago: "phase-contract",
   };
   return phaseClasses[phaseLower] || "phase-default";
 };
@@ -397,9 +393,12 @@ const formatInputDate = (date) => {
 
 const getTimeLines = async () => {
   try {
-    console.log(baseURL+"project/" + props.idProject);
-    const data = await axios.get(baseURL+"project/" + props.idProject, header);
-    console.log(data.data)
+    console.log(baseURL + "project/" + props.idProject);
+    const data = await axios.get(
+      baseURL + "project/" + props.idProject,
+      header
+    );
+    console.log(data.data);
     timeLines.value = data.data
       .filter((item) => phases.includes(item.phase))
       .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));

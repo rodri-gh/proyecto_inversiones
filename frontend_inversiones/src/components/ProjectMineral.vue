@@ -233,8 +233,8 @@ const props = defineProps({
   },
 });
 
-const baseURL = "http://localhost:3000/project-minerals/";
-const baseUrlUsers = "http://localhost:3000/user/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/project-minerals/";
+const baseUrlUsers = "https://apiminerales.pruebasdeploy.online/user/";
 
 // Estados reactivos
 const projectMinerals = ref([]);
@@ -277,7 +277,10 @@ const getprojectMinerals = async () => {
 
 const getMinerals = async () => {
   try {
-    const data = await axios.get("http://localhost:3000/mineral/", header);
+    const data = await axios.get(
+      "https://apiminerales.pruebasdeploy.online/mineral/",
+      header
+    );
     minerals.value = data.data;
     console.log(data.data);
   } catch (error) {
@@ -350,20 +353,20 @@ const toggleProjectMineralStatus = async (projectMineral) => {
 const saveProjectMinerals = async () => {
   const method = selectedProjectMineral.value.id ? "put" : "post";
   const url = selectedProjectMineral.value.id
-      ? `${baseURL}${selectedProjectMineral.value.id}`
-      : baseURL;
+    ? `${baseURL}${selectedProjectMineral.value.id}`
+    : baseURL;
 
   const projectMineral = {
-        projectId: props.idProjectMineral,
-        mineralId: selectedMineral.value.id,
-        userId: userId.value,
-        operatingExpenseId: selectedProjectMineral.value.operatingExpenseId,
-        purchasePrice: purchasePrice.value,
-        prePurchase: prePurchase.value,
-        estimatedPurchasePrice: estimatedPurchasePrice.value,
-        exitPrice: exitPrice.value,
-        salePrice: salePrice.value,
-      };
+    projectId: props.idProjectMineral,
+    mineralId: selectedMineral.value.id,
+    userId: userId.value,
+    operatingExpenseId: selectedProjectMineral.value.operatingExpenseId,
+    purchasePrice: purchasePrice.value,
+    prePurchase: prePurchase.value,
+    estimatedPurchasePrice: estimatedPurchasePrice.value,
+    exitPrice: exitPrice.value,
+    salePrice: salePrice.value,
+  };
   const currentMinerals = projectMinerals.value.length;
   const newMineralsCount = selectedMinerals.value.length;
   if (!isEditing.value && currentMinerals + newMineralsCount > 2) {
@@ -375,32 +378,32 @@ const saveProjectMinerals = async () => {
     return;
   }
   try {
-        await axios[method](url, projectMineral, header);
-        await getprojectMinerals();
-        closeModal();
+    await axios[method](url, projectMineral, header);
+    await getprojectMinerals();
+    closeModal();
 
-        Swal.fire(
-          "¡Éxito!",
-          isEditing.value
-            ? "Mineral actualizado correctamente."
-            : "Minerales agregados correctamente.",
-          "success"
-        );
-    } catch (error) {
-        console.log(error);
-    }
+    Swal.fire(
+      "¡Éxito!",
+      isEditing.value
+        ? "Mineral actualizado correctamente."
+        : "Minerales agregados correctamente.",
+      "success"
+    );
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const deleteProjectMineral = async (id) => { 
+const deleteProjectMineral = async (id) => {
   try {
-    const response = await axios.patch(baseURL+id, header);
+    const response = await axios.patch(baseURL + id, header);
     getprojectMinerals();
     Swal.fire("Eliminado", "El mineral se eliminó correctamente.", "success");
-  } catch (e) { 
+  } catch (e) {
     console.error(e);
     Swal.fire("Error", "No se pudo eliminar el mineral.", "error");
   }
-} 
+};
 
 const selectProjectMineral = (projectMineral) => {
   isEditing.value = true;
@@ -447,7 +450,6 @@ const closeModal = () => {
 const selectedUser = computed(() => {
   return users.value.find((user) => String(user.id) === String(userId.value));
 });
-
 </script>
 
 <style scoped>

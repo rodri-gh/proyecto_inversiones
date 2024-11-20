@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
-const baseURL = "http://localhost:3000/site-setting";
+const baseURL = "https://apiminerales.pruebasdeploy.online/site-setting";
 
 const settings = ref([]);
 

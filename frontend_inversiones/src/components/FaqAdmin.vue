@@ -45,7 +45,7 @@ import { closeModal, openModal } from "@/utils/modal";
 
 const headers = ["Pregunta", "Respuesta", "Estado", "Acciones"];
 
-const baseURL = "http://localhost:3000/faq/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/faq/";
 const faqs = ref([]);
 const ask = ref("");
 const answer = ref("");

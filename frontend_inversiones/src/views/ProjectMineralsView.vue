@@ -208,7 +208,7 @@ import { ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
 import axios from "axios";
 
-const baseURL = "http://localhost:3000/projects/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/projects/";
 
 const projects = ref([]);
 

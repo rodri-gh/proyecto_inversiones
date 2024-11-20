@@ -10,9 +10,7 @@
         class="btn-color"
       />
     </div>
-    <CardsSummary                
-      :items="summaryUsers" 
-      />
+    <CardsSummary :items="summaryUsers" />
     <ul class="nav nav-tabs" id="userTabs" role="tablist">
       <li class="nav-item" role="presentation">
         <button
@@ -227,7 +225,7 @@ const headersTable = [
   "Acciones",
 ];
 
-const baseURL = "http://localhost:3000/user/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/user/";
 
 const rol = getUserRoleOfLocalStorage();
 
@@ -286,30 +284,30 @@ const getsummaryUsers = () => {
   if (users.value.length > 0) {
     let userTotals = users.value.length;
     let userActives = 0;
-    let userAdmins = 0; 
+    let userAdmins = 0;
     let userClients = 0;
-    for (var item of users.value){ 
-      if ( item.deleted === 1) { 
+    for (var item of users.value) {
+      if (item.deleted === 1) {
         userActives++;
       }
-      if ( item.role === 'admin') { 
+      if (item.role === "admin") {
         userAdmins++;
       }
-      if (item.role === 'client') { 
-        userClients++; 
+      if (item.role === "client") {
+        userClients++;
       }
     }
     summaryUsers.value = [
-      { key: 'Usuarios Totales', value: userTotals },
-      { key: 'Usuarios activos', value: userActives },
-      { key: 'Administradores', value: userAdmins },
-      { key: 'Clientes', value: userClients },
-    ]
-    console.log(summaryUsers.value); 
-  } else { 
-    console.log('el array de users para cards sumary esta vacio'); 
+      { key: "Usuarios Totales", value: userTotals },
+      { key: "Usuarios activos", value: userActives },
+      { key: "Administradores", value: userAdmins },
+      { key: "Clientes", value: userClients },
+    ];
+    console.log(summaryUsers.value);
+  } else {
+    console.log("el array de users para cards sumary esta vacio");
   }
-}
+};
 
 const createUser = async () => {
   if (!validateUserInput()) return;
@@ -325,7 +323,7 @@ const createUser = async () => {
     email: email.value,
     phone: phone.value,
     password: password.value,
-    role: role.value
+    role: role.value,
   };
   try {
     await axios[method](url, datos, header);

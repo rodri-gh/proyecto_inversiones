@@ -27,7 +27,7 @@ import { Carousel, Slide, Navigation } from "vue3-carousel";
 const posts = ref([]);
 const router = useRouter();
 
-const baseURL = "http://localhost:3000/post/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/post/";
 
 const getPosts = async () => {
   try {

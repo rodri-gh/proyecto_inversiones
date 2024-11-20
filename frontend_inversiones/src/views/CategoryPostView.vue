@@ -48,7 +48,7 @@ import { closeModal, openModal } from "@/utils/modal";
 
 const headers = ["Nombre", "Estado", "Acciones"];
 
-const baseURL = "http://localhost:3000/category-post/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/category-post/";
 const categoryPosts = ref([]);
 const name = ref("");
 const selectedCategoryPost = ref({});
