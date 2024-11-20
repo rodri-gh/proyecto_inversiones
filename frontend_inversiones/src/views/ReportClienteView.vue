@@ -43,21 +43,21 @@
               <label class="form-label">Estado</label>
               <select class="form-select p-2" v-model="filters.status">
                 <option value="">Todos</option>
-                <option value="active">Activo</option>
+                <!--   <option value="active">Activo</option> -->
                 <option value="pending">Pendiente</option>
                 <option value="closed">Cerrado</option>
               </select>
             </div>
             <div class="col-12 text-end">
-              <button class="btn btn-success me-2" @click="exportToExcel">
-                <i class="fa fa-file-excel-o me-1"></i>
+              <button class="btn btn-success me-2" @click="exportToExcel()">
+                <i class="fa fa-book me-1"></i>
                 Exportar a Excel
               </button>
-              <button class="btn btn-primary me-2" @click="getFilteredReport">
+              <button class="btn btn-primary me-2" @click="getFilteredReport()">
                 <i class="fa fa-search me-1"></i>
                 Aplicar Filtros
               </button>
-              <button class="btn btn-secondary" @click="resetFilters">
+              <button class="btn btn-secondary" @click="resetFilters()">
                 <i class="fa fa-refresh me-1"></i>
                 Limpiar Filtros
               </button>

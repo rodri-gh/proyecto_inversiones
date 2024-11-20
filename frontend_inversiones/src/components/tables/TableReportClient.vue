@@ -69,10 +69,14 @@ const formatCurrency = (value) => {
 };
 
 const getTotalAmount = () => {
-  return props.items.reduce((sum, item) => sum + Number(item.amount), 0);
+  return props.items
+    .filter((item) => item.status === "closed")
+    .reduce((sum, item) => sum + Number(item.amount), 0);
 };
 
 const getTotalEarnings = () => {
-  return props.items.reduce((sum, item) => sum + Number(item.earnings || 0), 0);
+  return props.items
+    .filter((item) => item.status === "closed")
+    .reduce((sum, item) => sum + Number(item.earnings || 0), 0);
 };
 </script>
