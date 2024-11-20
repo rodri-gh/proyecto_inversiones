@@ -225,7 +225,7 @@ const headersTable = [
   "Acciones",
 ];
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/user/";
+const baseURL = `${import.meta.env.VITE_API_URL}/user/`;
 
 const rol = getUserRoleOfLocalStorage();
 

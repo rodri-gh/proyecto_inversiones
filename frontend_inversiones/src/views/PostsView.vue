@@ -106,11 +106,11 @@ import TablePosts from "@/components/tables/TablePosts.vue";
 
 const headers = ["Titulo", "Resumen", "Estado", "Acciones"];
 
-const categoryURL = "https://apiminerales.pruebasdeploy.online/category-post/";
+const categoryURL = `${import.meta.env.VITE_API_URL}/category-post/`;
 
 const categoryPosts = ref([]);
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/post/";
+const baseURL = `${import.meta.env.VITE_API_URL}/post/`;
 
 const posts = ref([]);
 

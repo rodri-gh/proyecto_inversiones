@@ -6,7 +6,11 @@ import { fileURLToPath } from 'url';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import Mineral from '../models/mineralModel.js';
+import dotenv from 'dotenv';
 import { verifyIfIdExists } from '../helpers/handleId.js';
+
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,7 +38,7 @@ router.get('/', async (req, res, next) => {
     const minerals = await Mineral.findAll();
     minerals.forEach(mineral => {
       if (mineral.image) {
-        mineral.image = `https://apiminerales.pruebasdeploy.online/images/minerals/${mineral.image}`;
+        mineral.image = `${process.env.URL_BASE}/images/minerals/${mineral.image}`;
       }
     });
     getHandleSuccess(200)(res, minerals);

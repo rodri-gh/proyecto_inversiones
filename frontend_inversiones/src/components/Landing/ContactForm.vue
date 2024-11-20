@@ -42,7 +42,7 @@ import Input from "../base/Input.vue";
 import InputTextArea from "../base/InputTextArea.vue";
 import Button from "../base/Button.vue";
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/contact/";
+const baseURL = `${import.meta.env.VITE_API_URL}/contact/`;
 const name = ref("");
 const lastName = ref("");
 const email = ref("");

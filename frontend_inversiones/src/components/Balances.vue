@@ -16,7 +16,9 @@ onMounted(() => {
 const fetchFinancialSummary = async () => {
   try {
     const response = await axios.get(
-      `https://apiminerales.pruebasdeploy.online/analysis-report/GetUserFinancialSummary/${userId}`,
+      `${
+        import.meta.env.VITE_API_URL
+      }/analysis-report/GetUserFinancialSummary/${userId}`,
       header
     );
     console.log(response.data);

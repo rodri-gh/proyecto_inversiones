@@ -88,7 +88,7 @@ const router = useRouter();
 const post = ref({});
 const contentSections = ref([]);
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/post/";
+const baseURL = `${import.meta.env.VITE_API_URL}/post/`;
 
 const parseContent = (content) => {
   const parser = new DOMParser();

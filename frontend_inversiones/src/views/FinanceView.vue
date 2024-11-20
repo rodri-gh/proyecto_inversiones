@@ -5,8 +5,7 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 
 const header = getHeaderRequest();
-const baseUrl =
-  "https://apiminerales.pruebasdeploy.online/analysisReport/cash-flow";
+const baseUrl = `${import.meta.env.VITE_API_URL}/analysisReport/cash-flow`;
 const cashFlow = ref([]);
 
 const flowData = ref({

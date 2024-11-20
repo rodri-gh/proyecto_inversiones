@@ -74,8 +74,8 @@ import Button from "@/components/base/Button.vue";
 import { getHeaderRequest } from "@/authService";
 
 const router = useRouter();
-const baseUrl = "https://apiminerales.pruebasdeploy.online/auth/login";
-const baseUrGetUser = "https://apiminerales.pruebasdeploy.online/user/";
+const baseUrl = `${import.meta.env.VITE_API_URL}/auth/login`;
+const baseUrGetUser = `${import.meta.env.VITE_API_URL}/user/`;
 
 const username = ref("");
 const password = ref("");

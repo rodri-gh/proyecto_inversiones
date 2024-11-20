@@ -86,7 +86,7 @@ const headers = [
   "Acciones",
 ];
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/mineral/";
+const baseURL = `${import.meta.env.VITE_API_URL}/mineral/`;
 
 const minerals = ref([]);
 const name = ref("");

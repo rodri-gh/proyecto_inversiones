@@ -5,14 +5,15 @@ import { onMounted, ref } from "vue";
 
 const header = getHeaderRequest();
 const phasesOfFormat = getPhaseOfProject();
-const baseUrl =
-  "https://apiminerales.pruebasdeploy.online/project-timeline/project/";
+const baseUrl = `${import.meta.env.VITE_API_URL}/project-timeline/project/`;
 const percentageOfProject = ref(0.0);
 const phaseOfProject = ref("");
-const baseUrlAnalisiReport =
-  "https://apiminerales.pruebasdeploy.online/analysis-report/totalInvestmentVsReturn/";
-const baseUrlOperatingExp =
-  "https://apiminerales.pruebasdeploy.online/operating-expenses/project/";
+const baseUrlAnalisiReport = `${
+  import.meta.env.VITE_API_URL
+}/analysis-report/totalInvestmentVsReturn/`;
+const baseUrlOperatingExp = `${
+  import.meta.env.VITE_API_URL
+}/operating-expenses/project/`;
 const ROI = ref(0);
 const operatingExpe = ref(0);
 

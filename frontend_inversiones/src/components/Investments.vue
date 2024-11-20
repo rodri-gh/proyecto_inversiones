@@ -107,7 +107,7 @@ const props = defineProps({
 });
 
 const users = ref([]);
-const baseURL = "https://apiminerales.pruebasdeploy.online/investment/";
+const baseURL = `${import.meta.env.VITE_API_URL}/investment/`;
 const investments = ref([]);
 const amount = ref(0);
 const investment_date = ref("");
@@ -145,7 +145,7 @@ const getUsers = async () => {
   console.log;
   try {
     const data = await axios.get(
-      "https://apiminerales.pruebasdeploy.online/user",
+      `${import.meta.env.VITE_API_URL}/user`,
       header
     );
     users.value = data.data;

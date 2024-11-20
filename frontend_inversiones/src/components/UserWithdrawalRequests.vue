@@ -8,10 +8,8 @@ import InputFile from "@/components/base/InputFile.vue";
 import TableWithdrawalUsers from "./tables/TableWithdrawalUsers.vue";
 import CardsSummary from "@/components/CardsSummary.vue";
 
-const baseUrl =
-  "https://apiminerales.pruebasdeploy.online/withdrawal-request/user/";
-const investmentsUrl =
-  "https://apiminerales.pruebasdeploy.online/investment/user/";
+const baseUrl = `${import.meta.env.VITE_API_URL}/withdrawal-request/user/`;
+const investmentsUrl = `${import.meta.env.VITE_API_URL}/investment/user/`;
 
 const withdrawalRequests = ref([]);
 const pendingRequests = ref([]);
@@ -125,7 +123,7 @@ const submitRequest = async () => {
 
   try {
     await axios.post(
-      "https://apiminerales.pruebasdeploy.online/withdrawal-request",
+      `${import.meta.env.VITE_API_URL}/withdrawal-request`,
       formData,
       {
         headers: {

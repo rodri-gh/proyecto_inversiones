@@ -6,6 +6,10 @@ import { fileURLToPath } from 'url';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import SiteSetting from '../models/siteSettingModel.js';
+import dotenv from 'dotenv';
+
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,10 +38,10 @@ router.get('/', async (req, res, next) => {
     const settings = await SiteSetting.findAll();
     settings.forEach(setting => {
       if (setting.logo) {
-        setting.logo = `https://apiminerales.pruebasdeploy.online/images/site_settings/${setting.logo}`;
+        setting.logo = `${process.env.URL_BASE}/images/site_settings/${setting.logo}`;
       }
       if (setting.aboutImage) {
-        setting.aboutImage = `https://apiminerales.pruebasdeploy.online/images/site_settings/${setting.aboutImage}`;
+        setting.aboutImage = `${process.env.URL_BASE}/images/site_settings/${setting.aboutImage}`;
       }
     });
     getHandleSuccess(200)(res, settings);

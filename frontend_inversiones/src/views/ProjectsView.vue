@@ -243,7 +243,7 @@ import {
 } from "@/authService";
 import CardsSummary from "@/components/CardsSummary.vue";
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/project/";
+const baseURL = `${import.meta.env.VITE_API_URL}/project/`;
 const projects = ref([]);
 const name = ref("");
 const description = ref("");

@@ -216,7 +216,7 @@ import { openModal, closeModal } from "@/utils/modal";
 
 const headers = ["Campo", "Valor", "Acciones"];
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/site-setting";
+const baseURL = `${import.meta.env.VITE_API_URL}/site-setting`;
 
 const settings = ref({});
 const tempSettings = ref({});

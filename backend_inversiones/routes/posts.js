@@ -6,6 +6,10 @@ import { fileURLToPath } from 'url';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import Post from '../models/postModel.js';
+import dotenv from 'dotenv';
+
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,7 +37,7 @@ router.get('/', async (req, res, next) => {
     const posts = await Post.findAll();
     posts.forEach(post => {
       if (post.cover_image) {
-        post.cover_image = `https://apiminerales.pruebasdeploy.online/images/posts/${post.cover_image}`;
+        post.cover_image = `${process.env.URL_BASE}/images/posts/${post.cover_image}`;
       }
     });
     getHandleSuccess(200)(res, posts);
@@ -50,7 +54,7 @@ router.get('/:id', async (req, res, next) => {
       return getHandleError(new Error('Post not found'), res);
     }
     if (post.cover_image) {
-      post.cover_image = `https://apiminerales.pruebasdeploy.online/images/posts/${post.cover_image}`;
+      post.cover_image = `${process.env.URL_BASE}/images/posts/${post.cover_image}`;
     }
     getHandleSuccess(200)(res, post);
   } catch (error) {

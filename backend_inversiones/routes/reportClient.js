@@ -100,19 +100,23 @@ router.get('/user/:id/export', async (req, res) => {
       order: [['investmentDate', 'ASC']]
     });
 
+    console.log('Estados de inversiones:', investments.map(inv => ({
+      id: inv.id,
+      status: inv.status
+    })));
 
-    // Preparar datos para Excel
+    // Modificar la preparación de datos para Excel
     const data = investments.map(inv => ({
       'Proyecto': inv.project.name,
       'Código de Contrato': inv.contract.contractCode,
-      'Monto': inv.amount,
+      'Monto': Number(inv.amount).toFixed(2),
       'Fecha': new Date(inv.investmentDate).toLocaleDateString(),
-      'Porcentaje de Ganancia': inv.profitPercentage,
-      'Ganancias': inv.earnings,
-      'Estado': inv.status === 'closed' ? 'Cerrado' : 'Abierto'
+      'Porcentaje de Ganancia': `${inv.profitPercentage}%`,
+      'Ganancias': inv.status === 'closed' ? Number(inv.earnings).toFixed(2) : '0.00',
+      'Estado': inv.status === 'closed' ? 'Cerrado' : 'Pendiente'
     }));
 
-    // Calcular totales
+    // Calcular totales (solo inversiones cerradas)
     const totalAmount = investments
       .filter(inv => inv.status === 'closed')
       .reduce((sum, inv) => sum + Number(inv.amount || 0), 0)

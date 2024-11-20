@@ -16,7 +16,7 @@ const headers = [
   "Estado",
 ];
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/movements/";
+const baseURL = `${import.meta.env.VITE_API_URL}/movements/`;
 
 const movements = ref([]);
 const description = ref("");

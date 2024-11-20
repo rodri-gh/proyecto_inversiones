@@ -18,8 +18,14 @@
           <td>{{ formatCurrency(item.amount) }}</td>
           <td>{{ formatDate(item.investmentDate) }}</td>
           <td>{{ item.profitPercentage }}%</td>
-          <td>{{ formatCurrency(item.earnings) }}</td>
-          <td>{{ item.status == "closed" ? "Cerrado" : "Abierto" }}</td>
+          <td>
+            {{
+              item.status === "closed"
+                ? Number(item.earnings).toFixed(2)
+                : "0.00"
+            }}
+          </td>
+          <td>{{ item.status == "closed" ? "Cerrado" : "Pendiente" }}</td>
         </tr>
         <!-- Fila de totales -->
         <tr class="table-info">
