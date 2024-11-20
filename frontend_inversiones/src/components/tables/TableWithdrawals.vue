@@ -1,6 +1,6 @@
 <template>
-  <div class="table-responsive">
-    <table class="table">
+  <div>
+    <table class="table table-striped">
       <thead>
         <tr>
           <th v-for="(header, index) in headers" :key="index">{{ header }}</th>

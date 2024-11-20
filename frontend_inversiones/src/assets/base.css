@@ -22,7 +22,7 @@ Diseño del sitio:
 :root {
     --primary-color: #ff8800; /* Botón de acción */
     --primary-light: #ffa127; /* Botón de acción en modo oscuro */
-    --secondary-color: #b1b1b1; /* Fondo de barra de navegación */
+    --secondary-color: #ffffff; /* Fondo de barra de navegación */
     --text-color: #333333; /* Color del texto */
     --pending-color: #ff3300; /* Etiqueta de estado pendiente */
     --active-color: #008000; /* Etiqueta de estado activo */

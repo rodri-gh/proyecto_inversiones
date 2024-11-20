@@ -1,5 +1,5 @@
 <template>
-  <div class="container col-md-12 mt-5">
+  <div class="container col-md-12 mt-2">
     <h4 class="card-title text-center">
       Lista de Usuarios que requieren información
     </h4>
