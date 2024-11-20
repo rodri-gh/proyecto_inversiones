@@ -20,6 +20,7 @@ import SettingsLanding from "./SettingsLanding.vue";
 import UserSummary from "./UserSummary.vue";
 import axios from "axios";
 import Balances from "./Balances.vue";
+import ReportClienteView from "@/views/ReportClienteView.vue";
 
 const baseURL = "http://localhost:3000/site-setting";
 
@@ -138,6 +139,11 @@ const componentslinks = computed(() => {
     links.push({
       name: "Solicitudes de Retiro",
       component: UserWithdrawalRequests,
+      isDividerWithTitle: false,
+    });
+    links.push({
+      name: "Reporte de Inversiones",
+      component: ReportClienteView,
       isDividerWithTitle: false,
     });
   }

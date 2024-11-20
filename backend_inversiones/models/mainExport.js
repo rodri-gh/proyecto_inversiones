@@ -37,8 +37,13 @@ Contract.belongsTo(Project, { foreignKey: 'projectId' });
 User.hasMany(Contract, { foreignKey: 'userId' });
 Contract.belongsTo(User, { foreignKey: 'userId' });
 
-Investment.hasMany(Contract, { foreignKey: 'investmentId' });
-Contract.belongsTo(Investment, { foreignKey: 'investmentId' });
+//La relacion esta al reves de como estan estructuradas las tablas
+//Investment.hasMany(Contract, { foreignKey: 'investmentId' });
+//Contract.belongsTo(Investment, { foreignKey: 'investmentId' });
+
+Contract.hasOne(Investment, { foreignKey: 'contractId' });
+Investment.belongsTo(Contract, { foreignKey: 'contractId' });
+
 
 Project.hasMany(OperatingExpense, { foreignKey: 'projectId' });
 OperatingExpense.belongsTo(Project, { foreignKey: 'projectId' });
@@ -88,26 +93,26 @@ ProjectPayment.belongsTo(User, { foreignKey: 'userId' });
 
 
 export {
-    User,
-    Project,
-    Account,
-    Investment,
-    Contract,
-    Mineral,
-    OperatingExpense,
-    ProjectMineral,
-    ProjectTimeline,
-    CategoryPost,
-    Contact,
-    Faq,
-    Movement,
-    WithdrawalRequest,
-    FinancialTransactions,
-    MineralPriceHistory,
-    FinancialSettings,
-    UserActivitylog,
-    ProjectPerformance,
-    ProjectChanges,
-    FinancialProjections,
-    ProjectPayment,
+  User,
+  Project,
+  Account,
+  Investment,
+  Contract,
+  Mineral,
+  OperatingExpense,
+  ProjectMineral,
+  ProjectTimeline,
+  CategoryPost,
+  Contact,
+  Faq,
+  Movement,
+  WithdrawalRequest,
+  FinancialTransactions,
+  MineralPriceHistory,
+  FinancialSettings,
+  UserActivitylog,
+  ProjectPerformance,
+  ProjectChanges,
+  FinancialProjections,
+  ProjectPayment,
 };
