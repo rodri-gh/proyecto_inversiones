@@ -165,7 +165,6 @@ const headers = [
 
 onMounted(() => {
   getProjects();
-  console.log(projects.value);
 });
 
 const showProjectDetails = (project) => {
@@ -184,7 +183,7 @@ const getProjects = async () => {
     );
     deletedProjects.value = data.filter((project) => project.deleted === 1);
     getsummaryProjects();
-    console.log(projects.value);
+    console.log("Proyectos del usuario", projects.value);
   } catch (error) {
     console.log(error);
   }
