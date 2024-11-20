@@ -19,7 +19,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import Applications from "./Applications.vue";
 import WebResources from "./WebResources.vue";
 
-const baseURL = "http://localhost:3000/site-setting";
+const baseURL = "https://apiminerales.pruebasdeploy.online/site-setting";
 
 const settings = ref([]);
 

@@ -36,7 +36,7 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 
-const baseURL = "http://localhost:3000/faq/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/faq/";
 const faqs = ref([]);
 
 const ask = ref("");

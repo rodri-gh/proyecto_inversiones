@@ -17,26 +17,34 @@
           <div class="project-intro">
             <h3>Proyecto: {{ project.name }}</h3>
             <div class="project-image">
-              <img src="@/assets/iconMineralProject.png" alt="Imagen del Proyecto" />
+              <img
+                src="@/assets/iconMineralProject.png"
+                alt="Imagen del Proyecto"
+              />
             </div>
 
             <div class="project-summary">
               <div class="project-details">
                 <div class="detail-item shadow">
-                  <strong>Objetivo de Inversión:</strong> ${{ project.investmentGoal }} 
+                  <strong>Objetivo de Inversión:</strong> ${{
+                    project.investmentGoal
+                  }}
                 </div>
                 <div class="detail-item shadow">
                   <strong>Estado:</strong> {{ project.status }}
                 </div>
                 <div class="detail-item shadow">
-                  <strong>Duración:</strong> {{ formatDate(project.startDate) }} - {{ formatDate(project.endDate) }}
+                  <strong>Duración:</strong>
+                  {{ formatDate(project.startDate) }} -
+                  {{ formatDate(project.endDate) }}
                 </div>
                 <div class="detail-item shadow">
-                  <strong>Rentabilidad Esperada:</strong> {{ project.profitPercentage }}%
+                  <strong>Rentabilidad Esperada:</strong>
+                  {{ project.profitPercentage }}%
                 </div>
               </div>
-              <br>
-              <br>
+              <br />
+              <br />
               <p><strong>Descripcion:</strong> {{ project.description }}</p>
             </div>
           </div>
@@ -44,7 +52,7 @@
 
         <div v-if="selectedTab === 'Inversiones'">
           <h3>Contratos del Proyecto</h3>
-          <Contract :idProject="idProject" :project="project"/>
+          <Contract :idProject="idProject" :project="project" />
           <h4>Inversiones del Proyecto</h4>
           <Investments :idProjectInvestment="idProject" />
         </div>
@@ -69,13 +77,21 @@
     <div v-else-if="statusProject === 'closed'">
       <div class="project-summary-closed">
         <h3>Resumen del Proyecto Cerrado: {{ project.name }}</h3>
-        <br>  
+        <br />
         <div class="summary-section">
           <h4>Detalles del Proyecto</h4>
           <ul>
-            <li><strong>Duración:</strong> {{ formatDate(project.startDate) }} - {{ formatDate(project.endDate) }}</li>
-            <li><strong>Inversión Total:</strong> ${{ project.totalInvestment }}</li>
-            <li><strong>Rentabilidad del Projecto:</strong> {{ project.actualProfitPercentage }}%</li>
+            <li>
+              <strong>Duración:</strong> {{ formatDate(project.startDate) }} -
+              {{ formatDate(project.endDate) }}
+            </li>
+            <li>
+              <strong>Inversión Total:</strong> ${{ project.totalInvestment }}
+            </li>
+            <li>
+              <strong>Rentabilidad del Projecto:</strong>
+              {{ project.actualProfitPercentage }}%
+            </li>
             <li><strong>Estado:</strong> {{ project.status }}</li>
           </ul>
         </div>
@@ -91,8 +107,16 @@
         <div class="summary-section">
           <h4>Inversiones y Gastos</h4>
           <div class="investment-summary">
-            <p><strong>Total Inversiones:</strong> ${{ project.totalInvestments }}</p>
-            <p><strong>Gastos Operativos Totales:</strong> ${{ project.totalOperatingExpenses }}</p>
+            <p>
+              <strong>Total Inversiones:</strong> ${{
+                project.totalInvestments
+              }}
+            </p>
+            <p>
+              <strong>Gastos Operativos Totales:</strong> ${{
+                project.totalOperatingExpenses
+              }}
+            </p>
           </div>
         </div>
 
@@ -127,16 +151,22 @@ import { getHeaderRequest } from "@/authService";
 
 const header = getHeaderRequest();
 
-const statusProject = ref('');
+const statusProject = ref("");
 const project = ref({});
-const selectedTab = ref('Inicio');
-const tabs = ['Inicio', 'Inversiones', 'Minerales', 'Gastos Operativos', 'Linea de Tiempo'];
- 
+const selectedTab = ref("Inicio");
+const tabs = [
+  "Inicio",
+  "Inversiones",
+  "Minerales",
+  "Gastos Operativos",
+  "Linea de Tiempo",
+];
+
 const props = defineProps({
   projectId: {
     type: Number,
     required: true,
-  }
+  },
 });
 
 const idProject = ref(props.projectId || route.params.id);
@@ -145,25 +175,28 @@ const reloadData = () => {
   idProject.value = props.projectId;
 };
 
-const getProjectData = async () => { 
+const getProjectData = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/project/'+props.projectId, header);
+    const response = await axios.get(
+      "https://apiminerales.pruebasdeploy.online/project/" + props.projectId,
+      header
+    );
     console.log(response.data);
     statusProject.value = response.data.status;
     project.value = response.data;
     console.log(response.data);
-  } catch(e) { 
+  } catch (e) {
     console.error(e);
   }
-}
+};
 
 onMounted(() => {
-  eventBus.on('data-updated', reloadData);
+  eventBus.on("data-updated", reloadData);
   getProjectData();
 });
 
 onUnmounted(() => {
-  eventBus.off('data-updated', reloadData);
+  eventBus.off("data-updated", reloadData);
 });
 
 const formatDate = (date) => {
@@ -260,5 +293,4 @@ const formatDate = (date) => {
 .investment-summary p {
   margin: 5px 0;
 }
-
 </style>

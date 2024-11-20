@@ -34,7 +34,7 @@ router.get('/', async (req, res, next) => {
     const minerals = await Mineral.findAll();
     minerals.forEach(mineral => {
       if (mineral.image) {
-        mineral.image = `http://localhost:3000/images/minerals/${mineral.image}`;
+        mineral.image = `https://apiminerales.pruebasdeploy.online/images/minerals/${mineral.image}`;
       }
     });
     getHandleSuccess(200)(res, minerals);

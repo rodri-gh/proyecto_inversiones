@@ -9,7 +9,7 @@
         icon="fa fa-plus"
       />
     </div>
-    <CardsSummary :items="summaryMinerals"/>
+    <CardsSummary :items="summaryMinerals" />
     <TableMinerals
       :headers="headers"
       :items="minerals"
@@ -86,7 +86,7 @@ const headers = [
   "Acciones",
 ];
 
-const baseURL = "http://localhost:3000/mineral/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/mineral/";
 
 const minerals = ref([]);
 const name = ref("");
@@ -118,20 +118,20 @@ const getsummaryMinerals = () => {
   if (minerals.value.length > 0) {
     let userTotals = minerals.value.length;
     let projectDeleted = 0;
-    for (var item of minerals.value){ 
-      if (item.deleted === 0) { 
-        projectDeleted++; 
+    for (var item of minerals.value) {
+      if (item.deleted === 0) {
+        projectDeleted++;
       }
     }
     summaryMinerals.value = [
-      { key: 'Minerales Totales', value: userTotals },
-      { key: 'Eliminados', value: projectDeleted },
-    ]
-    console.log(summaryMinerals.value); 
-  } else { 
-    console.log('el array de minerals para cards sumary esta vacio'); 
+      { key: "Minerales Totales", value: userTotals },
+      { key: "Eliminados", value: projectDeleted },
+    ];
+    console.log(summaryMinerals.value);
+  } else {
+    console.log("el array de minerals para cards sumary esta vacio");
   }
-}
+};
 
 const handleImageChange = (file) => {
   image.value = file;

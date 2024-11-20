@@ -160,7 +160,7 @@ import { getHeaderRequest, getUserIdOfLocalStorage } from "@/authService";
 import CardsSummary from "@/components/CardsSummary.vue";
 
 const userId = getUserIdOfLocalStorage();
-const baseURL = `http://localhost:3000/investment/user/${userId}`;
+const baseURL = `https://apiminerales.pruebasdeploy.online/investment/user/${userId}`;
 const investments = ref([]);
 const activeInvestments = ref([]);
 const pendingInvestments = ref([]);

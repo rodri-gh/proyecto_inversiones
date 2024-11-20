@@ -34,10 +34,10 @@ router.get('/', async (req, res, next) => {
     const settings = await SiteSetting.findAll();
     settings.forEach(setting => {
       if (setting.logo) {
-        setting.logo = `http://localhost:3000/images/site_settings/${setting.logo}`;
+        setting.logo = `https://apiminerales.pruebasdeploy.online/images/site_settings/${setting.logo}`;
       }
       if (setting.aboutImage) {
-        setting.aboutImage = `http://localhost:3000/images/site_settings/${setting.aboutImage}`;
+        setting.aboutImage = `https://apiminerales.pruebasdeploy.online/images/site_settings/${setting.aboutImage}`;
       }
     });
     getHandleSuccess(200)(res, settings);

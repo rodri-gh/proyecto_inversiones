@@ -18,7 +18,10 @@ const form = reactive({
 
 const handleSubmit = async () => {
   try {
-    const response = await axios.post("http://localhost:3000/contacts", form);
+    const response = await axios.post(
+      "https://apiminerales.pruebasdeploy.online/contacts",
+      form
+    );
     console.log(response.data);
   } catch (error) {
     console.error(error);

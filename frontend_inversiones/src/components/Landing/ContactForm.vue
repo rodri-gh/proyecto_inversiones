@@ -42,7 +42,7 @@ import Input from "../base/Input.vue";
 import InputTextArea from "../base/InputTextArea.vue";
 import Button from "../base/Button.vue";
 
-const baseURL = "http://localhost:3000/contact/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/contact/";
 const name = ref("");
 const lastName = ref("");
 const email = ref("");

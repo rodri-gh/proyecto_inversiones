@@ -1,12 +1,11 @@
 <script setup>
-
 import { computed, ref, onMounted, onUnmounted } from "vue";
 
 import { closeSession, getUserRoleOfLocalStorage } from "../authService";
 import { RouterLink, useRouter } from "vue-router";
 import axios from "axios";
 
-const baseURL = "http://localhost:3000/site-setting";
+const baseURL = "https://apiminerales.pruebasdeploy.online/site-setting";
 
 const settings = ref([]);
 
@@ -41,7 +40,7 @@ const handleScroll = () => {
 
   const currentScrollPosition = window.scrollY;
   if (currentScrollPosition < 0) return;
-  
+
   lastScrollPosition.value = currentScrollPosition;
 };
 
@@ -51,11 +50,11 @@ const handleNavHover = () => {
 };
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll);
+  window.addEventListener("scroll", handleScroll);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener("scroll", handleScroll);
   if (scrollTimeout.value) {
     clearTimeout(scrollTimeout.value);
   }
@@ -89,26 +88,27 @@ const navLinks = computed(() => {
     { name: "Marketplace", path: "/marketplace" },
     { name: "Panel de control", path: "/dashboard" },
   ];
-  
+
   if (userRole === "super_user" || userRole === "admin") {
     links.push(
       { name: "Análisis", path: "/analysisAndReports" },
-      { name: "Finanzas", path: "/finance"}
+      { name: "Finanzas", path: "/finance" }
     );
   }
-  
+
   return links;
 });
 </script>
 
 <template>
-  <div class="nav-wrapper" 
-       :class="{ 'nav-hidden': !isNavbarVisible }"
-       @mouseenter="handleNavHover">
+  <div
+    class="nav-wrapper"
+    :class="{ 'nav-hidden': !isNavbarVisible }"
+    @mouseenter="handleNavHover"
+  >
     <nav class="navbar navbar-expand-lg floating-nav">
       <div class="navbar-container">
         <div class="navbar-left">
-
           <img
             :src="settings.logo"
             width="100"
@@ -117,16 +117,24 @@ const navLinks = computed(() => {
             class="navbar-logo"
           />
           <a class="navbar-brand mx-1" href="#">{{ settings.name }}</a>
-
         </div>
 
-        <button class="navbar-toggler" :class="{ 'is-active': isMobileMenuOpen }" @click="toggleMobileMenu" aria-label="Toggle navigation">
+        <button
+          class="navbar-toggler"
+          :class="{ 'is-active': isMobileMenuOpen }"
+          @click="toggleMobileMenu"
+          aria-label="Toggle navigation"
+        >
           <span></span>
           <span></span>
           <span></span>
         </button>
 
-        <div class="navbar-collapse" :class="{ 'show': isMobileMenuOpen }" id="navbarNav">
+        <div
+          class="navbar-collapse"
+          :class="{ show: isMobileMenuOpen }"
+          id="navbarNav"
+        >
           <div class="navbar-content">
             <ul class="navbar-nav">
               <li v-if="isRootRoute" class="nav-item">
@@ -150,9 +158,7 @@ const navLinks = computed(() => {
               </li>
 
               <li v-if="isRootRoute" class="nav-item">
-                <a class="nav-link" @click="scrollToSection('faq')">
-                  FAQ
-                </a>
+                <a class="nav-link" @click="scrollToSection('faq')"> FAQ </a>
               </li>
 
               <li v-if="isRootRoute" class="nav-item">
@@ -162,15 +168,17 @@ const navLinks = computed(() => {
               </li>
 
               <li v-if="isRootRoute" class="nav-item">
-                <a class="nav-link" @click="scrollToSection('blog')">
-                  Blog
-                </a>
+                <a class="nav-link" @click="scrollToSection('blog')"> Blog </a>
               </li>
             </ul>
           </div>
 
           <div class="navbar-right">
-            <button v-if="isLoggedIn" class="auth-button logout-button" @click="logOut()">
+            <button
+              v-if="isLoggedIn"
+              class="auth-button logout-button"
+              @click="logOut()"
+            >
               <span>Cerrar Sesión</span>
             </button>
             <RouterLink v-else class="auth-button login-button" to="/login">
@@ -189,7 +197,7 @@ const navLinks = computed(() => {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%; 
+  width: 90%;
   z-index: 1000;
   padding-top: 15px;
   transition: transform 0.3s ease-in-out;
@@ -202,7 +210,8 @@ const navLinks = computed(() => {
 .floating-nav {
   background-color: var(--navbar-bg) !important;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   border-radius: 80px;
   margin: 0 auto;
   width: 100%;
@@ -222,15 +231,15 @@ const navLinks = computed(() => {
   align-items: center;
   width: 100%;
   padding: 0.5rem 1.5rem;
-  flex-wrap: nowrap; 
+  flex-wrap: nowrap;
 }
 
 .navbar-content {
   display: flex;
   align-items: center;
-  justify-content: center; 
-  flex: 1; 
-  min-width: 0; 
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
 }
 
 .logo-link {
@@ -262,23 +271,23 @@ const navLinks = computed(() => {
   margin: 0;
   padding: 0;
   list-style: none;
-  flex-wrap: nowrap; 
-  overflow-x: auto; 
-  -ms-overflow-style: none; 
-  scrollbar-width: none; 
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .navbar-nav::-webkit-scrollbar {
-  display: none; 
+  display: none;
 }
 
 .navbar-right {
   margin-left: auto;
-  flex-shrink: 0; 
+  flex-shrink: 0;
 }
 
 .nav-link {
-  white-space: nowrap; 
-  padding: 0.5rem 0.75rem; 
+  white-space: nowrap;
+  padding: 0.5rem 0.75rem;
   display: flex;
   align-items: center;
   padding: 0.5rem 1rem;
@@ -352,7 +361,6 @@ const navLinks = computed(() => {
   transition: all 0.3s linear;
   position: relative;
   transform-origin: 1px;
-  
 }
 
 .navbar-toggler.is-active span:first-child {
@@ -379,7 +387,7 @@ const navLinks = computed(() => {
 
   .navbar-container {
     padding: 0.5rem;
-    position: relative; 
+    position: relative;
   }
 
   .navbar-toggler {
@@ -390,9 +398,9 @@ const navLinks = computed(() => {
 
   /* Contenedor del menú desplegable */
   .navbar-collapse {
-    display: none; 
+    display: none;
     position: absolute;
-    top: calc(100% + 10px); 
+    top: calc(100% + 10px);
     left: 0;
     right: 0;
     background-color: var(--navbar-bg);
@@ -405,7 +413,7 @@ const navLinks = computed(() => {
 
   /* Cuando el menú está activo */
   .navbar-collapse.show {
-    display: block !important; 
+    display: block !important;
     opacity: 1;
     visibility: visible;
   }
@@ -491,7 +499,6 @@ const navLinks = computed(() => {
     visibility: visible;
   }
 }
-
 
 /* Estilos específicos para pantallas muy pequeñas */
 @media (max-width: 480px) {

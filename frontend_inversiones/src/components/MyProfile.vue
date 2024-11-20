@@ -4,7 +4,7 @@ import { onMounted, ref } from "vue";
 import { getHeaderRequest, getUserIdOfLocalStorage } from "@/authService";
 import Swal from "sweetalert2";
 const userProfile = ref({});
-const baseURL = "http://localhost:3000/user/";
+const baseURL = "https://apiminerales.pruebasdeploy.online/user/";
 
 const password = ref("");
 const confirmPassword = ref("");

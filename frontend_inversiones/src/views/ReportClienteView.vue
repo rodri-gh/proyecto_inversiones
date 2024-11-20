@@ -127,7 +127,7 @@ import {
 const userId = getUserIdOfLocalStorage();
 const userName = userNameOfLocalStorage();
 const date = new Date().toLocaleDateString();
-const baseURL = `http://localhost:3000/report-client/user/${userId}`;
+const baseURL = `https://apiminerales.pruebasdeploy.online/report-client/user/${userId}`;
 const investments = ref([]);
 const selectedContract = ref(null);
 const header = getHeaderRequest();
