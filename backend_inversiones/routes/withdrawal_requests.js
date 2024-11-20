@@ -19,14 +19,8 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-<<<<<<< HEAD
-
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     cb(null, uniqueSuffix + path.extname(file.originalname));
-=======
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, uniqueSuffix + path.extname(file.originalname));
->>>>>>> ed44825 (++)
   }
 });
 
@@ -70,11 +64,6 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-<<<<<<< HEAD
-
-
-router.patch('/status/:id', async (req, res) => {
-=======
 router.get('/pending', async (req, res, next) => {
   try {
     const withdrawalRequests = await WithdrawalRequest.findAll({ where: { status:'pending' }});
@@ -84,8 +73,7 @@ router.get('/pending', async (req, res, next) => {
   }
 });
 
-router.get('/:id', async (req, res, next) => {
->>>>>>> ed44825 (++)
+router.patch('/status/:id', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
