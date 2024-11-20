@@ -5,6 +5,7 @@ import { ProjectTimeline, ProjectMineral, OperatingExpense, Investment, ProjectP
 import SiteSetting from '../models/siteSettingModel.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 import { created } from '../helpers/customMessage.js';
+import sequelize from '../database/connection.js';
 
 
 const router = express.Router();
@@ -43,6 +44,7 @@ router.get('/project/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res, next) => {
+  const transaction = await sequelize.transaction();
   const { projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 } = req.body;
   try {
     const projecMinerals = await ProjectMineral.findAll({ where: { projectId: projectId, deleted: 0}});
@@ -51,30 +53,38 @@ router.post('/', async (req, res, next) => {
       const allVerify = projecMinerals.every((mineral) => mineral.salePrice != null && mineral.salePrice > 0);
       console.log('despues de verificar los prices ');
       if (allVerify) {
-        const createdTimeline = await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 });
+        console.log('crando el timelinea ');
+        const createdTimeline = await ProjectTimeline.create({
+           projectId, phase, startDate, endDate, status, description, priceMineral1,
+            priceMineral2 }, { transaction});
+        await transaction.commit(); 
         return getHandleSuccess(201)(res, createdTimeline);
       } else {
         console.log('los minerales del projecto deben estar vendidos!');
         return res.status(400).json({ error: 'No se puede agregar esta etapa porque tus minerales deben estar vendidos!' });
       }
-    }
-
-    if (phase === 'pago') {
+    } else if (phase === 'pago') {
       const projectTimelines = await ProjectTimeline.findAll({ where: { projectId } });
       const phasePago = projectTimelines.some((timeline) => timeline.phase === 'ganancia');
       if (phasePago) {
-        const createdTimeline = await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 });
+        const createdTimeline = await ProjectTimeline.create({ projectId, phase, startDate, endDate, 
+          status, description, priceMineral1, priceMineral2 }, { transaction});
+        await transaction.commit(); 
         await calculateReturnOnInvestment(projectId, projecMinerals);
         return getHandleSuccess(201)(res, createdTimeline);
       } else {
         return res.status(400).json({ error: 'No se puede agregar esta etapa porque no existe una fase de pago!' });
       }
+    } else {
+      const createdTimeline = await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 }, {transaction});
+      await transaction.commit(); 
+      return getHandleSuccess(201)(res, createdTimeline);
     }
-    const createdTimeline = await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 });
-    return getHandleSuccess(201)(res, createdTimeline);
 
-  } catch (error) {
-    getHandleError(error, res)
+  } catch (e) {
+    console.error(e)
+    await transaction.rollback();
+    getHandleError(e, res)
   }
 });
 
@@ -124,12 +134,13 @@ async function paymentsToInvestors(investments, totalInvestment, netProfit) {
   return;
 }
 
-async function depositPayment(userId, projectId, amountInvested, amountEarned, ) {
-  await ProjectPayment.create({userId, projectId, amountInvested, amountEarned});
-  // arreglar 
-  await Project.update({ userId, status:'closed' }, {
-    where: { id: projectId }
-  });
+async function depositPayment(userIdpayment, projectId, amountInvested, amountEarned) {
+  console.log(userIdpayment);
+  await ProjectPayment.create({userId: userIdpayment, projectId, amountInvested, amountEarned});
+  await Project.update({ userId: userIdpayment, status:'closed' }, {
+    where: { id: projectId }});
+  await Investment.update({ status: 'closed', earnings: amountEarned}, 
+    { where: { userId: userIdpayment, amount: amountInvested}});
   return;
 }
 

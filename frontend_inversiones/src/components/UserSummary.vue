@@ -2,7 +2,9 @@
 import { getHeaderRequest, getUserIdOfLocalStorage, getUserRoleOfLocalStorage } from '@/authService';
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
+import { Chart, registerables } from 'chart.js';
 
+Chart.register(...registerables);
 
 const userRole = getUserRoleOfLocalStorage();
 const header = getHeaderRequest();
@@ -27,6 +29,7 @@ const getNotifications = async () => {
         contacsPending.value = responseContacts.data;
         withdrawalRequestsPending.value = responseWithdrawal.data;
         movements7days.value = lastMovements7days.data;
+        createChart(); 
     } catch (e) { 
         console.error(e);
     }
@@ -36,77 +39,123 @@ const getFinancialSummary = async () => {
     try {
         const response = await axios.get(`http://localhost:3000/analysis-report/GetUserClientSummary/${userId}`, header);
         console.log(response.data);
-
-        // Asignar datos a variables reactivas
     } catch (e) {
         console.error(e);
     }
 };
+
+const createChart = () => {
+    const ctx = document.getElementById('activityChart').getContext('2d');
+
+    // Preparar datos del backend
+    const labels = movements7days.value.map(item => item.tipo); // Ej: 'Projects', 'Investments'
+    const data = movements7days.value.map(item => parseFloat(item.amount)); // Convertir amounts a números
+
+    // Crear gráfico
+    new Chart(ctx, {
+        type: 'bar', // Tipo de gráfico (puede ser 'line', 'bar', 'pie', etc.)
+        data: {
+            labels: labels, // Etiquetas
+            datasets: [{
+                label: 'Actividad por Tipo',
+                data: data, // Datos para el gráfico
+                backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)'], // Colores
+                borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'], // Bordes
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => `Amount: ${context.raw}`,
+                    }
+                }
+            }
+        }
+    });
+};
+
 </script>
 
 <template>
     <div>
-        <h3 class="">Resumen para tu rol: <strong>{{ userRole }}</strong></h3>
-        <div v-if="userRole === 'super_user'">
-            <div class="card mb-4 shadow-sm">
-                    <div class="card-header">
-                        <h5><i class="bi bi-bar-chart"></i> Gráficos de Actividad</h5>
+        <h4 class="">Resumen para tu rol: <strong>{{ userRole }}</strong></h4>
+        <br>
+        <div v-if="userRole === 'super_user'" class="container">
+            <div class="row">
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="detail-item shadow">
+                        <div>
+                            <h6><i class="bi bi-bar-chart"></i> Gráfico de Actividad</h6>
+                        </div>
+                        <div>
+                            <canvas id="activityChart"></canvas>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="text-muted"> gráficos de actividad.</p>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="detail-item shadow">
+                        <div>
+                            <h6><i class="bi bi-person-badge"></i> Solicitudes de Contactos Pendientes</h6>
+                        </div>
+                        <div class="card-body">
+                            <div v-if="contacsPending.length">
+                                <ul class="list-group">
+                                    <li v-for="item in contacsPending" :key="item" class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>{{ item.name }} {{ item.lastname }}</span>
+                                        <span class="badge bg-warning text-dark">{{ item.answer }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div v-else class="text-muted">No hay contactos pendientes.</div>
+                        </div>
                     </div>
-            </div>
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header">
-                    <h5><i class="bi bi-person-badge"></i> Solicitudes de Contactos Pendientes</h5>
                 </div>
-                <div class="card-body">
-                    <div v-if="contacsPending.length">
-                        <ul class="list-group">
-                            <li v-for="item in contacsPending" :key="item" class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>{{ item.name }} {{ item.lastname }}</span>
-                                <span class="badge bg-warning text-dark">{{ item.answer }}</span>
-                            </li>
-                        </ul>
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="detail-item shadow">
+                        <div>
+                            <h6><i class="bi bi-cash-stack"></i> Solicitudes de Retiro Pendientes</h6>
+                        </div>
+                        <div class="card-body">
+                            <div v-if="withdrawalRequestsPending.length">
+                                <ul class="list-group">
+                                    <li v-for="item in withdrawalRequestsPending" :key="item" class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>ID Usuario: {{ item.id }}</span>
+                                        <span class="badge bg-info text-dark">{{ item.status }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div v-else class="text-muted">No hay solicitudes de retiro pendientes.</div>
+                        </div>
                     </div>
-                    <div v-else class="text-muted">No hay contactos pendientes.</div>
                 </div>
-            </div>
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header">
-                    <h5><i class="bi bi-cash-stack"></i> Solicitudes de Retiro Pendientes</h5>
-                </div>
-                <div class="card-body">
-                    <div v-if="withdrawalRequestsPending.length">
-                        <ul class="list-group">
-                            <li v-for="item in withdrawalRequestsPending" :key="item" class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>ID Usuario: {{ item.id }}</span>
-                                <span class="badge bg-info text-dark">{{ item.status }}</span>
-                            </li>
-                        </ul>
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="detail-item shadow">
+                        <div>
+                            <h6><i class="bi bi-clock-history"></i> Últimos Movimientos</h6>
+                        </div>
+                        <div class="card-body">
+                            <div v-if="movements7days.length">
+                                <ul class="list-group">
+                                    <li v-for="item in movements7days" :key="item" class="list-group-item">
+                                        <div>
+                                            <strong>{{ item.tipo }}</strong> - {{ item.descripcion }}
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-muted">{{ item.fecha }}</span>
+                                            <span class="text-success"><strong>{{ item.amount }}</strong></span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div v-else class="text-muted">No hay movimientos recientes.</div>
+                        </div>
                     </div>
-                    <div v-else class="text-muted">No hay solicitudes de retiro pendientes.</div>
-                </div>
-            </div>
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header">
-                    <h5><i class="bi bi-clock-history"></i> Últimos Movimientos</h5>
-                </div>
-                <div class="card-body">
-                    <div v-if="movements7days.length">
-                        <ul class="list-group">
-                            <li v-for="item in movements7days" :key="item" class="list-group-item">
-                                <div>
-                                    <strong>{{ item.tipo }}</strong> - {{ item.descripcion }}
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-muted">{{ item.fecha }}</span>
-                                    <span class="text-success"><strong>{{ item.amount }}</strong></span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div v-else class="text-muted">No hay movimientos recientes.</div>
                 </div>
             </div>
         </div>
@@ -145,4 +194,9 @@ const getFinancialSummary = async () => {
 </template>
 
 <style scoped> 
+.detail-item {
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 10px;
+}
 </style>

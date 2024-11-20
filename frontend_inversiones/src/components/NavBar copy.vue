@@ -86,14 +86,14 @@ const toggleMobileMenu = () => {
 const navLinks = computed(() => {
   const userRole = getUserRoleOfLocalStorage();
   let links = [
-    { name: "Marketplace", path: "/marketplace" },
-    { name: "Panel de control", path: "/dashboard" },
+    { name: "Marketplace", path: "/marketplace", icon: "🏪" },
+    { name: "Panel de control", path: "/dashboard", icon: "📊" },
   ];
   
   if (userRole === "super_user" || userRole === "admin") {
     links.push(
-      { name: "Análisis", path: "/analysisAndReports" },
-      { name: "Finanzas", path: "/finance"}
+      { name: "Análisis", path: "/analysisAndReports", icon: "📈" },
+      { name: "Finanzas", path: "/finance", icon: "💰" }
     );
   }
   
@@ -131,6 +131,7 @@ const navLinks = computed(() => {
             <ul class="navbar-nav">
               <li v-if="isRootRoute" class="nav-item">
                 <a class="nav-link" @click="scrollToSection('home')">
+                  <span class="icon">🏠</span>
                   <span>Inicio</span>
                 </a>
               </li>
@@ -138,32 +139,37 @@ const navLinks = computed(() => {
               <template v-if="isLoggedIn">
                 <li v-for="link in navLinks" :key="link.name" class="nav-item">
                   <router-link class="nav-link" :to="link.path">
-                    {{ link.name }}
+                    <span class="icon">{{ link.icon }}</span>
+                    <span>{{ link.name }}</span>
                   </router-link>
                 </li>
               </template>
 
               <li v-if="isRootRoute" class="nav-item">
                 <a class="nav-link" @click="scrollToSection('about')">
-                  Acerca de
+                  <span class="icon">ℹ️</span>
+                  <span>Acerca de</span>
                 </a>
               </li>
 
               <li v-if="isRootRoute" class="nav-item">
                 <a class="nav-link" @click="scrollToSection('faq')">
-                  FAQ
+                  <span class="icon">❓</span>
+                  <span>FAQ</span>
                 </a>
               </li>
 
               <li v-if="isRootRoute" class="nav-item">
                 <a class="nav-link" @click="scrollToSection('contact')">
-                  Contacto
+                  <span class="icon">📞</span>
+                  <span>Contacto</span>
                 </a>
               </li>
 
               <li v-if="isRootRoute" class="nav-item">
                 <a class="nav-link" @click="scrollToSection('blog')">
-                  Blog
+                  <span class="icon">📝</span>
+                  <span>Blog</span>
                 </a>
               </li>
             </ul>
@@ -171,9 +177,11 @@ const navLinks = computed(() => {
 
           <div class="navbar-right">
             <button v-if="isLoggedIn" class="auth-button logout-button" @click="logOut()">
+              <span class="icon">🚪</span>
               <span>Cerrar Sesión</span>
             </button>
             <RouterLink v-else class="auth-button login-button" to="/login">
+              <span class="icon">🔑</span>
               <span>Iniciar Sesión</span>
             </RouterLink>
           </div>
@@ -271,14 +279,16 @@ const navLinks = computed(() => {
   display: none; 
 }
 
+.nav-link {
+  white-space: nowrap; 
+  padding: 0.5rem 0.75rem; 
+}
 .navbar-right {
   margin-left: auto;
   flex-shrink: 0; 
 }
 
 .nav-link {
-  white-space: nowrap; 
-  padding: 0.5rem 0.75rem; 
   display: flex;
   align-items: center;
   padding: 0.5rem 1rem;

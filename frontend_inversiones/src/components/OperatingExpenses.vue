@@ -92,12 +92,12 @@ onUnmounted(() => {
   eventBus.off('data-updated', getOperatingExpenses); 
 });
 
-
 const getOperatingExpenses = async () => {
   try {
-      console.log(baseURL+"project/")
-      console.log(props.idProject)
+      console.log(baseURL+"project/");
+      console.log(props.idProject);
       const data = await axios.get(baseURL + "project/" + props.idProject, header);
+      console.log(data.data);
       operatingExpenses.value = data.data.filter((item) => item.deleted === 0);
   } catch (error) {
       console.error(error);
