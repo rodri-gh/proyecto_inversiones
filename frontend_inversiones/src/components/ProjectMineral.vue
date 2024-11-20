@@ -233,8 +233,8 @@ const props = defineProps({
   },
 });
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/project-minerals/";
-const baseUrlUsers = "https://apiminerales.pruebasdeploy.online/user/";
+const baseURL = `${import.meta.env.VITE_API_URL}/project-minerals/`;
+const baseUrlUsers = `${import.meta.env.VITE_API_URL}/user/`;
 
 // Estados reactivos
 const projectMinerals = ref([]);
@@ -278,7 +278,7 @@ const getprojectMinerals = async () => {
 const getMinerals = async () => {
   try {
     const data = await axios.get(
-      "https://apiminerales.pruebasdeploy.online/mineral/",
+      `${import.meta.env.VITE_API_URL}/mineral/`,
       header
     );
     minerals.value = data.data;

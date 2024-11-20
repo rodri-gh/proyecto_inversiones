@@ -58,7 +58,7 @@ const props = defineProps({
   },
 });
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/operating-expenses/";
+const baseURL = `${import.meta.env.VITE_API_URL}/operating-expenses/`;
 const operatingExpenses = ref([]);
 const name = ref("");
 const description = ref("");

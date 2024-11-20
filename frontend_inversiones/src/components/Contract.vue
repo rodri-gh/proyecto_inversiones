@@ -28,7 +28,7 @@ const header = getHeaderRequestMultiPartFormData();
 const contracts = ref([]);
 
 const users = ref([]);
-const baseURL = "https://apiminerales.pruebasdeploy.online/contract/";
+const baseURL = `${import.meta.env.VITE_API_URL}/contract/`;
 
 const userId = ref("");
 const investmentAmount = ref("");
@@ -82,7 +82,7 @@ onUnmounted(() => {
 const getUsers = async () => {
   try {
     const data = await axios.get(
-      "https://apiminerales.pruebasdeploy.online/user",
+      `${import.meta.env.VITE_API_URL}/user`,
       header
     );
     users.value = data.data;

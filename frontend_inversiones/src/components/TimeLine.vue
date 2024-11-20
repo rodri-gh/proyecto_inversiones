@@ -278,7 +278,7 @@ const props = defineProps({
   },
 });
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/project-timeline/";
+const baseURL = `${import.meta.env.VITE_API_URL}/project-timeline/`;
 
 const timeLines = ref([]);
 

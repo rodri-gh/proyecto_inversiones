@@ -208,7 +208,7 @@ import { ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
 import axios from "axios";
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/projects/";
+const baseURL = `${import.meta.env.VITE_API_URL}/projects/`;
 
 const projects = ref([]);
 

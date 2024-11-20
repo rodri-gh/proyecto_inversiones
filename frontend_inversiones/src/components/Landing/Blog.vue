@@ -27,7 +27,7 @@ import { Carousel, Slide, Navigation } from "vue3-carousel";
 const posts = ref([]);
 const router = useRouter();
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/post/";
+const baseURL = `${import.meta.env.VITE_API_URL}/post/`;
 
 const getPosts = async () => {
   try {

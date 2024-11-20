@@ -97,7 +97,7 @@ import CardsSummary from "@/components/CardsSummary.vue";
 
 const withdrawals = ref([]);
 const summaryWithdrawals = ref([]);
-const baseURL = "https://apiminerales.pruebasdeploy.online/withdrawal-request/";
+const baseURL = `${import.meta.env.VITE_API_URL}/withdrawal-request/`;
 
 const headers = [
   "Proyecto",

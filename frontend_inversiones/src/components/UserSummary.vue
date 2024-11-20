@@ -25,15 +25,17 @@ onMounted(() => {
 const getNotifications = async () => {
   try {
     const responseContacts = await axios.get(
-      "https://apiminerales.pruebasdeploy.online/contact/pending",
+      `${import.meta.env.VITE_API_URL}/contact/pending`,
       header
     );
     const responseWithdrawal = await axios.get(
-      "https://apiminerales.pruebasdeploy.online/withdrawal-request/pending",
+      `${import.meta.env.VITE_API_URL}/withdrawal-request/pending`,
       header
     );
     const lastMovements7days = await axios.get(
-      "https://apiminerales.pruebasdeploy.online/analysis-report/getMovementsFromLast7Days",
+      `${
+        import.meta.env.VITE_API_URL
+      }/analysis-report/getMovementsFromLast7Days`,
       header
     );
     console.log(responseContacts.data);
@@ -51,7 +53,9 @@ const getNotifications = async () => {
 const getFinancialSummary = async () => {
   try {
     const response = await axios.get(
-      `https://apiminerales.pruebasdeploy.online/analysis-report/GetUserClientSummary/${userId}`,
+      `${
+        import.meta.env.VITE_API_URL
+      }/analysis-report/GetUserClientSummary/${userId}`,
       header
     );
     console.log(response.data);

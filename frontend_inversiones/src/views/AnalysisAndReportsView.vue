@@ -30,8 +30,9 @@ const generateColors = (numColors) => {
 
 onMounted(async () => {
   try {
-    const baseUrl =
-      "https://apiminerales.pruebasdeploy.online/analysis-report/projectsStatus";
+    const baseUrl = `${
+      import.meta.env.VITE_API_URL
+    }/analysis-report/projectsStatus`;
     const header = getHeaderRequest();
     const response = await axios.get(baseUrl, header);
     console.log(response);

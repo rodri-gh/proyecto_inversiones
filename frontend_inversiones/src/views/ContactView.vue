@@ -149,7 +149,7 @@ const headers = [
   "Acciones",
 ];
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/contact/";
+const baseURL = `${import.meta.env.VITE_API_URL}/contact/`;
 const contacts = ref([]);
 const summaryContacts = ref([]);
 const activeUsers = ref([]);

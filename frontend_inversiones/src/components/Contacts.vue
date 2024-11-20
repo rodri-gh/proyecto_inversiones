@@ -19,7 +19,7 @@ const form = reactive({
 const handleSubmit = async () => {
   try {
     const response = await axios.post(
-      "https://apiminerales.pruebasdeploy.online/contacts",
+      `${import.meta.env.VITE_API_URL}/contacts`,
       form
     );
     console.log(response.data);

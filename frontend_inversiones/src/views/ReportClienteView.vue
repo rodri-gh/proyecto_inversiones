@@ -127,7 +127,7 @@ import {
 const userId = getUserIdOfLocalStorage();
 const userName = userNameOfLocalStorage();
 const date = new Date().toLocaleDateString();
-const baseURL = `https://apiminerales.pruebasdeploy.online/report-client/user/${userId}`;
+const baseURL = `${import.meta.env.VITE_API_URL}/report-client/user/${userId}`;
 const investments = ref([]);
 const selectedContract = ref(null);
 const header = getHeaderRequest();

@@ -36,7 +36,7 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/faq/";
+const baseURL = `${import.meta.env.VITE_API_URL}/faq/`;
 const faqs = ref([]);
 
 const ask = ref("");

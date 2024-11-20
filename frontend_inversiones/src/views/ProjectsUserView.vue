@@ -143,7 +143,7 @@ import CardsSummary from "@/components/CardsSummary.vue";
 import { getUserIdOfLocalStorage } from "@/authService";
 
 const userId = getUserIdOfLocalStorage();
-const baseURL = `https://apiminerales.pruebasdeploy.online/project/user/${userId}`;
+const baseURL = `${import.meta.env.VITE_API_URL}/project/user/${userId}`;
 const projects = ref([]);
 
 const idProject = ref("");

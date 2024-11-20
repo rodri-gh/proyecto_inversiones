@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/site-setting";
+const baseURL = `${import.meta.env.VITE_API_URL}/site-setting`;
 
 const settings = ref([]);
 

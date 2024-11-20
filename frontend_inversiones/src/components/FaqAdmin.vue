@@ -45,7 +45,7 @@ import { closeModal, openModal } from "@/utils/modal";
 
 const headers = ["Pregunta", "Respuesta", "Estado", "Acciones"];
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/faq/";
+const baseURL = `${import.meta.env.VITE_API_URL}/faq/`;
 const faqs = ref([]);
 const ask = ref("");
 const answer = ref("");

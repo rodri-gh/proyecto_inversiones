@@ -178,7 +178,7 @@ const reloadData = () => {
 const getProjectData = async () => {
   try {
     const response = await axios.get(
-      "https://apiminerales.pruebasdeploy.online/project/" + props.projectId,
+      `${import.meta.env.VITE_API_URL}/project/` + props.projectId,
       header
     );
     console.log(response.data);

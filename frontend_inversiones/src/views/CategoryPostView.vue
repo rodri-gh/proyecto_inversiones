@@ -48,7 +48,7 @@ import { closeModal, openModal } from "@/utils/modal";
 
 const headers = ["Nombre", "Estado", "Acciones"];
 
-const baseURL = "https://apiminerales.pruebasdeploy.online/category-post/";
+const baseURL = `${import.meta.env.VITE_API_URL}/category-post/`;
 const categoryPosts = ref([]);
 const name = ref("");
 const selectedCategoryPost = ref({});
