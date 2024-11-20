@@ -15,11 +15,9 @@ import Balances from "./Balances.vue";
 
 import ReportClienteView from "@/views/ReportClienteView.vue";
 
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import Applications from "./Applications.vue";
 import WebResources from "./WebResources.vue";
-
-
 
 const baseURL = "http://localhost:3000/site-setting";
 
@@ -119,19 +117,20 @@ const componentslinks = computed(() => {
 
 const iconMap = {
   "Gestion de Usuarios": "fas fa-users",
-  "Proyectos": "fas fa-cubes",
-  "Minerales": "fas fa-gem",
-  "Finanzas": "fas fa-dollar-sign",
-  "FAQs": "fas fa-question-circle",
+  Proyectos: "fas fa-cubes",
+  Minerales: "fas fa-gem",
+  Finanzas: "fas fa-dollar-sign",
+  FAQs: "fas fa-question-circle",
   "Ajustes de la Web": "fas fa-cog",
   "Ir a web": "fas fa-globe",
   "Mi Perfil": "fas fa-id-badge",
-  "Inicio": "fas fa-file-alt",
-  "Solicitudes": "fas fa-paper-plane",
+  Inicio: "fas fa-file-alt",
+  Solicitudes: "fas fa-paper-plane",
   "Recursos Web": "fas fa-book-open",
-  "Balances": "fas fa-wallet",
-  "Inversiones": "fas fa-chart-pie",
+  Balances: "fas fa-wallet",
+  Inversiones: "fas fa-chart-pie",
   "Solicitudes de Retiro": "fas fa-piggy-bank",
+  "Reporte de Inversiones": "fas fa-file-excel",
 };
 </script>
 
@@ -184,7 +183,7 @@ const iconMap = {
             <router-link
               v-else-if="link.name === 'Ir a web'"
               :to="link.path"
-              :class="{ activeSideBar: activeLink === link.name } "
+              :class="{ activeSideBar: activeLink === link.name }"
               class="sidebar-link"
             >
               <i :class="iconMap[link.name]" class="icon-large"></i>
@@ -216,7 +215,7 @@ const iconMap = {
 </template>
 
 <style scoped>
-.content-div { 
+.content-div {
   background-color: rgb(240, 240, 240);
 }
 .sidebar a.activeSideBar {
@@ -228,7 +227,7 @@ const iconMap = {
   color: var(--text-color);
   padding-top: 20px;
   border-right: var(--secondary-color) 1px solid;
-  background: linear-gradient(135deg, #ffa726, #fb8c00); 
+  background: linear-gradient(135deg, #ffa726, #fb8c00);
 }
 .sidebar a {
   color: var(--text-color);

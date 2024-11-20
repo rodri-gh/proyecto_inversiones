@@ -253,4 +253,11 @@ const exportToExcel = async () => {
 .btn-success:hover {
   opacity: 0.9;
 }
+.btn-secondary {
+  background-color: #6c757d !important;
+  border-color: #6c757d;
+}
+.btn-secondary:hover {
+  opacity: 0.9;
+}
 </style>
