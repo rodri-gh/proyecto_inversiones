@@ -66,7 +66,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/pending', async (req, res, next) => {
   try {
-    const withdrawalRequests = await WithdrawalRequest.findAll({ where: { status:'pending' }});
+    const withdrawalRequests = await WithdrawalRequest.findAll({ where: { status: 'pending' } });
     getHandleSuccess(200)(res, withdrawalRequests);
   } catch (error) {
     getHandleError(error, res);
