@@ -294,4 +294,18 @@ const iconMap = {
   flex-direction: column !important;
   align-items: center;
 }
+.navbar-logo {
+  width: 100px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 70px;
+  transition: transform 0.3s ease;
+}
+
+@media (max-width: 480px) {
+  .navbar-logo {
+    width: 80px;
+    height: 40px;
+  }
+}
 </style>
