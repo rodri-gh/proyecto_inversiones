@@ -65,7 +65,7 @@ router.get('/user/:id/export', async (req, res) => {
 
   console.log(user);
 
-  // Aplicar los mismos filtros que el endpoint normal
+
   if (startDate && endDate) {
     where.investmentDate = {
       [Op.between]: [new Date(startDate), new Date(endDate)]

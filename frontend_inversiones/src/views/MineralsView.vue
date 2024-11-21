@@ -101,6 +101,7 @@ const inputFileRef = ref(null);
 
 onMounted(() => {
   getMinerals();
+  console.log("urlbase", baseURL);
 });
 
 const getMinerals = async () => {
