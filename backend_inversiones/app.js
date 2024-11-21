@@ -29,6 +29,7 @@ import projectPerformanceRouter from './routes/projectPerformance.js';
 import userActivitylogRouter from './routes/userActivitylog.js';
 import siteSettingRouter from './routes/siteSettings.js';
 import reportClient from './routes/reportClient.js';
+import reportAdmin from './routes/reportAdmin.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -69,6 +70,7 @@ app.use('/projectPerformance', projectPerformanceRouter);
 app.use('/userActivitylog', userActivitylogRouter);
 app.use('/site-setting', siteSettingRouter);
 app.use('/report-client', reportClient);
+app.use('/report-admin', reportAdmin);
 
 
 export default app;

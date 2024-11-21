@@ -38,7 +38,9 @@ router.get('/', async (req, res, next) => {
     const minerals = await Mineral.findAll();
     minerals.forEach(mineral => {
       if (mineral.image) {
-        mineral.image = `${process.env.URL_BASE}/images/minerals/${mineral.image}`;
+        const url = process.env.URL_BASE;
+        const image = mineral.image;
+        mineral.image = url + '/images/minerals/' + image;
       }
     });
     getHandleSuccess(200)(res, minerals);
