@@ -29,7 +29,7 @@
             aria-controls="active"
             aria-selected="false"
           >
-            Inversionnes
+            Inversiones
           </button>
         </li>
         <li class="nav-item" role="presentation">
@@ -43,7 +43,7 @@
             aria-controls="inactive"
             aria-selected="false"
           >
-            Finalizados
+            Otro Reporte
           </button>
         </li>
         <li class="nav-item" role="presentation">
@@ -57,7 +57,7 @@
             aria-controls="clients"
             aria-selected="false"
           >
-            Eliminados
+            Otro Reporte
           </button>
         </li>
       </ul>

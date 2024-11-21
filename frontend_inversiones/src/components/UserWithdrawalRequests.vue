@@ -18,11 +18,11 @@ const rejectedRequests = ref([]);
 const closedInvestments = ref([]);
 const summaryRequests = ref([]);
 const newRequest = ref({
-  investment_id: "",
-  user_id: getUserIdOfLocalStorage(),
-  request_amount: "",
-  photo_document: null,
-  selfie_photo: null,
+  investmentId: "",
+  userId: getUserIdOfLocalStorage(),
+  requestAmount: "",
+  photoDocument: null,
+  selfiePhoto: null,
 });
 
 const inputFileRef = ref(null);
@@ -75,7 +75,7 @@ const getInvestments = async () => {
     closedInvestments.value = allInvestments.filter(
       (inv) =>
         inv.status === "closed" &&
-        !withdrawalRequests.value.some((req) => req.investment_id === inv.id)
+        !withdrawalRequests.value.some((req) => req.investmentId === inv.id)
     );
   } catch (e) {
     console.error(e);
@@ -102,23 +102,23 @@ const handleImageChange = (file, type) => {
 
 const updateAmount = () => {
   const selectedInvestment = closedInvestments.value.find(
-    (inv) => inv.id === newRequest.value.investment_id
+    (inv) => inv.id === newRequest.value.investmentId
   );
   if (selectedInvestment) {
-    newRequest.value.request_amount = selectedInvestment.earnings;
+    newRequest.value.requestAmount = selectedInvestment.earnings;
   }
 };
 
 const submitRequest = async () => {
   const formData = new FormData();
-  formData.append("investment_id", newRequest.value.investment_id);
-  formData.append("user_id", newRequest.value.user_id);
-  formData.append("request_amount", newRequest.value.request_amount);
-  if (newRequest.value.photo_document) {
-    formData.append("photo_document", newRequest.value.photo_document);
+  formData.append("investmentId", newRequest.value.investmentId);
+  formData.append("userId", newRequest.value.userId);
+  formData.append("requestAmount", newRequest.value.requestAmount);
+  if (newRequest.value.photoDocument) {
+    formData.append("photoDocument", newRequest.value.photoDocument);
   }
-  if (newRequest.value.selfie_photo) {
-    formData.append("selfie_photo", newRequest.value.selfie_photo);
+  if (newRequest.value.selfiePhoto) {
+    formData.append("selfiePhoto", newRequest.value.selfiePhoto);
   }
 
   try {
@@ -142,11 +142,11 @@ const submitRequest = async () => {
 
 const resetForm = () => {
   newRequest.value = {
-    investment_id: "",
-    user_id: getUserIdOfLocalStorage(),
+    investmentId: "",
+    userId: getUserIdOfLocalStorage(),
     amount: "",
-    photo_document: null,
-    selfie_photo: null,
+    photoDocument: null,
+    selfiePhoto: null,
   };
   inputFileRef.value?.reset();
 };
@@ -251,11 +251,11 @@ const resetForm = () => {
           </div>
           <div class="modal-body">
             <div class="mb-3">
-              <label for="investment_id" class="form-label">Proyecto</label>
+              <label for="investmentId" class="form-label">Proyecto</label>
               <select
-                id="investment_id"
+                id="investmentId"
                 class="form-select"
-                v-model="newRequest.investment_id"
+                v-model="newRequest.investmentId"
                 @change="updateAmount"
               >
                 <option value="" disabled>Seleccione un proyecto</option>
@@ -269,19 +269,19 @@ const resetForm = () => {
               </select>
             </div>
             <InputFile
-              id="photo_document"
+              id="photoDocument"
               label="Documento Fotográfico"
               @update:modelValue="
-                (file) => handleImageChange(file, 'photo_document')
+                (file) => handleImageChange(file, 'photoDocument')
               "
               accept="image/*"
               ref="inputFileRef"
             />
             <InputFile
-              id="selfie_photo"
+              id="selfiePhoto"
               label="Foto Selfie"
               @update:modelValue="
-                (file) => handleImageChange(file, 'selfie_photo')
+                (file) => handleImageChange(file, 'selfiePhoto')
               "
               accept="image/*"
               ref="inputFileRef"

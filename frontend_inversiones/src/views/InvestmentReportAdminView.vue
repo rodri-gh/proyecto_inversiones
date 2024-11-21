@@ -39,32 +39,39 @@
                 v-model="filters.maxAmount"
               />
             </div>
+
             <div class="col-md-4">
               <label class="form-label">Usuario</label>
-              <Multiselect
+              <v-select
                 v-model="filters.userId"
                 :options="users"
-                :searchable="true"
-                :createTag="false"
-                placeholder="Buscar usuario..."
+                :reduce="(option) => option.id"
                 label="fullName"
-                track-by="id"
-                @search-change="searchUsers"
-              />
+                :filterable="false"
+                @search="searchUsers"
+                placeholder="Buscar usuario..."
+              >
+                <template #no-options>
+                  Escriba para buscar usuarios...
+                </template>
+              </v-select>
             </div>
 
             <div class="col-md-4">
               <label class="form-label">Proyecto</label>
-              <Multiselect
+              <v-select
                 v-model="filters.projectId"
                 :options="projects"
-                :searchable="true"
-                :createTag="false"
-                placeholder="Buscar proyecto..."
+                :reduce="(option) => option.id"
                 label="name"
-                track-by="id"
-                @search-change="searchProjects"
-              />
+                :filterable="false"
+                @search="searchProjects"
+                placeholder="Buscar proyecto..."
+              >
+                <template #no-options>
+                  Escriba para buscar proyectos...
+                </template>
+              </v-select>
             </div>
             <div class="col-md-2">
               <label class="form-label">Mineral</label>
@@ -119,8 +126,8 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import TableInvestmentsReportAdmin from "@/components/tables/TableInvestmentsReportAdmin.vue";
 import { getHeaderRequest, userNameOfLocalStorage } from "@/authService";
-import Multiselect from "@vueform/multiselect";
-import "@vueform/multiselect/themes/default.css";
+import VSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 
 const baseURL = `${import.meta.env.VITE_API_URL}/report-admin`;
 const userName = userNameOfLocalStorage();
@@ -157,53 +164,96 @@ onMounted(() => {
   getMinerals();
   getFilteredReport();
 });
-
 const getMinerals = async () => {
   try {
-    const { data } = await axios.get(`${baseURL}/minerals`, {
-      headers: header,
-    });
+    const { data } = await axios.get(
+      `${import.meta.env.VITE_API_URL}/mineral`,
+      {
+        headers: header,
+      }
+    );
     minerals.value = data;
   } catch (error) {
     console.error("Error al obtener minerales:", error);
   }
 };
-
-const searchUsers = async (search) => {
+const searchUsers = async (search, loading) => {
   if (search.length < 2) return;
+
+  loading(true);
   try {
     const { data } = await axios.get(
-      `${baseURL}/users/search?search=${search}`,
-      {
-        headers: header,
-      }
+      `${baseURL}/users/search?search=${encodeURIComponent(search)}`,
+      { headers: header }
     );
+
     users.value = data.map((user) => ({
-      ...user,
+      id: user.id,
       fullName: `${user.name} ${user.lastName}`,
+      name: user.name,
+      lastName: user.lastName,
     }));
+
+    // Si hay un usuario seleccionado, asegurarse de mantenerlo en las opciones
+    if (filters.value.userId) {
+      const selectedUser = users.value.find(
+        (u) => u.id === filters.value.userId
+      );
+      if (!selectedUser) {
+        const currentUser = users.value.find(
+          (u) => u.id === filters.value.userId
+        );
+        if (currentUser) {
+          users.value = [...users.value, currentUser];
+        }
+      }
+    }
   } catch (error) {
     console.error("Error buscando usuarios:", error);
+  } finally {
+    loading(false);
   }
 };
 
-const searchProjects = async (search) => {
+const searchProjects = async (search, loading) => {
   if (search.length < 2) return;
+
+  loading(true);
   try {
     const { data } = await axios.get(
-      `${baseURL}/projects/search?search=${search}`,
-      {
-        headers: header,
-      }
+      `${baseURL}/projects/search?search=${encodeURIComponent(search)}`,
+      { headers: header }
     );
-    projects.value = data;
+
+    projects.value = data.map((project) => ({
+      id: project.id,
+      name: project.name,
+    }));
+
+    // Si hay un proyecto seleccionado, asegurarse de mantenerlo en las opciones
+    if (filters.value.projectId) {
+      const selectedProject = projects.value.find(
+        (p) => p.id === filters.value.projectId
+      );
+      if (!selectedProject) {
+        const currentProject = projects.value.find(
+          (p) => p.id === filters.value.projectId
+        );
+        if (currentProject) {
+          projects.value = [...projects.value, currentProject];
+        }
+      }
+    }
   } catch (error) {
     console.error("Error buscando proyectos:", error);
+  } finally {
+    loading(false);
   }
 };
 
 const getFilteredReport = async () => {
   try {
+    console.log("Enviando filtros:", filters.value); // Debug
     const params = new URLSearchParams();
 
     if (filters.value.startDate) {
@@ -238,6 +288,8 @@ const getFilteredReport = async () => {
 
     investments.value = data.investments;
     totals.value = data.totals;
+    //Valores aplicados al filtro por consola
+    console.log("Filtros aplicados:", filters.value);
   } catch (error) {
     console.error("Error al obtener reporte:", error);
   }
@@ -250,13 +302,14 @@ const resetFilters = () => {
     minAmount: "",
     maxAmount: "",
     mineralId: "",
-    projectId: "",
-    userId: "",
+    projectId: null,
+    userId: null,
     status: "",
   };
+  users.value = [];
+  projects.value = [];
   getFilteredReport();
 };
-
 const exportToExcel = async () => {
   try {
     const params = new URLSearchParams();
@@ -345,30 +398,28 @@ const exportToExcel = async () => {
 .btn-secondary:hover {
   opacity: 0.9;
 }
-.multiselect-wrapper {
-  width: 100%;
+.chosen-container {
+  width: 100% !important;
+}
+.v-select {
+  border-radius: 25px;
+  --vs-border-color: #ced4da;
+  --vs-dropdown-bg: #fff;
+  --vs-dropdown-color: #333;
+  --vs-selected-bg: var(--primary-color);
+  --vs-selected-color: black;
 }
 
-.multiselect {
-  border: 1px solid #ced4da;
-  border-radius: 0.375rem;
+.v-select .vs__dropdown-toggle {
+  border-radius: 25px;
+  padding: 4px 0;
 }
 
-.multiselect-search {
-  padding: 0.375rem 0.75rem;
+.v-select .vs__search {
+  padding-left: 20px;
 }
 
-.multiselect-option {
-  padding: 0.375rem 0.75rem;
-}
-
-.multiselect-option.is-selected {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-.multiselect-option.is-pointed {
-  background-color: #e9ecef;
-  color: #212529;
+.v-select .vs__selected {
+  padding-left: 20px;
 }
 </style>

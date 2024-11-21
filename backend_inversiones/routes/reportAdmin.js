@@ -274,6 +274,18 @@ router.get('/investments', async (req, res) => {
 
   try {
     let where = {};
+    let projectWhere = {};
+
+
+    if (mineralId) {
+      const projectMinerals = await ProjectMineral.findAll({
+        where: { mineralId },
+        attributes: ['projectId']
+      });
+      const projectIds = projectMinerals.map(pm => pm.projectId);
+      projectWhere.id = { [Op.in]: projectIds };
+    }
+
 
     if (startDate && endDate) {
       const start = new Date(startDate);
@@ -302,6 +314,7 @@ router.get('/investments', async (req, res) => {
         },
         {
           model: Project,
+          where: projectWhere,
           include: [{
             model: ProjectMineral,
             include: [{
@@ -346,6 +359,18 @@ router.get('/investments/export', async (req, res) => {
 
   try {
     let where = {};
+    let projectWhere = {};
+
+
+    if (mineralId) {
+      const projectMinerals = await ProjectMineral.findAll({
+        where: { mineralId },
+        attributes: ['projectId']
+      });
+      const projectIds = projectMinerals.map(pm => pm.projectId);
+      projectWhere.id = { [Op.in]: projectIds };
+    }
+
 
     if (startDate && endDate) {
       const start = new Date(startDate);
@@ -374,6 +399,7 @@ router.get('/investments/export', async (req, res) => {
         },
         {
           model: Project,
+          where: projectWhere,
           include: [{
             model: ProjectMineral,
             include: [{
