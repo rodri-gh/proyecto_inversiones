@@ -35,7 +35,7 @@ const getNotifications = async () => {
     const lastMovements7days = await axios.get(
       `${
         import.meta.env.VITE_API_URL
-      }/analysis-report/getMovementsFromLast7Days`,
+      }/analysisReportgit /getMovementsFromLast7Days`,
       header
     );
     console.log(responseContacts.data);
@@ -55,7 +55,7 @@ const getFinancialSummary = async () => {
     const response = await axios.get(
       `${
         import.meta.env.VITE_API_URL
-      }/analysis-report/GetUserClientSummary/${userId}`,
+      }/analysisReport/GetUserClientSummary/${userId}`,
       header
     );
     console.log(response.data);
