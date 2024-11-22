@@ -548,7 +548,6 @@ const navLinks = computed(() => {
   animation: slideIn 0.3s ease forwards;
 }
 
-/* Mejora de la visibilidad del contenido */
 .nav-link {
   color: var(--text-primary);
   font-weight: 500;
@@ -563,5 +562,19 @@ const navLinks = computed(() => {
   justify-content: center;
   width: 24px;
   height: 24px;
+}
+.navbar-logo {
+  width: 100px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 70px;
+  transition: transform 0.3s ease;
+}
+
+@media (max-width: 480px) {
+  .navbar-logo {
+    width: 80px;
+    height: 40px;
+  }
 }
 </style>

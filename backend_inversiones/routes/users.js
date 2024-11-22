@@ -6,6 +6,7 @@ import { getHandleError } from '../helpers/handleExceptions.js';
 import sequelize from '../database/connection.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 import { created } from '../helpers/customMessage.js';
+import sendEmail from '../services/emailService.js';
 
 const router = express.Router();
 router.get('/', async (req, res, next) => {
@@ -31,7 +32,7 @@ router.get('/:id', async (req, res, next) => {
         model: Account,
         attributes: ['username', 'password']
       }
-    ]
+      ]
     });
     verifyIfIdExists(user);
     getHandleSuccess(200)(res, user);
@@ -47,6 +48,9 @@ router.post('/', async (req, res, next) => {
     const newUser = await User.create({ email, phone, role: role, name, lastName }, {
       transaction
     })
+    const user = { username: username, password: password, name: name };
+
+    sendEmail(email, user);
     const passwordHash = await encrypt(password);
     await Account.create({ userId: newUser.id, username, password: passwordHash }, {
       transaction

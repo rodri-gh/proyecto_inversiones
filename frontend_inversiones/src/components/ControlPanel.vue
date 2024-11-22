@@ -14,7 +14,7 @@ import axios from "axios";
 import Balances from "./Balances.vue";
 
 import ReportClienteView from "@/views/ReportClienteView.vue";
-
+import AdminReportView from "@/views/AdminReportView.vue";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Applications from "./Applications.vue";
 import WebResources from "./WebResources.vue";
@@ -71,6 +71,11 @@ const componentslinks = computed(() => {
     links.push({
       name: "Solicitudes",
       component: Applications,
+      isDividerWithTitle: false,
+    });
+    links.push({
+      name: "Reportes",
+      component: AdminReportView,
       isDividerWithTitle: false,
     });
     //links.push({ name: "Reportes", component: AnalysisAndReportsView });
@@ -131,6 +136,7 @@ const iconMap = {
   Inversiones: "fas fa-chart-pie",
   "Solicitudes de Retiro": "fas fa-piggy-bank",
   "Reporte de Inversiones": "fas fa-file-excel",
+  Reportes: "fas fa-chart-line",
 };
 </script>
 
@@ -287,5 +293,19 @@ const iconMap = {
   display: flex !important;
   flex-direction: column !important;
   align-items: center;
+}
+.navbar-logo {
+  width: 100px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 70px;
+  transition: transform 0.3s ease;
+}
+
+@media (max-width: 480px) {
+  .navbar-logo {
+    width: 80px;
+    height: 40px;
+  }
 }
 </style>
