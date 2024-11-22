@@ -49,7 +49,16 @@ router.get('/user/:id', async (req, res) => {
       order: [['investmentDate', 'ASC']]
     });
 
-    getHandleSuccess(200)(res, investments);
+    const totalAmount = investments
+      .reduce((sum, inv) => sum + Number(inv.amount || 0), 0)
+      .toFixed(2);
+
+    const totalEarnings = investments
+      .filter(inv => inv.status === 'closed')
+      .reduce((sum, inv) => sum + Number(inv.earnings || 0), 0)
+      .toFixed(2);
+
+    getHandleSuccess(200)(res, { investments, totals: { totalAmount, totalEarnings } });
   } catch (error) {
     getHandleError(error, res);
   }
@@ -116,9 +125,8 @@ router.get('/user/:id/export', async (req, res) => {
       'Estado': inv.status === 'closed' ? 'Cerrado' : 'Pendiente'
     }));
 
-    // Calcular totales (solo inversiones cerradas)
+    // Calcular totales 
     const totalAmount = investments
-      .filter(inv => inv.status === 'closed')
       .reduce((sum, inv) => sum + Number(inv.amount || 0), 0)
       .toFixed(2);
 
