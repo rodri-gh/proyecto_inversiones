@@ -10,7 +10,6 @@ import ProjectTimeline from './projectTimelineModel.js';
 import CategoryPost from './categoryPostModel.js';
 import Contact from './contactModel.js';
 import Faq from './faqModel.js';
-import Movement from './movementModel.js';
 import WithdrawalRequest from './withdrawalRequestModel.js';
 import UserActivitylog from './userActivitylogModel.js';
 import FinancialTransactions from './financialTransactionsModel.js'
@@ -37,10 +36,6 @@ Contract.belongsTo(Project, { foreignKey: 'projectId' });
 User.hasMany(Contract, { foreignKey: 'userId' });
 Contract.belongsTo(User, { foreignKey: 'userId' });
 
-//La relacion esta al reves de como estan estructuradas las tablas
-//Investment.hasMany(Contract, { foreignKey: 'investmentId' });
-//Contract.belongsTo(Investment, { foreignKey: 'investmentId' });
-
 Contract.hasOne(Investment, { foreignKey: 'contractId' });
 Investment.belongsTo(Contract, { foreignKey: 'contractId' });
 
@@ -53,6 +48,9 @@ ProjectMineral.belongsTo(Project, { foreignKey: 'projectId' });
 
 Mineral.hasMany(ProjectMineral, { foreignKey: 'mineralId' });
 ProjectMineral.belongsTo(Mineral, { foreignKey: 'mineralId' });
+
+User.hasMany(ProjectMineral, { foreignKey: 'userId' });
+ProjectMineral.belongsTo(User, { foreignKey: 'userId' });
 
 Project.hasMany(ProjectTimeline, { foreignKey: 'projectId' });
 ProjectTimeline.belongsTo(Project, { foreignKey: 'projectId' });
@@ -105,7 +103,6 @@ export {
   CategoryPost,
   Contact,
   Faq,
-  Movement,
   WithdrawalRequest,
   FinancialTransactions,
   MineralPriceHistory,

@@ -178,7 +178,7 @@ CREATE TABLE `project_minerals` (
     `id` INT NOT NULL AUTO_INCREMENT, 
     `name` VARCHAR(100) NOT NULL,
     PRIMARY KEY (`id`)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
 
   CREATE TABLE IF NOT EXISTS `posts` (
     `id` INT NOT NULL AUTO_INCREMENT,

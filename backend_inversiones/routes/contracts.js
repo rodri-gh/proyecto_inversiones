@@ -91,6 +91,12 @@ router.post('/', upload.fields([{ name: 'contractFilePath'}]), async (req, res, 
         getHandleSuccess(201)(res, "Contract and associated investment created successfully")
     } catch (error) {
         console.error(error);
+        if (error.parent.message) {
+            return res.status(422).json({
+                error: 'Error Contrato',
+                message: error.parent.message
+            });
+        }
         getHandleError(error, res)
     }
 });
@@ -127,7 +133,8 @@ router.put('/:id', upload.fields([{ name: 'contractFilePath', maxCount:1 }]), as
         });
         verifyIfIdExists(updatedCount);
         getHandleSuccess(204)(res)
-    } catch (error) {
+    } catch (e) {
+        console.error(e)
         getHandleError(error, res)
     }
 });

@@ -3,77 +3,148 @@ import { getHeaderRequest, getUserIdOfLocalStorage } from "@/authService";
 import axios from "axios";
 import { onMounted, ref } from "vue";
 
-// Variables reactivas
 const financialSummary = ref({});
 const userId = getUserIdOfLocalStorage();
 const header = getHeaderRequest();
+const totallyInvested = ref(0);
+const performanceOfInvestments = ref({});
+const historMovements = ref([]);
 
 onMounted(() => {
-  fetchFinancialSummary();
+  getTotallyInvested();
+  getProfitOrLosess();
+  getMovementsOfuser();
 });
 
-// Obtener el resumen financiero
-const fetchFinancialSummary = async () => {
-  try {
+const getTotallyInvested = async () => { 
+  try { 
     const response = await axios.get(
       `${
         import.meta.env.VITE_API_URL
-      }/analysis-report/GetUserFinancialSummary/${userId}`,
+      }/analysisReport/totallyInvested/${userId}`,
       header
     );
-    console.log(response.data);
+    console.log('total invertido: '+response.data);
+    totallyInvested.value = response.data;
+  } catch (e) { 
+    console.error(e)
+  }
+}
 
-    // Asignar los datos a la variable reactiva financialSummary
-    financialSummary.value = response.data;
-  } catch (e) {
+const getProfitOrLosess = async () => { 
+  try{
+    const response = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/analysisReport/profitsOrlosses/${userId}`,
+      header
+    );
+    console.log("rendimiento de las inversiones: "+response.data);
+    performanceOfInvestments.value = response.data;
+  } catch (e) { 
     console.error(e);
   }
-};
+}
+
+const getMovementsOfuser = async () => { 
+  try{
+    const response = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/analysisReport/historyMovementsOfuser/${userId}`,
+      header
+    );
+    console.log("historial de movimientos: "+response.data);
+    historMovements.value = response.data;
+  } catch (e) { 
+    console.error(e);
+  }
+}
 </script>
 
 <template>
   <div>
     <h4>Resumen General del Balance</h4>
-
-    <div class="summary-container">
-      <p>
-        <strong>Saldo Actual:</strong> ${{
-          financialSummary.saldo_actual || "0.00"
-        }}
-      </p>
-      <p>
-        <strong>Inversiones Activas:</strong> ${{
-          financialSummary.inversiones_activas || "0.00"
-        }}
-      </p>
-      <p>
-        <strong>Ganancias Totales:</strong> ${{
-          financialSummary.ganancias_totales || "0.00"
-        }}
-      </p>
-      <p>
-        <strong>Pérdidas Totales:</strong> ${{
-          financialSummary.perdidas_totales || "0.00"
-        }}
-      </p>
-      <p>
-        <strong>ROI Acumulado:</strong>
-        {{ financialSummary.retorno_inversion || "0.00" }}%
-      </p>
-      <p>
-        <strong>Rentabilidad Total:</strong> ${{
-          financialSummary.rentabilidad_total || "0.00"
-        }}
-      </p>
+    <div class="row">
+      <!--
+      <div class="col-12 col-md-6 col-lg-4 mb-4">
+          <div class="detail-item shadow">
+            <div>
+              <h6><i class="bi bi-bar-chart"></i> Gráfico de Actividad</h6>
+            </div>
+            <div>
+              <canvas id="activityChart"></canvas>
+            </div>
+          </div>
+      </div> -->
+      <div class="col-12 col-md-6 col-lg-4 mb-4">
+          <div class="detail-item shadow">
+            <div>
+              <h6>
+                <i class="bi bi-person-badge"></i> Total Invertido
+              </h6>
+            </div>
+            <div class="card-body">
+              <div v-if="totallyInvested != null && totallyInvested > 0 ">
+                <p>{{ totallyInvested }}</p>
+              </div> 
+              <div v-else class="text-muted">No hay Inversiones.</div>
+            </div>
+          </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4 mb-4">
+          <div class="detail-item shadow">
+            <div>
+              <h6>
+                <i class="bi bi-person-badge"></i> Rendimiento de inversiones
+              </h6>
+            </div>
+            <div class="card-body">
+              <div v-if="performanceOfInvestments != null">
+                <p>Total de Inversiones Finalizadas: {{ performanceOfInvestments.totallyInvested }}</p>
+                <p>Total Rendimiento de esas inversiones: {{ performanceOfInvestments.profitOrLosess }}</p>
+              </div> 
+              <div v-else class="text-muted">No hay rendimiento de tus inversiones aun.</div>
+            </div>
+          </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4 mb-4">
+          <div class="detail-item shadow">
+            <div>
+              <h6><i class="bi bi-clock-history"></i> Historial de Movimientos</h6>
+            </div>
+            <div class="card-body">
+              <div v-if="historMovements.length">
+                <ul class="list-group">
+                  <li
+                    v-for="item in historMovements"
+                    :key="item"
+                    class="list-group-item"
+                  >
+                    <div>
+                      <strong>{{ item.tipo }}</strong> - {{ item.descripcion }}
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <span class="text-muted">{{ item.fecha }}</span>
+                      <span class="text-success"
+                        ><strong>{{ item.amount }}</strong></span
+                      >
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div v-else class="text-muted">No hay movimientos recientes.</div>
+            </div>
+          </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.summary-container {
+.detail-item {
+  background-color: #ffffff;
   padding: 10px;
-  background-color: #f5f5f5;
   border-radius: 10px;
-  margin-bottom: 20px;
 }
 </style>

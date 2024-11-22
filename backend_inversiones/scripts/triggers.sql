@@ -96,7 +96,7 @@ END $$
 DELIMITER ;
 
 
--- para el timeline del phase compra_de_mineral
+-- para el timeline del phase compra_de_mineral despues de  una insersion
 DELIMITER $$
 
 CREATE TRIGGER after_project_mineral_insert
@@ -144,6 +144,68 @@ END $$
 
 DELIMITER ;
 
+
+-- para el timeline del phase compra_de_mineral despues de una actualizacion
+DELIMITER $$
+
+CREATE TRIGGER after_project_mineral_update
+AFTER UPDATE ON project_minerals
+FOR EACH ROW
+BEGIN
+	
+    IF ( NEW.purchase_price > 0.00 AND NEW.sale_price <= 0.00 ) OR
+    		(NEW.pre_purchase > 0.00 AND NEW.sale_price <= 0.00)
+    THEN
+        IF NOT EXISTS (
+            SELECT 1
+            FROM project_timelines
+            WHERE project_id = NEW.project_id AND phase = 'compra_de_mineral'
+        ) THEN
+            INSERT INTO project_timelines (project_id, phase, description, price_mineral1, price_mineral2, status)
+            VALUES (NEW.project_id, 'compra_de_mineral', 'Fase de compra de mineral', NEW.purchase_price, NEW.pre_purchase, 'open');
+        END IF;
+    END IF;
+  
+    IF NEW.sale_price > 0.00 AND NEW.purchase_price > 0.00 OR
+    		(NEW.pre_purchase > 0.00 AND NEW.sale_price > 0.00)
+    THEN
+    
+        IF NOT EXISTS (
+            SELECT 1
+            FROM project_minerals
+            WHERE project_id = NEW.project_id AND sale_price <= 0.00 AND deleted = 0
+        ) THEN
+            IF NOT EXISTS (
+                SELECT 1
+                FROM project_timelines
+                WHERE project_id = NEW.project_id AND phase = 'compra_de_mineral' 
+            ) THEN
+                INSERT INTO project_timelines (project_id, phase, description, price_mineral1, price_mineral2, status)
+                VALUES (NEW.project_id, 'compra_de_mineral', 'Fase de compra de mineral', NEW.purchase_price, NEW.pre_purchase, 'closed');
+            ELSE
+                UPDATE project_timelines
+                SET end_date = CURRENT_TIMESTAMP, status = 'closed'
+                WHERE project_id = NEW.project_id AND phase = 'compra_de_mineral';
+            END IF;
+        END IF;
+    END IF;
+
+    IF (OLD.sale_price > 0 AND NEW.sale_price <= 0) OR
+        (OLD.purchase_price > 0 AND NEW.purchase_price <= 0) 
+    THEN
+        IF EXISTS (
+            SELECT 1
+            FROM project_timelines
+            WHERE project_id = NEW.project_id AND phase = 'compra_de_mineral'
+        ) THEN
+            UPDATE project_timelines
+            SET status = 'open', end_date = NULL
+            WHERE project_id = NEW.project_id AND phase = 'compra_de_mineral';
+        END IF;
+    END IF;
+END $$
+
+DELIMITER ;
 
 -- trigger para insertar un timeline despues de insertar una inversion
 DELIMITER $$
