@@ -149,7 +149,65 @@
         @onSave="saveProject()"
       >
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-4">
+            <div class="mb-3 mt-3">
+              <label for="mineral" class="form-label">
+                Selecciona un mineral
+              </label>
+              <select
+                class="form-select"
+                id="mineral"
+                :disabled="selectedMinerals.length >= 2"
+                v-model="selectedMineral"
+                @change="addMineral"
+              >
+                <option value="">Seleccione un mineral</option>
+                <option
+                  v-for="mineral in availableMinerals"
+                  :key="mineral.id"
+                  :value="mineral"
+                >
+                  {{ mineral.name }}
+                </option>
+              </select>
+            </div>
+
+            <div v-if="selectedMinerals.length > 0">
+              <h6>Minerales seleccionados:</h6>
+              <ul class="list-group">
+                <li
+                  v-for="mineral in selectedMinerals"
+                  :key="mineral.id"
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  {{ mineral.name }}
+                  <button
+                    class="btn btn-danger btn-sm"
+                    @click="removeMineral(mineral)"
+                  >
+                    <i class="fa fa-times"></i>
+                  </button>
+                </li>
+              </ul>
+              <ul class="list-group">
+                <li
+                  v-for="mineral in selectedMinerals"
+                  :key="mineral.id"
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <label for="">{{ mineral.name }}</label>
+                  <Input
+                  id=""
+                  label="Peso en Onzas"
+                  type="number"
+                  v-model="mineral.weightOunces"
+                />
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-md-8">
             <div class="row">
               <div class="col-md-6 mt-3">
                 <Input id="name" label="Nombre" type="text" v-model="name" />
@@ -189,20 +247,22 @@
               <div class="col-md-6 mt-3">
                 <Input
                   id="profitPercentage"
-                  label="Porcentange de ganancia Estimada"
+                  label="% Ganancia Estimada"
                   type="number"
                   v-model="profitPercentage"
                 />
               </div>
               <div class="col-md-6 mt-3">
-                <Input
-                  id="status"
-                  label="Estado"
-                  type="text"
+                <Select
+                  :options="[{name: 'Abierto', value: 'open'}, {name: 'En transito', value: 'in_transit'}, {name: 'Cerrado', value: 'closed'} ]"
+                  label="Estado del Proyecto"
+                  value-key="value"
+                  label-key="name"
                   v-model="status"
+                  select-class=""
                 />
               </div>
-              <div class="col-md-6 mt-3">
+              <div class="col-md-6">
                 <br />
                 <label for="">Tipo de Pojecto</label>
                 <p><strong>Minero</strong></p>
@@ -242,8 +302,9 @@ import {
   getUserRoleOfLocalStorage,
 } from "@/authService";
 import CardsSummary from "@/components/CardsSummary.vue";
+import Select from "@/components/base/Select.vue";
 
-const baseURL = `${import.meta.env.VITE_API_URL}/project/`;
+const baseURL = `${import.meta.env.VITE_API_URL}/`;
 const projects = ref([]);
 const name = ref("");
 const description = ref("");
@@ -261,6 +322,10 @@ const summaryProjects = ref([]);
 const activeUsers = ref([]);
 const inactiveUsers = ref([]);
 const clientUsers = ref([]);
+const availableMinerals = ref([]);
+const selectedMinerals = ref([]);
+const selectedMineral = ref({});
+
 const userIdoOfProject = getUserIdOfLocalStorage();
 const userRole = getUserRoleOfLocalStorage();
 
@@ -284,6 +349,7 @@ const headers = [
 
 onMounted(() => {
   getProjects();
+  getMinerals();
 });
 
 const showProjectDetails = (project) => {
@@ -296,9 +362,19 @@ const Back = () => {
   showDetails.value = false;
 };
 
+const getMinerals = async () => {
+  try {
+    const response = await axios.get(baseURL+'mineral');
+    console.log('minerales: '+ response.data); 
+    availableMinerals.value = response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const getProjects = async () => {
   try {
-    const { data } = await axios.get(baseURL);
+    const { data } = await axios.get(baseURL+'project');
     if (userRole === "admin") {
       projects.value = data.filter((item) => item.userId === userIdoOfProject);
     } else {
@@ -316,6 +392,29 @@ const getProjects = async () => {
   } catch (error) {
     console.log(error);
   }
+};
+
+const addMineral = () => {
+  if (selectedMineral.value && selectedMinerals.value.length < 2) {
+    console.log(selectedMineral.value);
+    selectedMinerals.value.push(selectedMineral.value);
+  }
+};
+
+const removeMineral = async (mineral) => {
+  const method = mineral.idProjectMineral ? "remove" : "update";
+  if(method === "remove") {
+    try {
+      await axios.patch(baseURL+'projectMinerals/'+mineral.idProjectMineral, header); 
+      console.log('mineral eliminado para el projecto!')
+    } catch(e) {
+      console.error(e); 
+    }
+  }
+  selectedMinerals.value = selectedMinerals.value.filter(
+    (m) => m.id !== mineral.id
+  );
+  selectedMineral.value = {};
 };
 
 const getsummaryProjects = () => {
@@ -349,20 +448,29 @@ const getsummaryProjects = () => {
 
 const selectProject = (project) => {
   selectedProject.value = project;
-
   name.value = project.name;
   description.value = project.description;
   investmentGoal.value = project.investmentGoal;
   profitPercentage.value = project.profitPercentage;
   status.value = project.status;
-
+  project.projectMinerals.forEach(projectMineral => {
+    const mineralWithId = {
+            name: projectMineral.mineral.name,   
+            id: projectMineral.mineral.id, 
+            weightOunces: projectMineral.weightOunces,
+            idProjectMineral: projectMineral.id,
+            operatingExpenseId: projectMineral.operatingExpenseId,
+        };
+        selectedMinerals.value.push(mineralWithId);
+  });
+  console.log(selectedMinerals.value);
   openModal("modalProject");
 };
 
 const deleteProject = async (id) => {
   console.log(baseURL + id);
   try {
-    const data = await axios.patch(baseURL + id);
+    const data = await axios.patch(baseURL+'project/' + id);
     console.log(baseURL + id);
     getProjects();
   } catch (error) {
@@ -376,16 +484,20 @@ const reset = () => {
   investmentGoal.value = 0;
   profitPercentage.value = 0;
   selectedProject.value = {};
+  selectedMinerals.value = []; 
+  selectedMineral.value = {};
 };
 
 const saveProject = async () => {
   const method = selectedProject.value.id ? "put" : "post";
   const url = selectedProject.value.id
-    ? `${baseURL}${selectedProject.value.id}`
-    : baseURL;
-  const formData = createData();
+    ? `${baseURL+'project/'}${selectedProject.value.id}`
+    : baseURL+'project/';
+  const formData = createDataProject();
   try {
-    await axios[method](url, formData, header);
+    const response = await axios[method](url, formData, header);
+    console.log(response);
+    await saveProjectMinerals( response.data.message.id);
     getProjects();
     closeModal("modalProject");
     reset();
@@ -394,7 +506,43 @@ const saveProject = async () => {
   }
 };
 
-const createData = () => {
+const saveProjectMinerals = async ( projectId) => { 
+  try {
+    if (selectedMinerals.value.length > 0) { 
+      console.log(selectedMinerals.value);
+      for ( var item of selectedMinerals.value) {
+        console.log(item);
+        const method = item.idProjectMineral ? "put" : "post";
+        const url = item.idProjectMineral
+        ? `${baseURL+'projectMinerals/'}${item.idProjectMineral}`
+        : baseURL+'projectMinerals/';
+        console.log(url);
+        var data = createDataMineralProject( item, projectId); 
+        var response = await axios[method](url, data, header);
+      }
+    }
+  } catch (e) { 
+    console.log(e);
+  }
+}
+
+const createDataMineralProject = (mineral, idProject) => { 
+  const data = { 
+    projectId: idProject, 
+    mineralId: mineral.id, 
+    userId: null, 
+    operatingExpenseId: (mineral.operatingExpenseId)?? null,
+    weightOunces: mineral.weightOunces,
+    purchasePrice: 0, 
+    prePurchase: 0, 
+    estimatedPurchasePrice: 0, 
+    exitPrice: 0, 
+    salePrice: 0
+  } 
+  return data; 
+}
+
+const createDataProject = () => {
   const data = {
     userId: userIdoOfProject,
     name: name.value,
@@ -408,7 +556,9 @@ const createData = () => {
   };
   return data;
 };
+
 </script>
+
 
 <style scoped>
 .nav-tabs .nav-link {

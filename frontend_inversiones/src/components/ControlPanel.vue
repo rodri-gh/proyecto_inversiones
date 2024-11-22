@@ -54,7 +54,7 @@ const componentslinks = computed(() => {
   ];
   if (userRole == "super_user" || userRole == "admin") {
     links.push({
-      name: "Gestion de Usuarios",
+      name: "Usuarios",
       component: UsersView,
       isDividerWithTitle: false,
     });
@@ -116,7 +116,7 @@ const componentslinks = computed(() => {
 });
 
 const iconMap = {
-  "Gestion de Usuarios": "fas fa-users",
+  "Usuarios": "fas fa-users",
   Proyectos: "fas fa-cubes",
   Minerales: "fas fa-gem",
   Finanzas: "fas fa-dollar-sign",
@@ -174,7 +174,7 @@ const iconMap = {
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-2 sidebar shadow">
+        <div class="col-md-2 sidebar shadow vh-100">
           <div v-for="(link, index) in componentslinks" :key="index">
             <div v-if="link.isDividerWithTitle" class="section-divider">
               {{ link.title }}

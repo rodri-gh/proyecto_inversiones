@@ -4,7 +4,7 @@ import {
   getHeaderRequestMultiPartFormData,
 } from "@/authService";
 import axios from "axios";
-import { onMounted, ref, computed, onUnmounted } from "vue";
+import { onMounted, ref, computed, onUnmounted, defineProps } from "vue";
 import Modal from "./base/Modal.vue";
 import Button from "./base/Button.vue";
 import Input from "@/components/base/Input.vue";
@@ -12,6 +12,7 @@ import Select from "@/components/base/Select.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import TableContracts from "./tables/TableContracts.vue";
 import { eventBus } from "@/eventBus";
+import { handleErrorSwal } from "@/errorMixin";
 
 const props = defineProps({
   idProject: {
@@ -129,8 +130,8 @@ const saveContract = async () => {
     getContracts();
     updateData();
     reset();
-  } catch (error) {
-    console.error(error);
+  } catch (e) {
+    handleErrorSwal(e, 'Error al guardar el Contrato');
   }
 };
 
@@ -156,8 +157,7 @@ const selectedUser = computed(() => {
 
 const reset = () => {
   investmentAmount.value = 0;
-  (contractCode.value = ""), (startDate.value = "");
-  endDate.value = "";
+  contractCode.value = "", 
   status.value = "";
   contractType.value = "";
   currency.value = "";
