@@ -61,7 +61,7 @@ router.post('/', async (req, res, next) => {
         return getHandleSuccess(201)(res, createdTimeline);
       } else {
         console.log('los minerales del projecto deben estar vendidos!');
-        return res.status(400).json({ error: 'No se puede agregar esta etapa porque tus minerales deben estar vendidos!' });
+        return res.status(400).json({ error: 'error', message: 'No se puede agregar esta etapa porque los minerales de tu proyecto deben estar en su fase de vendidos!' });
       }
     } else if (phase === 'pago') {
       const projectTimelines = await ProjectTimeline.findAll({ where: { projectId } });
@@ -73,7 +73,7 @@ router.post('/', async (req, res, next) => {
         await calculateReturnOnInvestment(projectId, projecMinerals);
         return getHandleSuccess(201)(res, createdTimeline);
       } else {
-        return res.status(400).json({ error: 'No se puede agregar esta etapa porque no existe una fase de pago!' });
+        return res.status(400).json({ error: 'error', message: 'No se puede agregar esta etapa porque no existe una fase de ganancia!' });
       }
     } else {
       const createdTimeline = await ProjectTimeline.create({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 }, {transaction});

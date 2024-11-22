@@ -13,7 +13,8 @@ export const sequelize = new Sequelize(
         dialect: process.env.DB_DIALECT,
         define: {
             underscored: true
-        }
+        },
+        logging: console.log
     }
 );
 
