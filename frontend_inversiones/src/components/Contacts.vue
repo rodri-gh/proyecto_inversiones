@@ -37,34 +37,11 @@ const handleSubmit = async () => {
       <h2>¡Contactanos Ya!</h2>
       <form @submit.prevent="handleSubmit">
         <div class="form-row">
-          <input
-            v-model="form.name"
-            id="name"
-            type="text"
-            placeholder="Nombre"
-            required
-          />
-          <input
-            v-model="form.email"
-            id="email"
-            type="email"
-            placeholder="Email"
-            required
-          />
-          <input
-            v-model="form.phone"
-            id="phone"
-            type="number"
-            placeholder="Telefono"
-            required
-          />
+          <input v-model="form.name" id="name" type="text" placeholder="Nombre" required />
+          <input v-model="form.email" id="email" type="email" placeholder="Email" required />
+          <input v-model="form.phone" id="phone" type="number" placeholder="Telefono" required />
         </div>
-        <textarea
-          v-model="form.comments"
-          id="comments"
-          placeholder="Mensaje"
-          required
-        ></textarea>
+        <textarea v-model="form.comments" id="comments" placeholder="Mensaje" required></textarea>
         <button type="submit">Enviar Mensaje</button>
       </form>
     </div>
@@ -79,14 +56,8 @@ const handleSubmit = async () => {
         <p>Horario de Atención: Lunes a Viernes: 9:00 - 18:00</p>
       </div>
       <div class="video-box">
-        <iframe
-          width="100%"
-          height="200"
-          src="https://www.youtube.com/watch?v=nhBVL41-_Cw"
-          frameborder="0"
-          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        ></iframe>
+        <iframe width="100%" height="200" src="https://www.youtube.com/watch?v=nhBVL41-_Cw" frameborder="0"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
   </div>
@@ -173,4 +144,3 @@ button:hover {
   overflow: hidden;
 }
 </style>
-

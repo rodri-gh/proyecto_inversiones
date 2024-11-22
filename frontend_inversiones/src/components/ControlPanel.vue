@@ -142,37 +142,19 @@ const iconMap = {
 
 <template>
   <div class="content-div">
-    <nav
-      class="navbar navbar-expand-lg navbar-light px-3 shadow"
-      style="background-color: var(--secondary-color)"
-    >
+    <nav class="navbar navbar-expand-lg bg-color-navbar px-3 shadow" style="background-color: var(--secondary-color)">
       <a class="navbar-brand" href="#">
-        <img
-          :src="settings.logo"
-          alt="Logo"
-          class="brand me-1 navbar-logo"
-          width="100"
-          height="50"
-        />
+        <img :src="settings.logo" alt="Logo" class="brand me-1 navbar-logo" width="100" height="50" />
         <b>{{ settings.name }}</b>
       </a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <router-link to="/login" class="nav-link btn btn-primary"
-              >Cerrar Sesión</router-link
-            >
+            <router-link to="/login" class="nav-link btn btn-primary">Cerrar Sesión</router-link>
           </li>
         </ul>
       </div>
@@ -186,22 +168,13 @@ const iconMap = {
               {{ link.title }}
             </div>
 
-            <router-link
-              v-else-if="link.name === 'Ir a web'"
-              :to="link.path"
-              :class="{ activeSideBar: activeLink === link.name }"
-              class="sidebar-link"
-            >
+            <router-link v-else-if="link.name === 'Ir a web'" :to="link.path"
+              :class="{ activeSideBar: activeLink === link.name }" class="sidebar-link">
               <i :class="iconMap[link.name]" class="icon-large"></i>
               <span>{{ link.name }}</span>
             </router-link>
-            <a
-              v-else-if="link.component"
-              href="#"
-              @click="showComponent(link.component, link.name)"
-              :class="{ activeSideBar: activeLink === link.name }"
-              class="sidebar-link"
-            >
+            <a v-else-if="link.component" href="#" @click="showComponent(link.component, link.name)"
+              :class="{ activeSideBar: activeLink === link.name }" class="sidebar-link">
               <i :class="iconMap[link.name]" class="icon-large"></i>
               <span>{{ link.name }}</span>
             </a>
@@ -221,20 +194,49 @@ const iconMap = {
 </template>
 
 <style scoped>
+.bg-color-navbar {
+  background: linear-gradient(to left, #006d72, #82afb8, #AFB0B5, #C7C4CB, #DFC7C5, #E49A5B, #EE7C3E, #922B26);
+
+  /* background: linear-gradient(to left, #02696E, #63B2C1, #a3a3a4, #C7C4CB, #cdbaaf, #E49A5B, #EE7C3E, #A62F14); */
+}
+
+.btn-primary {
+  /* background: linear-gradient(#d2d2d2, #eb7e1e, #993b04) !important; */
+  background: linear-gradient(#ffa43b, #dc7234, #bb4500) !important;
+  border-radius: 25px !important;
+  border: 2px solid #909090 !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  /* box-shadow: inset 0 5px 1px rgba(0, 0, 0, 0.35), 0 5px 5px rgba(0, 0, 0, 0.5) !important; */
+  color: #ffffff !important;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(#c2b6a7, #95918f, #4a4a4a) !important;
+  border-radius: 25px !important;
+  border: 2px solid #5e5e5e !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  color: #fffaf0 !important;
+}
+
 .content-div {
   background-color: rgb(240, 240, 240);
 }
+
 .sidebar a.activeSideBar {
   font-weight: bold;
-  color: var(--primary-color);
+  background: linear-gradient(#ffa43b, #dc7234, #bb4500) !important;
 }
 
 .sidebar {
   color: var(--text-color);
   padding-top: 20px;
   border-right: var(--secondary-color) 1px solid;
-  background: linear-gradient(135deg, #ffa726, #fb8c00);
+  /* background: linear-gradient(135deg, #fdaa4a, #ea8951); */
+  background: linear-gradient(135deg, rgb(201, 198, 195), #dcd8d8);
 }
+
 .sidebar a {
   color: var(--text-color);
   text-decoration: none;
@@ -243,8 +245,9 @@ const iconMap = {
   cursor: pointer;
   margin-top: 5px;
 }
+
 .sidebar a:hover {
-  background-color: #e0e0e0;
+  background: linear-gradient(#ece3d8, #c1bbb8, #8e8d8d) !important;
   border-radius: 25px;
 }
 
@@ -294,6 +297,7 @@ const iconMap = {
   flex-direction: column !important;
   align-items: center;
 }
+
 .navbar-logo {
   width: 100px;
   height: 50px;

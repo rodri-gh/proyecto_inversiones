@@ -1,12 +1,7 @@
 <template>
   <label class="container">
-    <input
-      v-bind="$attrs"
-      class="input"
-      type="checkbox"
-      :checked="checked"
-      @change="$emit('update:checked', $event.target.checked)"
-    />
+    <input v-bind="$attrs" class="input" type="checkbox" :checked="checked"
+      @change="$emit('update:checked', $event.target.checked)" />
     <span class="switch"></span>
     <span class="label">{{ label }}</span>
   </label>
@@ -31,6 +26,7 @@ defineProps({
   display: flex;
   align-items: center;
 }
+
 .label {
   margin-left: 12px;
   color: #1a202c;
@@ -39,6 +35,7 @@ defineProps({
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 /* Visually hide the checkbox input */
 .input {
   position: absolute;
@@ -51,13 +48,14 @@ defineProps({
   white-space: nowrap;
   border-width: 0;
 }
+
 .switch {
   --switch-container-width: 34px;
   --switch-size: 20px;
   --light-gray: #e2e8f0;
   --gray: #cbd5e0;
   --dark-gray: #a0aec0;
-  --teal: #9627bb;
+  --teal: #d7732c;
   --dark-teal: #319795;
   /* Vertically center the inner circle */
   display: flex;
@@ -72,6 +70,7 @@ defineProps({
   flex-shrink: 0;
   transition: background-color 0.25s ease-in-out;
 }
+
 .switch::before {
   content: "";
   position: absolute;
@@ -85,26 +84,30 @@ defineProps({
   border: 2px solid var(--light-gray);
   transition: transform 0.15s ease-in-out;
 }
-.input:checked + .switch {
+
+.input:checked+.switch {
   background-color: var(--teal);
 }
-.input:checked + .switch::before {
+
+.input:checked+.switch::before {
   border-color: var(--teal);
   /* Move the inner circle to the right */
-  transform: translateX(
-    calc(var(--switch-container-width) - var(--switch-size))
-  );
+  transform: translateX(calc(var(--switch-container-width) - var(--switch-size)));
 }
-.input:focus + .switch::before {
+
+.input:focus+.switch::before {
   border-color: var(--gray);
 }
-.input:focus:checked + .switch::before {
+
+.input:focus:checked+.switch::before {
   border-color: none;
 }
-.input:disabled + .switch {
+
+.input:disabled+.switch {
   background-color: var(--gray);
 }
-.input:disabled + .switch::before {
+
+.input:disabled+.switch::before {
   background-color: var(--dark-gray);
   border-color: var(--dark-gray);
 }

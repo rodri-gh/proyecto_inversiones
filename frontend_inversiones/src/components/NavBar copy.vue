@@ -101,40 +101,22 @@ const navLinks = computed(() => {
 </script>
 
 <template>
-  <div
-    class="nav-wrapper"
-    :class="{ 'nav-hidden': !isNavbarVisible }"
-    @mouseenter="handleNavHover"
-  >
+  <div class="nav-wrapper" :class="{ 'nav-hidden': !isNavbarVisible }" @mouseenter="handleNavHover">
     <nav class="navbar navbar-expand-lg floating-nav">
       <div class="navbar-container">
         <div class="navbar-left">
-          <img
-            :src="settings.logo"
-            width="100"
-            height="50"
-            alt="Logo"
-            class="navbar-logo"
-          />
+          <img :src="settings.logo" width="100" height="50" alt="Logo" class="navbar-logo" />
           <a class="navbar-brand mx-1" href="#">{{ settings.name }}</a>
         </div>
 
-        <button
-          class="navbar-toggler"
-          :class="{ 'is-active': isMobileMenuOpen }"
-          @click="toggleMobileMenu"
-          aria-label="Toggle navigation"
-        >
+        <button class="navbar-toggler" :class="{ 'is-active': isMobileMenuOpen }" @click="toggleMobileMenu"
+          aria-label="Toggle navigation">
           <span></span>
           <span></span>
           <span></span>
         </button>
 
-        <div
-          class="navbar-collapse"
-          :class="{ show: isMobileMenuOpen }"
-          id="navbarNav"
-        >
+        <div class="navbar-collapse" :class="{ show: isMobileMenuOpen }" id="navbarNav">
           <div class="navbar-content">
             <ul class="navbar-nav">
               <li v-if="isRootRoute" class="nav-item">
@@ -184,11 +166,7 @@ const navLinks = computed(() => {
           </div>
 
           <div class="navbar-right">
-            <button
-              v-if="isLoggedIn"
-              class="auth-button logout-button"
-              @click="logOut()"
-            >
+            <button v-if="isLoggedIn" class="auth-button logout-button" @click="logOut()">
               <span class="icon">🚪</span>
               <span>Cerrar Sesión</span>
             </button>
@@ -288,6 +266,7 @@ const navLinks = computed(() => {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .navbar-nav::-webkit-scrollbar {
   display: none;
 }
@@ -296,6 +275,7 @@ const navLinks = computed(() => {
   white-space: nowrap;
   padding: 0.5rem 0.75rem;
 }
+
 .navbar-right {
   margin-left: auto;
   flex-shrink: 0;
@@ -552,6 +532,7 @@ const navLinks = computed(() => {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

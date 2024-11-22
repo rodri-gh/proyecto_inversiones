@@ -92,90 +92,40 @@ const updatePhone = async () => {
   <div class="container col-md-10 mt-5">
     <ul class="nav nav-tabs" id="userTabs" role="tablist">
       <li class="nav-item" role="presentation">
-        <button
-          class="nav-link active"
-          id="all-tab"
-          data-bs-toggle="tab"
-          data-bs-target="#all"
-          type="button"
-          role="tab"
-          aria-controls="all"
-          aria-selected="true"
-        >
+        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab"
+          aria-controls="all" aria-selected="true">
           Datos personales
         </button>
       </li>
       <li class="nav-item" role="presentation">
-        <button
-          class="nav-link"
-          id="active-tab"
-          data-bs-toggle="tab"
-          data-bs-target="#active"
-          type="button"
-          role="tab"
-          aria-controls="active"
-          aria-selected="false"
-        >
+        <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button" role="tab"
+          aria-controls="active" aria-selected="false">
           Cuenta
         </button>
       </li>
     </ul>
     <div class="tab-content" id="userTabsContent">
-      <div
-        class="tab-pane fade show active"
-        id="all"
-        role="tabpanel"
-        aria-labelledby="all-tab"
-      >
+      <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
         <div class="row pt-3">
           <div class="mb-3 col-md-6">
             <label for="name" class="form-label">Nombre</label>
-            <input
-              type="text"
-              class="form-control"
-              id="name"
-              :value="userProfile.name"
-              readonly
-            />
+            <input type="text" class="form-control" id="name" :value="userProfile.name" readonly />
           </div>
           <div class="mb-3 col-md-6">
             <label for="lastName" class="form-label">Apellidos</label>
-            <input
-              type="text"
-              class="form-control"
-              id="lastName"
-              :value="userProfile.lastName"
-              readonly
-            />
+            <input type="text" class="form-control" id="lastName" :value="userProfile.lastName" readonly />
           </div>
           <div class="mb-3 col-md-6">
             <label for="email" class="form-label">Correo</label>
-            <input
-              type="email"
-              class="form-control"
-              id="email"
-              :value="userProfile.email"
-              readonly
-            />
+            <input type="email" class="form-control" id="email" :value="userProfile.email" readonly />
           </div>
           <div class="mb-3 col-md-6">
             <label for="phone" class="form-label">Teléfono</label>
-            <input
-              type="phone"
-              class="form-control"
-              id="phone"
-              :value="userProfile.phone"
-              readonly
-            />
+            <input type="phone" class="form-control" id="phone" :value="userProfile.phone" readonly />
           </div>
         </div>
       </div>
-      <div
-        class="tab-pane fade"
-        id="active"
-        role="tabpanel"
-        aria-labelledby="active-tab"
-      >
+      <div class="tab-pane fade" id="active" role="tabpanel" aria-labelledby="active-tab">
         <h2>Cambiar credenciales</h2>
 
         <div class="row pt-3">
@@ -200,29 +150,16 @@ const updatePhone = async () => {
               />
             </div> -->
           <div class="mb-3 col-md-12">
-            <button
-              class="btn btn-primary mt-2"
-              data-bs-toggle="modal"
-              data-bs-target="#passwordModal"
-            >
+            <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#passwordModal">
               Cambiar contraseña
             </button>
           </div>
           <div class="mb-3 col-md-6">
             <label for="newPhone" class="form-label">Teléfono</label>
-            <input
-              type="phone"
-              class="form-control"
-              id="newPhone"
-              v-model="newPhone"
-            />
+            <input type="phone" class="form-control" id="newPhone" v-model="newPhone" />
           </div>
           <div class="mb-3 col-md-12">
-            <button
-              class="btn btn-primary mt-2"
-              data-bs-toggle="modal"
-              data-bs-target="#phoneModal"
-            >
+            <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#phoneModal">
               Cambiar teléfono
             </button>
           </div>
@@ -231,61 +168,30 @@ const updatePhone = async () => {
     </div>
 
     <!-- Modal para cambiar contraseña -->
-    <div
-      class="modal fade"
-      id="passwordModal"
-      tabindex="-1"
-      aria-labelledby="passwordModalLabel"
-      aria-hidden="true"
-    >
+    <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="passwordModalLabel">
               Cambiar contraseña
             </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div class="mb-3">
               <label for="password" class="form-label">Contraseña</label>
-              <input
-                type="password"
-                class="form-control"
-                id="password"
-                v-model="password"
-              />
+              <input type="password" class="form-control" id="password" v-model="password" />
             </div>
             <div class="mb-3">
-              <label for="confirmPassword" class="form-label"
-                >Confirmar contraseña</label
-              >
-              <input
-                type="password"
-                class="form-control"
-                id="confirmPassword"
-                v-model="confirmPassword"
-              />
+              <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+              <input type="password" class="form-control" id="confirmPassword" v-model="confirmPassword" />
             </div>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
               Cerrar
             </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="updatePassword"
-            >
+            <button type="button" class="btn btn-primary" @click="updatePassword">
               Guardar cambios
             </button>
           </div>
@@ -294,41 +200,21 @@ const updatePhone = async () => {
     </div>
 
     <!-- Modal para cambiar teléfono -->
-    <div
-      class="modal fade"
-      id="phoneModal"
-      tabindex="-1"
-      aria-labelledby="phoneModalLabel"
-      aria-hidden="true"
-    >
+    <div class="modal fade" id="phoneModal" tabindex="-1" aria-labelledby="phoneModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="phoneModalLabel">Cambiar teléfono</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div class="mb-3">
               <label for="newPhone" class="form-label">Teléfono</label>
-              <input
-                type="phone"
-                class="form-control"
-                id="newPhone"
-                v-model="newPhone"
-              />
+              <input type="phone" class="form-control" id="newPhone" v-model="newPhone" />
             </div>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
               Cerrar
             </button>
             <button type="button" class="btn btn-primary" @click="updatePhone">
@@ -350,34 +236,39 @@ const updatePhone = async () => {
   overflow: hidden;
   border: 2px solid #ccc;
 }
+
 .profile-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .nav-tabs .nav-link {
   color: #495057;
   background-color: #fff;
   border: 1px solid #dee2e6;
   border-bottom-color: transparent;
 }
+
 .nav-link {
   border-radius: 0;
 }
+
 .nav-link.active {
   color: white;
   background-color: var(--primary-color);
   border-color: var(--primary-color);
 }
+
 .active {
   background-color: transparent;
 }
 
-.tab-content > .tab-pane {
+.tab-content>.tab-pane {
   display: none;
 }
 
-.tab-content > .active {
+.tab-content>.active {
   display: block;
 }
 </style>

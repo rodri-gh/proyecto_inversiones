@@ -2,12 +2,7 @@
   <div>
     <div v-if="statusProject === 'open' || statusProject === 'in-transit'">
       <div class="navbar-tabs">
-        <button
-          v-for="tab in tabs"
-          :key="tab"
-          @click="selectedTab = tab"
-          :class="{ active: selectedTab === tab }"
-        >
+        <button v-for="tab in tabs" :key="tab" @click="selectedTab = tab" :class="{ active: selectedTab === tab }">
           {{ tab }}
         </button>
       </div>
@@ -17,10 +12,7 @@
           <div class="project-intro">
             <h3>Proyecto: {{ project.name }}</h3>
             <div class="project-image">
-              <img
-                src="@/assets/iconMineralProject.png"
-                alt="Imagen del Proyecto"
-              />
+              <img src="@/assets/iconMineralProject.png" alt="Imagen del Proyecto" />
             </div>
 
             <div class="project-summary">
@@ -224,13 +216,13 @@ const formatDate = (date) => {
 }
 
 .navbar-tabs button.active {
-  background-color: #204d7c;
+  background-color: #006d72;
   border-radius: 30px;
   color: white;
 }
 
 .navbar-tabs button:hover {
-  background-color: #879dda;
+  background-color: #82afb8;
   color: #04090e;
   border-radius: 10px;
 }
@@ -239,6 +231,7 @@ const formatDate = (date) => {
   padding: 10px;
   border-radius: 5px;
 }
+
 .project-intro {
   padding: 10px;
   text-align: center;
