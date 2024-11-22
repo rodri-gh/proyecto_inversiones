@@ -32,7 +32,7 @@ onMounted(async () => {
   try {
     const baseUrl = `${
       import.meta.env.VITE_API_URL
-    }/analysis-report/projectsStatus`;
+    }/analysisReport/projectsStatus`;
     const header = getHeaderRequest();
     const response = await axios.get(baseUrl, header);
     console.log(response);

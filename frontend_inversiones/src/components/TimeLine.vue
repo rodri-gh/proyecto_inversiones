@@ -270,6 +270,7 @@ import { ref, onMounted, computed, onUnmounted } from "vue";
 import axios from "axios";
 import { getHeaderRequest } from "@/authService";
 import { eventBus } from "@/eventBus";
+import { handleErrorSwal } from "@/errorMixin";
 
 const props = defineProps({
   idProject: {
@@ -278,7 +279,7 @@ const props = defineProps({
   },
 });
 
-const baseURL = `${import.meta.env.VITE_API_URL}/project-timeline/`;
+const baseURL = `${import.meta.env.VITE_API_URL}/projectTimeline/`;
 
 const timeLines = ref([]);
 
@@ -408,6 +409,8 @@ const getTimeLines = async () => {
 };
 
 const createTimeLine = async () => {
+  var myModalEl = document.getElementById("modalTimeline");
+  var modal = bootstrap.Modal.getInstance(myModalEl);
   const timeLine = {
     projectId: props.idProject,
     phase: phase.value,
@@ -431,13 +434,13 @@ const createTimeLine = async () => {
     console.log(baseURL);
     const data = await axios.post(baseURL, timeLine, header);
     console.log(data.data);
-    var myModalEl = document.getElementById("modalTimeline");
-    var modal = bootstrap.Modal.getInstance(myModalEl);
     modal.hide();
     getTimeLines();
     reset();
-  } catch (error) {
-    console.error(error);
+  } catch (e) {
+    handleErrorSwal(e, 'Error al crear Timeline!');
+    modal.hide();
+    reset();
   }
 };
 

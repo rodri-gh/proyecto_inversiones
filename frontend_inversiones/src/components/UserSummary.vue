@@ -66,11 +66,9 @@ const getFinancialSummary = async () => {
 
 const createChart = () => {
   const ctx = document.getElementById("activityChart").getContext("2d");
-
   // Preparar datos del backend
   const labels = movements7days.value.map((item) => item.tipo); // Ej: 'Projects', 'Investments'
   const data = movements7days.value.map((item) => parseFloat(item.amount)); // Convertir amounts a números
-
   // Crear gráfico
   new Chart(ctx, {
     type: "bar", // Tipo de gráfico (puede ser 'line', 'bar', 'pie', etc.)

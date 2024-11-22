@@ -1,9 +1,9 @@
 <template>
-  <div :class="['mb-3', selectClass]">
-    <label :for="id" class="form-label">{{ label }}</label>
+  <div :class="[ selectClass]">
+    <label :for="id" class="form-label m-0">{{ label }}</label>
     <select
       :id="id"
-      class="form-select"
+      class="form-select m-0"
       :value="modelValue"
       @change="updateValue"
     >
