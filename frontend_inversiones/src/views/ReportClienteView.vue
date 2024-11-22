@@ -170,9 +170,11 @@ const getFilteredReport = async () => {
     const { data } = await axios.get(`${baseURL}?${params.toString()}`, {
       headers: header,
     });
-
+    console.log("data", data);
     investments.value = data.investments;
+    console.log("las inversiones son:", investments.value);
     totals.value = data.totals;
+    console.log("los totales son:", totals.value);
   } catch (error) {
     console.error("Error al obtener reporte:", error);
   }
