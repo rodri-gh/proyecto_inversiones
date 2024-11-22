@@ -91,13 +91,27 @@ router.get('/projects', async (req, res) => {
     });
 
 
-    const totals = formattedProjects
-      .filter(p => p.status === 'closed')
-      .reduce((acc, project) => ({
-        totalInvestment: acc.totalInvestment + project.investmentGoal,
-        totalExpenses: acc.totalExpenses + project.operatingExpenses,
-        totalProfit: acc.totalProfit + project.profit
-      }), { totalInvestment: 0, totalExpenses: 0, totalProfit: 0 });
+    const totals = projects.reduce((acc, project) => {
+
+      const expenses = project.operatingExpenses.reduce((sum, exp) =>
+        sum + Number(exp.expenses), 0);
+
+
+      const profit = project.status === 'closed'
+        ? (project.investmentGoal * (project.profitPercentage / 100)) - expenses
+        : 0;
+
+      return {
+
+        totalInvestment: acc.totalInvestment + Number(project.investmentGoal),
+        totalExpenses: acc.totalExpenses + expenses,
+        totalProfit: acc.totalProfit + profit
+      };
+    }, {
+      totalInvestment: 0,
+      totalExpenses: 0,
+      totalProfit: 0
+    });
 
     getHandleSuccess(200)(res, { projects: formattedProjects, totals });
   } catch (error) {
@@ -182,24 +196,34 @@ router.get('/projects/export', async (req, res) => {
         'Ganancia': profit.toFixed(2),
         'Fecha Inicio': new Date(project.startDate).toLocaleDateString(),
         'Fecha Fin': new Date(project.endDate).toLocaleDateString(),
-        'Estado': project.status,
+        'Estado': project.status === 'closed' ? 'Cerrado' : 'Abierto',
         'Inversores': totalInvestments,
         'Minerales': minerals
       };
     });
 
 
-    const totals = projects
-      .filter(p => p.status === 'closed')
-      .reduce((acc, project) => {
-        const expenses = project.operatingExpenses.reduce((sum, exp) => sum + Number(exp.expenses), 0);
-        const profit = (project.investmentGoal * (project.profitPercentage / 100)) - expenses;
-        return {
-          totalInvestment: acc.totalInvestment + Number(project.investmentGoal),
-          totalExpenses: acc.totalExpenses + expenses,
-          totalProfit: acc.totalProfit + profit
-        };
-      }, { totalInvestment: 0, totalExpenses: 0, totalProfit: 0 });
+    const totals = projects.reduce((acc, project) => {
+
+      const expenses = project.operatingExpenses.reduce((sum, exp) =>
+        sum + Number(exp.expenses), 0);
+
+
+      const profit = project.status === 'closed'
+        ? (project.investmentGoal * (project.profitPercentage / 100)) - expenses
+        : 0;
+
+      return {
+
+        totalInvestment: acc.totalInvestment + Number(project.investmentGoal),
+        totalExpenses: acc.totalExpenses + expenses,
+        totalProfit: acc.totalProfit + profit
+      };
+    }, {
+      totalInvestment: 0,
+      totalExpenses: 0,
+      totalProfit: 0
+    });
 
 
     data.push({
@@ -341,12 +365,13 @@ router.get('/investments', async (req, res) => {
     });
 
 
-    const totals = formattedInvestments
-      .filter(inv => inv.status === 'Cerrado')
-      .reduce((acc, inv) => ({
-        totalInvestment: acc.totalInvestment + inv.amount,
-        totalEarnings: acc.totalEarnings + (typeof inv.earnings === 'number' ? inv.earnings : 0)
-      }), { totalInvestment: 0, totalEarnings: 0 });
+    const totals = formattedInvestments.reduce((acc, inv) => ({
+      totalInvestment: acc.totalInvestment + inv.amount,
+      totalEarnings: acc.totalEarnings + (inv.status === 'closed' && typeof inv.earnings === 'number' ? inv.earnings : 0)
+    }), {
+      totalInvestment: 0,
+      totalEarnings: 0
+    });
 
     getHandleSuccess(200)(res, { investments: formattedInvestments, totals });
   } catch (error) {
@@ -427,21 +452,22 @@ router.get('/investments/export', async (req, res) => {
     });
 
 
-    const totalClosed = investments
-      .filter(inv => inv.status === 'closed')
-      .reduce((sum, inv) => ({
-        amount: sum.amount + Number(inv.amount),
-        earnings: sum.earnings + Number(inv.earnings || 0)
-      }), { amount: 0, earnings: 0 });
+    const totals = investments.reduce((acc, inv) => ({
+      totalInvestment: acc.totalInvestment + Number(inv.amount),
+      totalEarnings: acc.totalEarnings + (inv.status === 'closed' ? Number(inv.earnings || 0) : 0)
+    }), {
+      totalInvestment: 0,
+      totalEarnings: 0
+    });
 
 
     data.push({
-      'Usuario': 'TOTALES (Solo cerrados)',
+      'Usuario': 'TOTALES',
       'Proyecto': '',
-      'Monto Inversión': totalClosed.amount.toFixed(2),
+      'Monto Inversión': totals.totalInvestment.toFixed(2),
       'Fecha Inversión': '',
       'Estado': '',
-      'Ganancia': totalClosed.earnings.toFixed(2),
+      'Ganancia': totals.totalEarnings.toFixed(2),
       'Minerales': ''
     });
 
