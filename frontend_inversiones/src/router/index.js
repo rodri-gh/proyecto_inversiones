@@ -115,11 +115,6 @@ const router = createRouter({
       name: 'posts',
       component: PostsView
     },
-    /* {
-      path: '/posts/:id',
-      name: 'post-details',
-      component: PostView
-    }, */
     {
       path: '/movements',
       name: 'movements',

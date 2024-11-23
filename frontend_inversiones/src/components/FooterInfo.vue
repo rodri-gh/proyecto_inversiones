@@ -22,8 +22,8 @@ const getSettings = async () => {
 </script>
 
 <template>
-  <div class="m-0">
-    <div class="row">
+  <div class="m-0 shadow">
+    <div class="row shadow">
       <footer class="footer">
         <div class="footer-section text-center">
           <h5>Siguenos en Redes</h5>

@@ -53,6 +53,7 @@
         <div v-if="selectedTab === 'Inversiones'">
           <h3>Contratos del Proyecto</h3>
           <Contract :idProject="idProject" :project="project" />
+          <br><br>
           <h4>Inversiones del Proyecto</h4>
           <Investments :idProjectInvestment="idProject" />
         </div>
@@ -148,6 +149,7 @@ import Investments from "@/components/Investments.vue";
 import Contract from "@/components/Contract.vue";
 import axios from "axios";
 import { getHeaderRequest } from "@/authService";
+import { formatDate } from "@/router/viewFormat";
 
 const header = getHeaderRequest();
 
@@ -198,11 +200,6 @@ onMounted(() => {
 onUnmounted(() => {
   eventBus.off("data-updated", reloadData);
 });
-
-const formatDate = (date) => {
-  if (!date) return "";
-  return new Date(date).toLocaleDateString();
-};
 </script>
 
 <style scoped>

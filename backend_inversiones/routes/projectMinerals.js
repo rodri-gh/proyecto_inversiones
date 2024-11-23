@@ -31,16 +31,17 @@ router.get('/projects/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const projectMineral = await ProjectMineral.findAll({
-      where: { project_id: id }, 
+      where: { projectId: id, deleted: 0 }, 
       include: [{
         model: Mineral, 
         attributes: [
           'id','name', 'price', 'description', 'image']
-      },
-      {
-        model: User,
-        required: false,
-      }]
+        },
+        {
+          model: User,
+          required: false,
+        }
+      ]
      });
     verifyIfIdExists(projectMineral);
     getHandleSuccess(200)(res, projectMineral);id

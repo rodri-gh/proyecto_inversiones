@@ -7,6 +7,7 @@ import Investment from '../models/investmentModel.js';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import User from '../models/userModel.js';
 
 
 const uploadDir = 'public/contratos';
@@ -57,7 +58,12 @@ router.get('/project/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
     const contracts = await Contract.findAll({
-      where: { projectId: id }
+      where: { projectId: id }, 
+      include: [
+        {
+          model: User,
+        }
+      ]
     });
     getHandleSuccess(200)(res, contracts);
   } catch (error) {
@@ -81,7 +87,6 @@ router.post('/', upload.fields([{ name: 'contractFilePath' }]), async (req, res,
       investmentAmount, contractCode, startDate, endDate,
       status, contractType, currency, contractFilePath
     });
-    'SELECT userr fr'
 
     await Investment.create({
       contractId: contract.id,
@@ -89,12 +94,18 @@ router.post('/', upload.fields([{ name: 'contractFilePath' }]), async (req, res,
       amount: investmentAmount,
       investmentDate: startDate,
       //profit_percentage,
-      currency: currency, status: status,
-      status: 'pending'
+      currency: currency, 
+      status: status
     })
     getHandleSuccess(201)(res, "Contract and associated investment created successfully")
   } catch (error) {
     console.error(error);
+    if(error.parent?.sqlMessage){
+      return res.status(422).json({
+         error: 'Error',
+         message: error.parent.sqlMessage
+        });
+    }
     getHandleError(error, res)
   }
 });

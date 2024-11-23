@@ -26,10 +26,11 @@ const props = defineProps({
 });
 
 const header = getHeaderRequestMultiPartFormData();
+const hearderNormal = getHeaderRequest();
 const contracts = ref([]);
 
 const users = ref([]);
-const baseURL = `${import.meta.env.VITE_API_URL}/contract/`;
+const baseURL = `${import.meta.env.VITE_API_URL}/`;
 
 const userId = ref("");
 const investmentAmount = ref("");
@@ -41,23 +42,23 @@ const contractType = ref("");
 const currency = ref("");
 const contractFilePath = ref(null);
 const selectedContract = ref({});
+const amountsInvestmentGoal = ref({});
 
 const headers = [
-  "usuario id",
-  "monto de inversion",
-  "condigo de contrato",
-  "fehca de inicio",
-  "fehca de finalizacion",
-  "estado ",
+  "Usuario",
+  "Inversion",
+  "Cod. Contrato",
+  "Inicio",
+  "Finalizacion",
   "tipo de contrato",
-  "moneda",
+  "Moneda",
   "Acciones",
 ];
 
 const getContracts = async () => {
   try {
     const response = await axios.get(
-      baseURL + "project/" + props.idProject,
+      baseURL + "contract/project/" + props.idProject,
       header
     );
     contracts.value = response.data;
@@ -74,12 +75,24 @@ const updateData = () => {
 onMounted(() => {
   getContracts();
   getUsers();
+  getAmountsInvestmentGoal();
   eventBus.on("data-updated", getContracts);
 });
 
 onUnmounted(() => {
   eventBus.off("data-updated", getContracts);
 });
+
+const getAmountsInvestmentGoal = async () => {
+  try {
+    const data = await axios.get(baseURL+'analysisReport/verifyProjectInvestmentGoal/'+props.idProject, hearderNormal);
+    amountsInvestmentGoal.value = data.data;  
+    console.log(data.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const getUsers = async () => {
   try {
     const data = await axios.get(
@@ -216,16 +229,29 @@ const previewUrl = computed(() => {
       >
         <div class="row">
           <div class="col-md-4">
+            <div v-if="amountsInvestmentGoal.investmentGoalOfProject === amountsInvestmentGoal.totalInvestmentOfProject">
+              <p>No se puede invertir mas!!</p>
+              <p>Meta alcanzada: <strong>{{ amountsInvestmentGoal.investmentGoalOfProject }} $</strong></p>
+            </div>
+            <div v-if="amountsInvestmentGoal.totalInvestmentOfProject < amountsInvestmentGoal.investmentGoalOfProject ">
+              <p>Monto disponible para invertir</p>
+              <p><strong>1 $ - {{ amountsInvestmentGoal.amountAvailableForInvestment }} $</strong></p>
+            </div>
+            <Input
+              id="investmentAmount"
+              label="Cantidad de inversion"
+              type="number"
+              v-model="investmentAmount"
+            />
             <Select
               :options="users"
-              label="Usuario"
+              label="Inversor"
               value-key="id"
               label-key="name"
               v-model="userId"
               select-class="col-8"
             />
             <div class="mt-4">
-              <h6>Datos del Usuario Seleccionado:</h6>
               <p>
                 <strong>Nombre:</strong>
                 {{ selectedUser?.name || "Seleccione un usuario" }}
@@ -256,23 +282,13 @@ const previewUrl = computed(() => {
               </div>
               <div class="col-md-6 mt-3">
                 <Input
-                  id="investmentAmount"
-                  label="Cantidad de inversion"
-                  type="number"
-                  v-model="investmentAmount"
-                />
-              </div>
-              <div class="col-md-6 mt-3">
-                <Input
                   id="contractCode"
                   label="codigo para almacen"
                   type="number"
                   v-model="contractCode"
                 />
               </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mt-3">
+              <div class="col-md-6 mt-2">
                 <label for="" class="form-label">Tipo de contrato</label>
                 <select
                   class="form-select form-select"

@@ -17,11 +17,11 @@
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">Id del projecto</th>
-                <th scope="col">Nombre del mineral</th>
-                <th scope="col">Precio estimado de compra</th>
-                <th scope="col">Precio pre compra</th>
-                <th scope="col">Precio de compra</th>
+                <th scope="col">Mineral</th>
+                <th scope="col">Peso en Onzas</th>
+                <th scope="col">Estimado de Compra</th>
+                <th scope="col">Pre Compra</th>
+                <th scope="col">Compra</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
@@ -36,8 +36,8 @@
                 v-for="projectMineral in projectMinerals"
                 :key="projectMineral.id"
               >
-                <td>{{ projectMineral.projectId }}</td>
                 <td>{{ projectMineral.mineral.name }}</td>
+                <td>{{ projectMineral.weightOunces }}</td>
                 <td>{{ projectMineral.estimatedPurchasePrice }}</td>
                 <td>{{ projectMineral.prePurchase }}</td>
                 <td>{{ projectMineral.purchasePrice }}</td>
@@ -289,7 +289,7 @@ onMounted(() => {
 const getprojectMinerals = async () => {
   try {
     const data = await axios.get(baseURL+'projectMinerals/projects/' + props.idProjectMineral, header);
-    projectMinerals.value = data.data.filter((item) => item.deleted === 0);
+    projectMinerals.value = data.data;
     console.log(data.data);
   } catch (error) {
     console.error(error);
@@ -431,7 +431,7 @@ const saveProjectMinerals = async () => {
         : "Minerales agregados correctamente.",
       "success"
     );
-  } catch (error) {
+  } catch (e) {
     handleErrorSwal(e, 'Error al Guardar Mineral del Projecto');
     closeModal();
   }

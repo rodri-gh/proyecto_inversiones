@@ -89,6 +89,7 @@ const updatePhone = async () => {
 </script>
 
 <template>
+  <router-link to="/login" class="btn btn-logout shadow"><strong>Cerrar Sesion </strong> <i class="fas fa-sign-out-alt"></i></router-link>
   <div class="container col-md-10 mt-5">
     <ul class="nav nav-tabs" id="userTabs" role="tablist">
       <li class="nav-item" role="presentation">
@@ -342,6 +343,18 @@ const updatePhone = async () => {
 </template>
 
 <style scoped>
+.btn-logout { 
+  background-color: #d82424; /* Firebrick red */
+  border-color: #c71f1f;    /* Slightly darker for border */
+  color: white;             /* Text color for contrast */
+  border: none;
+  border-radius: 1rem !important;
+}
+
+.btn-logout:hover {
+  background-color: #a11d1d; /* Darker red for hover effect */
+  border-color: #971818;
+}
 .profile-image {
   width: 150px;
   height: 150px;

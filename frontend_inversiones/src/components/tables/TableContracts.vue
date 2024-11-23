@@ -14,13 +14,13 @@
                 </tr>
 
                 <tr v-for="item in items" :key="item.id">
-                    <td>{{ item.userId }}</td>
+                    <td>{{ item.user.name }}</td>
                     <td>{{ item.investmentAmount }}</td>
                     <td>{{ item.contractCode }}</td>
-                    <td>{{ item.startDate }}</td>
-                    <td>{{ item.endDate }}</td>
-                    <td>{{ item.status }}</td>
-                    <td>{{ item.contractType }}</td>
+                    <td>{{ formatDate(item.startDate) }}</td>
+                    <td>{{ formatDate(item.endDate) }}</td>
+                    <td v-if="item.contractType === 'variable_rate'">Tasa Variable</td>
+                    <td v-if="item.contractType === 'fixed_rate'">Tasa Fija</td>
                     <td>{{ item.currency }}</td>
                     <td>
                         <Button 
@@ -45,6 +45,7 @@
 
 <script setup>
 import Button from "@/components/base/Button.vue";
+import { formatDate } from "@/router/viewFormat";
 
 defineProps({
     headers: {

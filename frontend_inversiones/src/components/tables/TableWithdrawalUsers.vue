@@ -68,6 +68,7 @@
 </template>
 
 <script setup>
+import { formatDate } from "@/router/viewFormat";
 import { computed, ref } from "vue";
 
 const props = defineProps({
@@ -100,10 +101,6 @@ const changePage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
   }
-};
-
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString();
 };
 
 const getStatusBadgeClass = (status) => {

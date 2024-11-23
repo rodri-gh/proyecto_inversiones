@@ -20,7 +20,7 @@
           <td>{{ item.email }}</td>
           <td>{{ item.phone }}</td>
           <td>{{ item.comment }}</td>
-          <td>{{ new Date(item.createdDate).toLocaleDateString() }}</td>
+          <td>{{ formatDate(item.createdDate) }}</td>
           <td>
             <span v-if="item.answer === 'pending'" class="badge bg-dark"
               >Pendiente</span
@@ -95,6 +95,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import Button from "@/components/base/Button.vue";
+import { formatDate } from "@/router/viewFormat";
 
 const props = defineProps({
   headers: {
