@@ -98,6 +98,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import Button from "@/components/base/Button.vue";
+import { formatDate } from "@/router/viewFormat";
 
 const props = defineProps({
   headers: {
@@ -129,13 +130,6 @@ const changePage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
   }
-};
-
-const formatDate = (date) => {
-  const d = new Date(date);
-  const formattedDate = d.toLocaleDateString();
-  const formattedTime = d.toLocaleTimeString();
-  return formattedDate + ", " + formattedTime;
 };
 </script>
 

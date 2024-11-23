@@ -35,7 +35,7 @@ const getNotifications = async () => {
     const lastMovements7days = await axios.get(
       `${
         import.meta.env.VITE_API_URL
-      }/analysisReportgit /getMovementsFromLast7Days`,
+      }/analysisReport/getMovementsFromLast7Days`,
       header
     );
     console.log(responseContacts.data);

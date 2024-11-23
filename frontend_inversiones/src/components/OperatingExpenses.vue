@@ -49,7 +49,7 @@ import { openModal, closeModal } from "@/utils/modal";
 import { getHeaderRequest } from "@/authService";
 import { eventBus } from "@/eventBus";
 
-const headers = ["Nombre", "Descripción", "Gastos", "Estado", "Acciones"];
+const headers = ["Nombre", "Descripción", "Gastos", "Acciones"];
 
 const props = defineProps({
   idProject: {

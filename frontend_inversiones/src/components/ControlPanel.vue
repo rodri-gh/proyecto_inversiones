@@ -12,12 +12,12 @@ import SettingsLanding from "./SettingsLanding.vue";
 import UserSummary from "./UserSummary.vue";
 import axios from "axios";
 import Balances from "./Balances.vue";
-
 import ReportClienteView from "@/views/ReportClienteView.vue";
 import AdminReportView from "@/views/AdminReportView.vue";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Applications from "./Applications.vue";
 import WebResources from "./WebResources.vue";
+import Banner from "./Banner.vue";
 
 const baseURL = `${import.meta.env.VITE_API_URL}/site-setting`;
 
@@ -41,6 +41,7 @@ const activeComponent = ref(markRaw(MyProfile));
 const activeLink = ref("Mi Perfil");
 
 const showComponent = (componentName, linkName) => {
+  console.log("Cambiando componente:", componentName, "Nombre:", linkName);
   activeComponent.value = markRaw(componentName);
   activeLink.value = linkName;
 };
@@ -48,9 +49,8 @@ const showComponent = (componentName, linkName) => {
 const componentslinks = computed(() => {
   const userRole = getUserRoleOfLocalStorage();
   let links = [
-    { name: "Ir a web", path: "/", divider: true, isDividerWithTitle: false },
-    { name: "Mi Perfil", component: MyProfile, isDividerWithTitle: false },
-    { name: "Inicio", component: UserSummary, isDividerWithTitle: false },
+    { name: "Web", component: WebResources },
+    { name: "Inicio", component: UserSummary},
   ];
   if (userRole == "super_user" || userRole == "admin") {
     links.push({
@@ -80,11 +80,6 @@ const componentslinks = computed(() => {
     });
     //links.push({ name: "Reportes", component: AnalysisAndReportsView });
     //links.push({ name: "Finanzas", component: FinanceView, divider: true });
-    links.push({
-      name: "Recursos Web",
-      component: WebResources,
-      isDividerWithTitle: false,
-    });
     links.push({
       name: "Ajustes de la Web",
       component: SettingsLanding,
@@ -127,7 +122,7 @@ const iconMap = {
   Finanzas: "fas fa-dollar-sign",
   FAQs: "fas fa-question-circle",
   "Ajustes de la Web": "fas fa-cog",
-  "Ir a web": "fas fa-globe",
+  "Web": "fas fa-globe",
   "Mi Perfil": "fas fa-id-badge",
   Inicio: "fas fa-file-alt",
   Solicitudes: "fas fa-paper-plane",
@@ -143,58 +138,59 @@ const iconMap = {
 <template>
   <div class="content-div">
     <nav
-      class="navbar navbar-expand-lg navbar-light px-3 shadow"
-      style="background-color: var(--secondary-color)"
+      class="navbar navbar-expand-lg navbar-light px-3 shadow navbar-gradient "
     >
-      <a class="navbar-brand" href="#">
-        <img
-          :src="settings.logo"
-          alt="Logo"
-          class="brand me-1 navbar-logo"
-          width="100"
-          height="50"
-        />
-        <b>{{ settings.name }}</b>
-      </a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <router-link to="/login" class="nav-link btn btn-primary"
-              >Cerrar Sesión</router-link
-            >
-          </li>
-        </ul>
+      <div class="navbar-container">
+        <div class="navbar-left">
+          <a class="navbar-brand" href="#">
+            <img
+              :src="settings.logo"
+              alt="Logo"
+              class="brand me-1 navbar-logo"
+              width="100"
+              height="50"
+            />
+            <b>{{ settings.name }}</b>
+          </a>
+        </div>
+        <div class="navbar-content">
+          <div class="navbar-banner-container">
+            <Banner />
+          </div>
+        </div>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-right">
+          <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a href="#" @click="showComponent(MyProfile, 'Mi perfil')" class="nav-link perfil-icon-container"
+                  ><i class="fas fa-user icon-perfil"></i></a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        
       </div>
     </nav>
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-2 sidebar shadow vh-100">
+        <div class="col-md-2 sidebar shadow">
           <div v-for="(link, index) in componentslinks" :key="index">
             <div v-if="link.isDividerWithTitle" class="section-divider">
               {{ link.title }}
             </div>
-
-            <router-link
-              v-else-if="link.name === 'Ir a web'"
-              :to="link.path"
-              :class="{ activeSideBar: activeLink === link.name }"
-              class="sidebar-link"
-            >
-              <i :class="iconMap[link.name]" class="icon-large"></i>
-              <span>{{ link.name }}</span>
-            </router-link>
             <a
               v-else-if="link.component"
               href="#"
@@ -221,6 +217,14 @@ const iconMap = {
 </template>
 
 <style scoped>
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.1rem 1.2rem;
+  flex-wrap: nowrap;
+}
 .content-div {
   background-color: rgb(240, 240, 240);
 }
@@ -229,11 +233,39 @@ const iconMap = {
   color: var(--primary-color);
 }
 
+.navbar-banner-container {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  width: 100%; 
+  margin-top: 0px;
+  top: 0;
+  left: 0;
+}
+@media (max-width: 768px) {
+  .navbar-banner-container {
+    display: block; 
+    text-align: center;
+    margin-top: 0px;
+  }
+
+  .navbar-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.navbar-gradient {
+  background: linear-gradient(to right, white 20%, #ffad4f 70%, #0a6b61 100%);
+  }
+
 .sidebar {
   color: var(--text-color);
   padding-top: 20px;
   border-right: var(--secondary-color) 1px solid;
   background: linear-gradient(135deg, #ffa726, #fb8c00);
+  height: 100vh !important;
 }
 .sidebar a {
   color: var(--text-color);
@@ -287,6 +319,21 @@ const iconMap = {
 
 .icon-large {
   font-size: 3rem;
+}
+
+.icon-perfil {
+  font-size: 2rem;
+}
+.perfil-icon-container {
+  background-color: #ffffff;
+  color: black;
+  border-radius: 50%;
+}
+
+.perfil-icon-container:hover {
+  background-color: #d66d26;
+  color: rgb(255, 255, 255);
+  border-radius: 50%;
 }
 
 .sidebar-link {
