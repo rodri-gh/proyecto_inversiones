@@ -7,53 +7,121 @@
     <CardsSummary :items="summaryContacts" />
     <ul class="nav nav-tabs" id="userTabs" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab"
-          aria-controls="all" aria-selected="true">
+        <button
+          class="nav-link active"
+          id="all-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#all"
+          type="button"
+          role="tab"
+          aria-controls="all"
+          aria-selected="true"
+        >
           Todos
         </button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button" role="tab"
-          aria-controls="active" aria-selected="false">
+        <button
+          class="nav-link"
+          id="active-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#active"
+          type="button"
+          role="tab"
+          aria-controls="active"
+          aria-selected="false"
+        >
           Respondidos
         </button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="inactive-tab" data-bs-toggle="tab" data-bs-target="#inactive" type="button"
-          role="tab" aria-controls="inactive" aria-selected="false">
+        <button
+          class="nav-link"
+          id="inactive-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#inactive"
+          type="button"
+          role="tab"
+          aria-controls="inactive"
+          aria-selected="false"
+        >
           Pendientes
         </button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="clients-tab" data-bs-toggle="tab" data-bs-target="#clients" type="button"
-          role="tab" aria-controls="clients" aria-selected="false">
+        <button
+          class="nav-link"
+          id="clients-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#clients"
+          type="button"
+          role="tab"
+          aria-controls="clients"
+          aria-selected="false"
+        >
           Eliminados
         </button>
       </li>
     </ul>
     <div class="tab-content" id="userTabsContent">
-      <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
-        <TableContacts :headers="headers" :items="contacts" :actions="{
-          answer: answerContact,
-          delete: deleteContact,
-        }" />
-      </div>
-      <div class="tab-pane fade" id="active" role="tabpanel" aria-labelledby="active-tab">
-        <TableContacts :headers="headers" :items="activeUsers" :actions="{
-          answer: answerContact,
-          delete: deleteContact,
-        }" />
-      </div>
-      <div class="tab-pane fade" id="inactive" role="tabpanel" aria-labelledby="inactive-tab">
-        <TableContacts :headers="headers" :items="inactiveUsers" :actions="{
-          answer: answerContact,
-          delete: deleteContact,
-        }" />
-        <div class="tab-pane fade" id="clients" role="tabpanel" aria-labelledby="clients-tab">
-          <TableContacts :headers="headers" :items="clientUsers" :actions="{
+      <div
+        class="tab-pane fade show active"
+        id="all"
+        role="tabpanel"
+        aria-labelledby="all-tab"
+      >
+        <TableContacts
+          :headers="headers"
+          :items="contacts"
+          :actions="{
             answer: answerContact,
             delete: deleteContact,
-          }" />
+          }"
+        />
+      </div>
+      <div
+        class="tab-pane fade"
+        id="active"
+        role="tabpanel"
+        aria-labelledby="active-tab"
+      >
+        <TableContacts
+          :headers="headers"
+          :items="activeUsers"
+          :actions="{
+            answer: answerContact,
+            delete: deleteContact,
+          }"
+        />
+      </div>
+      <div
+        class="tab-pane fade"
+        id="inactive"
+        role="tabpanel"
+        aria-labelledby="inactive-tab"
+      >
+        <TableContacts
+          :headers="headers"
+          :items="inactiveUsers"
+          :actions="{
+            answer: answerContact,
+            delete: deleteContact,
+          }"
+        />
+        <div
+          class="tab-pane fade"
+          id="clients"
+          role="tabpanel"
+          aria-labelledby="clients-tab"
+        >
+          <TableContacts
+            :headers="headers"
+            :items="clientUsers"
+            :actions="{
+              answer: answerContact,
+              delete: deleteContact,
+            }"
+          />
         </div>
       </div>
     </div>
@@ -161,7 +229,7 @@ const deleteContact = async (contact_id) => {
     console.log(error);
   }
 };
-const answerContact = async (contact_id, contact_email) => {
+const answerContact = async (contact_id) => {
   try {
     const result = await Swal.fire({
       icon: "warning",
@@ -175,7 +243,6 @@ const answerContact = async (contact_id, contact_email) => {
     });
     if (result.isConfirmed) {
       //actualizar la columna answer a answered
-      window.location.href = `mailto:${contact_email}`;
       const { data } = await axios.put(baseURL + contact_id, {
         answer: "answered",
       });
@@ -196,22 +263,20 @@ const answerContact = async (contact_id, contact_email) => {
   border: 1px solid #dee2e6;
   border-bottom-color: transparent;
 }
-
 .nav-link {
   border-radius: 0;
 }
-
 .nav-tabs .nav-link.active {
   color: white;
   background-color: var(--primary-color);
   border-color: var(--primary-color);
 }
 
-.tab-content>.tab-pane {
+.tab-content > .tab-pane {
   display: none;
 }
 
-.tab-content>.active {
+.tab-content > .active {
   display: block;
 }
 </style>

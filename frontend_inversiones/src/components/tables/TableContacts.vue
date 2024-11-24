@@ -22,38 +22,70 @@
           <td>{{ item.comment }}</td>
           <td>{{ formatDate(item.createdDate) }}</td>
           <td>
-            <span v-if="item.answer === 'pending'" class="badge bg-dark">Pendiente</span>
-            <span v-if="item.answer === 'answered'" class="badge bg-secondary">Enviado</span>
+            <span v-if="item.answer === 'pending'" class="badge bg-dark"
+              >Pendiente</span
+            >
+            <span v-if="item.answer === 'answered'" class="badge bg-secondary"
+              >Enviado</span
+            >
           </td>
           <td>
-            <span v-if="item.deleted == 0" class="badge bg-success">Activo</span>
+            <span v-if="item.deleted == 0" class="badge bg-success"
+              >Activo</span
+            >
             <span v-else class="badge bg-danger">Inactivo</span>
           </td>
           <td width="10%">
-            <Button @click="() => actions.answer(item.id, item.email)" icon="fa fa-envelope"
-              buttonClass="btn btn-dark btn-sm m-1" :class="{ disabled: item.answer === 'answered' }"
-              :disabled="item.answer === 'answered'" />
-            <Button @click="() => actions.delete(item.id)" :icon="item.deleted ? 'fa fa-check' : 'fa fa-trash'"
-              :buttonClass="`btn-${item.deleted ? 'restore' : 'delete'
-                } btn-sm m-1`" />
+            <Button
+              @click="() => actions.answer(item.id)"
+              icon="fa fa-envelope"
+              buttonClass="btn btn-dark btn-sm m-1"
+              :class="{ disabled: item.answer === 'answered' }"
+              :disabled="item.answer === 'answered'"
+            />
+            <Button
+              @click="() => actions.delete(item.id)"
+              :icon="item.deleted ? 'fa fa-check' : 'fa fa-trash'"
+              :buttonClass="`btn-${
+                item.deleted ? 'restore' : 'delete'
+              } btn-sm m-1`"
+            />
           </td>
         </tr>
       </tbody>
     </table>
 
     <!-- Paginación -->
-    <nav aria-label="Page navigation" class="d-flex justify-content-center mt-3">
+    <nav
+      aria-label="Page navigation"
+      class="d-flex justify-content-center mt-3"
+    >
       <ul class="pagination">
         <li class="page-item" :class="{ disabled: currentPage === 1 }">
-          <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)">Anterior</a>
+          <a
+            class="page-link"
+            href="#"
+            @click.prevent="changePage(currentPage - 1)"
+            >Anterior</a
+          >
         </li>
-        <li v-for="page in totalPages" :key="page" class="page-item" :class="{ active: page === currentPage }">
+        <li
+          v-for="page in totalPages"
+          :key="page"
+          class="page-item"
+          :class="{ active: page === currentPage }"
+        >
           <a class="page-link" href="#" @click.prevent="changePage(page)">{{
             page
           }}</a>
         </li>
         <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-          <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)">Siguiente</a>
+          <a
+            class="page-link"
+            href="#"
+            @click.prevent="changePage(currentPage + 1)"
+            >Siguiente</a
+          >
         </li>
       </ul>
     </nav>

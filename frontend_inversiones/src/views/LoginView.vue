@@ -8,19 +8,19 @@
       <div class="logo">MinerApp</div>
       <div class="login-form">
         <div>
-          <Input id="username" v-model="username" type="text" label="Nombre de usuario" class="label mb-3" />
+          <Input id="username" v-model="username" type="text" label="Nombre de usuario" class="label" />
         </div>
         <div>
           <Input id="password" v-model="password" type="password" label="Contraseña" class="label" />
         </div>
-        <!-- <div>
+        <div>
           <Switch :checked="shouldReceiveNewsletter" @toggle="toggle" label="Recuérdame" />
-      </div> -->
+        </div>
         <!-- 
           <div class="mb-3 col-md-12 mt-4 text-center fw-bold">
             <a class="nav-link forgot" href="#">¿Olvidaste tu contraseña?</a>
           </div> -->
-        <div class="col-md-12">
+        <div class="mb-3 col-md-12">
           <Button text="Ingresar" @click="iniciarSesion()" class="sign-in-btn" />
         </div>
       </div>
@@ -147,7 +147,8 @@ html {
   background-color: #fff;
   border-radius: 30px;
   overflow: hidden;
-  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0px 5px rgba(98, 24, 1, 0.500), 0 5px 5px !important;
+  /* box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2) !important; */
   z-index: 1;
 }
 
@@ -169,9 +170,10 @@ html {
 .logo {
   position: absolute;
   top: 33%;
-  left: 35%;
-  background: linear-gradient(#ffa43b, #dc7234, #bb4500) !important;
-  color: #fff;
+  left: 30%;
+  /* background-color: var(--primary-color); */
+  background: linear-gradient(135deg, #AFB0B5, #C7C4CB, #ce7e53, #923c26);
+  color: rgb(117, 52, 6);
   padding: 20px 20px;
   border-radius: 40px;
   font-size: 20px;
@@ -191,7 +193,7 @@ html {
 }
 
 .sign-in-btn {
-  background: linear-gradient(#ffa43b, #dc7234, #bb4500) !important;
+  background: linear-gradient(#e3d1bc, #dc7234, #ff6a13) !important;
   border-radius: 25px !important;
   width: 100%;
   height: 50px;
@@ -199,13 +201,17 @@ html {
   padding: 12px;
   font-size: 16px;
   font-weight: bold;
+  /* border: 2px solid #909090 !important; */
   padding-left: 15px !important;
   padding-right: 15px !important;
+  box-shadow: inset 0 5px 1px rgba(0, 0, 0, 0.25), 0 5px 5px rgba(0, 0, 0, 0.5) !important;
   color: #ffffff !important;
+
+  /* transition: background-color 0.3s; */
 }
 
 .sign-in-btn:hover {
-  opacity: 0.9;
+  background: linear-gradient(#ffd4a3, #d04d1e, #eb5702) !important;
   border-radius: 25px !important;
   width: 100%;
   height: 50px;
@@ -213,8 +219,10 @@ html {
   padding: 12px;
   font-size: 16px;
   font-weight: bold;
+  /* border: 2px solid #909090 !important; */
   padding-left: 15px !important;
   padding-right: 15px !important;
+  box-shadow: inset 0 5px 1px rgba(0, 0, 0, 0.25), 0 5px 5px rgba(0, 0, 0, 0.5) !important;
   color: #ffffff !important;
 }
 

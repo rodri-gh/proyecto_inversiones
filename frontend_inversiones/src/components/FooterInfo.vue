@@ -29,20 +29,40 @@ const getSettings = async () => {
           <h5>Siguenos en Redes</h5>
           <ul class="social-links d-flex justify-content-center gap-3">
             <li>
-              <a :href="settings.facebook" target="_blank"><img src="../assets/iconFacebook.png" alt="Facebook"
-                  width="50px" height="50px" /></a>
+              <a :href="settings.facebook" target="_blank"
+                ><img
+                  src="../assets/iconFacebook.png"
+                  alt="Facebook"
+                  width="50px"
+                  height="50px"
+              /></a>
             </li>
             <li>
-              <a :href="settings.instagram" target="_blank"><img width="50px" height="50px"
-                  src="../assets/iconInstagram.png" alt="Instagram" /></a>
+              <a :href="settings.instagram" target="_blank"
+                ><img
+                  width="50px"
+                  height="50px"
+                  src="../assets/iconInstagram.png"
+                  alt="Instagram"
+              /></a>
             </li>
             <li>
-              <a :href="settings.tiktok" target="_blank"><img width="50px" height="50px" src="../assets/iconTikTok.png"
-                  alt="Tiktok" /></a>
+              <a :href="settings.tiktok" target="_blank"
+                ><img
+                  width="50px"
+                  height="50px"
+                  src="../assets/iconTikTok.png"
+                  alt="Tiktok"
+              /></a>
             </li>
             <li>
-              <a :href="settings.x" target="_blank"><img width="50px" height="50px" src="../assets/IconX.png"
-                  alt="twiter" /></a>
+              <a :href="settings.x" target="_blank"
+                ><img
+                  width="50px"
+                  height="50px"
+                  src="../assets/IconX.png"
+                  alt="twiter"
+              /></a>
             </li>
           </ul>
         </div>
@@ -56,7 +76,9 @@ const getSettings = async () => {
               <a href="#">WhatsApp: {{ settings.whatsapp }}</a>
             </li>
             <li>
-              <a :href="'mailto:' + settings.email">Email: {{ settings.email }}</a>
+              <a :href="'mailto:' + settings.email"
+                >Email: {{ settings.email }}</a
+              >
             </li>
             <li>
               <a href="#">Direccion: {{ settings.address }}</a>
@@ -70,10 +92,13 @@ const getSettings = async () => {
           <h5>Nuestras politicas</h5>
           <ul>
             <li>
-              <a :href="settings.dataPolicyLink" target="_blank">Tratamiento de datos personales</a>
+              <a :href="settings.dataPolicyLink" target="_blank"
+                >Tratamiento de datos personales</a
+              >
             </li>
             <li>
-              <a :href="settings.termsConditionsLink" target="_blank">Términos y condiciones
+              <a :href="settings.termsConditionsLink" target="_blank"
+                >Términos y condiciones
               </a>
             </li>
           </ul>
@@ -87,22 +112,6 @@ const getSettings = async () => {
 </template>
 
 <style scoped>
-.m-0 {
-  margin: 0 !important;
-  /* Asegúrate de que no haya margen horizontal */
-  padding: 0 !important;
-  width: 100%;
-  /* Garantiza que el ancho sea del viewport */
-  overflow-x: hidden;
-  /* Asegúrate de no tener desbordamiento horizontal */
-}
-
-.row {
-  margin-right: 0 !important;
-  /* Evita márgenes negativos laterales */
-  margin-left: 0 !important;
-}
-
 .footer {
   background-color: #f8f9fa;
   padding: 40px;
@@ -112,39 +121,32 @@ const getSettings = async () => {
   border-top: 1px solid #ddd;
   font-family: Arial, sans-serif;
 }
-
 .footer-section {
   flex: 1 1 200px;
   margin: 5px 10px;
 }
-
 .footer-section h5 {
   margin-bottom: 15px;
   font-size: 20px;
   color: #002fff;
 }
-
 .footer-section ul {
   list-style: none;
   padding: 0;
 }
-
 .footer-section a {
   text-decoration: none;
   color: #555;
   transition: color 0.3s;
 }
-
 .footer-section a:hover {
   color: #ff6600;
 }
-
 .footer-reserved-rights {
   text-align: center;
   padding: 6px;
   background-color: #000000;
 }
-
 .footer-reserved-rights p {
   margin: 0;
   font-size: 14px;
