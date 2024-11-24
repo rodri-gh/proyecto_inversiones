@@ -181,8 +181,8 @@ const iconMap = {
           </div>
         </div>
 
-        <div class="col-md-10">
-          <div class="container">
+        <div class="col-md-10 main-content">
+          <div class="container ">
             <div class="mt-4">
               <component :is="activeComponent" />
             </div>
@@ -227,11 +227,14 @@ const iconMap = {
 .sidebar a.activeSideBar {
   font-weight: bold;
   background: linear-gradient(#ffa43b, #dc7234, #bb4500) !important;
+  border-radius: 0;
 }
 
 .sidebar {
   color: var(--text-color);
   padding-top: 20px;
+  padding-left: 0px;
+  padding-right: 0px;
   border-right: var(--secondary-color) 1px solid;
   /* background: linear-gradient(135deg, #fdaa4a, #ea8951); */
   background: linear-gradient(135deg, rgb(201, 198, 195), #dcd8d8);
@@ -248,7 +251,7 @@ const iconMap = {
 
 .sidebar a:hover {
   background: linear-gradient(#ece3d8, #c1bbb8, #8e8d8d) !important;
-  border-radius: 25px;
+  border-radius: 0px;
 }
 
 .divider-with-title {
@@ -304,6 +307,10 @@ const iconMap = {
   object-fit: contain;
   border-radius: 70px;
   transition: transform 0.3s ease;
+}
+
+.main-content {
+  background-color: #f7f7f7 !important;
 }
 
 @media (max-width: 480px) {

@@ -18,10 +18,7 @@ const form = reactive({
 
 const handleSubmit = async () => {
   try {
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_URL}/contacts`,
-      form
-    );
+    const response = await axios.post("http://localhost:3000/contacts", form);
     console.log(response.data);
   } catch (error) {
     console.error(error);
