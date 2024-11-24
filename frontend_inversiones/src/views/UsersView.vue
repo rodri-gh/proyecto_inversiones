@@ -155,11 +155,10 @@
         placeholder="Ingrese los apellidos"
       />
       <Input
-        id="username"
-        label="Nombre de Usuario"
-        v-model="username"
+        label="Nro de Documento"
+        v-model="documentNumber"
         type="text"
-        placeholder="Ingrese un nombre de Usuario"
+        placeholder="Ingrese el número de documento"
       />
       <Input
         id="email"
@@ -184,21 +183,6 @@
           <option value="client">Cliente</option>
         </select>
       </div>
-
-      <Input
-        id="password"
-        label="Escriba una contraseña"
-        v-model="password"
-        type="password"
-        placeholder="**********"
-      />
-      <Input
-        id="confirmPassword"
-        label="Repita la contraseña"
-        v-model="confirmPassword"
-        type="password"
-        placeholder="Confirmar contraseña"
-      />
     </Modal>
   </div>
 </template>
@@ -214,6 +198,7 @@ import Input from "@/components/base/Input.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import { getUserRoleOfLocalStorage } from "@/authService";
 import CardsSummary from "@/components/CardsSummary.vue";
+import { existAlert, validateInputs } from "@/utils/validateInputs";
 
 const headersTable = [
   "Nombre(s)",
@@ -235,12 +220,11 @@ const inactiveUsers = ref([]);
 const clientUsers = ref([]);
 const name = ref("");
 const lastName = ref("");
-const username = ref("");
 const email = ref("");
 const phone = ref("");
 const role = ref("");
-const password = ref("");
-const confirmPassword = ref("");
+const documentNumber = ref("");
+
 const selectedUser = ref({});
 const summaryUsers = ref([]);
 
@@ -273,7 +257,7 @@ const selectUser = (user) => {
   selectedUser.value = user;
   name.value = user.name;
   lastName.value = user.lastName;
-  username.value = user.username;
+  documentNumber.value = user.documentNumber;
   email.value = user.email;
   phone.value = user.phone;
 
@@ -310,7 +294,44 @@ const getsummaryUsers = () => {
 };
 
 const createUser = async () => {
-  if (!validateUserInput()) return;
+  console.log("documentNumber", documentNumber.value);
+
+  if (
+    !validateInputs([
+      {
+        value: name.value,
+        name: "Nombre",
+        type: "text",
+      },
+      {
+        value: lastName.value,
+        name: "Apellidos",
+        type: "text",
+      },
+      {
+        value: documentNumber.value,
+        name: "Nro de Documento",
+        type: "text",
+      },
+      {
+        value: email.value,
+        name: "Correo",
+        type: "email",
+      },
+      {
+        value: phone.value,
+        name: "Teléfono",
+        type: "text",
+      },
+      {
+        value: role.value,
+        name: "Rol",
+        type: "select",
+      },
+    ])
+  ) {
+    return;
+  }
 
   const method = selectedUser.value.id ? "put" : "post";
   const url = selectedUser.value.id
@@ -319,10 +340,9 @@ const createUser = async () => {
   const datos = {
     name: name.value,
     lastName: lastName.value,
-    username: username.value,
+    documentNumber: documentNumber.value,
     email: email.value,
     phone: phone.value,
-    password: password.value,
     role: role.value,
   };
   try {
@@ -339,38 +359,15 @@ const createUser = async () => {
       timer: 2500,
     });
   } catch (error) {
+    if (error.response && error.response.status === 400) {
+      existAlert(error.response.data.message);
+    } else {
+      console.log(error);
+    }
     console.log(error);
   }
 };
-const validateUserInput = () => {
-  if (
-    name.value === "" ||
-    lastName.value === "" ||
-    username.value === "" ||
-    email.value === "" ||
-    phone.value === "" ||
-    password.value === "" ||
-    confirmPassword.value === ""
-  ) {
-    Swal.fire({
-      icon: "error",
-      title: "Campos vacíos!",
-      text: "Todos los campos son obligatorios",
-    });
-    return false;
-  }
-  if (password.value !== confirmPassword.value) {
-    Swal.fire({
-      icon: "error",
-      title: "Las contraseñas no coinciden",
-      text: "Por favor, ingresa las mismas contraseñas",
-    });
-    password.value = "";
-    confirmPassword.value = "";
-    return false;
-  }
-  return true;
-};
+
 const deleteUser = async (id) => {
   try {
     const { data } = await axios.patch(baseURL + id, header);
@@ -384,11 +381,9 @@ const deleteUser = async (id) => {
 const reset = () => {
   name.value = "";
   lastName.value = "";
-  username.value = "";
   email.value = "";
+
   phone.value = "";
-  password.value = "";
-  confirmPassword.value = "";
   selectedUser.value = {};
   role.value = "";
 };

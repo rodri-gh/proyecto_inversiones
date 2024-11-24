@@ -19,6 +19,7 @@ import ProjectPerformance from './projectPerformanceModel.js';
 import ProjectChanges from './projectChangesModel.js';
 import FinancialProjections from './financialProjectionsModel.js';
 import ProjectPayment from './projectPaymentsModel.js';
+import SiteSetting from './siteSettingModel.js';
 
 
 User.hasOne(Account, { foreignKey: 'userId' });
@@ -112,4 +113,5 @@ export {
   ProjectChanges,
   FinancialProjections,
   ProjectPayment,
+  SiteSetting
 };
