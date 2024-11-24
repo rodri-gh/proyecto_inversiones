@@ -7,6 +7,7 @@ import Button from "@/components/base/Button.vue";
 import InputFile from "@/components/base/InputFile.vue";
 import TableWithdrawalUsers from "./tables/TableWithdrawalUsers.vue";
 import CardsSummary from "@/components/CardsSummary.vue";
+import { validateInputs } from "@/utils/validateInputs";
 
 const baseUrl = `${import.meta.env.VITE_API_URL}/withdrawal-request/user/`;
 const investmentsUrl = `${import.meta.env.VITE_API_URL}/investment/user/`;
@@ -110,6 +111,29 @@ const updateAmount = () => {
 };
 
 const submitRequest = async () => {
+  if (
+    !validateInputs([
+      {
+        value: newRequest.value.investmentId,
+        name: "Proyecto",
+        type: "select",
+      },
+
+      {
+        value: newRequest.value.photoDocument,
+        name: "Documento Fotográfico",
+        type: "file",
+      },
+      {
+        value: newRequest.value.selfiePhoto,
+        name: "Foto Selfie",
+        type: "file",
+      },
+    ])
+  ) {
+    return;
+  }
+
   const formData = new FormData();
   formData.append("investmentId", newRequest.value.investmentId);
   formData.append("userId", newRequest.value.userId);
@@ -265,6 +289,9 @@ const resetForm = () => {
                   :value="investment.id"
                 >
                   {{ investment.project.name }}
+                </option>
+                <option v-if="closedInvestments.length === 0" disabled>
+                  No tienes ningún proyecto del cual retirar inversiones
                 </option>
               </select>
             </div>
