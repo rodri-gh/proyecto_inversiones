@@ -76,6 +76,11 @@ import InputTextArea from "@/components/base/InputTextArea.vue";
 import InputFile from "@/components/base/InputFile.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import CardsSummary from "@/components/CardsSummary.vue";
+import {
+  validateInputs,
+  successAlert,
+  existAlert,
+} from "@/utils/validateInputs";
 
 const headers = [
   "Nombre",
@@ -154,6 +159,17 @@ const selectMineral = (mineral) => {
 };
 
 const saveMineral = async () => {
+  if (
+    !validateInputs([
+      { value: name.value, name: "Nombre", type: "text" },
+      { value: price.value, name: "Precio", type: "number" },
+      { value: description.value, name: "Descripción", type: "text" },
+      { value: image.value, name: "Imagen", type: "file" },
+    ])
+  ) {
+    return;
+  }
+
   const method = selectedMineral.value.id ? "put" : "post";
   const url = selectedMineral.value.id
     ? `${baseURL}${selectedMineral.value.id}`
@@ -169,10 +185,15 @@ const saveMineral = async () => {
     });
 
     closeModal("modalMineral");
+    successAlert("Mineral guardado correctamente");
     getMinerals();
     reset();
   } catch (error) {
-    console.log(error);
+    if (error.response.status === 409) {
+      existAlert("El mineral ya existe");
+    } else {
+      console.log(error);
+    }
   }
 };
 

@@ -42,23 +42,28 @@ router.get('/:id', async (req, res, next) => {
 });
 
 router.post('/', async (req, res, next) => {
-  const { email, phone, role, name, lastName, username, password } = req.body;
+  const { email, phone, role, name, lastName, documentNumber } = req.body;
   const transaction = await sequelize.transaction();
   try {
-    const newUser = await User.create({ email, phone, role: role, name, lastName }, {
+    const newUser = await User.create({ email, phone, role: role, name, lastName, documentNumber }, {
       transaction
-    })
-    const user = { username: username, password: password, name: name };
-
-    sendEmail(email, user);
+    });
+    const firstName = name.split(' ')[0];
+    const username = documentNumber;
+    const password = `${firstName.charAt(0).toUpperCase() + firstName.slice(1)}.${documentNumber}`;
     const passwordHash = await encrypt(password);
+
+    sendEmail(email, { username, password, name });
     await Account.create({ userId: newUser.id, username, password: passwordHash }, {
       transaction
-    })
+    });
     await transaction.commit();
     getHandleSuccess(201)(res, created.user);
   } catch (error) {
-    transaction.rollback();
+    await transaction.rollback();
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return res.status(400).json({ message: 'Ya existe un usuario con esos datos' });
+    }
     getHandleError(error, res);
   }
 });

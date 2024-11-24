@@ -197,11 +197,11 @@
                 >
                   <label for="">{{ mineral.name }}</label>
                   <Input
-                  id=""
-                  label="Peso en Onzas"
-                  type="number"
-                  v-model="mineral.weightOunces"
-                />
+                    id=""
+                    label="Peso en Onzas"
+                    type="number"
+                    v-model="mineral.weightOunces"
+                  />
                 </li>
               </ul>
             </div>
@@ -254,7 +254,11 @@
               </div>
               <div class="col-md-6 mt-3">
                 <Select
-                  :options="[{name: 'Abierto', value: 'open'}, {name: 'En transito', value: 'in_transit'}, {name: 'Cerrado', value: 'closed'} ]"
+                  :options="[
+                    { name: 'Abierto', value: 'open' },
+                    { name: 'En transito', value: 'in_transit' },
+                    { name: 'Cerrado', value: 'closed' },
+                  ]"
                   label="Estado del Proyecto"
                   value-key="value"
                   label-key="name"
@@ -303,6 +307,7 @@ import {
 } from "@/authService";
 import CardsSummary from "@/components/CardsSummary.vue";
 import Select from "@/components/base/Select.vue";
+import { validateInputs } from "@/utils/validateInputs";
 
 const baseURL = `${import.meta.env.VITE_API_URL}/`;
 const projects = ref([]);
@@ -364,8 +369,8 @@ const Back = () => {
 
 const getMinerals = async () => {
   try {
-    const response = await axios.get(baseURL+'mineral');
-    console.log('minerales: '+ response.data); 
+    const response = await axios.get(baseURL + "mineral");
+    console.log("minerales: " + response.data);
     availableMinerals.value = response.data;
   } catch (error) {
     console.log(error);
@@ -374,7 +379,7 @@ const getMinerals = async () => {
 
 const getProjects = async () => {
   try {
-    const { data } = await axios.get(baseURL+'project');
+    const { data } = await axios.get(baseURL + "project");
     if (userRole === "admin") {
       projects.value = data.filter((item) => item.userId === userIdoOfProject);
     } else {
@@ -403,12 +408,15 @@ const addMineral = () => {
 
 const removeMineral = async (mineral) => {
   const method = mineral.idProjectMineral ? "remove" : "update";
-  if(method === "remove") {
+  if (method === "remove") {
     try {
-      await axios.patch(baseURL+'projectMinerals/'+mineral.idProjectMineral, header); 
-      console.log('mineral eliminado para el projecto!')
-    } catch(e) {
-      console.error(e); 
+      await axios.patch(
+        baseURL + "projectMinerals/" + mineral.idProjectMineral,
+        header
+      );
+      console.log("mineral eliminado para el projecto!");
+    } catch (e) {
+      console.error(e);
     }
   }
   selectedMinerals.value = selectedMinerals.value.filter(
@@ -453,15 +461,15 @@ const selectProject = (project) => {
   investmentGoal.value = project.investmentGoal;
   profitPercentage.value = project.profitPercentage;
   status.value = project.status;
-  project.projectMinerals.forEach(projectMineral => {
+  project.projectMinerals.forEach((projectMineral) => {
     const mineralWithId = {
-            name: projectMineral.mineral.name,   
-            id: projectMineral.mineral.id, 
-            weightOunces: projectMineral.weightOunces,
-            idProjectMineral: projectMineral.id,
-            operatingExpenseId: projectMineral.operatingExpenseId,
-        };
-        selectedMinerals.value.push(mineralWithId);
+      name: projectMineral.mineral.name,
+      id: projectMineral.mineral.id,
+      weightOunces: projectMineral.weightOunces,
+      idProjectMineral: projectMineral.id,
+      operatingExpenseId: projectMineral.operatingExpenseId,
+    };
+    selectedMinerals.value.push(mineralWithId);
   });
   console.log(selectedMinerals.value);
   openModal("modalProject");
@@ -470,7 +478,7 @@ const selectProject = (project) => {
 const deleteProject = async (id) => {
   console.log(baseURL + id);
   try {
-    const data = await axios.patch(baseURL+'project/' + id);
+    const data = await axios.patch(baseURL + "project/" + id);
     console.log(baseURL + id);
     getProjects();
   } catch (error) {
@@ -484,20 +492,46 @@ const reset = () => {
   investmentGoal.value = 0;
   profitPercentage.value = 0;
   selectedProject.value = {};
-  selectedMinerals.value = []; 
+  selectedMinerals.value = [];
   selectedMineral.value = {};
 };
 
 const saveProject = async () => {
+  if (
+    !validateInputs([
+      { value: name.value, name: "Nombre", type: "text" },
+      { value: description.value, name: "Descripcion", type: "text" },
+      {
+        value: investmentGoal.value,
+        name: "Meta de inversion",
+        type: "number",
+      },
+      {
+        value: profitPercentage.value,
+        name: "Ganancia estimada",
+        type: "number",
+      },
+      { value: startDate.value, name: "Fecha de inicio", type: "date" },
+      { value: endDate.value, name: "Fecha estimada de fin", type: "date" },
+      {
+        value: selectedMinerals.value.length,
+        name: "Minerales",
+        type: "minerals",
+      },
+    ])
+  ) {
+    return;
+  }
+
   const method = selectedProject.value.id ? "put" : "post";
   const url = selectedProject.value.id
-    ? `${baseURL+'project/'}${selectedProject.value.id}`
-    : baseURL+'project/';
+    ? `${baseURL + "project/"}${selectedProject.value.id}`
+    : baseURL + "project/";
   const formData = createDataProject();
   try {
     const response = await axios[method](url, formData, header);
     console.log(response);
-    await saveProjectMinerals( response.data.message.id);
+    await saveProjectMinerals(response.data.message.id);
     getProjects();
     closeModal("modalProject");
     reset();
@@ -506,41 +540,41 @@ const saveProject = async () => {
   }
 };
 
-const saveProjectMinerals = async ( projectId) => { 
+const saveProjectMinerals = async (projectId) => {
   try {
-    if (selectedMinerals.value.length > 0) { 
+    if (selectedMinerals.value.length > 0) {
       console.log(selectedMinerals.value);
-      for ( var item of selectedMinerals.value) {
+      for (var item of selectedMinerals.value) {
         console.log(item);
         const method = item.idProjectMineral ? "put" : "post";
         const url = item.idProjectMineral
-        ? `${baseURL+'projectMinerals/'}${item.idProjectMineral}`
-        : baseURL+'projectMinerals/';
+          ? `${baseURL + "projectMinerals/"}${item.idProjectMineral}`
+          : baseURL + "projectMinerals/";
         console.log(url);
-        var data = createDataMineralProject( item, projectId); 
+        var data = createDataMineralProject(item, projectId);
         var response = await axios[method](url, data, header);
       }
     }
-  } catch (e) { 
+  } catch (e) {
     console.log(e);
   }
-}
+};
 
-const createDataMineralProject = (mineral, idProject) => { 
-  const data = { 
-    projectId: idProject, 
-    mineralId: mineral.id, 
-    userId: null, 
-    operatingExpenseId: (mineral.operatingExpenseId)?? null,
+const createDataMineralProject = (mineral, idProject) => {
+  const data = {
+    projectId: idProject,
+    mineralId: mineral.id,
+    userId: null,
+    operatingExpenseId: mineral.operatingExpenseId ?? null,
     weightOunces: mineral.weightOunces,
-    purchasePrice: 0, 
-    prePurchase: 0, 
-    estimatedPurchasePrice: 0, 
-    exitPrice: 0, 
-    salePrice: 0
-  } 
-  return data; 
-}
+    purchasePrice: 0,
+    prePurchase: 0,
+    estimatedPurchasePrice: 0,
+    exitPrice: 0,
+    salePrice: 0,
+  };
+  return data;
+};
 
 const createDataProject = () => {
   const data = {
@@ -556,7 +590,6 @@ const createDataProject = () => {
   };
   return data;
 };
-
 </script>
 
 
