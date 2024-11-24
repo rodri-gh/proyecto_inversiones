@@ -13,8 +13,8 @@
                 <tr v-for="item in items" :key="item.id">
                     <td>{{ item.user.name }}</td>
                     <td>{{ item.amount }}</td>
-                    <td>{{ item.investmentDate }}</td>
-                    <td>{{ item.profitPercentage }}</td>
+                    <td>{{ formatDate(item.investmentDate) }}</td>
+                    <td>{{ item.earnings }}</td>
                     <td>
                         <Button
                             @click="() => actions.edit(item)"
@@ -30,6 +30,7 @@
 
 <script setup>
 import Button from "@/components/base/Button.vue";
+import { formatDate } from "@/router/viewFormat";
 
 defineProps({
     headers: {

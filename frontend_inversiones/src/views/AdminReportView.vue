@@ -32,7 +32,7 @@
             Inversiones
           </button>
         </li>
-        <li class="nav-item" role="presentation">
+        <!--   <li class="nav-item" role="presentation">
           <button
             class="nav-link"
             id="inactive-tab"
@@ -59,7 +59,7 @@
           >
             Otro Reporte
           </button>
-        </li>
+        </li> -->
       </ul>
       <div class="tab-content" id="userTabsContent">
         <div

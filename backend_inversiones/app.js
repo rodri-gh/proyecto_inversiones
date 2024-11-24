@@ -15,7 +15,6 @@ import investmentsRouter from './routes/investments.js';
 import project_mineralsRouter from './routes/projectMinerals.js';
 import withdrawal_requestsRouter from './routes/withdrawal_requests.js';
 import contactsRouter from './routes/contacts.js';
-import movementsRouter from './routes/movements.js';
 import categoryPostsRouter from './routes/categoryPosts.js';
 import postRouter from './routes/posts.js';
 import faqRouter from './routes/faq.js';
@@ -29,8 +28,9 @@ import projectPerformanceRouter from './routes/projectPerformance.js';
 import userActivitylogRouter from './routes/userActivitylog.js';
 import siteSettingRouter from './routes/siteSettings.js';
 import reportClient from './routes/reportClient.js';
+import apiMineralPrices from './routes/apiMineralPrices.js';
 import reportAdmin from './routes/reportAdmin.js';
-
+import analysisiReort from './routes/analysisReport.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,20 +47,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/auth', authRouter)
 app.use('/user', usersRouter);
 app.use('/mineral', mineralsRouter);
-app.use('/project-timeline', projectTimelineRouter);
+app.use('/projectTimeline', projectTimelineRouter);
 app.use('/project', projectsRouter);
 app.use('/contract', contractsRouter);
 app.use('/operating-expenses', operatingexpensesRouter);
 app.use('/investment', investmentsRouter);
-app.use('/project-minerals', project_mineralsRouter);
+app.use('/projectMinerals', project_mineralsRouter);
 app.use('/withdrawal-request', withdrawal_requestsRouter);
 app.use('/contact', contactsRouter);
-app.use('/movement', movementsRouter);
 app.use('/category-post', categoryPostsRouter);
 app.use('/post', postRouter);
 app.use('/faq', faqRouter);
-app.use('/movement', movementsRouter);
-app.use('/analysis-report', analysisReportRouter);
+app.use('/analysisReport', analysisReportRouter);
 app.use('/financialProjections', financialProjectionsRouter);
 app.use('/financialSettings', financialSettingsRouter);
 app.use('/financialTransactions', financialTransactionsRouter);
@@ -70,7 +68,8 @@ app.use('/projectPerformance', projectPerformanceRouter);
 app.use('/userActivitylog', userActivitylogRouter);
 app.use('/site-setting', siteSettingRouter);
 app.use('/report-client', reportClient);
+app.use('/apiMineralPrices', apiMineralPrices);
 app.use('/report-admin', reportAdmin);
-
+app.use('/analysisReport', analysisiReort);
 
 export default app;

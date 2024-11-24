@@ -15,7 +15,7 @@
         </div>
         <!-- <div>
           <Switch :checked="shouldReceiveNewsletter" @toggle="toggle" label="Recuérdame" />
-        </div> -->
+      </div> -->
         <!-- 
           <div class="mb-3 col-md-12 mt-4 text-center fw-bold">
             <a class="nav-link forgot" href="#">¿Olvidaste tu contraseña?</a>
@@ -23,20 +23,6 @@
         <div class="col-md-12">
           <Button text="Ingresar" @click="iniciarSesion()" class="sign-in-btn" />
         </div>
-        <!--  <div class="mb-3 col-md-12">
-            <button class="btn btn-outline-secondary w-100 google">
-              Ingresar con Google
-            </button>
-          </div> -->
-        <!--  <div
-            class="d-flex justify-content-center mb-3 col-md-12 mt-4 text-center"
-          >
-            <span class="mx-2"> ¿No tienes cuenta?</span>
-
-            <a class="nav-link register-link fw-bolder" href="#">
-              Regístrate gratis
-            </a>
-          </div> -->
       </div>
     </div>
   </div>

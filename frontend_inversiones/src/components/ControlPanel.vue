@@ -12,12 +12,12 @@ import SettingsLanding from "./SettingsLanding.vue";
 import UserSummary from "./UserSummary.vue";
 import axios from "axios";
 import Balances from "./Balances.vue";
-
 import ReportClienteView from "@/views/ReportClienteView.vue";
 import AdminReportView from "@/views/AdminReportView.vue";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Applications from "./Applications.vue";
 import WebResources from "./WebResources.vue";
+import Banner from "./Banner.vue";
 
 const baseURL = `${import.meta.env.VITE_API_URL}/site-setting`;
 
@@ -41,6 +41,7 @@ const activeComponent = ref(markRaw(MyProfile));
 const activeLink = ref("Mi Perfil");
 
 const showComponent = (componentName, linkName) => {
+  console.log("Cambiando componente:", componentName, "Nombre:", linkName);
   activeComponent.value = markRaw(componentName);
   activeLink.value = linkName;
 };
@@ -48,13 +49,12 @@ const showComponent = (componentName, linkName) => {
 const componentslinks = computed(() => {
   const userRole = getUserRoleOfLocalStorage();
   let links = [
-    { name: "Ir a web", path: "/", divider: true, isDividerWithTitle: false },
-    { name: "Mi Perfil", component: MyProfile, isDividerWithTitle: false },
-    { name: "Inicio", component: UserSummary, isDividerWithTitle: false },
+    { name: "Web", component: WebResources },
+    { name: "Inicio", component: UserSummary },
   ];
   if (userRole == "super_user" || userRole == "admin") {
     links.push({
-      name: "Gestion de Usuarios",
+      name: "Usuarios",
       component: UsersView,
       isDividerWithTitle: false,
     });
@@ -80,11 +80,6 @@ const componentslinks = computed(() => {
     });
     //links.push({ name: "Reportes", component: AnalysisAndReportsView });
     //links.push({ name: "Finanzas", component: FinanceView, divider: true });
-    links.push({
-      name: "Recursos Web",
-      component: WebResources,
-      isDividerWithTitle: false,
-    });
     links.push({
       name: "Ajustes de la Web",
       component: SettingsLanding,
@@ -121,13 +116,13 @@ const componentslinks = computed(() => {
 });
 
 const iconMap = {
-  "Gestion de Usuarios": "fas fa-users",
+  "Usuarios": "fas fa-users",
   Proyectos: "fas fa-cubes",
   Minerales: "fas fa-gem",
   Finanzas: "fas fa-dollar-sign",
   FAQs: "fas fa-question-circle",
   "Ajustes de la Web": "fas fa-cog",
-  "Ir a web": "fas fa-globe",
+  "Web": "fas fa-globe",
   "Mi Perfil": "fas fa-id-badge",
   Inicio: "fas fa-file-alt",
   Solicitudes: "fas fa-paper-plane",
@@ -230,6 +225,34 @@ const iconMap = {
   border-radius: 0;
 }
 
+.navbar-banner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 0px;
+  top: 0;
+  left: 0;
+}
+
+@media (max-width: 768px) {
+  .navbar-banner-container {
+    display: block;
+    text-align: center;
+    margin-top: 0px;
+  }
+
+  .navbar-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.navbar-gradient {
+  background: linear-gradient(to right, white 20%, #ffad4f 70%, #0a6b61 100%);
+}
+
 .sidebar {
   color: var(--text-color);
   padding-top: 20px;
@@ -293,6 +316,22 @@ const iconMap = {
 
 .icon-large {
   font-size: 3rem;
+}
+
+.icon-perfil {
+  font-size: 2rem;
+}
+
+.perfil-icon-container {
+  background-color: #ffffff;
+  color: black;
+  border-radius: 50%;
+}
+
+.perfil-icon-container:hover {
+  background-color: #d66d26;
+  color: rgb(255, 255, 255);
+  border-radius: 50%;
 }
 
 .sidebar-link {

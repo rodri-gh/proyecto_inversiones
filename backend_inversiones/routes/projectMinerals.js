@@ -1,30 +1,47 @@
 import express from 'express';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
-import { Mineral, ProjectMineral, OperatingExpense } from '../models/mainExport.js';
+import { Mineral, ProjectMineral, OperatingExpense, 
+  User,
+  Project,
+  Contract
+} from '../models/mainExport.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 import sequelize from '../database/connection.js';
 
 const router = express.Router();
+
 router.get('/', (req, res) => {
   try {
-    const projectMinerals = ProjectMineral.findAll();
+    const projectMinerals = ProjectMineral.findAll({
+      include: [
+        {
+          model: User,
+          required: false,
+        }
+      ]
+    });
     getHandleSuccess(200)(res, projectMinerals);
   } catch (error) {
     getHandleError(error, res);
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/projects/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const projectMineral = await ProjectMineral.findAll({
-      where: { project_id: id }, 
+      where: { projectId: id, deleted: 0 }, 
       include: [{
         model: Mineral, 
         attributes: [
           'id','name', 'price', 'description', 'image']
-      }]
+        },
+        {
+          model: User,
+          required: false,
+        }
+      ]
      });
     verifyIfIdExists(projectMineral);
     getHandleSuccess(200)(res, projectMineral);id
@@ -34,19 +51,28 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { projectId, mineralId, userId, purchasePrice, prePurchase, estimatedPurchasePrice, exitPrice, salePrice } = req.body;
+  const { projectId, mineralId, userId, weightOunces ,purchasePrice, prePurchase, estimatedPurchasePrice, exitPrice, salePrice } = req.body;
+  if( await checkInsertioOfPriceFields(projectId, purchasePrice, prePurchase, exitPrice, salePrice) ) { 
+    console.log('no estas afectando la logica del proceso puedes seguir!'); 
+  } else {
+    return res.status(400).json({ error: 'La meta de inversion no se ha alcanzado no puedes actulizar campos de precios de los minerales' });
+  }
+  let expenseMineral = 0;
+  if(purchasePrice > 0 && weightOunces > 0) {
+    expenseMineral = purchasePrice * weightOunces;
+  }
   const transaction = await sequelize.transaction();
   try {
     const operatingExpense = await OperatingExpense.create({
       name: 'gasto de mineral', 
       description: 'se gasto en pago mineral', 
-      expenses: purchasePrice ?? 0, 
+      expenses: expenseMineral, 
       projectId: projectId
     }, 
     {transaction});
     console.log(operatingExpense.id);
     const project = await ProjectMineral.create({ projectId, mineralId, userId,
-       operatingExpenseId: operatingExpense.id, purchasePrice, prePurchase, 
+       operatingExpenseId: operatingExpense.id, weightOunces, purchasePrice, prePurchase, 
        estimatedPurchasePrice, exitPrice, salePrice }, 
       { transaction });
     await transaction.commit();
@@ -60,18 +86,27 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { projectId, mineralId, userId, operatingExpenseId ,purchasePrice, prePurchase, estimatedPurchasePrice, exitPrice, salePrice } = req.body;
+  const { projectId, mineralId, userId, operatingExpenseId ,weightOunces ,purchasePrice ,prePurchase, estimatedPurchasePrice, exitPrice, salePrice } = req.body;
+  if( await checkInsertioOfPriceFields(projectId, purchasePrice, prePurchase, exitPrice, salePrice) ) {
+    console.log('no estas afectando la logica del proceso puedes seguir!'); 
+  } else {
+    return res.status(422).json({ error: 'Error', message: 'La meta de inversion no se ha alcanzado no puedes actulizar campos de precios' });
+  }
+  let expenseMineral = 0;
+  if(purchasePrice > 0 && weightOunces > 0) {
+    expenseMineral = purchasePrice * weightOunces;
+  }
   const transaction = await sequelize.transaction();
   try {
-    const [updatedCount] = await ProjectMineral.update({ 
-      projectId, mineralId, userId, operatingExpenseId, purchasePrice, prePurchase,
+    const updatedCount = await ProjectMineral.update({ 
+      projectId, mineralId, userId, operatingExpenseId, weightOunces, purchasePrice, prePurchase,
        estimatedPurchasePrice, exitPrice, salePrice
        }, { where: { id } }, {transaction} 
     );
     const operatingExpense = await OperatingExpense.update({
       name: 'gasto de mineral', 
       description: 'se gasto en mineral', 
-      expenses: purchasePrice ?? 0, 
+      expenses: expenseMineral, 
       projectId: projectId
     }, { where : { id: operatingExpenseId }}, {transaction});
     if (updatedCount === 0) {
@@ -106,6 +141,38 @@ router.patch('/:id', async (req, res) => {
     getHandleError(error, res);
   }
 });
+
+async function checkInsertioOfPriceFields(projectId, purchasePrice, prePurchase, exitPrice, salePrice) {
+  if( purchasePrice > 0 || prePurchase > 0 || exitPrice > 0 || salePrice > 0) {
+    return await verifiInvestmentGoal(projectId);
+  }
+  return true
+}
+
+async function verifiInvestmentGoal(idProject) {
+  if (!idProject) {
+    console.log('el idProject no existe');
+    return false;
+  }
+  try { 
+    const project = await Project.findOne({ where: { id: idProject, deleted: 0}});
+    if (!project) {
+      console.log('no se encontro el projecto con ese id y estado no eliminado!');
+      return false;
+    }
+    const investmentGoalProject = parseFloat(project.investmentGoal) ||  0;
+    const contracts = await Contract.findAll({ where: { projectId: idProject}});
+    const totalInvestment = contracts.reduce((acc, item) => acc + (parseFloat(item.investmentAmount) || 0), 0);
+    if (totalInvestment >= investmentGoalProject && investmentGoalProject > 0 && totalInvestment > 0) { 
+      return true; 
+    } else { 
+      return false;
+    }
+  } catch(e) { 
+    console.error(e);
+    return false; 
+  }
+}
 
 
 export default router;

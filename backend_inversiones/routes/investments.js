@@ -18,7 +18,7 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
-    const investments = await Investment.findAll({ where: { userId: id }});
+    const investments = await Investment.findAll({ where: { userId: id } });
     getHandleSuccess(200)(res, investments);
   } catch (error) {
     getHandleError(error, res)
@@ -28,7 +28,7 @@ router.get('/:id', async (req, res, next) => {
 router.get('/formData/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
-    const investments = await Investment.findAll({ where: { userId: id}});
+    const investments = await Investment.findAll({ where: { userId: id } });
     getHandleSuccess(200)(res, investments);
   } catch (error) {
     getHandleError(error, res)
@@ -38,6 +38,7 @@ router.get('/formData/:id', async (req, res, next) => {
 router.get('/user/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
+
     const investments = await Investment.findAll({
       where: { userId: id },
       include: [
@@ -49,13 +50,15 @@ router.get('/user/:id', async (req, res, next) => {
     });
 
     const updatedInvestments = await Promise.all(investments.map(async (investment) => {
-      if (investment.project && investment.profitPercentage !== investment.project.profitPercentage) {
+      if (investment.project) {
+
         investment.profitPercentage = investment.project.profitPercentage;
         investment.earnings = (investment.amount * investment.profitPercentage) / 100;
         await investment.save();
       }
       return investment;
     }));
+
 
     const investmentsWithContracts = await Promise.all(
       updatedInvestments.map(async (investment) => {
@@ -69,6 +72,7 @@ router.get('/user/:id', async (req, res, next) => {
         };
       })
     );
+
     getHandleSuccess(200)(res, investmentsWithContracts);
   } catch (error) {
     getHandleError(error, res);

@@ -17,11 +17,11 @@
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">Id del projecto</th>
-                <th scope="col">Nombre del mineral</th>
-                <th scope="col">Precio estimado de compra</th>
-                <th scope="col">Precio pre compra</th>
-                <th scope="col">Precio de compra</th>
+                <th scope="col">Mineral</th>
+                <th scope="col">Peso en Onzas</th>
+                <th scope="col">Estimado de Compra</th>
+                <th scope="col">Pre Compra</th>
+                <th scope="col">Compra</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
@@ -36,8 +36,8 @@
                 v-for="projectMineral in projectMinerals"
                 :key="projectMineral.id"
               >
-                <td>{{ projectMineral.projectId }}</td>
                 <td>{{ projectMineral.mineral.name }}</td>
+                <td>{{ projectMineral.weightOunces }}</td>
                 <td>{{ projectMineral.estimatedPurchasePrice }}</td>
                 <td>{{ projectMineral.prePurchase }}</td>
                 <td>{{ projectMineral.purchasePrice }}</td>
@@ -72,9 +72,9 @@
       role="dialog"
       aria-labelledby="modalTitleId"
       aria-hidden="true"
-    >
+    > 
       <div
-        class="modal-dialog modal-dialog-scrollable modal-dialog-centered"
+        class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg"
         role="document"
       >
         <div class="modal-content">
@@ -90,32 +90,7 @@
           </div>
           <div class="modal-body">
             <div class="row">
-              <div class="col-md-6">
-                <Select
-                  :options="users"
-                  label="Usuario"
-                  value-key="id"
-                  label-key="name"
-                  v-model="userId"
-                  select-class="col-8"
-                />
-                <div class="mt-2">
-                  <h5>Datos del Usuario Seleccionado:</h5>
-                  <p>
-                    <strong>Nombre:</strong>
-                    {{ selectedUser?.name || "Seleccione un usuario" }}
-                  </p>
-                  <p>
-                    <strong>Email:</strong>
-                    {{ selectedUser?.email || "Seleccione un usuario" }}
-                  </p>
-                  <p>
-                    <strong>Teléfono:</strong>
-                    {{ selectedUser?.phone || "Seleccione un usuario" }}
-                  </p>
-                </div>
-              </div>
-              <div class="col-6">
+              <div class="col-4">
                 <div class="mb-3">
                   <label for="mineral" class="form-label">
                     Selecciona un mineral
@@ -131,62 +106,104 @@
                     <option
                       v-for="mineral in availableMinerals"
                       :key="mineral.id"
-                      :value="mineral"
+                      :value="mineral" 
                     >
-                      {{ mineral.name }}
+                      {{ mineral.name }} =
+                      {{ mineral.price }} $
                     </option>
                   </select>
                 </div>
-
-                <div v-if="selectedMinerals.length > 0">
-                  <h6>Mineral seleccionado:</h6>
-                  <ul class="list-group">
-                    <li
-                      v-for="mineral in selectedMinerals"
-                      :key="mineral.id"
-                      class="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                      {{ mineral.name }}
-                      <button
-                        class="btn btn-danger btn-sm"
-                        @click="removeMineral(mineral)"
-                      >
-                        <i class="fa fa-times"></i>
-                      </button>
-                    </li>
-                  </ul>
-                </div>
                 <div>
-                  <Input
-                    id="estimatedPurchasePrice"
-                    label="Precio estimado de compra"
-                    type="number"
-                    v-model="estimatedPurchasePrice"
-                  />
                   <Input
                     id="prePurchase"
                     label="Precio pre compra"
                     type="number"
                     v-model="prePurchase"
                   />
+                  <br>
                   <Input
                     id="purchasePrice"
                     label="Precio de compra"
                     type="number"
                     v-model="purchasePrice"
                   />
+                  <br>
                   <Input
                     id="exitPrice"
                     label="Precio salida del ingenio"
                     type="number"
                     v-model="exitPrice"
                   />
+                  <br>
                   <Input
                     id="salePrice"
-                    label="Precio de Venta"
+                    label="Ingrese precio de Venta"
                     type="number"
                     v-model="salePrice"
                   />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div v-if="selectedMinerals.length > 0">
+                  <h6>Mineral seleccionado:</h6>
+                  <ul class="list-group">
+                    <li
+                      v-for="mineral in selectedMinerals"
+                      :key="mineral.id"
+                      class="list-group-item"
+                    >
+                      <button
+                        class="btn btn-danger btn-sm"
+                        @click="removeMineral(mineral)"
+                      >
+                        <i class="fa fa-times"></i>
+                      </button>
+                         -  <i class="fas fa-gem text-center"></i>
+                        <strong>{{ mineral.name }} </strong>
+                      <br> <br>
+                        <label for=""> Precio Estimado Actual:</label>
+                        <p>
+                          <strong>{{ mineral.price }} $</strong>
+                          por Onza
+                        </p>
+                    </li>
+                  </ul>
+                </div>
+                <Input
+                    id="weightOuncesMineral"
+                    label="Peso en Onzas del mineral"
+                    type="number"
+                    v-model="weightOuncesMineral"
+                  />
+                <div v-if="calculateMineralQuotation > 0">
+                  <Input
+                    id="calculateMineralQuotation"
+                    label="+ 50% Cotizacion por Onza"
+                    type="number"
+                    v-model="calculateMineralQuotation"
+                  />
+                  <div class="mt-3">
+                    <label for="">Estimacion Precio Venta</label>
+                    <p>90% Cotiz. 10% Precio actual</p>
+                    <p>90% = <strong>{{ calculateMineralQuotation*0.90 }} $</strong></p>
+                    <p>10% = <strong>{{ selectedMinerals[0].price *0.10 }} $</strong></p>
+                    <p>Venta Sugerida = <strong>{{ selectedMinerals[0].price *0.10 + calculateMineralQuotation*0.90 }} $</strong></p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <Select
+                  :options="users"
+                  label="Usuario Comprador"
+                  value-key="id"
+                  label-key="name"
+                  v-model="userId"
+                  select-class="col-8"
+                />
+                <div class="mt-2">
+                  <p>User: {{ selectedUser?.name || "Seleccione un usuario" }}</p>
+                  <p>Email: {{ selectedUser?.email || "Seleccione un usuario" }}</p>
+                  <p>Cel: {{ selectedUser?.phone || "Seleccione un usuario" }}</p>
                 </div>
               </div>
             </div>
@@ -218,13 +235,14 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
-import Swal from "sweetalert2";
 import { getHeaderRequest } from "@/authService";
 import Input from "./base/Input.vue";
 import Button from "./base/Button.vue";
 import { eventBus } from "@/eventBus";
 import Select from "./base/Select.vue";
-import OperatingExpenses from "./OperatingExpenses.vue";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import { handleErrorSwal } from "@/errorMixin";
+import Swal from "sweetalert2";
 
 const props = defineProps({
   idProjectMineral: {
@@ -233,7 +251,7 @@ const props = defineProps({
   },
 });
 
-const baseURL = `${import.meta.env.VITE_API_URL}/project-minerals/`;
+const baseURL = `${import.meta.env.VITE_API_URL}/`;
 const baseUrlUsers = `${import.meta.env.VITE_API_URL}/user/`;
 
 // Estados reactivos
@@ -241,18 +259,21 @@ const projectMinerals = ref([]);
 const minerals = ref([]);
 const users = ref([]);
 
-const estimatedPurchasePrice = ref("");
-const prePurchase = ref("");
-const purchasePrice = ref("");
-const exitPrice = ref("");
-const salePrice = ref("");
-const userId = ref("");
+const estimatedPurchasePrice = ref(0);
+const prePurchase = ref(0);
+const purchasePrice = ref(0);
+const exitPrice = ref(0);
+const salePrice = ref(0);
+const weightOuncesMineral = ref(0);
+const mineralQuotation = ref(0);
+const userId = ref(null);
 
 const selectedMinerals = ref([]);
 const selectedMineral = ref("");
 const selectedProjectMineral = ref({});
 const isEditing = ref(false);
 const header = getHeaderRequest();
+const pricesMinerals = ref([]);
 
 onMounted(() => {
   getprojectMinerals();
@@ -267,8 +288,8 @@ onMounted(() => {
 
 const getprojectMinerals = async () => {
   try {
-    const data = await axios.get(baseURL + props.idProjectMineral, header);
-    projectMinerals.value = data.data.filter((item) => item.deleted === 0);
+    const data = await axios.get(baseURL+'projectMinerals/projects/' + props.idProjectMineral, header);
+    projectMinerals.value = data.data;
     console.log(data.data);
   } catch (error) {
     console.error(error);
@@ -282,11 +303,29 @@ const getMinerals = async () => {
       header
     );
     minerals.value = data.data;
-    console.log(data.data);
+    await getMineralsPrices();
+    minerals.value.forEach(mineral => {
+      pricesMinerals.value.forEach(item => {
+        if (item.name === (mineral.name).toLowerCase() ) {
+          mineral.price = item.price;
+        }
+      });
+    });
+    console.log(minerals.value);
   } catch (error) {
     console.error("Error al obtener minerales:", error);
   }
 };
+
+const getMineralsPrices = async () => { 
+  try { 
+    const response = await axios.get(baseURL+'apiMineralPrices/', header);
+    console.log('precios de los minerales: '+ response.data); 
+    pricesMinerals.value = response.data;
+  } catch(e) { 
+    console.error(e);
+  }
+}
 
 const getUsers = async () => {
   try {
@@ -307,11 +346,13 @@ const availableMinerals = computed(() => {
       !selectedMinerals.value.some((selected) => selected.id === mineral.id)
   );
 });
+
 const addMineral = () => {
   if (selectedMineral.value && selectedMinerals.value.length < 2) {
     selectedMinerals.value.push(selectedMineral.value);
   }
 };
+
 const removeMineral = (mineral) => {
   selectedMinerals.value = selectedMinerals.value.filter(
     (m) => m.id !== mineral.id
@@ -344,23 +385,23 @@ const toggleProjectMineralStatus = async (projectMineral) => {
         "success"
       );
     }
-  } catch (error) {
-    console.error("Error al eliminar:", error);
-    Swal.fire("Error", "No se pudo eliminar el mineral.", "error");
+  } catch (e) {
+    handleErrorSwal(e, 'Error');
   }
 };
 
 const saveProjectMinerals = async () => {
   const method = selectedProjectMineral.value.id ? "put" : "post";
   const url = selectedProjectMineral.value.id
-    ? `${baseURL}${selectedProjectMineral.value.id}`
-    : baseURL;
+    ? `${baseURL+'projectMinerals/'}${selectedProjectMineral.value.id}`
+    : baseURL+'projectMinerals/';
 
   const projectMineral = {
     projectId: props.idProjectMineral,
     mineralId: selectedMineral.value.id,
     userId: userId.value,
     operatingExpenseId: selectedProjectMineral.value.operatingExpenseId,
+    weightOunces: weightOuncesMineral.value,
     purchasePrice: purchasePrice.value,
     prePurchase: prePurchase.value,
     estimatedPurchasePrice: estimatedPurchasePrice.value,
@@ -377,6 +418,7 @@ const saveProjectMinerals = async () => {
     );
     return;
   }
+  console.log(projectMineral);
   try {
     await axios[method](url, projectMineral, header);
     await getprojectMinerals();
@@ -389,30 +431,33 @@ const saveProjectMinerals = async () => {
         : "Minerales agregados correctamente.",
       "success"
     );
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    handleErrorSwal(e, 'Error al Guardar Mineral del Projecto');
+    closeModal();
   }
 };
 
 const deleteProjectMineral = async (id) => {
   try {
-    const response = await axios.patch(baseURL + id, header);
+    const response = await axios.patch(baseURL+'projectMinerals/' + id, header);
     getprojectMinerals();
     Swal.fire("Eliminado", "El mineral se eliminó correctamente.", "success");
   } catch (e) {
-    console.error(e);
-    Swal.fire("Error", "No se pudo eliminar el mineral.", "error");
+    handleErrorSwal(e, 'Error no se pudo eliminar el mineral del proyecto');
   }
 };
 
 const selectProjectMineral = (projectMineral) => {
   isEditing.value = true;
   selectedProjectMineral.value = projectMineral;
+  userId.value = projectMineral.userId;
   estimatedPurchasePrice.value = projectMineral.estimatedPurchasePrice;
+  mineralQuotation.value = projectMineral.mineralQuotation || 0;
   prePurchase.value = projectMineral.prePurchase;
   purchasePrice.value = projectMineral.purchasePrice;
   exitPrice.value = projectMineral.exitPrice;
   salePrice.value = projectMineral.salePrice;
+  weightOuncesMineral.value = projectMineral.weightOunces;
 
   const mineralToEdit = minerals.value.find(
     (m) => m.id === projectMineral.mineralId
@@ -425,19 +470,18 @@ const selectProjectMineral = (projectMineral) => {
   modal.show();
 };
 
-// Métodos de utilidad
-const handleError = (error, defaultMessage) => {
-  console.error(error);
-  const errorMessage = error.response?.data?.message || defaultMessage;
-  Swal.fire("Error", errorMessage, "error");
-};
-
 const resetModal = () => {
   selectedMinerals.value = [];
-  selectedMineral.value = "";
+  selectedMineral.value = '';
   isEditing.value = false;
   selectedProjectMineral.value = {};
-  selectedMineral.value = "";
+  selectedMineral.value = '';
+  weightOuncesMineral.value = 0;
+  userId.value = null;
+  prePurchase.value = ref(0);
+  purchasePrice.value = ref(0);
+  exitPrice.value = ref(0);
+  salePrice.value = ref(0);
 };
 
 const closeModal = () => {
@@ -449,6 +493,10 @@ const closeModal = () => {
 
 const selectedUser = computed(() => {
   return users.value.find((user) => String(user.id) === String(userId.value));
+});
+
+const calculateMineralQuotation = computed(() => {
+  return 1.5 * purchasePrice.value || 0;
 });
 </script>
 

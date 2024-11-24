@@ -97,7 +97,7 @@ import { openModal, closeModal } from "@/utils/modal";
 import { getHeaderRequest } from "@/authService";
 import { eventBus } from "@/eventBus";
 
-const headers = ["Usuario", "Cantidad", "Fecha", "Ganancia", "Acciones"];
+const headers = ["Usuario", "Cantidad", "Fecha", "Rendimiento", "Acciones"];
 
 const props = defineProps({
   idProjectInvestment: {

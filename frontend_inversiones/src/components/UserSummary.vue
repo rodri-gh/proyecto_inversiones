@@ -35,7 +35,7 @@ const getNotifications = async () => {
     const lastMovements7days = await axios.get(
       `${
         import.meta.env.VITE_API_URL
-      }/analysis-report/getMovementsFromLast7Days`,
+      }/analysisReport/getMovementsFromLast7Days`,
       header
     );
     console.log(responseContacts.data);
@@ -55,7 +55,7 @@ const getFinancialSummary = async () => {
     const response = await axios.get(
       `${
         import.meta.env.VITE_API_URL
-      }/analysis-report/GetUserClientSummary/${userId}`,
+      }/analysisReport/GetUserClientSummary/${userId}`,
       header
     );
     console.log(response.data);
@@ -66,11 +66,9 @@ const getFinancialSummary = async () => {
 
 const createChart = () => {
   const ctx = document.getElementById("activityChart").getContext("2d");
-
   // Preparar datos del backend
   const labels = movements7days.value.map((item) => item.tipo); // Ej: 'Projects', 'Investments'
   const data = movements7days.value.map((item) => parseFloat(item.amount)); // Convertir amounts a números
-
   // Crear gráfico
   new Chart(ctx, {
     type: "bar", // Tipo de gráfico (puede ser 'line', 'bar', 'pie', etc.)

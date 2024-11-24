@@ -27,16 +27,15 @@
           </td>
           <td>{{ item.status == "closed" ? "Cerrado" : "Pendiente" }}</td>
         </tr>
-        <!-- Fila de totales -->
         <tr class="table-info">
           <td colspan="2"><strong>Totales:</strong></td>
           <td>
-            <strong>{{ formatCurrency(getTotalAmount()) }}</strong>
+            <strong>{{ formatCurrency(totals.totalAmount) }}</strong>
           </td>
           <td></td>
           <td></td>
           <td>
-            <strong>{{ formatCurrency(getTotalEarnings()) }}</strong>
+            <strong>{{ formatCurrency(totals.totalEarnings) }}</strong>
           </td>
           <td></td>
         </tr>
@@ -46,8 +45,6 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-
 const props = defineProps({
   headers: {
     type: Array,
@@ -58,6 +55,10 @@ const props = defineProps({
     required: true,
   },
   actions: {
+    type: Object,
+    required: true,
+  },
+  totals: {
     type: Object,
     required: true,
   },
@@ -72,17 +73,5 @@ const formatCurrency = (value) => {
     style: "currency",
     currency: "USD",
   }).format(value || 0);
-};
-
-const getTotalAmount = () => {
-  return props.items
-    .filter((item) => item.status === "closed")
-    .reduce((sum, item) => sum + Number(item.amount), 0);
-};
-
-const getTotalEarnings = () => {
-  return props.items
-    .filter((item) => item.status === "closed")
-    .reduce((sum, item) => sum + Number(item.earnings || 0), 0);
 };
 </script>

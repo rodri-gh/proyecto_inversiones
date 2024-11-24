@@ -19,7 +19,7 @@ ProjectMineral.init(
         },
         userId: {
             type: DataTypes.BIGINT,
-            allowNull: false
+            allowNull: true
         },
         operatingExpenseId: {
             type: DataTypes.BIGINT,
@@ -28,6 +28,11 @@ ProjectMineral.init(
         purchasePrice: {
             type: DataTypes.DECIMAL(20, 2),
             allowNull: false
+        },
+        weightOunces: {
+            type: DataTypes.DECIMAL(10, 3),
+            allowNull: false, 
+            defaultValue: 0
         },
         prePurchase: {
             type: DataTypes.DECIMAL(20, 2),

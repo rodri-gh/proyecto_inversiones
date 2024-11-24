@@ -71,7 +71,7 @@
         :headers="headers"
         :items="investments"
         :actions="{ view: showContractDetails }"
-        :showTotal="true"
+        :totals="totals"
       />
     </div>
 
@@ -129,6 +129,7 @@ const userName = userNameOfLocalStorage();
 const date = new Date().toLocaleDateString();
 const baseURL = `${import.meta.env.VITE_API_URL}/report-client/user/${userId}`;
 const investments = ref([]);
+const totals = ref({ totalInvestment: 0, totalExpenses: 0, totalProfit: 0 });
 const selectedContract = ref(null);
 const header = getHeaderRequest();
 
@@ -169,8 +170,11 @@ const getFilteredReport = async () => {
     const { data } = await axios.get(`${baseURL}?${params.toString()}`, {
       headers: header,
     });
-
-    investments.value = data;
+    console.log("data", data);
+    investments.value = data.investments;
+    console.log("las inversiones son:", investments.value);
+    totals.value = data.totals;
+    console.log("los totales son:", totals.value);
   } catch (error) {
     console.error("Error al obtener reporte:", error);
   }

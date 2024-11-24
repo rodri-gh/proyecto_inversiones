@@ -18,10 +18,6 @@
                     <td>{{ item.description }}</td>
                     <td>{{ item.expenses }}</td>
                     <td>
-                        <span v-if="item.deleted == 1" class="badge bg-success">Activo</span>
-                        <span v-else class="badge bg-danger">Inactivo</span>
-                    </td>
-                    <td>
                         <Button 
                             @click="() => actions.edit(item)"
                             icon="fa fa-edit"
