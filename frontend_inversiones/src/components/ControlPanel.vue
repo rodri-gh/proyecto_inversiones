@@ -41,7 +41,6 @@ const activeComponent = ref(markRaw(MyProfile));
 const activeLink = ref("Mi Perfil");
 
 const showComponent = (componentName, linkName) => {
-  console.log("Cambiando componente:", componentName, "Nombre:", linkName);
   activeComponent.value = markRaw(componentName);
   activeLink.value = linkName;
 };
