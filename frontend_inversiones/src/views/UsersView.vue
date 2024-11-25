@@ -262,7 +262,7 @@ const selectUser = (user) => {
   documentNumber.value = user.documentNumber;
   email.value = user.email;
   phone.value = user.phone;
-
+  role.value = user.role;
   openModal("modalUser");
 };
 
@@ -392,7 +392,7 @@ const reset = () => {
 </script>
 
 <style scoped>
-.users-container { 
+.users-container {
   max-height: 850px;
   overflow-y: auto;
 }

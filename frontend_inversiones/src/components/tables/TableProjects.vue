@@ -8,7 +8,7 @@
       </thead>
       <tbody>
         <tr v-if="items.length == 0">
-          <td colspan="5" class="text-center">No hay Proyectos registrados</td>
+          <td colspan="9" class="text-center">No hay Proyectos registrados</td>
         </tr>
         <tr v-for="item in paginatedItems" :key="item.id">
           <td>{{ formatDate(item.startDate) }}</td>

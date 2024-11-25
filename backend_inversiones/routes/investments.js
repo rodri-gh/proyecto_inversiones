@@ -51,18 +51,8 @@ router.get('/user/:id', async (req, res, next) => {
       ]
     });
 
-    const updatedInvestments = await Promise.all(investments.map(async (investment) => {
-      if (investment.project) {
-        const netProfitPercentage = investment.project.profitPercentage - appCommission;
-        investment.profitPercentage = netProfitPercentage;
-        investment.earnings = (investment.amount * netProfitPercentage) / 100;
-        await investment.save();
-      }
-      return investment;
-    }));
-
     const investmentsWithContracts = await Promise.all(
-      updatedInvestments.map(async (investment) => {
+      investments.map(async (investment) => {
         const contract = await Contract.findOne({
           where: { id: investment.contractId }
         });
