@@ -21,7 +21,7 @@
             <Button
               @click="() => actions.view(item)"
               icon="fa fa-eye"
-              buttonClass="btn-view btn-sm m-1"
+              buttonClass="btn-secondary btn-sm m-1"
             />
             <Button
               @click="() => actions.edit(item)"

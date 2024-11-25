@@ -5,7 +5,7 @@
       <div class="header-image">
         <img src="@/assets/minerals.png" alt="" />
       </div>
-      <div class="logo">Minerales</div>
+      <div class="logo">{{ settings.name }}</div>
       <div class="login-form">
         <div>
           <Input
@@ -25,13 +25,13 @@
             class="label"
           />
         </div>
-        <div>
+        <!--  <div>
           <Switch
             :checked="shouldReceiveNewsletter"
             @toggle="toggle"
             label="Recuérdame"
           />
-        </div>
+        </div> -->
         <div class="mb-3 col-md-12">
           <Button
             text="Ingresar"
@@ -45,8 +45,6 @@
 </template>
 
 <script setup>
-import Switch from "@/components/Switch.vue";
-
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -54,6 +52,10 @@ import { useRouter } from "vue-router";
 import Input from "@/components/base/Input.vue";
 import Button from "@/components/base/Button.vue";
 import { getHeaderRequest } from "@/authService";
+
+const baseURL = `${import.meta.env.VITE_API_URL}/site-setting`;
+
+const settings = ref([]);
 
 const router = useRouter();
 const baseUrl = `${import.meta.env.VITE_API_URL}/auth/login`;
@@ -66,7 +68,18 @@ const header = getHeaderRequest();
 
 onMounted(() => {
   limpiar();
+  getSettings();
 });
+
+const getSettings = async () => {
+  try {
+    const response = await axios.get(baseURL);
+    settings.value = response.data[0];
+    console.log("Setting:", settings.value);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const iniciarSesion = async () => {
   if (username.value == "" || password.value == "") {
@@ -113,6 +126,8 @@ const limpiar = () => {
   }
 };
 </script>
+
+
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Bai+Jamjuree:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
@@ -182,7 +197,7 @@ html {
 .logo {
   position: absolute;
   top: 33%;
-  left: 30%;
+  left: 35%;
   background: #f57c00;
   color: white;
   padding: 20px 20px;
@@ -218,6 +233,5 @@ html {
 
 .sign-in-btn:hover {
   background: #ef6c00;
-
 }
 </style>

@@ -16,7 +16,7 @@ export function closeSession(router) {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
   isLoggedIn.value = false;
-  router.push({ path: "/login" })
+  router.push({ path: "/" })
 }
 
 export function getStatusAuthentication() {

@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <h1>Preguntas Frecuentes</h1>
+    <h1 class="mb-4">Preguntas Frecuentes</h1>
     <div class="accordion w-50 mx-auto" id="faqAccordion">
       <div v-for="(faq, index) in faqs" :key="index" class="accordion-item">
         <h2 class="accordion-header" :id="'heading' + index">

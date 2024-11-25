@@ -112,6 +112,20 @@ const getSettings = async () => {
 </template>
 
 <style scoped>
+.m-0 {
+  margin: 0 !important;
+  /* Asegúrate de que no haya margen horizontal */
+  padding: 0 !important;
+  width: 100%;
+  /* Garantiza que el ancho sea del viewport */
+  overflow-x: hidden;
+  /* Asegúrate de no tener desbordamiento horizontal */
+}
+.row {
+  margin-right: 0 !important;
+  /* Evita márgenes negativos laterales */
+  margin-left: 0 !important;
+}
 .footer {
   background-color: #f8f9fa;
   padding: 40px;

@@ -8,9 +8,7 @@
       </thead>
       <tbody>
         <tr v-if="items.length == 0">
-          <td colspan="5" class="text-center">
-            No hay Proyectos registrados
-          </td>
+          <td colspan="5" class="text-center">No hay Proyectos registrados</td>
         </tr>
         <tr v-for="item in paginatedItems" :key="item.id">
           <td>{{ formatDate(item.startDate) }}</td>
@@ -51,7 +49,7 @@
             />
             <Button
               @click="() => actions.view(item)"
-              buttonClass="btn btn-info btn-sm m-1"
+              buttonClass="btn btn-secondary btn-sm m-1"
               icon="fa fa-eye"
             />
           </td>

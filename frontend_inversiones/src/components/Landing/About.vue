@@ -7,12 +7,13 @@
         <h1>{{ settings.aboutTitle }}</h1>
         <h7>{{ settings.aboutText }} </h7>
       </div>
-      <div class="col-md-6 img-about">
+      <div class="col-md-6 img-about text-center">
         <img
           :src="settings.aboutImage"
           alt="minerales"
           width="auto"
           height="auto"
+          class="img-fluid rounded-5"
         />
       </div>
     </div>
