@@ -7,6 +7,7 @@
         data-bs-target="#modalCategoryPost"
         text="Nuevo"
         icon="fa fa-plus"
+        class="mb-3"
       />
     </div>
     <TableCategoryPost

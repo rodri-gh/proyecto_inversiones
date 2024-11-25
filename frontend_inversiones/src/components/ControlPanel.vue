@@ -1,6 +1,6 @@
 <script setup>
 import { computed, markRaw, ref, onMounted } from "vue";
-import { getUserRoleOfLocalStorage } from "@/authService";
+import { getUserRoleOfLocalStorage, closeSession } from "@/authService";
 import MyProfile from "./MyProfile.vue";
 import ProjectsView from "@/views/ProjectsView.vue";
 import UserWithdrawalRequests from "./UserWithdrawalRequests.vue";
@@ -18,10 +18,18 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import Applications from "./Applications.vue";
 import WebResources from "./WebResources.vue";
 import Banner from "./Banner.vue";
+import { useRouter } from "vue-router";
+
+const route = useRouter();
 
 const baseURL = `${import.meta.env.VITE_API_URL}/site-setting`;
 
 const settings = ref([]);
+
+const logOut = () => {
+  closeSession(route);
+  isLoggedIn.value = false;
+};
 
 onMounted(() => {
   getSettings();
@@ -169,18 +177,28 @@ const iconMap = {
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="navbar-right">
-          <div
-            class="collapse navbar-collapse justify-content-end"
-            id="navbarNav"
-          >
-            <ul class="navbar-nav ml-auto">
-              <li class="nav-item">
+          <div class="dropdown custom-dropdown">
+            <button
+              class="btn dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="fas fa-user-circle icon-perfil"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
                 <a
+                  class="dropdown-item"
                   href="#"
                   @click="showComponent(MyProfile, 'Mi perfil')"
-                  class="nav-link perfil-icon-container"
-                  ><i class="fas fa-user icon-perfil"></i
-                ></a>
+                  >Perfil</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" @click="logOut()"
+                  >Cerrar sesión</a
+                >
               </li>
             </ul>
           </div>
@@ -221,6 +239,17 @@ const iconMap = {
 </template>
 
 <style scoped>
+.custom-dropdown .dropdown-menu {
+  right: auto !important;
+  left: -85px !important;
+  transform-origin: top right;
+}
+
+li a:hover {
+  background-color: var(--primary-light);
+  color: white;
+}
+
 .navbar-container {
   display: flex;
   justify-content: space-between;

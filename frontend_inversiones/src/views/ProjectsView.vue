@@ -1,8 +1,8 @@
 <template>
-  <div class="container col-md-11 m-3">
+  <div class="container col-md-12 mt-5">
     <div v-if="!showDetails">
       <div>
-        <h4 class="card-title text-center">Gestion de proyectos</h4>
+        <h4 class="card-title text-center">Gestión de proyectos</h4>
         <div class="text-end">
           <Button
             data-bs-toggle="modal"

@@ -7,7 +7,7 @@
     </thead>
     <tbody>
       <tr v-if="items.length === 0">
-        <td colspan="6" class="text-center">No hay minerales registrados</td>
+        <td colspan="7" class="text-center">No hay minerales registrados</td>
       </tr>
       <tr v-for="item in items" :key="item.id">
         <td>{{ item.name }}</td>

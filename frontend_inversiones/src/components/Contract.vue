@@ -50,7 +50,7 @@ const headers = [
   "Cod. Contrato",
   "Inicio",
   "Finalizacion",
-  "tipo de contrato",
+  "Tipo de Contrato",
   "Moneda",
   "Acciones",
 ];
@@ -85,8 +85,11 @@ onUnmounted(() => {
 
 const getAmountsInvestmentGoal = async () => {
   try {
-    const data = await axios.get(baseURL+'analysisReport/verifyProjectInvestmentGoal/'+props.idProject, hearderNormal);
-    amountsInvestmentGoal.value = data.data;  
+    const data = await axios.get(
+      baseURL + "analysisReport/verifyProjectInvestmentGoal/" + props.idProject,
+      hearderNormal
+    );
+    amountsInvestmentGoal.value = data.data;
     console.log(data.data);
   } catch (error) {
     console.error(error);
@@ -131,10 +134,10 @@ const deleteContract = async (id) => {
 const saveContract = async () => {
   const method = selectedContract.value.id ? "put" : "post";
   const url = selectedContract.value.id
-    ? `${baseURL+'contract/'}${selectedContract.value.id}`
-    : baseURL+'contract/';
+    ? `${baseURL + "contract/"}${selectedContract.value.id}`
+    : baseURL + "contract/";
   const formData = createFormData();
-  console.log(method+url);
+  console.log(method + url);
   console.log(Array.from(formData.entries()));
   try {
     await axios[method](url, formData, header);
@@ -145,7 +148,7 @@ const saveContract = async () => {
     updateData();
     reset();
   } catch (e) {
-    handleErrorSwal(e, 'Error al guardar el Contrato');
+    handleErrorSwal(e, "Error al guardar el Contrato");
   }
 };
 
@@ -171,8 +174,7 @@ const selectedUser = computed(() => {
 
 const reset = () => {
   investmentAmount.value = 0;
-  contractCode.value = "", 
-  status.value = "";
+  (contractCode.value = ""), (status.value = "");
   contractType.value = "";
   currency.value = "";
   selectedContract.value = {};
@@ -205,8 +207,9 @@ const previewUrl = computed(() => {
           <Button
             data-bs-toggle="modal"
             data-bs-target="#modalContract"
-            text="Nuevo Contrato"
+            text="Nuevo"
             icon="fa fa-plus"
+            class="mb-3"
           />
         </div>
         <TableContracts
@@ -229,13 +232,34 @@ const previewUrl = computed(() => {
       >
         <div class="row">
           <div class="col-md-4">
-            <div v-if="amountsInvestmentGoal.investmentGoalOfProject === amountsInvestmentGoal.totalInvestmentOfProject">
+            <div
+              v-if="
+                amountsInvestmentGoal.investmentGoalOfProject ===
+                amountsInvestmentGoal.totalInvestmentOfProject
+              "
+            >
               <p>No se puede invertir mas!!</p>
-              <p>Meta alcanzada: <strong>{{ amountsInvestmentGoal.investmentGoalOfProject }} $</strong></p>
+              <p>
+                Meta alcanzada:
+                <strong
+                  >{{ amountsInvestmentGoal.investmentGoalOfProject }} $</strong
+                >
+              </p>
             </div>
-            <div v-if="amountsInvestmentGoal.totalInvestmentOfProject < amountsInvestmentGoal.investmentGoalOfProject ">
+            <div
+              v-if="
+                amountsInvestmentGoal.totalInvestmentOfProject <
+                amountsInvestmentGoal.investmentGoalOfProject
+              "
+            >
               <p>Monto disponible para invertir</p>
-              <p><strong>1 $ - {{ amountsInvestmentGoal.amountAvailableForInvestment }} $</strong></p>
+              <p>
+                <strong
+                  >1 $ -
+                  {{ amountsInvestmentGoal.amountAvailableForInvestment }}
+                  $</strong
+                >
+              </p>
             </div>
             <Input
               id="investmentAmount"
