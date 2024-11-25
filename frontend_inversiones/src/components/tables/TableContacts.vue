@@ -37,7 +37,7 @@
           </td>
           <td width="10%">
             <Button
-              @click="() => actions.answer(item.id)"
+              @click="() => actions.answer(item.id, item.email)"
               icon="fa fa-envelope"
               buttonClass="btn btn-dark btn-sm m-1"
               :class="{ disabled: item.answer === 'answered' }"

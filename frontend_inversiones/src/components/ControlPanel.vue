@@ -37,8 +37,8 @@ const getSettings = async () => {
   }
 };
 
-const activeComponent = ref(markRaw(MyProfile));
-const activeLink = ref("Mi Perfil");
+const activeComponent = ref(markRaw(UserSummary));
+const activeLink = ref("Inicio");
 
 const showComponent = (componentName, linkName) => {
   activeComponent.value = markRaw(componentName);
@@ -49,7 +49,7 @@ const componentslinks = computed(() => {
   const userRole = getUserRoleOfLocalStorage();
   let links = [
     { name: "Web", component: WebResources },
-    { name: "Inicio", component: UserSummary},
+    { name: "Inicio", component: UserSummary },
   ];
   if (userRole == "super_user" || userRole == "admin") {
     links.push({
@@ -115,13 +115,13 @@ const componentslinks = computed(() => {
 });
 
 const iconMap = {
-  "Usuarios": "fas fa-users",
+  Usuarios: "fas fa-users",
   Proyectos: "fas fa-cubes",
   Minerales: "fas fa-gem",
   Finanzas: "fas fa-dollar-sign",
   FAQs: "fas fa-question-circle",
   "Ajustes de la Web": "fas fa-cog",
-  "Web": "fas fa-globe",
+  Web: "fas fa-globe",
   "Mi Perfil": "fas fa-id-badge",
   Inicio: "fas fa-file-alt",
   Solicitudes: "fas fa-paper-plane",
@@ -137,7 +137,7 @@ const iconMap = {
 <template>
   <div class="content-div">
     <nav
-      class="navbar navbar-expand-lg navbar-light px-3 shadow navbar-gradient "
+      class="navbar navbar-expand-lg navbar-light px-3 shadow navbar-gradient"
     >
       <div class="navbar-container">
         <div class="navbar-left">
@@ -169,17 +169,22 @@ const iconMap = {
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="navbar-right">
-          <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <div
+            class="collapse navbar-collapse justify-content-end"
+            id="navbarNav"
+          >
             <ul class="navbar-nav ml-auto">
               <li class="nav-item">
-                <a href="#" @click="showComponent(MyProfile, 'Mi perfil')" class="nav-link perfil-icon-container"
-                  ><i class="fas fa-user icon-perfil"></i></a
-                >
+                <a
+                  href="#"
+                  @click="showComponent(MyProfile, 'Mi perfil')"
+                  class="nav-link perfil-icon-container"
+                  ><i class="fas fa-user icon-perfil"></i
+                ></a>
               </li>
             </ul>
           </div>
         </div>
-        
       </div>
     </nav>
 
@@ -234,16 +239,16 @@ const iconMap = {
 
 .navbar-banner-container {
   display: flex;
-  justify-content: center; 
+  justify-content: center;
   align-items: center;
-  width: 100%; 
+  width: 100%;
   margin-top: 0px;
   top: 0;
   left: 0;
 }
 @media (max-width: 768px) {
   .navbar-banner-container {
-    display: block; 
+    display: block;
     text-align: center;
     margin-top: 0px;
   }
@@ -257,7 +262,7 @@ const iconMap = {
 
 .navbar-gradient {
   background: linear-gradient(to right, white 20%, #ffad4f 70%, #0a6b61 100%);
-  }
+}
 
 .sidebar {
   color: var(--text-color);

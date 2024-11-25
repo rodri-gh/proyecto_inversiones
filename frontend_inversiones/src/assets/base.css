@@ -33,11 +33,15 @@ Diseño del sitio:
     --navbar-bg: rgba(255, 255, 255, 0.8);
     --navbar-bg-hover: rgba(0, 0, 0, 0.05);
     --text-primary: #333;
-  
 }
 
 /* Estilos de los botones de acción */
 .btn-primary {
+    background-color: var(--button-primary);
+    border: none;
+    border-radius: 1rem !important;
+}
+.btn-secondary {
     background-color: var(--button-primary);
     border: none;
     border-radius: 1rem !important;
@@ -92,8 +96,7 @@ Diseño del sitio:
     color: white !important;
 }
 .btn-secondary {
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
+    background-color: #6c757d;
     border-radius: 25px;
     color: white;
 }
@@ -154,4 +157,4 @@ Diseño del sitio:
 .login-button {
     background-color: #e6743c;
     color: white;
-  }
+}

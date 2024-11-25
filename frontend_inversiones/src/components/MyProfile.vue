@@ -1,9 +1,17 @@
 <script setup>
 import axios from "axios";
 import { onMounted, ref } from "vue";
-import { getHeaderRequest, getUserIdOfLocalStorage } from "@/authService";
+import {
+  getHeaderRequest,
+  getUserIdOfLocalStorage,
+  closeSession,
+} from "@/authService";
 import { closeModal } from "@/utils/modal";
 import Swal from "sweetalert2";
+import { useRouter } from "vue-router";
+
+const route = useRouter();
+
 const userProfile = ref({});
 const baseURL = `${import.meta.env.VITE_API_URL}/user/`;
 
@@ -14,6 +22,11 @@ const tempPhone = ref("");
 
 const passwordError = ref("");
 const confirmPasswordError = ref("");
+
+const logOut = () => {
+  closeSession(route);
+  isLoggedIn.value = false;
+};
 
 onMounted(() => {
   getUserProfile();
@@ -122,9 +135,9 @@ const updatePhone = async () => {
 
 <template>
   <div>
-    <router-link to="/login" class="btn btn-logout shadow"
-      ><strong>Cerrar Sesion </strong> <i class="fas fa-sign-out-alt"></i
-    ></router-link>
+    <button class="btn btn-logout shadow" @click="logOut()">
+      <strong>Cerrar Sesión </strong> <i class="fas fa-sign-out-alt"></i>
+    </button>
     <div class="container col-md-10 mt-5">
       <ul class="nav nav-tabs" id="userTabs" role="tablist">
         <li class="nav-item" role="presentation">

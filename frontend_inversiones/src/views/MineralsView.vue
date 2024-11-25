@@ -1,87 +1,87 @@
 <template>
-  <div>
+  <div class="minerals-container">
     <div class="navbar-tabs">
-        <button
-          v-for="tab in tabs"
-          :key="tab"
-          @click="selectedTab = tab"
-          :class="{ active: selectedTab === tab }"
-        >
-          {{ tab }}
-        </button>
-      </div>
+      <button
+        v-for="tab in tabs"
+        :key="tab"
+        @click="selectedTab = tab"
+        :class="{ active: selectedTab === tab }"
+      >
+        {{ tab }}
+      </button>
+    </div>
 
-      <div class="tab-content mt-3">
-        <div v-if="selectedTab === 'Precios Historicos'">
-          <MineralTrends />
-        </div>
-        <div v-if="selectedTab === 'Minerales'">
-          <div class="container col-md-10 mt-4">
-            <h4 class="card-title text-center">Minerales</h4>
-            <div class="text-end">
-              <Button
-                data-bs-toggle="modal"
-                data-bs-target="#modalMineral"
-                text="Nuevo"
-                icon="fa fa-plus"
-              />
-            </div>
-            <CardsSummary :items="summaryMinerals" />
-            <TableMinerals
-              :headers="headers"
-              :items="minerals"
-              :actions="{
-                edit: selectMineral,
-                delete: deleteMineral,
-              }"
+    <div class="tab-content mt-3">
+      <div v-if="selectedTab === 'Precios Historicos'">
+        <MineralTrends />
+      </div>
+      <div v-if="selectedTab === 'Minerales'">
+        <div class="container col-md-10 mt-4">
+          <h4 class="card-title text-center">Minerales</h4>
+          <div class="text-end">
+            <Button
+              data-bs-toggle="modal"
+              data-bs-target="#modalMineral"
+              text="Nuevo"
+              icon="fa fa-plus"
+            />
+          </div>
+          <CardsSummary :items="summaryMinerals" />
+          <TableMinerals
+            :headers="headers"
+            :items="minerals"
+            :actions="{
+              edit: selectMineral,
+              delete: deleteMineral,
+            }"
+          />
+
+          <Modal
+            modalId="modalMineral"
+            title="Datos del Mineral"
+            :showSaveButton="!selectedMineral?.id"
+            :showUpdateButton="Boolean(selectedMineral?.id)"
+            @onClose="reset()"
+            @onSave="saveMineral()"
+          >
+            <Input
+              id="name"
+              label="Nombre"
+              v-model="name"
+              type="text"
+              placeholder="Ingrese el nombre"
             />
 
-            <Modal
-              modalId="modalMineral"
-              title="Datos del Mineral"
-              :showSaveButton="!selectedMineral?.id"
-              :showUpdateButton="Boolean(selectedMineral?.id)"
-              @onClose="reset()"
-              @onSave="saveMineral()"
-            >
-              <Input
-                id="name"
-                label="Nombre"
-                v-model="name"
-                type="text"
-                placeholder="Ingrese el nombre"
-              />
+            <Input
+              id="price"
+              label="Precio"
+              v-model="price"
+              type="number"
+              placeholder="Ingrese el precio"
+            />
 
-              <Input
-                id="price"
-                label="Precio"
-                v-model="price"
-                type="number"
-                placeholder="Ingrese el precio"
-              />
+            <InputTextArea
+              id="description"
+              label="Descripción"
+              v-model="description"
+              placeholder="Ingrese la descripción"
+            />
 
-              <InputTextArea
-                id="description"
-                label="Descripción"
-                v-model="description"
-                placeholder="Ingrese la descripción"
-              />
+            <InputFile
+              id="image"
+              label="Imagen"
+              @update:modelValue="handleImageChange"
+              accept="image/*"
+              ref="inputFileRef"
+            />
 
-              <InputFile
-                id="image"
-                label="Imagen"
-                @update:modelValue="handleImageChange"
-                accept="image/*"
-                ref="inputFileRef"
-              />
-
-              <div v-if="previewUrl" class="mt-3">
-                <img :src="previewUrl" alt="Vista_previa" class="img-fluid" />
-              </div>
-            </Modal>
-          </div>
+            <div v-if="previewUrl" class="mt-3">
+              <img :src="previewUrl" alt="Vista_previa" class="img-fluid" />
+            </div>
+          </Modal>
         </div>
       </div>
+    </div>
   </div>
 </template>
 
@@ -103,8 +103,8 @@ import {
   existAlert,
 } from "@/utils/validateInputs";
 
-const selectedTab = ref('Precios Historicos');
-const tabs = ['Precios Historicos', 'Minerales'];
+const selectedTab = ref("Precios Historicos");
+const tabs = ["Precios Historicos", "Minerales"];
 const headers = [
   "Nombre",
   "Precio Estimado $",
@@ -251,6 +251,10 @@ const reset = () => {
 </script>
 
 <style scoped>
+.minerals-container {
+  max-height: 850px;
+  overflow-y: auto;
+}
 .navbar-tabs {
   display: flex;
   justify-content: center;

@@ -229,7 +229,7 @@ const deleteContact = async (contact_id) => {
     console.log(error);
   }
 };
-const answerContact = async (contact_id) => {
+const answerContact = async (contact_id, contact_email) => {
   try {
     const result = await Swal.fire({
       icon: "warning",
@@ -242,7 +242,7 @@ const answerContact = async (contact_id) => {
       cancelButtonText: "Cancelar",
     });
     if (result.isConfirmed) {
-      //actualizar la columna answer a answered
+      window.location.href = `mailto:${contact_email}`;
       const { data } = await axios.put(baseURL + contact_id, {
         answer: "answered",
       });

@@ -2,7 +2,9 @@
   <div class="fondo">
     <h1>{{ settings.homeTitle }}</h1>
     <p>{{ settings.homeText }}</p>
-    <button class="button-config">Comienza Aqui!</button>
+    <button class="button-config" @click="scrollToSection('contact')">
+      Comienza Aqui!
+    </button>
   </div>
 </template>
 
@@ -25,6 +27,19 @@ const getSettings = async () => {
     console.log("Setting:", settings.value);
   } catch (error) {
     console.error(error);
+  }
+};
+
+const scrollToSection = (sectionId) => {
+  const section = document.getElementById(sectionId);
+  if (section) {
+    const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+    const offset = window.innerHeight * 0.2;
+    window.scrollTo({
+      top: sectionTop - offset,
+      behavior: "smooth",
+    });
+    isMobileMenuOpen.value = false; // Cerrar menú móvil después de click
   }
 };
 </script>

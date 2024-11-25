@@ -1,6 +1,6 @@
 <template>
   <div class="text-center bg-white py-2">
-    <h1>Nuestro Blog</h1>
+    <h2 class="mb-4">Nuestro Blog</h2>
     <Carousel v-bind="config">
       <Slide v-for="(post, index) in posts.slice(0, 10)" :key="index">
         <div class="carousel__item">
@@ -58,7 +58,7 @@ const config = {
 
 <style scoped>
 button {
-  background-color: var(--button-primary);
+  background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 70px;
@@ -66,13 +66,17 @@ button {
   font-size: 16px;
   height: 50px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
   text-decoration: none;
   line-height: 1.6;
 }
 
 button:hover {
-  background-color: var(--button-primary-hover);
+  opacity: 0.9;
+}
+/*imagen con tamaño fijo*/
+img {
+  height: 200px !important;
+  border-radius: 15px !important;
 }
 
 .carousel__slide {

@@ -84,10 +84,7 @@ const toggleMobileMenu = () => {
 
 const navLinks = computed(() => {
   const userRole = getUserRoleOfLocalStorage();
-  let links = [
-    { name: "Marketplace", path: "/marketplace" },
-    { name: "Panel de control", path: "/dashboard" },
-  ];
+  let links = [{ name: "Panel de control", path: "/dashboard" }];
 
   if (userRole === "super_user" || userRole === "admin") {
     links.push(
@@ -116,7 +113,7 @@ const navLinks = computed(() => {
             alt="Logo"
             class="navbar-logo"
           />
-          <a class="navbar-brand mx-1" href="#">{{ settings.name }}</a>
+          <a class="navbar-brand mx-1" href="/">{{ settings.name }}</a>
         </div>
 
         <button
@@ -319,13 +316,9 @@ const navLinks = computed(() => {
   text-decoration: none;
 }
 
+.login-button,
 .logout-button {
-  background-color: var(--button-primary);
-  color: white;
-}
-
-.login-button {
-  background-color: #e6743c;
+  background-color: var(--primary-color) !important;
   color: white;
 }
 
@@ -374,7 +367,9 @@ const navLinks = computed(() => {
 .navbar-toggler.is-active span:last-child {
   transform: rotate(-45deg);
 }
-
+.nav-item {
+  cursor: pointer;
+}
 @media (max-width: 1260px) {
   .nav-wrapper {
     width: 95%;
