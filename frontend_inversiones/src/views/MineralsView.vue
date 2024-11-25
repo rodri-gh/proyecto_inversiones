@@ -181,14 +181,17 @@ const selectMineral = (mineral) => {
 };
 
 const saveMineral = async () => {
-  if (
-    !validateInputs([
-      { value: name.value, name: "Nombre", type: "text" },
-      { value: price.value, name: "Precio", type: "number" },
-      { value: description.value, name: "Descripción", type: "text" },
-      { value: image.value, name: "Imagen", type: "file" },
-    ])
-  ) {
+  const fieldsToValidate = [
+    { value: name.value, name: "Nombre", type: "text" },
+    { value: price.value, name: "Precio", type: "number" },
+    { value: description.value, name: "Descripción", type: "text" },
+  ];
+
+  if (!selectedMineral.value.id) {
+    fieldsToValidate.push({ value: image.value, name: "Imagen", type: "file" });
+  }
+
+  if (!validateInputs(fieldsToValidate)) {
     return;
   }
 

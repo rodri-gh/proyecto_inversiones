@@ -70,24 +70,16 @@ router.post('/', async (req, res, next) => {
 
 router.put('/:id', async (req, res, next) => {
   const { id } = req.params;
-  const { email, phone, name, lastName, username, password, role } = req.body;
+  const { email, phone, name, lastName, role, documentNumber } = req.body;
   const transaction = await sequelize.transaction();
 
   try {
-    const [updatedUserCount] = await User.update({ email, phone, name, lastName, role }, {
+    const [updatedUserCount] = await User.update({ email, phone, name, lastName, role, documentNumber }, {
       where: { id },
       returning: true,
       transaction
     });
     verifyIfIdExists(updatedUserCount);
-    const passwordHash = await encrypt(password);
-    const [updatedAccountCount] = await Account.update({ username, password: passwordHash }, {
-      where: { userId: id },
-      returning: true,
-      transaction
-    }
-    );
-    verifyIfIdExists(updatedAccountCount);
     await transaction.commit();
     getHandleSuccess(204)(res);
   } catch (error) {
