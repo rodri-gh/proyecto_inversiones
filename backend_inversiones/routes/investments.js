@@ -1,7 +1,7 @@
 import express from 'express';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
-import { Investment, Contract, Project, User } from '../models/mainExport.js';
+import { Investment, Contract, Project, User, SiteSetting } from '../models/mainExport.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 
 
@@ -38,6 +38,8 @@ router.get('/formData/:id', async (req, res, next) => {
 router.get('/user/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
+    const siteSetting = await SiteSetting.findOne();
+    const appCommission = siteSetting.appCommission;
 
     const investments = await Investment.findAll({
       where: { userId: id },
@@ -51,14 +53,13 @@ router.get('/user/:id', async (req, res, next) => {
 
     const updatedInvestments = await Promise.all(investments.map(async (investment) => {
       if (investment.project) {
-
-        investment.profitPercentage = investment.project.profitPercentage;
-        investment.earnings = (investment.amount * investment.profitPercentage) / 100;
+        const netProfitPercentage = investment.project.profitPercentage - appCommission;
+        investment.profitPercentage = netProfitPercentage;
+        investment.earnings = (investment.amount * netProfitPercentage) / 100;
         await investment.save();
       }
       return investment;
     }));
-
 
     const investmentsWithContracts = await Promise.all(
       updatedInvestments.map(async (investment) => {
@@ -78,6 +79,9 @@ router.get('/user/:id', async (req, res, next) => {
     getHandleError(error, res);
   }
 });
+
+
+
 router.get('/project/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
