@@ -30,7 +30,6 @@ import siteSettingRouter from './routes/siteSettings.js';
 import reportClient from './routes/reportClient.js';
 import apiMineralPrices from './routes/apiMineralPrices.js';
 import reportAdmin from './routes/reportAdmin.js';
-import analysisiReort from './routes/analysisReport.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -70,6 +69,5 @@ app.use('/site-setting', siteSettingRouter);
 app.use('/report-client', reportClient);
 app.use('/apiMineralPrices', apiMineralPrices);
 app.use('/report-admin', reportAdmin);
-app.use('/analysisReport', analysisiReort);
 
 export default app;

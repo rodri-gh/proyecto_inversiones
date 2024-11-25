@@ -1,67 +1,87 @@
 <template>
-  <div class="container col-md-10 mt-5">
-    <h4 class="card-title text-center">Minerales</h4>
-    <div class="text-end">
-      <Button
-        data-bs-toggle="modal"
-        data-bs-target="#modalMineral"
-        text="Nuevo"
-        icon="fa fa-plus"
-      />
-    </div>
-    <CardsSummary :items="summaryMinerals" />
-    <TableMinerals
-      :headers="headers"
-      :items="minerals"
-      :actions="{
-        edit: selectMineral,
-        delete: deleteMineral,
-      }"
-    />
-
-    <Modal
-      modalId="modalMineral"
-      title="Datos del Mineral"
-      :showSaveButton="!selectedMineral?.id"
-      :showUpdateButton="Boolean(selectedMineral?.id)"
-      @onClose="reset()"
-      @onSave="saveMineral()"
-    >
-      <Input
-        id="name"
-        label="Nombre"
-        v-model="name"
-        type="text"
-        placeholder="Ingrese el nombre"
-      />
-
-      <Input
-        id="price"
-        label="Precio"
-        v-model="price"
-        type="number"
-        placeholder="Ingrese el precio"
-      />
-
-      <InputTextArea
-        id="description"
-        label="Descripción"
-        v-model="description"
-        placeholder="Ingrese la descripción"
-      />
-
-      <InputFile
-        id="image"
-        label="Imagen"
-        @update:modelValue="handleImageChange"
-        accept="image/*"
-        ref="inputFileRef"
-      />
-
-      <div v-if="previewUrl" class="mt-3">
-        <img :src="previewUrl" alt="Vista_previa" class="img-fluid" />
+  <div>
+    <div class="navbar-tabs">
+        <button
+          v-for="tab in tabs"
+          :key="tab"
+          @click="selectedTab = tab"
+          :class="{ active: selectedTab === tab }"
+        >
+          {{ tab }}
+        </button>
       </div>
-    </Modal>
+
+      <div class="tab-content mt-3">
+        <div v-if="selectedTab === 'Precios Historicos'">
+          <MineralTrends />
+        </div>
+        <div v-if="selectedTab === 'Minerales'">
+          <div class="container col-md-10 mt-4">
+            <h4 class="card-title text-center">Minerales</h4>
+            <div class="text-end">
+              <Button
+                data-bs-toggle="modal"
+                data-bs-target="#modalMineral"
+                text="Nuevo"
+                icon="fa fa-plus"
+              />
+            </div>
+            <CardsSummary :items="summaryMinerals" />
+            <TableMinerals
+              :headers="headers"
+              :items="minerals"
+              :actions="{
+                edit: selectMineral,
+                delete: deleteMineral,
+              }"
+            />
+
+            <Modal
+              modalId="modalMineral"
+              title="Datos del Mineral"
+              :showSaveButton="!selectedMineral?.id"
+              :showUpdateButton="Boolean(selectedMineral?.id)"
+              @onClose="reset()"
+              @onSave="saveMineral()"
+            >
+              <Input
+                id="name"
+                label="Nombre"
+                v-model="name"
+                type="text"
+                placeholder="Ingrese el nombre"
+              />
+
+              <Input
+                id="price"
+                label="Precio"
+                v-model="price"
+                type="number"
+                placeholder="Ingrese el precio"
+              />
+
+              <InputTextArea
+                id="description"
+                label="Descripción"
+                v-model="description"
+                placeholder="Ingrese la descripción"
+              />
+
+              <InputFile
+                id="image"
+                label="Imagen"
+                @update:modelValue="handleImageChange"
+                accept="image/*"
+                ref="inputFileRef"
+              />
+
+              <div v-if="previewUrl" class="mt-3">
+                <img :src="previewUrl" alt="Vista_previa" class="img-fluid" />
+              </div>
+            </Modal>
+          </div>
+        </div>
+      </div>
   </div>
 </template>
 
@@ -76,12 +96,15 @@ import InputTextArea from "@/components/base/InputTextArea.vue";
 import InputFile from "@/components/base/InputFile.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import CardsSummary from "@/components/CardsSummary.vue";
+import MineralTrends from "@/components/MineralTrends.vue";
 import {
   validateInputs,
   successAlert,
   existAlert,
 } from "@/utils/validateInputs";
 
+const selectedTab = ref('Precios Historicos');
+const tabs = ['Precios Historicos', 'Minerales'];
 const headers = [
   "Nombre",
   "Precio",
@@ -106,7 +129,6 @@ const inputFileRef = ref(null);
 
 onMounted(() => {
   getMinerals();
-  console.log("urlbase", baseURL);
 });
 
 const getMinerals = async () => {
@@ -227,3 +249,39 @@ const reset = () => {
   inputFileRef.value?.reset();
 };
 </script>
+
+<style scoped>
+.navbar-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-radius: 30px;
+}
+
+.navbar-tabs button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 30px !important;
+  background-color: #ffffff;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.navbar-tabs button.active {
+  background-color: #204d7c;
+  border-radius: 30px;
+  color: white;
+}
+
+.navbar-tabs button:hover {
+  background-color: #879dda;
+  color: #04090e;
+  border-radius: 10px;
+}
+
+.tab-content {
+  padding: 10px;
+  border-radius: 5px;
+}
+</style>

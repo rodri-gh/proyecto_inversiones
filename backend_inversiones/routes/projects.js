@@ -42,7 +42,6 @@ router.get('/:id', async function (req, res, next) {
   } catch (error) {
     getHandleError(error, res);
   }
-
 });
 
 router.get('/user/:id', async function (req, res) {
@@ -81,15 +80,13 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-
-
 router.put('/:id', async (req, res, next) => {
   const { id } = req.params;
   const { userId, name, description, investmentGoal, status,
     startDate, endDate, projectType, profitPercentage } = req.body;
   try {
     const [projectCount] = await Project.update({
-      userId, name, description, investmentGoal, status,
+      name, description, investmentGoal, status,
       startDate, endDate, projectType, profitPercentage
     }, {
       where: { id }

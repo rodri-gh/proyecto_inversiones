@@ -17,6 +17,10 @@ MineralPriceHistory.init(
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
         },
+        price: {
+            type: DataTypes.DECIMAL(10, 3),
+            allowNull: false
+        },
         deleted: {
             type: DataTypes.TINYINT,
             allowNull: false,

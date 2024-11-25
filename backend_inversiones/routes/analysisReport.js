@@ -114,7 +114,6 @@ router.get('/totalInvestmentVsReturn/:id', async (req, res, next) => {
   router.get('/getMovementsFromLast7Days', async (req, res, next) => {
     try {
       const results = await sequelize.query('CALL getMovementsFromLast7Days()');
-      console.log(results);
       if (results.length === 0) {
         console.log('Not found movements of the last 7 days.');
       }
@@ -129,7 +128,6 @@ router.get('/totalInvestmentVsReturn/:id', async (req, res, next) => {
     const { id } = req.params;
     try {
       const results = await sequelize.query(`CALL GetUserFinancialSummary(${id})`);
-      console.log(results);
       if (results.length === 0) {
         console.log('Not found balances .');
       }
@@ -144,7 +142,6 @@ router.get('/totalInvestmentVsReturn/:id', async (req, res, next) => {
     const { id } = req.params;
     try {
       const results = await sequelize.query(`CALL GetUserClientSummary(${id})`);
-      console.log(results);
       if (results.length === 0) {
         console.log('Not found balances .');
       }
@@ -177,7 +174,6 @@ router.get('/totalInvestmentVsReturn/:id', async (req, res, next) => {
         totallyInvested: totallyInvested, 
         profitOrLosess: profitOrLosess
       }
-
       getHandleSuccess(200)(res, results);
     } catch(e) { 
       console.error('Error get Balances for user:', error);
@@ -201,7 +197,6 @@ router.get('/totalInvestmentVsReturn/:id', async (req, res, next) => {
     const { id } = req.params;
     try { 
       const project = await Project.findOne({ where: { id: id, deleted: 0 }}); 
-      console.log(project);
       if (!project) { 
         return res.status(400).json({ error: 'error', message: 'No se encontro el Proyecto!' });
       }
@@ -218,6 +213,35 @@ router.get('/totalInvestmentVsReturn/:id', async (req, res, next) => {
         totalInvestmentOfProject: totalInvestment,
         amountAvailableForInvestment: amountAvailableForInvestment
        });
+    } catch(e) { 
+      console.error('Error al obtener los montos disponibles para invertir:', e);
+      getHandleError(e, res);
+    }
+  });
+
+  router.get('/investmentOpportunities', async (req, res, next) => {
+    try { 
+      const projects = await Project.findAll({ 
+          where: { status: 'open', deleted: 0 },
+          include: [
+            {
+              model: Investment,
+              required: false
+            }
+          ]
+      }); 
+      if( !projects || projects.length === 0) {
+          return res.status(400).json({ error: 'error', message: 'No se encontraron proyectos!'});
+      }
+      for(let item of projects) { 
+        const totalInvested = item.investments.reduce((sum, investment) => {
+          return sum + (parseFloat(investment.amount) || 0);
+          }, 0);
+        const amountMissingForGoal = parseFloat(item.investmentGoal) - totalInvested || 0;
+        item.setDataValue('amountMissingForGoal', amountMissingForGoal);
+        item.setDataValue('totalInvested', totalInvested);
+      } 
+      getHandleSuccess(200)(res, projects);
     } catch(e) { 
       console.error('Error al obtener los montos disponibles para invertir:', e);
       getHandleError(e, res);
