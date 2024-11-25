@@ -13,7 +13,7 @@
           />
         </div>
 
-        <div class="table-responsive">
+        <div class="table-container">
           <table class="table">
             <thead>
               <tr>
@@ -22,6 +22,7 @@
                 <th scope="col">Estimado de Compra</th>
                 <th scope="col">Pre Compra</th>
                 <th scope="col">Compra</th>
+                <th scope="col">Venta</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
@@ -41,6 +42,7 @@
                 <td>{{ projectMineral.estimatedPurchasePrice }}</td>
                 <td>{{ projectMineral.prePurchase }}</td>
                 <td>{{ projectMineral.purchasePrice }}</td>
+                <td>{{ projectMineral.salePrice }}</td>
                 <td>
                   <button
                     class="btn btn-warning btn-sm m-1"
@@ -114,6 +116,12 @@
                   </select>
                 </div>
                 <div>
+                  <Input
+                    id="estimatedPurchasePrice"
+                    label="Estimado de Compra"
+                    type="number"
+                    v-model="estimatedPurchasePrice"
+                  />
                   <Input
                     id="prePurchase"
                     label="Precio pre compra"
@@ -503,5 +511,9 @@ const calculateMineralQuotation = computed(() => {
 <style scoped>
 .table-secondary {
   opacity: 0.7;
+}
+.table-container {
+  max-height: 400px; /* Ajusta este valor según sea necesario */
+  overflow-y: auto; /* Habilita el scroll vertical */
 }
 </style>

@@ -107,7 +107,7 @@ const selectedTab = ref('Precios Historicos');
 const tabs = ['Precios Historicos', 'Minerales'];
 const headers = [
   "Nombre",
-  "Precio",
+  "Precio Estimado $",
   "Descripción",
   "Imagen",
   "Estado",

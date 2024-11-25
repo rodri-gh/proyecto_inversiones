@@ -1,7 +1,8 @@
 import express from 'express';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
 import { Project, Investment, Contract, ProjectMineral, 
-  ProjectTimeline, Mineral } from '../models/mainExport.js';
+  ProjectTimeline, Mineral, 
+  OperatingExpense} from '../models/mainExport.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 
@@ -36,7 +37,23 @@ router.get('/', async function (req, res, next) {
 router.get('/:id', async function (req, res, next) {
   const { id } = req.params;
   try {
-    const project = await Project.findOne({ where: { id: id } });
+    const project = await Project.findOne({
+        where: { id: id },
+        include: [
+          {
+            model: Investment,
+            required: false,
+          },
+          {
+          model: OperatingExpense,
+          required: false,
+          },
+          {
+            model: ProjectMineral,
+            required: false,
+          }
+        ]
+      });
     verifyIfIdExists(project);
     getHandleSuccess(200)(res, project);
   } catch (error) {

@@ -1,189 +1,191 @@
 <template>
-  <div class="container col-md-10 mt-5">
-    <h4 class="card-title text-center">Usuarios Registrados</h4>
-    <div class="text-end">
-      <Button
-        data-bs-toggle="modal"
-        data-bs-target="#modalUser"
-        text="Nuevo"
-        icon="fa fa-plus"
-        class="btn-color"
-      />
-    </div>
-    <CardsSummary :items="summaryUsers" />
-    <ul class="nav nav-tabs" id="userTabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button
-          class="nav-link active"
-          id="all-tab"
-          data-bs-toggle="tab"
-          data-bs-target="#all"
-          type="button"
-          role="tab"
-          aria-controls="all"
-          aria-selected="true"
-        >
-          Todos
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button
-          class="nav-link"
-          id="active-tab"
-          data-bs-toggle="tab"
-          data-bs-target="#active"
-          type="button"
-          role="tab"
-          aria-controls="active"
-          aria-selected="false"
-        >
-          Activos
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button
-          class="nav-link"
-          id="inactive-tab"
-          data-bs-toggle="tab"
-          data-bs-target="#inactive"
-          type="button"
-          role="tab"
-          aria-controls="inactive"
-          aria-selected="false"
-        >
-          Inactivos
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button
-          class="nav-link"
-          id="clients-tab"
-          data-bs-toggle="tab"
-          data-bs-target="#clients"
-          type="button"
-          role="tab"
-          aria-controls="clients"
-          aria-selected="false"
-        >
-          Clientes
-        </button>
-      </li>
-    </ul>
-    <div class="tab-content" id="userTabsContent">
-      <div
-        class="tab-pane fade show active"
-        id="all"
-        role="tabpanel"
-        aria-labelledby="all-tab"
-      >
-        <TableUsers
-          :headers="headersTable"
-          :items="users"
-          :actions="{
-            edit: selectUser,
-            delete: deleteUser,
-          }"
+  <div class="users-container">
+    <div class="container col-md-10 mt-5">
+      <h4 class="card-title text-center">Usuarios Registrados</h4>
+      <div class="text-end">
+        <Button
+          data-bs-toggle="modal"
+          data-bs-target="#modalUser"
+          text="Nuevo"
+          icon="fa fa-plus"
+          class="btn-color"
         />
       </div>
-      <div
-        class="tab-pane fade"
-        id="active"
-        role="tabpanel"
-        aria-labelledby="active-tab"
-      >
-        <TableUsers
-          :headers="headers"
-          :items="activeUsers"
-          :actions="{
-            edit: selectUser,
-            delete: deleteUser,
-          }"
-        />
+      <CardsSummary :items="summaryUsers" />
+      <ul class="nav nav-tabs" id="userTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="all-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#all"
+            type="button"
+            role="tab"
+            aria-controls="all"
+            aria-selected="true"
+          >
+            Todos
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="active-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#active"
+            type="button"
+            role="tab"
+            aria-controls="active"
+            aria-selected="false"
+          >
+            Activos
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="inactive-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#inactive"
+            type="button"
+            role="tab"
+            aria-controls="inactive"
+            aria-selected="false"
+          >
+            Inactivos
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="clients-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#clients"
+            type="button"
+            role="tab"
+            aria-controls="clients"
+            aria-selected="false"
+          >
+            Clientes
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="userTabsContent">
+        <div
+          class="tab-pane fade show active"
+          id="all"
+          role="tabpanel"
+          aria-labelledby="all-tab"
+        >
+          <TableUsers
+            :headers="headersTable"
+            :items="users"
+            :actions="{
+              edit: selectUser,
+              delete: deleteUser,
+            }"
+          />
+        </div>
+        <div
+          class="tab-pane fade"
+          id="active"
+          role="tabpanel"
+          aria-labelledby="active-tab"
+        >
+          <TableUsers
+            :headers="headers"
+            :items="activeUsers"
+            :actions="{
+              edit: selectUser,
+              delete: deleteUser,
+            }"
+          />
+        </div>
+        <div
+          class="tab-pane fade"
+          id="inactive"
+          role="tabpanel"
+          aria-labelledby="inactive-tab"
+        >
+          <TableUsers
+            :headers="headers"
+            :items="inactiveUsers"
+            :actions="{
+              edit: selectUser,
+              delete: deleteUser,
+            }"
+          />
+        </div>
+        <div
+          class="tab-pane fade"
+          id="clients"
+          role="tabpanel"
+          aria-labelledby="clients-tab"
+        >
+          <TableUsers
+            :headers="headers"
+            :items="clientUsers"
+            :actions="{
+              edit: selectUser,
+              delete: deleteUser,
+            }"
+          />
+        </div>
       </div>
-      <div
-        class="tab-pane fade"
-        id="inactive"
-        role="tabpanel"
-        aria-labelledby="inactive-tab"
-      >
-        <TableUsers
-          :headers="headers"
-          :items="inactiveUsers"
-          :actions="{
-            edit: selectUser,
-            delete: deleteUser,
-          }"
-        />
-      </div>
-      <div
-        class="tab-pane fade"
-        id="clients"
-        role="tabpanel"
-        aria-labelledby="clients-tab"
-      >
-        <TableUsers
-          :headers="headers"
-          :items="clientUsers"
-          :actions="{
-            edit: selectUser,
-            delete: deleteUser,
-          }"
-        />
-      </div>
-    </div>
 
-    <Modal
-      modalId="modalUser"
-      title="Registro de Usuario"
-      :showSaveButton="!selectedUser?.id"
-      :showUpdateButton="Boolean(selectedUser?.id)"
-      @onClose="reset()"
-      @onSave="createUser()"
-    >
-      <Input
-        id="name"
-        label="Nombre"
-        v-model="name"
-        type="text"
-        placeholder="Ingrese el nombre"
-      />
-      <Input
-        id="lastName"
-        label="Apellidos"
-        v-model="lastName"
-        type="text"
-        placeholder="Ingrese los apellidos"
-      />
-      <Input
-        label="Nro de Documento"
-        v-model="documentNumber"
-        type="text"
-        placeholder="Ingrese el número de documento"
-      />
-      <Input
-        id="email"
-        label="Correo"
-        v-model="email"
-        type="email"
-        placeholder="Ingrese un correo electrónico"
-      />
-      <Input
-        id="phone"
-        label="Teléfono"
-        v-model="phone"
-        type="text"
-        placeholder="Ingrese número de teléfono"
-      />
+      <Modal
+        modalId="modalUser"
+        title="Registro de Usuario"
+        :showSaveButton="!selectedUser?.id"
+        :showUpdateButton="Boolean(selectedUser?.id)"
+        @onClose="reset()"
+        @onSave="createUser()"
+      >
+        <Input
+          id="name"
+          label="Nombre"
+          v-model="name"
+          type="text"
+          placeholder="Ingrese el nombre"
+        />
+        <Input
+          id="lastName"
+          label="Apellidos"
+          v-model="lastName"
+          type="text"
+          placeholder="Ingrese los apellidos"
+        />
+        <Input
+          label="Nro de Documento"
+          v-model="documentNumber"
+          type="text"
+          placeholder="Ingrese el número de documento"
+        />
+        <Input
+          id="email"
+          label="Correo"
+          v-model="email"
+          type="email"
+          placeholder="Ingrese un correo electrónico"
+        />
+        <Input
+          id="phone"
+          label="Teléfono"
+          v-model="phone"
+          type="text"
+          placeholder="Ingrese número de teléfono"
+        />
 
-      <div v-if="rol === 'super_user'" class="mb-3">
-        <label for="" class="form-label">Rol</label>
-        <select class="form-select form-select" v-model="role" id="role">
-          <option value="">Selecione un rol</option>
-          <option value="admin">Administrador</option>
-          <option value="client">Cliente</option>
-        </select>
-      </div>
-    </Modal>
+        <div v-if="rol === 'super_user'" class="mb-3">
+          <label for="" class="form-label">Rol</label>
+          <select class="form-select form-select" v-model="role" id="role">
+            <option value="">Selecione un rol</option>
+            <option value="admin">Administrador</option>
+            <option value="client">Cliente</option>
+          </select>
+        </div>
+      </Modal>
+    </div>
   </div>
 </template>
 
@@ -390,6 +392,10 @@ const reset = () => {
 </script>
 
 <style scoped>
+.users-container { 
+  max-height: 850px;
+  overflow-y: auto;
+}
 .nav-tabs .nav-link {
   color: #495057;
   background-color: #fff;

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="project-container">
     <div v-if="statusProject === 'open' || statusProject === 'in-transit'">
       <div class="navbar-tabs">
         <button
@@ -76,61 +76,7 @@
     </div>
 
     <div v-else-if="statusProject === 'closed'">
-      <div class="project-summary-closed">
-        <h3>Resumen del Proyecto Cerrado: {{ project.name }}</h3>
-        <br />
-        <div class="summary-section">
-          <h4>Detalles del Proyecto</h4>
-          <ul>
-            <li>
-              <strong>Duración:</strong> {{ formatDate(project.startDate) }} -
-              {{ formatDate(project.endDate) }}
-            </li>
-            <li>
-              <strong>Inversión Total:</strong> ${{ project.totalInvestment }}
-            </li>
-            <li>
-              <strong>Rentabilidad del Projecto:</strong>
-              {{ project.actualProfitPercentage }}%
-            </li>
-            <li><strong>Estado:</strong> {{ project.status }}</li>
-          </ul>
-        </div>
-
-        <div class="summary-section">
-          <h4>Estadísticas de Rendimiento</h4>
-          <div class="chart-container">
-            <p>aqui podria agregar grafico para el porjecto</p>
-            <canvas id="profitChart"></canvas>
-          </div>
-        </div>
-
-        <div class="summary-section">
-          <h4>Inversiones y Gastos</h4>
-          <div class="investment-summary">
-            <p>
-              <strong>Total Inversiones:</strong> ${{
-                project.totalInvestments
-              }}
-            </p>
-            <p>
-              <strong>Gastos Operativos Totales:</strong> ${{
-                project.totalOperatingExpenses
-              }}
-            </p>
-          </div>
-        </div>
-
-        <div class="summary-section">
-          <h4>Minerales Extraídos</h4>
-          <ProjectMineral :idProjectMineral="idProject" />
-        </div>
-
-        <div class="summary-section">
-          <h4>Historial de Inversiones</h4>
-          <Investments :idProjectInvestment="idProject" />
-        </div>
-      </div>
+      <ClosedProjectSummary :idProject="props.projectId" />
     </div>
 
     <div v-else>
@@ -150,6 +96,7 @@ import Contract from "@/components/Contract.vue";
 import axios from "axios";
 import { getHeaderRequest } from "@/authService";
 import { formatDate } from "@/router/viewFormat";
+import ClosedProjectSummary from "@/components/Analysis/ClosedProjectSummary.vue";
 
 const header = getHeaderRequest();
 
@@ -171,7 +118,7 @@ const props = defineProps({
   },
 });
 
-const idProject = ref(props.projectId || route.params.id);
+const idProject = ref(props.projectId);
 
 const reloadData = () => {
   idProject.value = props.projectId;
@@ -193,6 +140,7 @@ const getProjectData = async () => {
 };
 
 onMounted(() => {
+  console.log(props.projectId);
   eventBus.on("data-updated", reloadData);
   getProjectData();
 });
@@ -203,6 +151,11 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.project-container { 
+  max-height: 850px;
+  overflow-y: auto;
+}
+
 .navbar-tabs {
   display: flex;
   justify-content: center;
@@ -271,23 +224,5 @@ onUnmounted(() => {
   max-width: 100%;
   border-radius: 10px;
   margin-top: 20px;
-}
-
-.project-summary-closed {
-  padding: 20px;
-  border-radius: 10px;
-}
-
-.summary-section {
-  margin-bottom: 20px;
-}
-
-.chart-container {
-  max-width: 600px;
-  margin: auto;
-}
-
-.investment-summary p {
-  margin: 5px 0;
 }
 </style>

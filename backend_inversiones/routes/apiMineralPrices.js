@@ -53,7 +53,7 @@ router.get('/historyOfAMonth', async function (req, res) {
                 }
               ]
         });
-        const oneMonthAgo = moment().subtract(1, 'months').startOf('day').utc().toDate();
+        const oneMonthAgo = moment().subtract(5, 'months').startOf('day').utc().toDate();
         console.log('Fecha límite (hace un mes):', oneMonthAgo);
 
         const filteredHistory = mineralPricesHistory.filter(record => {

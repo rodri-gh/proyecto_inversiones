@@ -29,6 +29,18 @@ router.get('/project/:id', async (req, res, next) => {
   }
 })
 
+router.get('/pending/user/:id', async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const investments = await ProjectPayment.findAll({
+      where: { userId: id, status: "pending" }
+    });
+    getHandleSuccess(200)(res, investments);
+  } catch (error) {
+    getHandleError(error, res)
+  }
+})
+
 router.post('/', async (req, res, next) => {
   const { projectId, userId, amount, profitPercentage } = req.body;
   try {
