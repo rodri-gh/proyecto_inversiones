@@ -10,6 +10,7 @@
             icon="fa fa-plus"
             @click="resetModal"
             :disabled="projectMinerals.length >= 2"
+            class="mb-3"
           />
         </div>
 
@@ -74,7 +75,7 @@
       role="dialog"
       aria-labelledby="modalTitleId"
       aria-hidden="true"
-    > 
+    >
       <div
         class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg"
         role="document"
@@ -108,10 +109,9 @@
                     <option
                       v-for="mineral in availableMinerals"
                       :key="mineral.id"
-                      :value="mineral" 
+                      :value="mineral"
                     >
-                      {{ mineral.name }} =
-                      {{ mineral.price }} $
+                      {{ mineral.name }} = {{ mineral.price }} $
                     </option>
                   </select>
                 </div>
@@ -128,21 +128,21 @@
                     type="number"
                     v-model="prePurchase"
                   />
-                  <br>
+                  <br />
                   <Input
                     id="purchasePrice"
                     label="Precio de compra"
                     type="number"
                     v-model="purchasePrice"
                   />
-                  <br>
+                  <br />
                   <Input
                     id="exitPrice"
                     label="Precio salida del ingenio"
                     type="number"
                     v-model="exitPrice"
                   />
-                  <br>
+                  <br />
                   <Input
                     id="salePrice"
                     label="Ingrese precio de Venta"
@@ -166,23 +166,24 @@
                       >
                         <i class="fa fa-times"></i>
                       </button>
-                         -  <i class="fas fa-gem text-center"></i>
-                        <strong>{{ mineral.name }} </strong>
-                      <br> <br>
-                        <label for=""> Precio Estimado Actual:</label>
-                        <p>
-                          <strong>{{ mineral.price }} $</strong>
-                          por Onza
-                        </p>
+                      - <i class="fas fa-gem text-center"></i>
+                      <strong>{{ mineral.name }} </strong>
+                      <br />
+                      <br />
+                      <label for=""> Precio Estimado Actual:</label>
+                      <p>
+                        <strong>{{ mineral.price }} $</strong>
+                        por Onza
+                      </p>
                     </li>
                   </ul>
                 </div>
                 <Input
-                    id="weightOuncesMineral"
-                    label="Peso en Onzas del mineral"
-                    type="number"
-                    v-model="weightOuncesMineral"
-                  />
+                  id="weightOuncesMineral"
+                  label="Peso en Onzas del mineral"
+                  type="number"
+                  v-model="weightOuncesMineral"
+                />
                 <div v-if="calculateMineralQuotation > 0">
                   <Input
                     id="calculateMineralQuotation"
@@ -193,9 +194,24 @@
                   <div class="mt-3">
                     <label for="">Estimacion Precio Venta</label>
                     <p>90% Cotiz. 10% Precio actual</p>
-                    <p>90% = <strong>{{ calculateMineralQuotation*0.90 }} $</strong></p>
-                    <p>10% = <strong>{{ selectedMinerals[0].price *0.10 }} $</strong></p>
-                    <p>Venta Sugerida = <strong>{{ selectedMinerals[0].price *0.10 + calculateMineralQuotation*0.90 }} $</strong></p>
+                    <p>
+                      90% =
+                      <strong>{{ calculateMineralQuotation * 0.9 }} $</strong>
+                    </p>
+                    <p>
+                      10% =
+                      <strong>{{ selectedMinerals[0].price * 0.1 }} $</strong>
+                    </p>
+                    <p>
+                      Venta Sugerida =
+                      <strong
+                        >{{
+                          selectedMinerals[0].price * 0.1 +
+                          calculateMineralQuotation * 0.9
+                        }}
+                        $</strong
+                      >
+                    </p>
                   </div>
                 </div>
               </div>
@@ -209,9 +225,15 @@
                   select-class="col-8"
                 />
                 <div class="mt-2">
-                  <p>User: {{ selectedUser?.name || "Seleccione un usuario" }}</p>
-                  <p>Email: {{ selectedUser?.email || "Seleccione un usuario" }}</p>
-                  <p>Cel: {{ selectedUser?.phone || "Seleccione un usuario" }}</p>
+                  <p>
+                    User: {{ selectedUser?.name || "Seleccione un usuario" }}
+                  </p>
+                  <p>
+                    Email: {{ selectedUser?.email || "Seleccione un usuario" }}
+                  </p>
+                  <p>
+                    Cel: {{ selectedUser?.phone || "Seleccione un usuario" }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -296,7 +318,10 @@ onMounted(() => {
 
 const getprojectMinerals = async () => {
   try {
-    const data = await axios.get(baseURL+'projectMinerals/projects/' + props.idProjectMineral, header);
+    const data = await axios.get(
+      baseURL + "projectMinerals/projects/" + props.idProjectMineral,
+      header
+    );
     projectMinerals.value = data.data;
     console.log(data.data);
   } catch (error) {
@@ -312,9 +337,9 @@ const getMinerals = async () => {
     );
     minerals.value = data.data;
     await getMineralsPrices();
-    minerals.value.forEach(mineral => {
-      pricesMinerals.value.forEach(item => {
-        if (item.name === (mineral.name).toLowerCase() ) {
+    minerals.value.forEach((mineral) => {
+      pricesMinerals.value.forEach((item) => {
+        if (item.name === mineral.name.toLowerCase()) {
           mineral.price = item.price;
         }
       });
@@ -325,15 +350,15 @@ const getMinerals = async () => {
   }
 };
 
-const getMineralsPrices = async () => { 
-  try { 
-    const response = await axios.get(baseURL+'apiMineralPrices/', header);
-    console.log('precios de los minerales: '+ response.data); 
+const getMineralsPrices = async () => {
+  try {
+    const response = await axios.get(baseURL + "apiMineralPrices/", header);
+    console.log("precios de los minerales: " + response.data);
     pricesMinerals.value = response.data;
-  } catch(e) { 
+  } catch (e) {
     console.error(e);
   }
-}
+};
 
 const getUsers = async () => {
   try {
@@ -394,15 +419,15 @@ const toggleProjectMineralStatus = async (projectMineral) => {
       );
     }
   } catch (e) {
-    handleErrorSwal(e, 'Error');
+    handleErrorSwal(e, "Error");
   }
 };
 
 const saveProjectMinerals = async () => {
   const method = selectedProjectMineral.value.id ? "put" : "post";
   const url = selectedProjectMineral.value.id
-    ? `${baseURL+'projectMinerals/'}${selectedProjectMineral.value.id}`
-    : baseURL+'projectMinerals/';
+    ? `${baseURL + "projectMinerals/"}${selectedProjectMineral.value.id}`
+    : baseURL + "projectMinerals/";
 
   const projectMineral = {
     projectId: props.idProjectMineral,
@@ -440,18 +465,21 @@ const saveProjectMinerals = async () => {
       "success"
     );
   } catch (e) {
-    handleErrorSwal(e, 'Error al Guardar Mineral del Projecto');
+    handleErrorSwal(e, "Error al Guardar Mineral del Projecto");
     closeModal();
   }
 };
 
 const deleteProjectMineral = async (id) => {
   try {
-    const response = await axios.patch(baseURL+'projectMinerals/' + id, header);
+    const response = await axios.patch(
+      baseURL + "projectMinerals/" + id,
+      header
+    );
     getprojectMinerals();
     Swal.fire("Eliminado", "El mineral se eliminó correctamente.", "success");
   } catch (e) {
-    handleErrorSwal(e, 'Error no se pudo eliminar el mineral del proyecto');
+    handleErrorSwal(e, "Error no se pudo eliminar el mineral del proyecto");
   }
 };
 
@@ -480,10 +508,10 @@ const selectProjectMineral = (projectMineral) => {
 
 const resetModal = () => {
   selectedMinerals.value = [];
-  selectedMineral.value = '';
+  selectedMineral.value = "";
   isEditing.value = false;
   selectedProjectMineral.value = {};
-  selectedMineral.value = '';
+  selectedMineral.value = "";
   weightOuncesMineral.value = 0;
   userId.value = null;
   prePurchase.value = ref(0);

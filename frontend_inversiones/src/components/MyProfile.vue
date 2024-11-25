@@ -8,9 +8,6 @@ import {
 } from "@/authService";
 import { closeModal } from "@/utils/modal";
 import Swal from "sweetalert2";
-import { useRouter } from "vue-router";
-
-const route = useRouter();
 
 const userProfile = ref({});
 const baseURL = `${import.meta.env.VITE_API_URL}/user/`;
@@ -22,11 +19,6 @@ const tempPhone = ref("");
 
 const passwordError = ref("");
 const confirmPasswordError = ref("");
-
-const logOut = () => {
-  closeSession(route);
-  isLoggedIn.value = false;
-};
 
 onMounted(() => {
   getUserProfile();
@@ -135,9 +127,6 @@ const updatePhone = async () => {
 
 <template>
   <div>
-    <button class="btn btn-logout shadow" @click="logOut()">
-      <strong>Cerrar Sesión </strong> <i class="fas fa-sign-out-alt"></i>
-    </button>
     <div class="container col-md-10 mt-5">
       <ul class="nav nav-tabs" id="userTabs" role="tablist">
         <li class="nav-item" role="presentation">
@@ -395,18 +384,6 @@ const updatePhone = async () => {
 </template>
 
 <style scoped>
-.btn-logout {
-  background-color: #d82424; /* Firebrick red */
-  border-color: #c71f1f; /* Slightly darker for border */
-  color: white; /* Text color for contrast */
-  border: none;
-  border-radius: 1rem !important;
-}
-
-.btn-logout:hover {
-  background-color: #a11d1d; /* Darker red for hover effect */
-  border-color: #971818;
-}
 .profile-image {
   width: 150px;
   height: 150px;
