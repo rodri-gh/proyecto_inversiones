@@ -1,7 +1,7 @@
 <template>
   <div class="container col-md-12 mt-3">
     <div>
-      <h4 class="card-title text-center mb-3">Reporte de Proyectos</h4>
+      <!--  <h4 class="card-title text-start mb-3">Reporte de Proyectos</h4> -->
 
       <div class="card mb-4">
         <div class="card-body">

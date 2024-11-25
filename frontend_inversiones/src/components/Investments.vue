@@ -7,6 +7,7 @@
           data-bs-target="#modalInvestment"
           text="Nuevo"
           icon="fa fa-plus"
+          class="mb-3"
         />
       </div>
       <TableInvestments

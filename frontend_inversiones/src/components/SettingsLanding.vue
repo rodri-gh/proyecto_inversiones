@@ -1,6 +1,6 @@
 <template>
   <div class="container col-md-10 mt-5">
-    <h4 class="card-title text-center">Ajustes de la Web</h4>
+    <h4 class="card-title text-center mb-3">Ajustes de la Web</h4>
     <TableSettings
       :headers="headers"
       :items="settings"
@@ -12,6 +12,7 @@
     <Modal
       modalId="modalSetting"
       title="Editar Ajustes de la Web"
+      modalClass="modal-lg"
       :showSaveButton="false"
       :showUpdateButton="true"
       @onClose="reset()"
@@ -50,6 +51,7 @@
           label="Texto de Inicio"
           v-model="tempSettings.homeText"
           placeholder="Ingrese el texto de inicio"
+          rows="20"
         />
       </template>
       <template v-if="selectedField === 'logo'">

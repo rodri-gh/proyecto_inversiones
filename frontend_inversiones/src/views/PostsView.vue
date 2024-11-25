@@ -8,6 +8,7 @@
         data-bs-target="#modalPost"
         text="Nuevo"
         icon="fa fa-plus"
+        class="mb-3"
       />
     </div>
     <TablePosts
