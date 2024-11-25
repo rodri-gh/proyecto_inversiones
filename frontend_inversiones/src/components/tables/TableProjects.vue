@@ -9,7 +9,7 @@
       <tbody>
         <tr v-if="items.length == 0">
           <td colspan="5" class="text-center">
-            No hay inversiones registradas
+            No hay Proyectos registrados
           </td>
         </tr>
         <tr v-for="item in paginatedItems" :key="item.id">

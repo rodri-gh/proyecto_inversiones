@@ -311,6 +311,8 @@ const reset = () => {
 
 <style scoped>
 .container {
+  max-height: 800px;
+  overflow-y: auto;
   margin-top: 20px;
 }
 </style>

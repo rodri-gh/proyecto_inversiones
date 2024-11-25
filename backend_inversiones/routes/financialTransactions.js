@@ -3,9 +3,13 @@ import { getHandleSuccess } from '../helpers/handleSuccess.js';
 import { FinancialTransactions } from '../models/mainExport.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
+import Op from 'sequelize';
+import moment from 'moment';
+
 
 
 const router = express.Router();
+
 router.get('/', async function (req, res, next) {
   try {
     const projects = await FinancialTransactions.findAll();
@@ -18,13 +22,33 @@ router.get('/', async function (req, res, next) {
 router.get('/:id', function (req, res, next) {
   const { id } = req.params;
   try {
-    const project = Project.findOne({ where: { id } });
+    const project = FinancialTransactions.findOne({ where: { id } });
     verifyIfIdExists(project);
     getHandleSuccess(200)(res, project);
   } catch (error) {
     getHandleError(error, res);
   }
 
+});
+
+router.get('last7days/user/:id', function (req, res, next) {
+  const { id } = req.params;
+  try {
+    const project = FinancialTransactions.findOne({ where: { id } });
+    if (!project) {
+      return res.status(404).json({ error: 'Proyecto no encontrado.' });
+    }
+    const twoWeeksAgo = moment().subtract(14, 'days').startOf('day').utc().toDate();
+    console.log('Fecha límite (hace 14 días):', twoWeeksAgo);
+
+    const filteredHistory = mineralPricesHistory.filter(record => {
+      const recordDate = moment(record.datePrice); 
+      return recordDate.isSameOrAfter(twoWeeksAgo);
+    });
+    getHandleSuccess(200)(res, filteredHistory);
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
 router.post('/', async (req, res, next) => {

@@ -7,6 +7,7 @@ import {
 import axios from "axios";
 import { onMounted, ref } from "vue";
 import { Chart, registerables } from "chart.js";
+import ClientSummary from "./Analysis/ClientSummary.vue";
 
 Chart.register(...registerables);
 
@@ -17,12 +18,10 @@ const withdrawalRequestsPending = ref([]);
 const movements7days = ref([]);
 const userId = getUserIdOfLocalStorage();
 const baseURL = `${import.meta.env.VITE_API_URL}/`;
-const investmentOpportunities = ref([]);
 
 onMounted(() => {
   getNotifications();
   getFinancialSummary();
-  getInvestmentOpportunities();
   if(userRole === 'admin'){
     filterSummaryOnlyAdmin();
   }
@@ -54,16 +53,6 @@ const getFinancialSummary = async () => {
   }
 };
 
-
-const getInvestmentOpportunities = async () => {
-  try {
-    const response = await axios.get(baseURL+'analysisReport/investmentOpportunities', header);
-    investmentOpportunities.value = response.data.filter(project => project.amountMissingForGoal > 0);
-    console.log(investmentOpportunities.value);
-  } catch (e) {
-    console.error(e);
-  }
-};
 
 const filterSummaryOnlyAdmin = () => { 
   //filtrar los arrays de resumenes solo de los proyectos que le
@@ -115,7 +104,7 @@ const createChart = () => {
 </script>
 
 <template>
-  <div>
+  <div class="summary-container">
     <h4 class="">
       Resumen para tu rol:
       <strong v-if="userRole === 'super_user'"> Super Usuario</strong>
@@ -324,46 +313,16 @@ const createChart = () => {
     </div>
     
     <div v-if="userRole === 'client'">
-      <p>
-        Resumen de Cuenta: Saldo actual de la cuenta. Historial de transacciones
-        recientes.
-      </p>
-      <p>
-        Mis Inversiones: Lista de proyectos en los que ha invertido, con
-        detalles sobre el progreso y los retornos. Indicadores de rendimiento de
-        las inversiones (ganancias, pérdidas, ROI).
-      </p>
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-4 mb-4">
-          <div class="detail-item shadow">
-            <div>
-              <h6>
-                <i class="bi bi-person-badge"></i> Oportunidades de Inversion en Proyectos
-              </h6>
-            </div>
-            <div class="card-body">
-              <div v-if="investmentOpportunities.length > 0">
-                <ul class="list-group">
-                  <li
-                    v-for="item in investmentOpportunities"
-                    :key="item"
-                    class="list-group-item d-flex justify-content-between align-items-center"
-                  >
-                    <span><strong>Proyecto:</strong> {{ item.name }} </span>
-                    <span><strong>Monto para Invertir:</strong> 1 $ -- {{ item.amountMissingForGoal }} $</span>
-                  </li>
-                </ul>
-              </div>
-              <div v-else class="text-muted">No hay contactos pendientes.</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ClientSummary />
     </div>
   </div>
 </template>
 
 <style scoped>
+.summary-container { 
+  max-height: 850px;
+  overflow-y: auto;
+}
 .detail-item {
   background-color: #ffffff;
   padding: 10px;

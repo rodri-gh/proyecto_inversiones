@@ -131,16 +131,17 @@ const deleteContract = async (id) => {
 const saveContract = async () => {
   const method = selectedContract.value.id ? "put" : "post";
   const url = selectedContract.value.id
-    ? `${baseURL}${selectedContract.value.id}`
-    : baseURL;
+    ? `${baseURL+'contract/'}${selectedContract.value.id}`
+    : baseURL+'contract/';
   const formData = createFormData();
-  console.log(url);
+  console.log(method+url);
   console.log(Array.from(formData.entries()));
   try {
     await axios[method](url, formData, header);
     closeModal("modalContract");
-    getUsers();
     getContracts();
+    getUsers();
+    getAmountsInvestmentGoal();
     updateData();
     reset();
   } catch (e) {
@@ -175,14 +176,13 @@ const reset = () => {
   contractType.value = "";
   currency.value = "";
   selectedContract.value = {};
+  contractFilePath.value = null;
 };
 
 const handleFileChange = (fileEvent) => {
-  console.log("ya no soy nulo");
   const file = fileEvent.target.files[0];
   if (file && file.type === "application/pdf") {
     contractFilePath.value = file;
-    console.log("ya no soy nulo");
   } else {
     contractFilePath.value = null;
     alert("Debes selecciona un archivo pdf valido.");

@@ -110,7 +110,7 @@
                   </small>
                 </div>
                 <div v-else>
-                  <p>No hay precios de los mienerales!</p>
+                  <p>No hay variaciones en los precios!</p>
                 </div>
 
                 <div class="mt-2">
@@ -504,6 +504,8 @@ const reset = () => {
 
  <style scoped>
 .timeline-container {
+  max-height: 700px;
+  overflow-y: auto;
   padding: 5px 0;
   width: 100%;
 }
