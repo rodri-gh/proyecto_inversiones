@@ -76,16 +76,17 @@ CREATE TABLE `investments` (
     CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-  CREATE TABLE IF NOT EXISTS `minerals` (
-    `id` bigint NOT NULL AUTO_INCREMENT,
-    `name` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-    `price` decimal(20,6) NOT NULL,
-    `description` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
-    `image` text COLLATE utf8mb4_general_ci,
-    `deleted` tinyint NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE KEY `name` (`name`)
-  ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `minerals` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `price` decimal(20,6) NOT NULL,
+  `description` varchar(200) DEFAULT NULL,
+  `image` text DEFAULT NULL,
+  `deleted` tinyint(4) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
 
   CREATE TABLE IF NOT EXISTS `operating_expenses` (
     `id` bigint NOT NULL AUTO_INCREMENT,
@@ -262,6 +263,16 @@ CREATE TABLE `financial_transactions` (
   CONSTRAINT `fk_financial_transactions_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
+CREATE TABLE `mineral_price_history` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `mineral_id` bigint(20) NOT NULL,
+  `date_price` timestamp NOT NULL DEFAULT current_timestamp(),
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_mineral_id` (`mineral_id`),
+  KEY `idx_date_price` (`date_price`),
+  CONSTRAINT `fk_mineral_price_history_mineral_id` FOREIGN KEY (`mineral_id`) REFERENCES `minerals` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
 
 INSERT INTO `users` (`id`, `email`, `phone`, `role`, `two_factor_enabled`, `name`, `last_name`, `deleted`) VALUES
