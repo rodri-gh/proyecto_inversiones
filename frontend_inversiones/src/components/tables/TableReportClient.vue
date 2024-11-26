@@ -69,9 +69,11 @@ const formatDate = (date) => {
 };
 
 const formatCurrency = (value) => {
-  return new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "USD",
+  const amount = new Intl.NumberFormat("es-ES", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(value || 0);
+
+  return `$ ${amount}`;
 };
 </script>

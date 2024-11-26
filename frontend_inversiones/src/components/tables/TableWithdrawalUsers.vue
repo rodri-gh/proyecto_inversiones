@@ -16,8 +16,10 @@
           <td>{{ item.investment.project.name }}</td>
           <td>
             {{
-              parseFloat(item.investment.amount) +
-              parseFloat(item.investment.earnings)
+              formatCurrency(
+                parseFloat(item.investment.amount) +
+                  parseFloat(item.investment.earnings)
+              )
             }}
           </td>
           <td>{{ formatDate(item.requestDate) }}</td>
@@ -119,6 +121,14 @@ const getStatusText = (status) => {
     rejected: "Rechazado",
   };
   return texts[status] || status;
+};
+const formatCurrency = (value) => {
+  const amount = new Intl.NumberFormat("es-ES", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value || 0);
+
+  return `$ ${amount}`;
 };
 </script>
 
