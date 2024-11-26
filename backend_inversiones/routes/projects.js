@@ -123,8 +123,8 @@ router.patch('/:id', async (req, res, next) => {
       return getHandleError(new Error('project not found'), res);
     }
     const newDeletedStatus = project.deleted ? 0 : 1;
-    await Project.destroy({ where: { id } });
-    //await Project.update({ deleted: newDeletedStatus }, { where: { id } });
+    //await Project.destroy({ where: { id } });
+    await Project.update({ deleted: newDeletedStatus }, { where: { id } });
     getHandleSuccess(200)(res, `User ${newDeletedStatus ? 'deleted' : 'restored'} successfully`);
   } catch (error) {
     getHandleError(error, res);
