@@ -93,7 +93,7 @@ const calculateBalances = () => {
                             class="list-group-item d-flex justify-content-between align-items-center"
                         >
                             <span><strong>Proyecto :</strong> {{ item.name }} </span>
-                            <span><strong>Monto para Invertir:</strong> 1 $ -- {{ item.amountMissingForGoal }} $</span>
+                            <span><strong>Monto para Invertir:</strong> $1 - ${{ item.amountMissingForGoal }}</span>
                         </li>
                         </ul>
                     </div>
@@ -105,7 +105,7 @@ const calculateBalances = () => {
                 <div class="detail-item shadow">
                     <h6>Saldo Cuenta</h6>
                     <p>
-                        <strong>{{ acountBalances }}</strong>
+                        <strong>${{ acountBalances }}</strong>
                     </p>
                 </div>
             </div>
