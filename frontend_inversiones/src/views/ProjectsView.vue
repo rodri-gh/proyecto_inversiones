@@ -309,6 +309,7 @@ import CardsSummary from "@/components/CardsSummary.vue";
 import Select from "@/components/base/Select.vue";
 import { validateInputs } from "@/utils/validateInputs";
 import { formatDate, standardFormatDate } from "@/router/viewFormat";
+import { handleErrorSwal } from "@/errorMixin";
 
 const baseURL = `${import.meta.env.VITE_API_URL}/`;
 const projects = ref([]);
@@ -337,7 +338,7 @@ const userRole = getUserRoleOfLocalStorage();
 
 const statusOptions = {
   open: "Abierto",
-  in_transit: "En curso",
+  //in_transit: "En curso",
   closed: "Cerrado",
 };
 
@@ -456,7 +457,6 @@ const getsummaryProjects = () => {
 };
 
 const selectProject = (project) => {
-  console.log(project.startDate); 
   console.log(project.endDate);
   selectedProject.value = project;
   name.value = project.name;
@@ -502,6 +502,9 @@ const reset = () => {
 };
 
 const saveProject = async () => {
+  if (!validateDates()) {
+    return;
+  }
   if (
     !validateInputs([
       { value: name.value, name: "Nombre", type: "text" },
@@ -594,6 +597,15 @@ const createDataProject = () => {
     profitPercentage: profitPercentage.value,
   };
   return data;
+};
+
+
+const validateDates = () => {
+  if (new Date(startDate.value) > new Date(endDate.value)) {
+    handleErrorSwal("", "La Fecha de inicio no puede ser menor a la fecha de fin!")
+    return false;
+  }
+  return true;
 };
 </script>
 

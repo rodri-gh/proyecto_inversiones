@@ -409,6 +409,9 @@ const getTimeLines = async () => {
 };
 
 const createTimeLine = async () => {
+  if (!validateDates()) {
+    return;
+  }
   var myModalEl = document.getElementById("modalTimeline");
   var modal = bootstrap.Modal.getInstance(myModalEl);
   const timeLine = {
@@ -421,15 +424,6 @@ const createTimeLine = async () => {
     priceMineral1: mineral_1.value,
     priceMineral2: mineral_2.value,
   };
-  console.log(props.idProject);
-  console.log(phase.value);
-  console.log(startDate.value);
-  console.log(endDate.value);
-  console.log(status.value);
-  console.log(description.value);
-  console.log(mineral_1.value);
-  console.log(mineral_2.value);
-  console.log(timeLine);
   try {
     console.log(baseURL);
     const data = await axios.post(baseURL, timeLine, header);
@@ -463,6 +457,9 @@ const selectTimeLine = (timeLine) => {
 };
 
 const updateTimeLine = async () => {
+  if (!validateDates()) {
+    return;
+  }
   const timeLine = {
     phase: phase.value,
     startDate: startDate.value,
@@ -500,6 +497,15 @@ const reset = () => {
   mineral_2.value = 0;
   selectedTimeLine.value = {};
 };
+
+const validateDates = () => {
+  if (new Date(startDate.value) > new Date(endDate.value)) {
+    handleErrorSwal("", "La Fecha de inicio no puede ser menor a la fecha de fin!")
+    return false;
+  }
+  return true;
+};
+
 </script>
 
  <style scoped>

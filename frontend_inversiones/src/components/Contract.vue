@@ -159,8 +159,8 @@ const createFormData = () => {
   formData.append("userId", userId.value);
   formData.append("investmentAmount", investmentAmount.value);
   formData.append("contractCode", contractCode.value);
-  formData.append("startDate", startDate);
-  formData.append("endDate", endDate);
+  formData.append("startDate", props.project.startDate);
+  formData.append("endDate", props.project.endDate);
   formData.append("status", status.value);
   formData.append("contractType", contractType.value);
   formData.append("currency", currency.value);
@@ -243,7 +243,7 @@ const previewUrl = computed(() => {
               <p>
                 Meta alcanzada:
                 <strong
-                  >{{ amountsInvestmentGoal.investmentGoalOfProject }} $</strong
+                  >${{ amountsInvestmentGoal.investmentGoalOfProject }}</strong
                 >
               </p>
             </div>
@@ -256,9 +256,8 @@ const previewUrl = computed(() => {
               <p>Monto disponible para invertir</p>
               <p>
                 <strong
-                  >1 $ -
-                  {{ amountsInvestmentGoal.amountAvailableForInvestment }}
-                  $</strong
+                  >$1 - ${{ amountsInvestmentGoal.amountAvailableForInvestment }}
+                </strong
                 >
               </p>
             </div>
