@@ -7,6 +7,29 @@ import excel from 'xlsx';
 
 const router = express.Router();
 
+
+
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+
+  try {
+
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'N/A';
+
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    return 'N/A';
+  }
+};
+
+
+
+
 router.get('/projects', async (req, res) => {
   const { startDate, endDate, minAmount, maxAmount, status, mineralId } = req.query;
 
@@ -47,6 +70,7 @@ router.get('/projects', async (req, res) => {
 
     const projects = await Project.findAll({
       where,
+      order: [['startDate', 'ASC']],
       include: [
         {
           model: Investment,
@@ -73,6 +97,8 @@ router.get('/projects', async (req, res) => {
         (project.investmentGoal * (project.profitPercentage / 100)) - totalOperatingExpenses :
         0;
 
+
+
       const minerals = project.projectMinerals.map(pm => pm.mineral.name).join(', ');
 
       return {
@@ -82,8 +108,8 @@ router.get('/projects', async (req, res) => {
         profitPercentage: project.profitPercentage,
         operatingExpenses: totalOperatingExpenses,
         profit: profit,
-        startDate: project.startDate,
-        endDate: project.endDate,
+        startDate: formatDate(project.startDate),
+        endDate: formatDate(project.endDate),
         status: project.status,
         investors: totalInvestments,
         minerals: minerals
@@ -160,6 +186,7 @@ router.get('/projects/export', async (req, res) => {
 
     const projects = await Project.findAll({
       where,
+      order: [['startDate', 'ASC']],
       include: [
         {
           model: Investment,
@@ -194,8 +221,8 @@ router.get('/projects/export', async (req, res) => {
         'Porcentaje Ganancia': `${project.profitPercentage}%`,
         'Gastos Operativos': totalOperatingExpenses.toFixed(2),
         'Ganancia': profit.toFixed(2),
-        'Fecha Inicio': new Date(project.startDate).toLocaleDateString(),
-        'Fecha Fin': new Date(project.endDate).toLocaleDateString(),
+        'Fecha Inicio': formatDate(project.startDate),
+        'Fecha Fin': formatDate(project.endDate),
         'Estado': project.status === 'closed' ? 'Cerrado' : 'Abierto',
         'Inversores': totalInvestments,
         'Minerales': minerals
@@ -282,6 +309,7 @@ router.get('/projects/search', async (req, res) => {
     const projects = await Project.findAll({
       where: {
         deleted: 0,
+        order: [['startDate', 'ASC']],
         name: { [Op.like]: `%${search}%` }
       },
       attributes: ['id', 'name']
@@ -331,6 +359,7 @@ router.get('/investments', async (req, res) => {
 
     const investments = await Investment.findAll({
       where,
+      order: [['investmentDate', 'ASC']],
       include: [
         {
           model: User,
@@ -357,7 +386,7 @@ router.get('/investments', async (req, res) => {
         userName: `${inv.user.name} ${inv.user.lastName}`,
         projectName: inv.project.name,
         amount: Number(inv.amount),
-        investmentDate: inv.investmentDate,
+        investmentDate: formatDate(inv.investmentDate),
         status: inv.status === 'closed' ? 'Cerrado' : 'Pendiente',
         earnings: inv.status === 'closed' ? Number(inv.earnings) : 'Pendiente',
         minerals: minerals
@@ -417,6 +446,7 @@ router.get('/investments/export', async (req, res) => {
 
     const investments = await Investment.findAll({
       where,
+      order: [['investmentDate', 'ASC']],
       include: [
         {
           model: User,
@@ -444,7 +474,7 @@ router.get('/investments/export', async (req, res) => {
         'Usuario': `${inv.user.name} ${inv.user.lastName}`,
         'Proyecto': inv.project.name,
         'Monto Inversión': Number(inv.amount).toFixed(2),
-        'Fecha Inversión': new Date(inv.investmentDate).toLocaleDateString(),
+        'Fecha Inversión': formatDate(inv.investmentDate),
         'Estado': inv.status === 'closed' ? 'Cerrado' : 'Pendiente',
         'Ganancia': inv.status === 'closed' ? Number(inv.earnings).toFixed(2) : 'Pendiente',
         'Minerales': minerals

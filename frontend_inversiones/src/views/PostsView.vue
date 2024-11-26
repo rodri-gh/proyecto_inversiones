@@ -104,6 +104,11 @@ import InputFile from "@/components/base/InputFile.vue";
 import Button from "@/components/base/Button.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import TablePosts from "@/components/tables/TablePosts.vue";
+import {
+  validateInputs,
+  successAlert,
+  existAlert,
+} from "@/utils/validateInputs";
 
 const headers = ["Titulo", "Resumen", "Estado", "Acciones"];
 
@@ -205,7 +210,34 @@ const handleImageChange = (file) => {
 };
 
 const savePost = async () => {
-  content.value = quillEditor.root.innerHTML;
+  const editorContent = quillEditor.root.innerHTML;
+
+  const isContentEmpty = editorContent.replace(/<[^>]*>/g, "").trim() === "";
+
+  content.value = editorContent;
+
+  const fieldsToValidate = [
+    { value: title.value, name: "Titulo", type: "text" },
+    { value: summary.value, name: "Resumen", type: "text" },
+    {
+      value: isContentEmpty ? "" : editorContent,
+      name: "Contenido",
+      type: "text",
+    },
+    { value: category_post_id.value, name: "Categoría", type: "select" },
+  ];
+
+  if (!selectedPost.value.id) {
+    fieldsToValidate.push({
+      value: cover_image.value,
+      name: "Portada",
+      type: "file",
+    });
+  }
+
+  if (!validateInputs(fieldsToValidate)) {
+    return;
+  }
 
   const method = selectedPost.value.id ? "put" : "post";
   const url = selectedPost.value.id
@@ -223,10 +255,15 @@ const savePost = async () => {
 
     console.log("Post guardado");
     closeModal("modalPost");
+    successAlert("Post guardado correctamente");
     getPosts();
     reset();
   } catch (error) {
-    console.log(error);
+    if (error.response.status === 409) {
+      existAlert("El post con ese título ya existe");
+    } else {
+      console.log(error);
+    }
   }
 };
 

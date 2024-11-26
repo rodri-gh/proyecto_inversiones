@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 const validateInputs = (inputs) => {
   let emptyInputs = [];
   for (const input of inputs) {
-    if (input.type === 'text' && input.value === '') {
+    if (input.type === 'text' && input.value.trim() === '') {
       emptyInputs.push(input.name);
     }
     if (input.type === 'number' && input.value === '' || input.value === 0) {
@@ -22,11 +22,11 @@ const validateInputs = (inputs) => {
       emptyInputs.push(input.name);
     }
 
-    if (input.type === 'email' && input.value === '') {
+    if (input.type === 'email' && input.value.trim() === '') {
       emptyInputs.push(input.name);
     }
 
-    if (input.type === 'textarea' && input.value === '') {
+    if (input.type === 'textarea' && input.value.trim() === '') {
       emptyInputs.push(input.name);
     }
 

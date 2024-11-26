@@ -11,8 +11,8 @@
           <td colspan="9" class="text-center">No hay proyectos registrados</td>
         </tr>
         <tr v-for="item in paginatedItems" :key="item.id">
-          <td>{{ formatDate(item.startDate) }}</td>
-          <td>{{ formatDate(item.endDate) }}</td>
+          <td>{{ item.startDate }}</td>
+          <td>{{ item.endDate }}</td>
           <td>{{ item.name }}</td>
           <td>{{ item.description }}</td>
           <td v-if="item.status == 'open'">Abierto</td>

@@ -16,7 +16,7 @@
           <td>{{ item.userName }}</td>
           <td>{{ item.projectName }}</td>
           <td>{{ formatCurrency(item.amount) }}</td>
-          <td>{{ formatDate(item.investmentDate) }}</td>
+          <td>{{ item.investmentDate }}</td>
           <td>{{ item.status }}</td>
           <td>
             {{

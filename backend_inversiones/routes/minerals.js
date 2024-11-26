@@ -8,6 +8,7 @@ import { getHandleError } from '../helpers/handleExceptions.js';
 import Mineral from '../models/mineralModel.js';
 import dotenv from 'dotenv';
 import { verifyIfIdExists } from '../helpers/handleId.js';
+import { Op } from 'sequelize';
 
 
 dotenv.config();
@@ -60,8 +61,17 @@ router.get('/:id', async (req, res, next) => {
 });
 
 router.post('/', upload.single('image'), async (req, res, next) => {
+
   const { name, price, description } = req.body;
   const image = req.file ? `${req.file.filename}` : null;
+
+  if (!name || !price || !description || !image) {
+    return res.status(400).json({
+      status: 400,
+      message: 'All fields are required'
+    });
+  }
+
   try {
     await Mineral.create({ name, price, description, image });
     getHandleSuccess(201)(res, "Mineral created successfully");
@@ -74,10 +84,32 @@ router.put('/:id', upload.single('image'), async (req, res, next) => {
   const { id } = req.params;
   const { name, description, price } = req.body;
 
+  if (!name || !price || !description) {
+    return res.status(400).json({
+      status: 400,
+      message: 'All fields are required'
+    });
+  }
+
   try {
+
     const mineral = await Mineral.findOne({ where: { id } });
     if (!mineral) {
       return getHandleError(new Error('Mineral not found'), res);
+    }
+
+    const existingMineral = await Mineral.findOne({
+      where: {
+        name: name,
+        id: { [Op.ne]: id }
+      }
+    });
+
+    if (existingMineral) {
+      return res.status(409).json({
+        status: 409,
+        message: 'Ya existe un mineral con este nombre'
+      });
     }
 
     let image = mineral.image;

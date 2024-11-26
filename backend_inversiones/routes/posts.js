@@ -65,6 +65,16 @@ router.get('/:id', async (req, res, next) => {
 router.post('/', upload.single('cover_image'), async (req, res, next) => {
   const { category_post_id, user_id, title, summary, content } = req.body;
   const cover_image = req.file ? `${req.file.filename}` : null;
+
+
+  if (!category_post_id || !user_id || !title || !summary || !content) {
+    return res.status(400).json({
+      error: true,
+      message: 'All fields are required'
+    });
+  }
+
+
   try {
     await Post.create({ category_post_id, user_id, title, summary, cover_image, content });
     getHandleSuccess(201)(res, "Post created successfully");

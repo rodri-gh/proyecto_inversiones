@@ -11,8 +11,8 @@
           <td colspan="9" class="text-center">No hay Proyectos registrados</td>
         </tr>
         <tr v-for="item in paginatedItems" :key="item.id">
-          <td>{{ formatDate(item.startDate) }}</td>
-          <td>{{ formatDate(item.endDate) }}</td>
+          <td>{{ item.startDate }}</td>
+          <td>{{ item.endDate }}</td>
           <td>{{ item.name }}</td>
           <td>{{ item.description }}</td>
           <td>{{ item.investmentGoal }}</td>

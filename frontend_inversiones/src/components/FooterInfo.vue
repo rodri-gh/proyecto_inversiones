@@ -22,7 +22,7 @@ const getSettings = async () => {
 </script>
 
 <template>
-  <div class="m-0 shadow">
+  <div class="m-0 shadow py-5">
     <div class="row shadow">
       <footer class="footer">
         <div class="footer-section text-center">

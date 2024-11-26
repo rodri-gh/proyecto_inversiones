@@ -19,8 +19,8 @@
           <td>{{ item.profitPercentage }}%</td>
           <td>{{ formatCurrency(item.operatingExpenses) }}</td>
           <td>{{ formatCurrency(item.profit) }}</td>
-          <td>{{ formatDate(item.startDate) }}</td>
-          <td>{{ formatDate(item.endDate) }}</td>
+          <td>{{ item.startDate }}</td>
+          <td>{{ item.endDate }}</td>
           <td>{{ formatStatus(item.status) }}</td>
           <td>{{ item.investors }}</td>
           <td>{{ item.minerals }}</td>

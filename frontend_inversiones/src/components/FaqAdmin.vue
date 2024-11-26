@@ -43,6 +43,11 @@ import Modal from "@/components/base/Modal.vue";
 import Input from "@/components/base/Input.vue";
 import InputTextArea from "@/components/base/InputTextArea.vue";
 import { closeModal, openModal } from "@/utils/modal";
+import {
+  validateInputs,
+  successAlert,
+  existAlert,
+} from "@/utils/validateInputs";
 
 const headers = ["Pregunta", "Respuesta", "Estado", "Acciones"];
 
@@ -67,6 +72,15 @@ const getfaqs = async () => {
 };
 
 const saveFaq = async () => {
+  const fieldsToValidate = [
+    { value: ask.value, ask: "Pregunta", type: "text" },
+    { value: answer.value, answer: "Respuesta", type: "text" },
+  ];
+
+  if (!validateInputs(fieldsToValidate)) {
+    return;
+  }
+
   const method = selectedFaq.value.id ? "put" : "post";
   const url = selectedFaq.value.id
     ? `${baseURL}${selectedFaq.value.id}`
@@ -78,10 +92,15 @@ const saveFaq = async () => {
     await axios[method](url, faq);
 
     closeModal("modalFaq");
+    successAlert("Pregunta Frecuente guardada correctamente");
     getfaqs();
     reset();
   } catch (error) {
-    console.log(error);
+    if (error.response.status === 409) {
+      existAlert("Pregunta Frecuente ya existe");
+    } else {
+      console.log(error);
+    }
   }
 };
 

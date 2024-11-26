@@ -1,19 +1,22 @@
 <template>
-  <div class="my-5">
+  <div class="py-5 bg-white">
     <div class="row">
       <div class="col-md-1"></div>
 
-      <div class="col-md-5">
-        <h1>{{ settings.aboutTitle }}</h1>
-        <h7>{{ settings.aboutText }} </h7>
+      <div class="col-md-5 d-flex flex-column justify-content-center">
+        <h1 class="py-2">{{ settings.aboutTitle || "Titulo de cabecera" }}</h1>
+        <h7 class="py-2">{{ settings.aboutText || "Texto acerca de" }} </h7>
       </div>
       <div class="col-md-6 img-about text-center">
         <img
-          :src="settings.aboutImage"
+          :src="
+            settings.aboutImage ||
+            'https://as1.ftcdn.net/v2/jpg/01/80/37/76/1000_F_180377624_wOuVL0f23adqaXxGdOkOVglYuilE8Bhu.jpg'
+          "
           alt="minerales"
           width="auto"
           height="auto"
-          class="img-fluid rounded-5"
+          class="img-fluid img-about rounded-5"
         />
       </div>
     </div>
@@ -87,7 +90,7 @@ p {
   z-index: 2;
 }
 .img-about img {
-  max-width: 100%;
+  max-width: 50%;
   height: auto;
 }
 .carousel-item img {

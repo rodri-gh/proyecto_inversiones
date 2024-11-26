@@ -38,8 +38,9 @@ router.get('/:id', async (req, res, next) => {
 });
 
 router.post('/', async (req, res, next) => {
-  //TODO: verify if we can create a repeat contact
+
   const { name, lastName, email, phone, comment, answer } = req.body;
+
   try {
     await Contact.create({ name, lastName, email, phone, comment, answer });
     getHandleSuccess(201)(res, "Contact created successfully")
