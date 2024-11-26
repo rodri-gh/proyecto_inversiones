@@ -8,6 +8,7 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 import { Chart, registerables } from "chart.js";
 import ClientSummary from "./Analysis/ClientSummary.vue";
+import { formatDate } from "@/router/viewFormat";
 
 Chart.register(...registerables);
 
@@ -197,7 +198,7 @@ const createChart = () => {
                       <strong>{{ item.tipo }}</strong> - {{ item.descripcion }}
                     </div>
                     <div class="d-flex justify-content-between">
-                      <span class="text-muted">{{ item.fecha }}</span>
+                      <span class="text-muted">{{ formatDate(item.fecha) }}</span>
                       <span class="text-success"
                         ><strong>{{ item.amount }}</strong></span
                       >

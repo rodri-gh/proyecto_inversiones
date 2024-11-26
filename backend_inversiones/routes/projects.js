@@ -118,6 +118,16 @@ router.post('/', async (req, res, next) => {
   const { userId, name, description, investmentGoal, status, startDate,
     endDate, projectType, profitPercentage } = req.body;
   try {
+        //validar fechas
+    const parsedStartDate = new Date(startDate);
+    const parsedEndDate = new Date(endDate);
+    if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
+      return res.status(400).json({ error: 'Fechas son invalidas verifique el formato de las fechas.' });
+    }
+    if (parsedEndDate < parsedStartDate) {
+      return res.status(400).json({ error: 'La fecha de fin no puede ser menor que la fecha de inicio.' });
+    }
+
     const project = await Project.create({
       userId, name, description, investmentGoal, status,
       startDate, endDate, projectType, profitPercentage
@@ -134,6 +144,17 @@ router.put('/:id', async (req, res, next) => {
   const { userId, name, description, investmentGoal, status,
     startDate, endDate, projectType, profitPercentage } = req.body;
   try {
+    //validar fechas
+    const parsedStartDate = new Date(startDate);
+    const parsedEndDate = new Date(endDate);
+    if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
+      return res.status(400).json({ error: 'Fechas son invalidas verifique el formato de las fechas.' });
+    }
+
+    if (parsedEndDate < parsedStartDate) {
+      return res.status(400).json({ error: 'La fecha de fin no puede ser menor que la fecha de inicio.' });
+    }
+
     const [projectCount] = await Project.update({
       name, description, investmentGoal, status,
       startDate, endDate, projectType, profitPercentage

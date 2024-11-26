@@ -47,6 +47,16 @@ router.post('/', async (req, res, next) => {
   const transaction = await sequelize.transaction();
   const { projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 } = req.body;
   try {
+        //validar fechas
+        const parsedStartDate = new Date(startDate);
+        const parsedEndDate = new Date(endDate);
+        if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
+          return res.status(400).json({ error: 'Fechas son invalidas verifique el formato de las fechas.' });
+        }
+    
+        if (parsedEndDate < parsedStartDate) {
+          return res.status(400).json({ error: 'La fecha de fin no puede ser menor que la fecha de inicio.' });
+        }
     const projecMinerals = await ProjectMineral.findAll({ where: { projectId: projectId, deleted: 0}});
     if (phase === 'ganancia') {
       console.log('entre al pase de ganancia');
@@ -92,6 +102,16 @@ router.put('/:id', async (req, res, next) => {
   const { id } = req.params;
   const { projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 } = req.body;
   try {
+        //validar fechas
+        const parsedStartDate = new Date(startDate);
+        const parsedEndDate = new Date(endDate);
+        if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
+          return res.status(400).json({ error: 'Fechas son invalidas verifique el formato de las fechas.' });
+        }
+    
+        if (parsedEndDate < parsedStartDate) {
+          return res.status(400).json({ error: 'La fecha de fin no puede ser menor que la fecha de inicio.' });
+        }
     const projectTimeline = await ProjectTimeline.update({ projectId, phase, startDate, endDate, status, description, priceMineral1, priceMineral2 },{ 
       where: { id } 
     });
