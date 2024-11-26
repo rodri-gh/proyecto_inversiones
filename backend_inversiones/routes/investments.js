@@ -105,7 +105,7 @@ router.get('/project/:id', async (req, res, next) => {
       where: { projectId: id },
       include: [{
         model: User,
-        attributes: ['name'],
+        attributes: ['name', 'lastName'],
         as: 'user'
       }]
     });

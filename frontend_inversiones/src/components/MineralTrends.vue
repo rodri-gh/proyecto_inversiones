@@ -118,6 +118,7 @@ const chartOptions = ref({
     },
 });
 
+
 onMounted(() => { 
     getMineralPricesHistory();
 })

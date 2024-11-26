@@ -3,7 +3,7 @@ import { getHandleSuccess } from '../helpers/handleSuccess.js';
 import {
   Project, Investment, Contract, ProjectMineral,
   ProjectTimeline, Mineral,
-  OperatingExpense
+  OperatingExpense, User
 } from '../models/mainExport.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
@@ -71,6 +71,12 @@ router.get('/:id', async function (req, res, next) {
         {
           model: Investment,
           required: false,
+          include: [
+            {
+              model: User,
+              required: false,
+            }
+          ]
         },
         {
           model: OperatingExpense,

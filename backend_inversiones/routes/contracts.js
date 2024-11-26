@@ -112,7 +112,7 @@ router.post('/', upload.fields([{ name: 'contractFilePath' }]), async (req, res,
 
 router.put('/:id', upload.fields([{ name: 'contractFilePath', maxCount: 1 }]), async (req, res, next) => {
   const { id } = req.params;
-  const { projectId, userId, investmentId, investmentAmount, contractCode, contractDate, contractFilePath } = req.body;
+  const { projectId, userId, investmentId, investmentAmount, contractCode, contractDate, currency, contractFilePath } = req.body;
   try {
     const currentContract = await Contract.findByPk(id);
     if (!currentContract) {
@@ -132,7 +132,6 @@ router.put('/:id', upload.fields([{ name: 'contractFilePath', maxCount: 1 }]), a
         }
       }
     }
-
     const [updatedCount] = await Contract.update({
       projectId, userId, investmentId,
       investmentAmount, contractCode, contractDate,
@@ -142,6 +141,13 @@ router.put('/:id', upload.fields([{ name: 'contractFilePath', maxCount: 1 }]), a
       returning: true
     });
     verifyIfIdExists(updatedCount);
+    console.log(id);
+    await Investment.update({
+      projectId: projectId,
+      userId: userId,
+      amount: investmentAmount,
+      currency: currency, 
+    }, {where: {contractId: id}})
     getHandleSuccess(204)(res)
   } catch (error) {
     getHandleError(error, res)
