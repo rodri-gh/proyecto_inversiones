@@ -8,13 +8,16 @@
       </thead>
       <tbody>
         <tr v-if="paginatedItems.length === 0">
-          <td colspan="7" class="text-center">No hay usuarios registrados</td>
+          <td colspan="9" class="text-center">No hay usuarios registrados</td>
         </tr>
         <tr v-for="item in paginatedItems" :key="item.id">
           <td>{{ item.name }}</td>
           <td>{{ item.lastName }}</td>
           <td>{{ item.documentNumber }}</td>
           <td>{{ item.account.username }}</td>
+          <td v-if="item.role === 'super_user'">Super usuario</td>
+          <td v-if="item.role === 'admin'">Administrador</td>
+          <td v-if="item.role === 'client'">Cliente</td>
           <td>{{ item.email }}</td>
           <td>{{ item.phone }}</td>
           <td>

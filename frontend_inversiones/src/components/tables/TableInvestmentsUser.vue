@@ -14,16 +14,15 @@
         </tr>
         <tr v-for="item in paginatedItems" :key="item.id">
           <td>{{ item.investmentDate }}</td>
-          <td>{{ item.amount }}</td>
-          <td>{{ item.currency }}</td>
+          <td>{{ formatCurrency(item.amount) }}</td>
           <td>{{ item.profitPercentage }}%</td>
           <td v-if="item.status === 'active'">Activa</td>
           <td v-else-if="item.status === 'pending'">Pendiente</td>
           <td v-else>Cerrada</td>
           <td>
             <span v-if="item.status === 'closed'"
-              >{{ item.earnings }} {{ item.currency }}</span
-            >
+              >{{ formatCurrency(item.earnings) }}
+            </span>
             <span v-else>Pendiente</span>
           </td>
           <td>
@@ -38,12 +37,12 @@
 
         <tr v-if="showTotal" class="table-info">
           <td colspan="1"><strong>Total Inversiones</strong></td>
-          <td colspan="3">
-            <strong>{{ calculateTotal }}</strong>
+          <td colspan="2">
+            <strong>{{ formatCurrency(calculateTotal) }}</strong>
           </td>
           <td colspan="1"><strong>Total Ganancias</strong></td>
           <td>
-            <strong>{{ calculateTotalEarnings }}</strong>
+            <strong>{{ formatCurrency(calculateTotalEarnings) }}</strong>
           </td>
           <td></td>
         </tr>
@@ -125,7 +124,14 @@ const changePage = (page) => {
     currentPage.value = page;
   }
 };
+const formatCurrency = (value) => {
+  const amount = new Intl.NumberFormat("es-ES", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value || 0);
 
+  return `$ ${amount}`;
+};
 const calculateTotal = computed(() => {
   const total = props.items.reduce(
     (sum, item) => sum + parseFloat(item.amount),

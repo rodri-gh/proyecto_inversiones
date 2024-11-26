@@ -73,8 +73,8 @@ const getfaqs = async () => {
 
 const saveFaq = async () => {
   const fieldsToValidate = [
-    { value: ask.value, ask: "Pregunta", type: "text" },
-    { value: answer.value, answer: "Respuesta", type: "text" },
+    { value: ask.value, name: "Pregunta", type: "text" },
+    { value: answer.value, name: "Respuesta", type: "text" },
   ];
 
   if (!validateInputs(fieldsToValidate)) {

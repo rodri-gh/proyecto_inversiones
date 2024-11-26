@@ -87,7 +87,7 @@ const iniciarSesion = async () => {
       icon: "warning",
       title: "Error!",
       text: "Ingrese sus credenciales",
-      timer: 1000,
+      timer: 1500,
       showConfirmButton: false,
     });
     return;
@@ -100,7 +100,18 @@ const iniciarSesion = async () => {
     const data = await axios.post(baseUrl, datos);
     const userId = data.data.account.userId;
     const dataUser = await axios.get(baseUrGetUser + userId, header);
-    console.log(dataUser.data.id);
+    console.log("usuario datos", dataUser);
+    if (dataUser.data.deleted === 1) {
+      Swal.fire({
+        icon: "error",
+        title: "Error!",
+        text: "Su cuenta está inactiva, contáctese con nosotros",
+        timer: 2500,
+        showConfirmButton: false,
+      });
+      return;
+    }
+
     data.data.account.role = dataUser.data.role;
     data.data.account.user_id = dataUser.data.id;
     console.log(data.data.account);

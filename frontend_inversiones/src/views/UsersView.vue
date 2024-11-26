@@ -215,6 +215,7 @@ const headersTable = [
   "Apellidos",
   "Nro de Documento",
   "Nombre de usuario",
+  "Rol",
   "Correo",
   "Teléfono",
   "Estado",
