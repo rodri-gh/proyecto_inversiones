@@ -160,7 +160,15 @@
           v-model="documentNumber"
           type="text"
           placeholder="Ingrese el número de documento"
-        />
+          @input="validateDocumentNumber($event.target.value)"
+        >
+          <span
+            v-if="documentNumberError"
+            class="text-danger small mt-1 d-block"
+          >
+            {{ documentNumberError }}
+          </span>
+        </Input>
         <Input
           id="email"
           label="Correo"
@@ -205,6 +213,7 @@ import { existAlert, validateInputs } from "@/utils/validateInputs";
 const headersTable = [
   "Nombre(s)",
   "Apellidos",
+  "Nro de Documento",
   "Nombre de usuario",
   "Correo",
   "Teléfono",
@@ -226,6 +235,7 @@ const email = ref("");
 const phone = ref("");
 const role = ref("");
 const documentNumber = ref("");
+const documentNumberError = ref("");
 
 const selectedUser = ref({});
 const summaryUsers = ref([]);
@@ -266,6 +276,28 @@ const selectUser = (user) => {
   openModal("modalUser");
 };
 
+const validateDocumentNumber = (value) => {
+  if (!value) {
+    documentNumberError.value = "";
+    return true;
+  }
+
+  const guiones = (value.match(/-/g) || []).length;
+  if (guiones > 1) {
+    documentNumberError.value = "Solo se permite un guión";
+    return false;
+  }
+
+  const letras = (value.match(/[A-Za-z]/g) || []).length;
+  if (letras > 4) {
+    documentNumberError.value = "No se permiten más de 4 letras";
+    return false;
+  }
+
+  documentNumberError.value = "";
+  return true;
+};
+
 const getsummaryUsers = () => {
   if (users.value.length > 0) {
     let userTotals = users.value.length;
@@ -296,7 +328,15 @@ const getsummaryUsers = () => {
 };
 
 const createUser = async () => {
-  console.log("documentNumber", documentNumber.value);
+  if (!validateDocumentNumber(documentNumber.value)) {
+    Swal.fire({
+      icon: "error",
+      title: "Error en el número de documento",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return;
+  }
 
   if (
     !validateInputs([
@@ -361,8 +401,11 @@ const createUser = async () => {
       timer: 2500,
     });
   } catch (error) {
-    if (error.response && error.response.status === 400) {
-      existAlert(error.response.data.message);
+    if (
+      error.response &&
+      (error.response.status === 409 || error.response.status === 400)
+    ) {
+      existAlert("Ya existe un usuario con esos datos");
     } else {
       console.log(error);
     }
@@ -388,6 +431,7 @@ const reset = () => {
   phone.value = "";
   selectedUser.value = {};
   role.value = "";
+  documentNumber.value = "";
 };
 </script>
 

@@ -1,17 +1,39 @@
 import express from 'express';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
-import { Project, Investment, Contract, ProjectMineral, 
-  ProjectTimeline, Mineral, 
-  OperatingExpense} from '../models/mainExport.js';
+import {
+  Project, Investment, Contract, ProjectMineral,
+  ProjectTimeline, Mineral,
+  OperatingExpense
+} from '../models/mainExport.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
 
 
 const router = express.Router();
 
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+
+  try {
+
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'N/A';
+
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    return 'N/A';
+  }
+};
+
+
 router.get('/', async function (req, res, next) {
   try {
     const projects = await Project.findAll({
+      order: [['startDate', 'ASC']],
       include: [
         {
           model: ProjectMineral,
@@ -24,11 +46,17 @@ router.get('/', async function (req, res, next) {
               model: Mineral,
               required: false,
             }
-          ] 
+          ]
         }
       ]
     });
-    getHandleSuccess(200)(res, projects);
+    const formattedProjects = projects.map(project => ({
+      ...project.toJSON(),
+      startDate: formatDate(project.startDate),
+      endDate: formatDate(project.endDate)
+    }));
+
+    getHandleSuccess(200)(res, formattedProjects);
   } catch (error) {
     getHandleError(error, res);
   }
@@ -38,22 +66,22 @@ router.get('/:id', async function (req, res, next) {
   const { id } = req.params;
   try {
     const project = await Project.findOne({
-        where: { id: id },
-        include: [
-          {
-            model: Investment,
-            required: false,
-          },
-          {
+      where: { id: id },
+      include: [
+        {
+          model: Investment,
+          required: false,
+        },
+        {
           model: OperatingExpense,
           required: false,
-          },
-          {
-            model: ProjectMineral,
-            required: false,
-          }
-        ]
-      });
+        },
+        {
+          model: ProjectMineral,
+          required: false,
+        }
+      ]
+    });
     verifyIfIdExists(project);
     getHandleSuccess(200)(res, project);
   } catch (error) {
@@ -66,16 +94,20 @@ router.get('/user/:id', async function (req, res) {
   try {
     const investments = await Investment.findAll({
       where: { userId: id },
-      include: [
-        {
-          model: Project,
-        }
-      ]
+      include: [{ model: Project }],
+      order: [[Project, 'startDate', 'ASC']]
     });
     const projects = investments.map(investment => investment.project);
-    const uniqueProjects = projects.filter((project, index, self) =>
-      index === self.findIndex((p) => p.id === project.id)
-    );
+    const uniqueProjects = projects
+      .filter((project, index, self) =>
+        index === self.findIndex((p) => p.id === project.id)
+      )
+      .map(project => ({
+        ...project.toJSON(),
+        startDate: formatDate(project.startDate),
+        endDate: formatDate(project.endDate)
+      }));
+
     getHandleSuccess(200)(res, uniqueProjects);
   } catch (error) {
     getHandleError(error, res);

@@ -43,6 +43,14 @@ router.get('/:id', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   const { email, phone, role, name, lastName, documentNumber } = req.body;
+
+
+
+  if (!email || !phone || !role || !name || !lastName || !documentNumber) {
+    return res.status(400).json({ message: 'All fields are required ' });
+  }
+
+
   const transaction = await sequelize.transaction();
   try {
     const newUser = await User.create({ email, phone, role: role, name, lastName, documentNumber }, {

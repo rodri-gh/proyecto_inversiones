@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center bg-white py-2">
+  <div class="text-center bg-white py-5">
     <h2 class="mb-4">Nuestro Blog</h2>
     <Carousel v-bind="config">
       <Slide v-for="(post, index) in posts.slice(0, 10)" :key="index">

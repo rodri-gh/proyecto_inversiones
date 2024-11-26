@@ -209,6 +209,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import Swal from "sweetalert2";
 import TableSettings from "@/components/tables/TableSettings.vue";
 import Modal from "@/components/base/Modal.vue";
 import Input from "@/components/base/Input.vue";
@@ -270,7 +271,25 @@ const selectSetting = (field) => {
   tempSettings.value = { ...settings.value };
   openModal("modalSetting");
 };
+
+const isEmptyValue = (value) => {
+  if (value === null || value === undefined) return true;
+  if (typeof value === "string" && value.trim() === "") return true;
+  if (value instanceof File) return false;
+  return false;
+};
+
 const updateSettings = async () => {
+  if (isEmptyValue(tempSettings.value[selectedField.value])) {
+    await Swal.fire({
+      icon: "error",
+      title: "Campo vacío",
+      text: "El campo no puede estar vacío. Por favor, ingrese un valor válido.",
+      confirmButtonText: "Entendido",
+    });
+    return;
+  }
+
   const formData = new FormData();
 
   if (
@@ -300,8 +319,19 @@ const updateSettings = async () => {
 
     await getSettings();
     closeModal("modalSetting");
+    await Swal.fire({
+      icon: "success",
+      title: "Actualizado",
+      text: "El campo se actualizó correctamente",
+      timer: 1500,
+    });
   } catch (error) {
     console.error(error);
+    await Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Ocurrió un error al actualizar el campo",
+    });
   }
 };
 const reset = () => {

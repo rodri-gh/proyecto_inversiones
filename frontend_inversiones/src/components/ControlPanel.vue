@@ -151,13 +151,16 @@ const iconMap = {
         <div class="navbar-left">
           <a class="navbar-brand" href="#">
             <img
-              :src="settings.logo"
+              :src="
+                settings.logo ||
+                'https://as1.ftcdn.net/v2/jpg/01/80/37/76/1000_F_180377624_wOuVL0f23adqaXxGdOkOVglYuilE8Bhu.jpg'
+              "
               alt="Logo"
               class="brand me-1 navbar-logo"
               width="100"
               height="50"
             />
-            <b>{{ settings.name }}</b>
+            <b>{{ settings.name || "Mi empresa" }}</b>
           </a>
         </div>
         <div class="navbar-content">

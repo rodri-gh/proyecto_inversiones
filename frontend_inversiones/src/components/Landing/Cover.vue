@@ -1,5 +1,5 @@
 <template>
-  <div class="fondo">
+  <div class="fondo py-5">
     <h1>{{ settings.homeTitle }}</h1>
     <p>{{ settings.homeText }}</p>
     <button class="button-config" @click="scrollToSection('contact')">

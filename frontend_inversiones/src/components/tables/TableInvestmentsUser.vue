@@ -13,7 +13,7 @@
           </td>
         </tr>
         <tr v-for="item in paginatedItems" :key="item.id">
-          <td>{{ formatDate(item.investmentDate) }}</td>
+          <td>{{ item.investmentDate }}</td>
           <td>{{ item.amount }}</td>
           <td>{{ item.currency }}</td>
           <td>{{ item.profitPercentage }}%</td>

@@ -13,6 +13,7 @@
         <tr v-for="item in paginatedItems" :key="item.id">
           <td>{{ item.name }}</td>
           <td>{{ item.lastName }}</td>
+          <td>{{ item.documentNumber }}</td>
           <td>{{ item.account.username }}</td>
           <td>{{ item.email }}</td>
           <td>{{ item.phone }}</td>

@@ -20,6 +20,7 @@
                 type="date"
                 class="form-control"
                 v-model="filters.endDate"
+                :min="filters.startDate"
               />
             </div>
             <div class="col-md-2">
@@ -28,6 +29,7 @@
                 type="number"
                 class="form-control"
                 v-model="filters.minAmount"
+                min="0"
               />
             </div>
             <div class="col-md-2">

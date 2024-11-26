@@ -9,6 +9,7 @@
       class="form-control m-0"
       :placeholder="placeholder"
     />
+    <slot></slot>
   </div>
 </template>
 

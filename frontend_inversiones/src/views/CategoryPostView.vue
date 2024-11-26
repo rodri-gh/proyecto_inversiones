@@ -46,6 +46,11 @@ import TableCategoryPost from "@/components/tables/TableCategoryPost.vue";
 import Modal from "@/components/base/Modal.vue";
 import Input from "@/components/base/Input.vue";
 import { closeModal, openModal } from "@/utils/modal";
+import {
+  validateInputs,
+  successAlert,
+  existAlert,
+} from "@/utils/validateInputs";
 
 const headers = ["Nombre", "Estado", "Acciones"];
 
@@ -69,6 +74,14 @@ const getCategoryPosts = async () => {
 };
 
 const saveCategory = async () => {
+  const fieldsToValidate = [
+    { value: name.value, name: "Nombre", type: "text" },
+  ];
+
+  if (!validateInputs(fieldsToValidate)) {
+    return;
+  }
+
   const method = selectedCategoryPost.value.id ? "put" : "post";
   const url = selectedCategoryPost.value.id
     ? `${baseURL}${selectedCategoryPost.value.id}`
@@ -80,10 +93,15 @@ const saveCategory = async () => {
     await axios[method](url, categoryPost);
 
     closeModal("modalCategoryPost");
+    successAlert("Categoria de post guardado correctamente");
     getCategoryPosts();
     reset();
   } catch (error) {
-    console.log(error);
+    if (error.response.status === 409) {
+      existAlert("La categoria ya existe");
+    } else {
+      console.log(error);
+    }
   }
 };
 

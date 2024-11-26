@@ -107,15 +107,19 @@ const navLinks = computed(() => {
       <div class="navbar-container">
         <div class="navbar-left">
           <img
-            :src="settings.logo"
+            :src="
+              settings.logo ||
+              'https://as1.ftcdn.net/v2/jpg/01/80/37/76/1000_F_180377624_wOuVL0f23adqaXxGdOkOVglYuilE8Bhu.jpg'
+            "
             width="100"
             height="50"
             alt="Logo"
             class="navbar-logo"
           />
-          <a class="navbar-brand mx-1" href="/">{{ settings.name }}</a>
+          <a class="navbar-brand mx-1" href="/">{{
+            settings.name || "Mi Empresa"
+          }}</a>
         </div>
-
         <button
           class="navbar-toggler"
           :class="{ 'is-active': isMobileMenuOpen }"

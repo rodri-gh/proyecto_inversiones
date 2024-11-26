@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center">
+  <div class="text-center py-5">
     <h1 class="mb-4">Preguntas Frecuentes</h1>
     <div class="accordion w-50 mx-auto" id="faqAccordion">
       <div v-for="(faq, index) in faqs" :key="index" class="accordion-item">
