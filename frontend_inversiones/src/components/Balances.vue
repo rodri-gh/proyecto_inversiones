@@ -2,6 +2,7 @@
 import { getHeaderRequest, getUserIdOfLocalStorage } from "@/authService";
 import axios from "axios";
 import { onMounted, ref } from "vue";
+import { formatDate } from "@/router/viewFormat";
 
 const financialSummary = ref({});
 const userId = getUserIdOfLocalStorage();
@@ -86,7 +87,7 @@ const getMovementsOfuser = async () => {
             </div>
             <div class="card-body">
               <div v-if="totallyInvested != null && totallyInvested > 0 ">
-                <p>{{ totallyInvested }}</p>
+                <p>${{ totallyInvested }}</p>
               </div> 
               <div v-else class="text-muted">No hay Inversiones.</div>
             </div>
@@ -102,7 +103,7 @@ const getMovementsOfuser = async () => {
             <div class="card-body">
               <div v-if="performanceOfInvestments != null">
                 <p>Total de Inversiones Finalizadas: {{ performanceOfInvestments.totallyInvested }}</p>
-                <p>Total Rendimiento de esas inversiones: {{ performanceOfInvestments.profitOrLosess }}</p>
+                <p>Total Rendimiento de esas inversiones: ${{ performanceOfInvestments.profitOrLosess }}</p>
               </div> 
               <div v-else class="text-muted">No hay rendimiento de tus inversiones aun.</div>
             </div>
@@ -122,12 +123,12 @@ const getMovementsOfuser = async () => {
                     class="list-group-item"
                   >
                     <div>
-                      <strong>{{ item.tipo }}</strong> - {{ item.descripcion }}
+                      <strong>{{ item.tipo }}</strong>
                     </div>
                     <div class="d-flex justify-content-between">
-                      <span class="text-muted">{{ item.fecha }}</span>
+                      <span class="text-muted">{{ formatDate(item.fecha ) }}</span>
                       <span class="text-success"
-                        ><strong>{{ item.amount }}</strong></span
+                        ><strong>${{ item.amount }}</strong></span
                       >
                     </div>
                   </li>
