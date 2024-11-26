@@ -161,7 +161,7 @@
                 v-model="selectedMineral"
                 @change="addMineral"
               >
-                <option value="">Seleccione un mineral</option>
+                <option value="" disabled>Seleccione un mineral</option>
                 <option
                   v-for="mineral in availableMinerals"
                   :key="mineral.id"
@@ -256,7 +256,7 @@
                 <Select
                   :options="[
                     { name: 'Abierto', value: 'open' },
-                    { name: 'En transito', value: 'in_transit' },
+                    //{ name: 'En transito', value: 'in_transit' },
                     { name: 'Cerrado', value: 'closed' },
                   ]"
                   label="Estado del Proyecto"
@@ -308,6 +308,7 @@ import {
 import CardsSummary from "@/components/CardsSummary.vue";
 import Select from "@/components/base/Select.vue";
 import { validateInputs } from "@/utils/validateInputs";
+import { formatDate, standardFormatDate } from "@/router/viewFormat";
 
 const baseURL = `${import.meta.env.VITE_API_URL}/`;
 const projects = ref([]);
@@ -329,7 +330,7 @@ const inactiveUsers = ref([]);
 const clientUsers = ref([]);
 const availableMinerals = ref([]);
 const selectedMinerals = ref([]);
-const selectedMineral = ref({});
+const selectedMineral = ref("");
 
 const userIdoOfProject = getUserIdOfLocalStorage();
 const userRole = getUserRoleOfLocalStorage();
@@ -455,12 +456,16 @@ const getsummaryProjects = () => {
 };
 
 const selectProject = (project) => {
+  console.log(project.startDate); 
+  console.log(project.endDate);
   selectedProject.value = project;
   name.value = project.name;
   description.value = project.description;
   investmentGoal.value = project.investmentGoal;
   profitPercentage.value = project.profitPercentage;
   status.value = project.status;
+  startDate.value = standardFormatDate(project.startDate);
+  endDate.value = standardFormatDate(project.endDate);
   project.projectMinerals.forEach((projectMineral) => {
     const mineralWithId = {
       name: projectMineral.mineral.name,
@@ -493,7 +498,7 @@ const reset = () => {
   profitPercentage.value = 0;
   selectedProject.value = {};
   selectedMinerals.value = [];
-  selectedMineral.value = {};
+  selectedMineral.value = "";
 };
 
 const saveProject = async () => {

@@ -125,6 +125,9 @@ const addDetailsProjectObject =  () => {
             }
         ],
         };
+    console.log(Object.keys(project.value.investments)); 
+    console.log(Object.values(project.value.earnings));
+    console.log(Object.values(project.value.repeatedAverages));
     gananciaData.value = {
         labels: Object.keys(project.value.investments),
         datasets: [

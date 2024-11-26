@@ -97,6 +97,7 @@ import Select from "@/components/base/Select.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import { getHeaderRequest } from "@/authService";
 import { eventBus } from "@/eventBus";
+import { standardFormatDate } from "@/router/viewFormat";
 
 const headers = ["Usuario", "Cantidad", "Fecha", "Rendimiento", "Acciones"];
 
@@ -157,10 +158,10 @@ const getUsers = async () => {
 
 const selectInvestment = (investment) => {
   selectedInvestment.value = investment;
-  user_id.value = investment.user_id;
+  user_id.value = investment.userId;
   amount.value = investment.amount;
-  investment_date.value = investment.investment_date;
-  profit_percentage.value = investment.profit_percentage;
+  investment_date.value = standardFormatDate(investment.investmentDate);
+  profit_percentage.value = investment.profitPercentage;
   openModal("modalInvestment");
 };
 

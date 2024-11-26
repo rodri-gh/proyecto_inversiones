@@ -13,6 +13,7 @@ import { openModal, closeModal } from "@/utils/modal";
 import TableContracts from "./tables/TableContracts.vue";
 import { eventBus } from "@/eventBus";
 import { handleErrorSwal } from "@/errorMixin";
+import { formatDate } from "@/router/viewFormat";
 
 const props = defineProps({
   idProject: {
@@ -35,8 +36,8 @@ const baseURL = `${import.meta.env.VITE_API_URL}/`;
 const userId = ref("");
 const investmentAmount = ref("");
 const contractCode = ref("");
-const startDate = props.project.startDate;
-const endDate = props.project.endDate;
+const startDate = formatDate(props.project.startDate);
+const endDate = formatDate(props.project.endDate);
 const status = ref("open");
 const contractType = ref("");
 const currency = ref("");

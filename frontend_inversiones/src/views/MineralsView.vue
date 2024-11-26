@@ -147,7 +147,7 @@ const getsummaryMinerals = () => {
     let userTotals = minerals.value.length;
     let projectDeleted = 0;
     for (var item of minerals.value) {
-      if (item.deleted === 0) {
+      if (item.deleted === 1) {
         projectDeleted++;
       }
     }
