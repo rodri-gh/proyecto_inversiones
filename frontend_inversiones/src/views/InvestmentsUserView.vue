@@ -171,8 +171,8 @@ const summaryInvestments = ref([]);
 
 const headers = [
   "Fecha de Inversión",
-  "Monto",
-  "Moneda",
+  "Monto (USD)",
+
   "Porcentaje de Ganancia",
   "Estado",
   "Ganancias",

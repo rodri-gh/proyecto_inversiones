@@ -58,8 +58,13 @@
               label="Precio"
               v-model="price"
               type="number"
+              min="0"
               placeholder="Ingrese el precio"
+              @input="validateNumber($event.target.value)"
             />
+            <span v-if="numberError" class="text-danger small mt-1 d-block">
+              {{ numberError }}
+            </span>
 
             <InputTextArea
               id="description"
@@ -89,6 +94,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import Swal from "sweetalert2";
 import Button from "@/components/base/Button.vue";
 import TableMinerals from "@/components/tables/TableMinerals.vue";
 import Modal from "@/components/base/Modal.vue";
@@ -125,6 +131,7 @@ const image = ref(null);
 const previewUrl = ref(null);
 const selectedMineral = ref({});
 const summaryMinerals = ref([]);
+const numberError = ref("");
 
 const inputFileRef = ref(null);
 
@@ -140,6 +147,16 @@ const getMinerals = async () => {
     getsummaryMinerals();
   } catch (error) {
     console.log(error);
+  }
+};
+
+const validateNumber = (value) => {
+  if (value < 0) {
+    numberError.value = "El precio no puede ser menor a 0";
+    return false;
+  } else {
+    numberError.value = "";
+    return true;
   }
 };
 
@@ -182,6 +199,16 @@ const selectMineral = (mineral) => {
 };
 
 const saveMineral = async () => {
+  if (!validateNumber(price.value)) {
+    Swal.fire({
+      icon: "error",
+      title: "Error el precio no puede ser menor a 0",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return;
+  }
+
   const fieldsToValidate = [
     { value: name.value, name: "Nombre", type: "text" },
     { value: price.value, name: "Precio", type: "number" },

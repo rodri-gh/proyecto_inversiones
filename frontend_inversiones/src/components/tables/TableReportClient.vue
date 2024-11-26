@@ -20,9 +20,7 @@
           <td>{{ item.profitPercentage }}%</td>
           <td>
             {{
-              item.status === "closed"
-                ? Number(item.earnings).toFixed(2)
-                : "0.00"
+              item.status === "closed" ? formatCurrency(item.earnings) : "0.00"
             }}
           </td>
           <td>{{ item.status == "closed" ? "Cerrado" : "Pendiente" }}</td>
