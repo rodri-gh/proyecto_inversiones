@@ -24,9 +24,10 @@
               data-bs-target="#modalMineral"
               text="Nuevo"
               icon="fa fa-plus"
+              class="mb-3"
             />
           </div>
-          <CardsSummary :items="summaryMinerals" />
+          <!--  <CardsSummary :items="summaryMinerals" /> -->
           <TableMinerals
             :headers="headers"
             :items="minerals"
