@@ -17,8 +17,10 @@
           <td>{{ item.user.name }}</td>
           <td>
             {{
-              parseFloat(item.investment.amount) +
-              parseFloat(item.investment.earnings)
+              formatCurrency(
+                parseFloat(item.investment.amount) +
+                  parseFloat(item.investment.earnings)
+              )
             }}
           </td>
           <td>{{ formatDate(item.requestDate) }}</td>
@@ -43,6 +45,13 @@
             >
               <i class="fa fa-times"></i>
             </button>
+
+            <Button
+              @click="() => actions.view(item)"
+              variant="primary"
+              size="sm"
+              text="Ver fotos"
+            />
           </td>
         </tr>
       </tbody>
@@ -86,6 +95,7 @@
 
 <script setup>
 import { computed, ref } from "vue";
+import Button from "@/components/base/Button.vue";
 
 const props = defineProps({
   headers: {
@@ -139,6 +149,14 @@ const getStatusText = (status) => {
     rejected: "Rechazado",
   };
   return texts[status] || status;
+};
+const formatCurrency = (value) => {
+  const amount = new Intl.NumberFormat("es-ES", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value || 0);
+
+  return `$ ${amount}`;
 };
 </script>
 

@@ -216,7 +216,7 @@ const saveMineral = async () => {
     reset();
   } catch (error) {
     if (error.response.status === 409) {
-      existAlert(error.response.data.message);
+      existAlert("El mineral ya existe");
     } else {
       console.log(error);
     }

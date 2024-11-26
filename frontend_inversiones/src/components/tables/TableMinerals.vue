@@ -11,7 +11,7 @@
       </tr>
       <tr v-for="item in items" :key="item.id">
         <td>{{ item.name }}</td>
-        <td>{{ item.price }}</td>
+        <td>{{ formatCurrency(item.price) }}</td>
         <td>{{ item.description }}</td>
         <td>
           <img
@@ -62,4 +62,12 @@ defineProps({
     required: true,
   },
 });
+const formatCurrency = (value) => {
+  const amount = new Intl.NumberFormat("es-ES", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value || 0);
+
+  return `$ ${amount}`;
+};
 </script>

@@ -85,6 +85,41 @@
         />
       </div>
     </div>
+    <!-- Modal para detalles del contrato -->
+    <div class="modal fade" id="photosModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Fotos</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-4 text-center">
+              <h6>Selfie</h6>
+              <img
+                v-if="photos?.selfiePhoto"
+                :src="photos.selfiePhoto"
+                class="img-fluid"
+                alt="Selfie"
+              />
+            </div>
+            <div class="text-center">
+              <h6>Documento</h6>
+              <img
+                v-if="photos?.photoDocument"
+                :src="photos.photoDocument"
+                class="img-fluid"
+                alt="Documento"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -98,6 +133,7 @@ import CardsSummary from "@/components/CardsSummary.vue";
 const withdrawals = ref([]);
 const summaryWithdrawals = ref([]);
 const baseURL = `${import.meta.env.VITE_API_URL}/withdrawal-request/`;
+const photos = ref(null);
 
 const headers = [
   "Proyecto",
@@ -124,6 +160,13 @@ const getWithdrawals = async () => {
   }
 };
 
+const showPictures = (item) => {
+  photos.value = item;
+  const modal = new bootstrap.Modal(document.getElementById("photosModal"));
+  console.log("Photos:", photos.value);
+  console.log("Iversiones:", photos.value.selfiePhoto);
+  modal.show();
+};
 const pendingWithdrawals = computed(() =>
   withdrawals.value.filter((w) => w.status === "pending")
 );
@@ -195,6 +238,7 @@ const rejectWithdrawal = async (id) => {
 const actions = {
   approve: approveWithdrawal,
   reject: rejectWithdrawal,
+  view: showPictures,
 };
 </script>
 
@@ -220,5 +264,9 @@ const actions = {
 
 .tab-content > .active {
   display: block;
+}
+img {
+  height: 350px;
+  width: 350px;
 }
 </style>

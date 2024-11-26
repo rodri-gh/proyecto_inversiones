@@ -6,6 +6,9 @@ import { getHandleSuccess } from '../helpers/handleSuccess.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import { WithdrawalRequest, Project } from '../models/mainExport.js';
 import { verifyIfIdExists } from '../helpers/handleId.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 
 const router = express.Router();
@@ -58,6 +61,21 @@ router.get('/', async (req, res, next) => {
         }
       ]
     });
+
+    withdrawalRequests.forEach(withdrawal => {
+      const url = process.env.URL_BASE;
+      if (withdrawal.selfiePhoto) {
+        const selfiePhoto = withdrawal.selfiePhoto;
+        withdrawal.selfiePhoto = url + '/images/withdrawalRequests/' + selfiePhoto;
+        console.log(withdrawal.selfiePhoto);
+      }
+      if (withdrawal.photoDocument) {
+        const photoDocument = withdrawal.photoDocument;
+        withdrawal.photoDocument = url + '/images/withdrawalRequests/' + photoDocument;
+        console.log(withdrawal.photoDocument);
+      }
+    });
+
     getHandleSuccess(200)(res, withdrawalRequests);
   } catch (error) {
     getHandleError(error, res);

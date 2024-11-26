@@ -285,7 +285,8 @@ const updateSettings = async () => {
       icon: "error",
       title: "Campo vacío",
       text: "El campo no puede estar vacío. Por favor, ingrese un valor válido.",
-      confirmButtonText: "Entendido",
+      showConfirmButton: false,
+      timer: 1500,
     });
     return;
   }
