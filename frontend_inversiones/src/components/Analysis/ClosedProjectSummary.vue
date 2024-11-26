@@ -125,11 +125,10 @@ const addDetailsProjectObject =  () => {
             }
         ],
         };
-    console.log(Object.keys(project.value.investments)); 
-    console.log(Object.values(project.value.earnings));
-    console.log(Object.values(project.value.repeatedAverages));
+        const users = project.value.investments.map(investment => investment.user.name);
+        console.log(users)
     gananciaData.value = {
-        labels: Object.keys(project.value.investments),
+        labels: users,
         datasets: [
             {
             label: 'Ganancia inversion',

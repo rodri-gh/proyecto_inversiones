@@ -93,7 +93,7 @@
           </div>
           <div class="modal-body">
             <div class="row">
-              <div class="col-4">
+              <div class="col-6">
                 <div class="mb-3">
                   <label for="mineral" class="form-label">
                     Selecciona un mineral
@@ -151,7 +151,7 @@
                   />
                 </div>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-6">
                 <div v-if="selectedMinerals.length > 0">
                   <h6>Mineral seleccionado:</h6>
                   <ul class="list-group">
@@ -215,6 +215,7 @@
                   </div>
                 </div>
               </div>
+              <!--
               <div class="col-4">
                 <Select
                   :options="users"
@@ -235,7 +236,7 @@
                     Cel: {{ selectedUser?.phone || "Seleccione un usuario" }}
                   </p>
                 </div>
-              </div>
+              </div>  -->
             </div>
           </div>
           <div class="modal-footer">

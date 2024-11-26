@@ -30,28 +30,22 @@
     >
       <div class="row">
         <div class="col-md-6">
-          <Select
-            :options="users"
-            label="Usuario"
-            value-key="id"
-            label-key="name"
-            v-model="user_id"
-            select-class="col-8"
-          />
-          <div class="mt-2">
-            <h5>Datos del Usuario Seleccionado:</h5>
-            <p>
-              <strong>Nombre:</strong>
-              {{ selectedUser?.name || "Seleccione un usuario" }}
-            </p>
-            <p>
-              <strong>Email:</strong>
-              {{ selectedUser?.email || "Seleccione un usuario" }}
-            </p>
-            <p>
-              <strong>Teléfono:</strong>
-              {{ selectedUser?.phone || "Seleccione un usuario" }}
-            </p>
+          <br>
+          <div>
+            <label class="form-label">Usuario</label>
+            <v-select
+              v-model="filters.userId"
+              :options="users"
+              :reduce="(option) => option.id"
+              label="fullName"
+              :filterable="false"
+              @search="searchUsers"
+              placeholder="Buscar usuario..."
+            >
+              <template #no-options>
+                Escriba para buscar usuarios...
+              </template>
+            </v-select>
           </div>
         </div>
         <div class="col-md-6">
@@ -98,6 +92,8 @@ import { openModal, closeModal } from "@/utils/modal";
 import { getHeaderRequest } from "@/authService";
 import { eventBus } from "@/eventBus";
 import { standardFormatDate } from "@/router/viewFormat";
+import VSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 
 const headers = ["Usuario", "Cantidad", "Fecha", "Rendimiento", "Acciones"];
 
@@ -109,6 +105,7 @@ const props = defineProps({
 });
 
 const users = ref([]);
+const baseURLStandard = `${import.meta.env.VITE_API_URL}/`;
 const baseURL = `${import.meta.env.VITE_API_URL}/investment/`;
 const investments = ref([]);
 const amount = ref(0);
@@ -119,9 +116,19 @@ const user_id = ref("");
 
 const header = getHeaderRequest();
 
+const filters = ref({
+  startDate: "",
+  endDate: "",
+  minAmount: "",
+  maxAmount: "",
+  mineralId: "",
+  projectId: "",
+  userId: "",
+  status: "",
+});
+
 onMounted(() => {
   getInvestments();
-  getUsers();
   console.log(props.idProjectInvestment);
   eventBus.on("data-updated", getInvestments);
 });
@@ -141,27 +148,29 @@ const getInvestments = async () => {
     console.error(error);
   }
 };
-
-const getUsers = async () => {
-  console.log;
-  try {
-    const data = await axios.get(
-      `${import.meta.env.VITE_API_URL}/user`,
-      header
-    );
-    users.value = data.data;
-    console.log(users.value);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 const selectInvestment = (investment) => {
+  console.log(investment);
   selectedInvestment.value = investment;
   user_id.value = investment.userId;
   amount.value = investment.amount;
   investment_date.value = standardFormatDate(investment.investmentDate);
   profit_percentage.value = investment.profitPercentage;
+  filters.value = {
+  startDate: "",
+  endDate: "",
+  minAmount: "",
+  maxAmount: "",
+  mineralId: "",
+  projectId: "",
+  name: investment.user.name,
+  userId: investment.userId,
+  status: "",}
+  users.value = [{
+      id: investment.userId,
+      fullName: `${investment.user.name} ${investment.user.lastName}`,
+      name: investment.user.name,
+      lastName: investment.user.lastName,
+    }]
   openModal("modalInvestment");
 };
 
@@ -176,7 +185,6 @@ const saveInvestment = async () => {
     await axios[method](url, formData, header);
     closeModal("modalInvestment");
     getInvestments();
-    getUsers();
     reset();
   } catch (error) {
     console.log(error);
@@ -185,21 +193,64 @@ const saveInvestment = async () => {
 
 const createFormData = () => {
   const formData = new FormData();
-  formData.append("userId", user_id.value);
+  formData.append("userId", filters.value.userId);
   formData.append("amount", amount.value);
   formData.append("investmentDate", investment_date.value);
   formData.append("profitPercentage", profit_percentage.value);
   formData.append("projectId", props.idProjectInvestment);
   return formData;
 };
-
-const selectedUser = computed(() => {
-  return users.value.find((user) => String(user.id) === String(user_id.value));
-});
 const reset = () => {
   amount.value = 0;
   investment_date.value = "";
   profit_percentage.value = 0;
   selectedInvestment.value = {};
+  filters.value = {
+  startDate: "",
+  endDate: "",
+  minAmount: "",
+  maxAmount: "",
+  mineralId: "",
+  projectId: "",
+  userId: "",
+  status: "",
+  };
+  users.value = [];
+};
+
+const searchUsers = async (search, loading) => {
+  if (search.length < 2) return;
+  loading(true);
+  try {
+    const { data } = await axios.get(
+      `${baseURLStandard}report-admin/users/search?search=${encodeURIComponent(search)}`,
+      { headers: header }
+    );
+    users.value = data.map((user) => ({
+      id: user.id,
+      fullName: `${user.name} ${user.lastName}`,
+      name: user.name,
+      lastName: user.lastName,
+    }));
+
+    // Si hay un usuario seleccionado, asegurarse de mantenerlo en las opciones
+    if (filters.value.userId) {
+      const selectedUser = users.value.find(
+        (u) => u.id === filters.value.userId
+      );
+      if (!selectedUser) {
+        const currentUser = users.value.find(
+          (u) => u.id === filters.value.userId
+        );
+        if (currentUser) {
+          users.value = [...users.value, currentUser];
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error buscando usuarios:", error);
+  } finally {
+    loading(false);
+  }
 };
 </script>

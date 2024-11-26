@@ -8,12 +8,13 @@ import { onMounted, ref, computed, onUnmounted, defineProps } from "vue";
 import Modal from "./base/Modal.vue";
 import Button from "./base/Button.vue";
 import Input from "@/components/base/Input.vue";
-import Select from "@/components/base/Select.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import TableContracts from "./tables/TableContracts.vue";
 import { eventBus } from "@/eventBus";
 import { handleErrorSwal } from "@/errorMixin";
 import { formatDate } from "@/router/viewFormat";
+import VSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 
 const props = defineProps({
   idProject: {
@@ -44,6 +45,16 @@ const currency = ref("");
 const contractFilePath = ref(null);
 const selectedContract = ref({});
 const amountsInvestmentGoal = ref({});
+const filters = ref({
+  startDate: "",
+  endDate: "",
+  minAmount: "",
+  maxAmount: "",
+  mineralId: "",
+  projectId: "",
+  userId: "",
+  status: "",
+});
 
 const headers = [
   "Usuario",
@@ -75,7 +86,6 @@ const updateData = () => {
 
 onMounted(() => {
   getContracts();
-  getUsers();
   getAmountsInvestmentGoal();
   eventBus.on("data-updated", getContracts);
 });
@@ -97,19 +107,6 @@ const getAmountsInvestmentGoal = async () => {
   }
 };
 
-const getUsers = async () => {
-  try {
-    const data = await axios.get(
-      `${import.meta.env.VITE_API_URL}/user`,
-      header
-    );
-    users.value = data.data;
-    console.log(users.value);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 const selectContract = (contract) => {
   selectedContract.value = contract;
   userId.value = contract.userId;
@@ -118,6 +115,22 @@ const selectContract = (contract) => {
   status.value = contract.status;
   contractType.value = contract.contractType;
   currency.value = contract.currency;
+  filters.value = {
+  startDate: "",
+  endDate: "",
+  minAmount: "",
+  maxAmount: "",
+  mineralId: "",
+  projectId: "",
+  name: contract.user.name,
+  userId: contract.userId,
+  status: "",}
+  users.value = [{
+      id: contract.userId,
+      fullName: `${contract.user.name} ${contract.user.lastName}`,
+      name: contract.user.name,
+      lastName: contract.user.lastName,
+    }]
   openModal("modalContract");
 };
 
@@ -144,7 +157,6 @@ const saveContract = async () => {
     await axios[method](url, formData, header);
     closeModal("modalContract");
     getContracts();
-    getUsers();
     getAmountsInvestmentGoal();
     updateData();
     reset();
@@ -156,7 +168,7 @@ const saveContract = async () => {
 const createFormData = () => {
   const formData = new FormData();
   formData.append("projectId", props.idProject);
-  formData.append("userId", userId.value);
+  formData.append("userId", filters.value.userId);
   formData.append("investmentAmount", investmentAmount.value);
   formData.append("contractCode", contractCode.value);
   formData.append("startDate", props.project.startDate);
@@ -180,6 +192,17 @@ const reset = () => {
   currency.value = "";
   selectedContract.value = {};
   contractFilePath.value = null;
+  filters.value = {
+  startDate: "",
+  endDate: "",
+  minAmount: "",
+  maxAmount: "",
+  mineralId: "",
+  projectId: "",
+  userId: "",
+  status: "",
+  };
+  users.value = [];
 };
 
 const handleFileChange = (fileEvent) => {
@@ -198,6 +221,46 @@ const previewUrl = computed(() => {
   }
   return "";
 });
+
+const searchUsers = async (search, loading) => {
+  console.log("Search term:", search);
+  if (search.length < 2) return;
+  loading(true);
+  try {
+    console.log("Endpoint URL:", `${baseURL}users/search?search=${encodeURIComponent(search)}`);
+    const { data } = await axios.get(
+      `${baseURL}report-admin/users/search?search=${encodeURIComponent(search)}`,
+      { headers: header }
+    );
+    console.log("Users result:", data);
+    users.value = data.map((user) => ({
+      id: user.id,
+      fullName: `${user.name} ${user.lastName}`,
+      name: user.name,
+      lastName: user.lastName,
+    }));
+
+    // Si hay un usuario seleccionado, asegurarse de mantenerlo en las opciones
+    if (filters.value.userId) {
+      const selectedUser = users.value.find(
+        (u) => u.id === filters.value.userId
+      );
+      if (!selectedUser) {
+        const currentUser = users.value.find(
+          (u) => u.id === filters.value.userId
+        );
+        if (currentUser) {
+          users.value = [...users.value, currentUser];
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error buscando usuarios:", error);
+  } finally {
+    loading(false);
+  }
+};
+
 </script>
 
 <template>
@@ -267,27 +330,22 @@ const previewUrl = computed(() => {
               type="number"
               v-model="investmentAmount"
             />
-            <Select
-              :options="users"
-              label="Inversor"
-              value-key="id"
-              label-key="name"
-              v-model="userId"
-              select-class="col-8"
-            />
-            <div class="mt-4">
-              <p>
-                <strong>Nombre:</strong>
-                {{ selectedUser?.name || "Seleccione un usuario" }}
-              </p>
-              <p>
-                <strong>Email:</strong>
-                {{ selectedUser?.email || "Seleccione un usuario" }}
-              </p>
-              <p>
-                <strong>Teléfono:</strong>
-                {{ selectedUser?.phone || "Seleccione un usuario" }}
-              </p>
+            <br>
+            <div>
+              <label class="form-label">Usuario</label>
+              <v-select
+                v-model="filters.userId"
+                :options="users"
+                :reduce="(option) => option.id"
+                label="fullName"
+                :filterable="false"
+                @search="searchUsers"
+                placeholder="Buscar usuario..."
+              >
+                <template #no-options>
+                  Escriba para buscar usuarios...
+                </template>
+              </v-select>
             </div>
           </div>
           <div class="col-md-8">
