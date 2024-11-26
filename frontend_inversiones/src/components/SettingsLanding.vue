@@ -324,6 +324,7 @@ const updateSettings = async () => {
       title: "Actualizado",
       text: "El campo se actualizó correctamente",
       timer: 1500,
+      showConfirmButton: false,
     });
   } catch (error) {
     console.error(error);
@@ -331,6 +332,8 @@ const updateSettings = async () => {
       icon: "error",
       title: "Error",
       text: "Ocurrió un error al actualizar el campo",
+      showConfirmButton: false,
+      timer: 1500,
     });
   }
 };

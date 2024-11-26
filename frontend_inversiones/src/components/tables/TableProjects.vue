@@ -15,8 +15,8 @@
           <td>{{ item.endDate }}</td>
           <td>{{ item.name }}</td>
           <td>{{ item.description }}</td>
-          <td>{{ item.investmentGoal }}</td>
-          <td>{{ item.profitPercentage }}</td>
+          <td>{{ formatCurrency(item.investmentGoal) }}</td>
+          <td>{{ item.profitPercentage }} %</td>
           <td v-if="item.deleted == 0">No</td>
           <td v-else>Si</td>
           <td>
@@ -128,6 +128,14 @@ const changePage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
   }
+};
+const formatCurrency = (value) => {
+  const amount = new Intl.NumberFormat("es-ES", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value || 0);
+
+  return `$ ${amount}`;
 };
 </script>
 
