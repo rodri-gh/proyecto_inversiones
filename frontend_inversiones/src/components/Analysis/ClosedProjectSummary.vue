@@ -257,12 +257,10 @@ const addDetailsProjectObject = () => {
       </div>
       <br /><br /><br /><br />
       <div class="summary-section">
-        <h4>Minerales del Proyecto</h4>
         <ProjectMineral :idProjectMineral="idProject" />
       </div>
 
       <div class="summary-section">
-        <h4>Historial de Inversiones</h4>
         <Investments :idProjectInvestment="idProject" />
       </div>
     </div>
