@@ -5,6 +5,7 @@ import { onMounted, ref, watch } from 'vue';
 import { formatDate } from '@/router/viewFormat';
 
 const baseUrl = `${import.meta.env.VITE_API_URL}/`;
+const baseUrlAnalisys = `${import.meta.env.VITE_ANALISYS_API_URL}/`;
 const header = getHeaderRequest();
 const selectedMineral = ref('');
 const mineralObject = ref({});
@@ -21,7 +22,115 @@ const chartOptions = ref({
         plotBorderColor: '#333',
     },
     title: {
-        text: 'Tendencia de Precios',
+        text: 'Precios Historicos',
+        style: {
+            color: '#fff',
+            fontSize: '20px',
+            fontWeight: 'bold',
+        },
+    },
+    xAxis: {
+        categories: [],
+        labels: {
+            style: {
+                color: '#ccc',
+                fontSize: '12px',
+            },
+        },
+        gridLineColor: '#333', 
+        gridLineWidth: 1,
+    },
+    yAxis: {
+        title: {
+            text: 'Precio en USD',
+            style: {
+                color: '#ccc', 
+            },
+        },
+        labels: {
+            style: {
+                color: '#ccc',
+            },
+        },
+        gridLineColor: '#333', 
+        gridLineWidth: 1,
+    },
+    series: [
+        {
+            name: '',
+            data: [],
+            color: '#42a5f5',
+            lineWidth: 3, 
+            marker: {
+                enabled: false, 
+            },
+            tooltip: {
+                backgroundColor: '#333', 
+                style: {
+                    color: '#fff',
+                },
+            },
+        },
+    ],
+    tooltip: {
+        shared: true,
+        crosshairs: true,
+        backgroundColor: '#333', 
+        borderWidth: 0,
+        style: {
+            color: '#fff', 
+        },
+    },
+    legend: {
+        itemStyle: {
+            color: '#ccc', 
+        },
+        itemHoverStyle: {
+            color: '#fff',
+        },
+    },
+    responsive: {
+        rules: [
+            {
+                condition: {
+                    maxWidth: 600,
+                },
+                chartOptions: {
+                    chart: {
+                        height: 'auto',
+                    },
+                    xAxis: {
+                        labels: {
+                            style: {
+                                fontSize: '10px',
+                            },
+                        },
+                    },
+                    yAxis: {
+                        labels: {
+                            style: {
+                                fontSize: '10px',
+                            },
+                        },
+                    },
+                },
+            },
+        ],
+    },
+});
+
+const chartOptionsPredictable = ref({
+    chart: {
+        type: 'line',
+        backgroundColor: '#1b1b1b',
+        borderColor: '#333',
+        borderWidth: 1,
+        plotBackgroundColor: '#1b1b1b',
+        plotBorderWidth: 1,
+        plotBorderColor: '#333',
+    },
+    title: {
+        text: 'Precios Historicos',
         style: {
             color: '#fff',
             fontSize: '20px',
@@ -151,11 +260,10 @@ const getMineralPricesHistory = async () => {
 }
 
 const updateMineralPricesGraphic = (selectMineral) => { 
-    console.log(mineralObject.value.Cobre);
+    console.log(mineralObject.value[selectMineral]);
+    
     const dates = [...mineralObject.value[selectMineral].dates];
     const prices = [...mineralObject.value[selectMineral].prices];
-    console.log(dates); 
-    console.log(prices);
     chartOptions.value.xAxis.categories = dates;
     chartOptions.value.series = [
         {
@@ -163,6 +271,14 @@ const updateMineralPricesGraphic = (selectMineral) => {
             data: prices,
         },
     ];
+}
+
+const updatePredictableMineralPricesGraphic = async (selectMineral) => { 
+    try { 
+        const response = await axios.get(baseUrlAnalisys+'predictMineralPrice/'+1 )
+    } catch (e) { 
+        console.error(e);
+    }
 }
 
 watch(selectedMineral, (newValue) => {

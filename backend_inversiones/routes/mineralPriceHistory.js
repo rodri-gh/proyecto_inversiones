@@ -15,10 +15,10 @@ router.get('/', async function (req, res, next) {
   }
 });
 
-router.get('/:id', function (req, res, next) {
+router.get('/:id', async function (req, res, next) {
   const { id } = req.params;
   try {
-    const project = Project.findOne({ where: { id } });
+    const project = await MineralPriceHistory.findAll({ where: { mineralId: id } });
     verifyIfIdExists(project);
     getHandleSuccess(200)(res, project);
   } catch (error) {
