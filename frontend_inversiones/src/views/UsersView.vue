@@ -1,188 +1,76 @@
 <template>
   <div class="users-container">
-    <div class="container col-md-10 mt-5">
+    <div class="container col-md-12 mt-5">
       <h4 class="card-title text-center">Usuarios Registrados</h4>
       <div class="text-end">
-        <Button
-          data-bs-toggle="modal"
-          data-bs-target="#modalUser"
-          text="Nuevo"
-          icon="fa fa-plus"
-          class="btn-color"
-        />
+        <Button data-bs-toggle="modal" data-bs-target="#modalUser" text="Nuevo" icon="fa fa-plus" class="btn-color" />
       </div>
       <CardsSummary :items="summaryUsers" />
       <ul class="nav nav-tabs" id="userTabs" role="tablist">
         <li class="nav-item" role="presentation">
-          <button
-            class="nav-link active"
-            id="all-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#all"
-            type="button"
-            role="tab"
-            aria-controls="all"
-            aria-selected="true"
-          >
+          <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button"
+            role="tab" aria-controls="all" aria-selected="true">
             Todos
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="active-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#active"
-            type="button"
-            role="tab"
-            aria-controls="active"
-            aria-selected="false"
-          >
+          <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button"
+            role="tab" aria-controls="active" aria-selected="false">
             Activos
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="inactive-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#inactive"
-            type="button"
-            role="tab"
-            aria-controls="inactive"
-            aria-selected="false"
-          >
+          <button class="nav-link" id="inactive-tab" data-bs-toggle="tab" data-bs-target="#inactive" type="button"
+            role="tab" aria-controls="inactive" aria-selected="false">
             Inactivos
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="clients-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#clients"
-            type="button"
-            role="tab"
-            aria-controls="clients"
-            aria-selected="false"
-          >
+          <button class="nav-link" id="clients-tab" data-bs-toggle="tab" data-bs-target="#clients" type="button"
+            role="tab" aria-controls="clients" aria-selected="false">
             Clientes
           </button>
         </li>
       </ul>
       <div class="tab-content" id="userTabsContent">
-        <div
-          class="tab-pane fade show active"
-          id="all"
-          role="tabpanel"
-          aria-labelledby="all-tab"
-        >
-          <TableUsers
-            :headers="headersTable"
-            :items="users"
-            :actions="{
-              edit: selectUser,
-              delete: deleteUser,
-            }"
-          />
+        <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+          <TableUsers :headers="headersTable" :items="users" :actions="{
+            edit: selectUser,
+            delete: deleteUser,
+          }" />
         </div>
-        <div
-          class="tab-pane fade"
-          id="active"
-          role="tabpanel"
-          aria-labelledby="active-tab"
-        >
-          <TableUsers
-            :headers="headers"
-            :items="activeUsers"
-            :actions="{
-              edit: selectUser,
-              delete: deleteUser,
-            }"
-          />
+        <div class="tab-pane fade" id="active" role="tabpanel" aria-labelledby="active-tab">
+          <TableUsers :headers="headers" :items="activeUsers" :actions="{
+            edit: selectUser,
+            delete: deleteUser,
+          }" />
         </div>
-        <div
-          class="tab-pane fade"
-          id="inactive"
-          role="tabpanel"
-          aria-labelledby="inactive-tab"
-        >
-          <TableUsers
-            :headers="headers"
-            :items="inactiveUsers"
-            :actions="{
-              edit: selectUser,
-              delete: deleteUser,
-            }"
-          />
+        <div class="tab-pane fade" id="inactive" role="tabpanel" aria-labelledby="inactive-tab">
+          <TableUsers :headers="headers" :items="inactiveUsers" :actions="{
+            edit: selectUser,
+            delete: deleteUser,
+          }" />
         </div>
-        <div
-          class="tab-pane fade"
-          id="clients"
-          role="tabpanel"
-          aria-labelledby="clients-tab"
-        >
-          <TableUsers
-            :headers="headers"
-            :items="clientUsers"
-            :actions="{
-              edit: selectUser,
-              delete: deleteUser,
-            }"
-          />
+        <div class="tab-pane fade" id="clients" role="tabpanel" aria-labelledby="clients-tab">
+          <TableUsers :headers="headers" :items="clientUsers" :actions="{
+            edit: selectUser,
+            delete: deleteUser,
+          }" />
         </div>
       </div>
 
-      <Modal
-        modalId="modalUser"
-        title="Registro de Usuario"
-        :showSaveButton="!selectedUser?.id"
-        :showUpdateButton="Boolean(selectedUser?.id)"
-        @onClose="reset()"
-        @onSave="createUser()"
-      >
-        <Input
-          id="name"
-          label="Nombre"
-          v-model="name"
-          type="text"
-          placeholder="Ingrese el nombre"
-        />
-        <Input
-          id="lastName"
-          label="Apellidos"
-          v-model="lastName"
-          type="text"
-          placeholder="Ingrese los apellidos"
-        />
-        <Input
-          label="Nro de Documento"
-          v-model="documentNumber"
-          type="text"
-          placeholder="Ingrese el número de documento"
-          @input="validateDocumentNumber($event.target.value)"
-        >
-          <span
-            v-if="documentNumberError"
-            class="text-danger small mt-1 d-block"
-          >
-            {{ documentNumberError }}
-          </span>
+      <Modal modalId="modalUser" title="Registro de Usuario" :showSaveButton="!selectedUser?.id"
+        :showUpdateButton="Boolean(selectedUser?.id)" @onClose="reset()" @onSave="createUser()">
+        <Input id="name" label="Nombre" v-model="name" type="text" placeholder="Ingrese el nombre" />
+        <Input id="lastName" label="Apellidos" v-model="lastName" type="text" placeholder="Ingrese los apellidos" />
+        <Input label="Nro de Documento" v-model="documentNumber" type="text"
+          placeholder="Ingrese el número de documento" @input="validateDocumentNumber($event.target.value)">
+        <span v-if="documentNumberError" class="text-danger small mt-1 d-block">
+          {{ documentNumberError }}
+        </span>
         </Input>
-        <Input
-          id="email"
-          label="Correo"
-          v-model="email"
-          type="email"
-          placeholder="Ingrese un correo electrónico"
-        />
-        <Input
-          id="phone"
-          label="Teléfono"
-          v-model="phone"
-          type="text"
-          placeholder="Ingrese número de teléfono"
-        />
+        <Input id="email" label="Correo" v-model="email" type="email" placeholder="Ingrese un correo electrónico" />
+        <Input id="phone" label="Teléfono" v-model="phone" type="text" placeholder="Ingrese número de teléfono" />
 
         <div v-if="rol === 'super_user'" class="mb-3">
           <label for="" class="form-label">Rol</label>
@@ -441,26 +329,29 @@ const reset = () => {
   max-height: 850px;
   overflow-y: auto;
 }
+
 .nav-tabs .nav-link {
   color: #495057;
   background-color: #fff;
   border: 1px solid #dee2e6;
   border-bottom-color: transparent;
 }
+
 .nav-link {
   border-radius: 0;
 }
+
 .nav-tabs .nav-link.active {
   color: white;
   background-color: var(--primary-color);
   border-color: var(--primary-color);
 }
 
-.tab-content > .tab-pane {
+.tab-content>.tab-pane {
   display: none;
 }
 
-.tab-content > .active {
+.tab-content>.active {
   display: block;
 }
 </style>

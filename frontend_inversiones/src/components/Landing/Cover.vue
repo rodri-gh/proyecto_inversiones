@@ -3,7 +3,7 @@
     <h1>{{ settings.homeTitle }}</h1>
     <p>{{ settings.homeText }}</p>
     <button class="button-config" @click="scrollToSection('contact')">
-      Comienza Aqui!
+      Comienza Aquí!
     </button>
   </div>
 </template>
@@ -44,7 +44,7 @@ const scrollToSection = (sectionId) => {
 };
 </script>
 
-<style  scoped>
+<style scoped>
 .fondo {
   position: relative;
   width: 100%;
@@ -59,6 +59,7 @@ const scrollToSection = (sectionId) => {
   align-items: center;
   z-index: 1;
 }
+
 .fondo::after {
   content: "";
   position: absolute;
@@ -70,10 +71,12 @@ const scrollToSection = (sectionId) => {
   pointer-events: none;
   z-index: 0;
 }
+
 h1 {
   color: rgb(255, 94, 0);
   z-index: 2;
 }
+
 .button-config {
   background-color: transparent;
   border: 2px solid white;
@@ -83,6 +86,7 @@ h1 {
   margin: 30px;
   z-index: 2;
 }
+
 p {
   color: rgb(255, 255, 255);
   z-index: 2;

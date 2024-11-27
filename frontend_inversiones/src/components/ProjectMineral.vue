@@ -3,15 +3,8 @@
     <div>
       <div>
         <div class="text-end">
-          <Button
-            data-bs-toggle="modal"
-            data-bs-target="#modalMineral"
-            text="Nuevo"
-            icon="fa fa-plus"
-            @click="resetModal"
-            :disabled="projectMinerals.length >= 2"
-            class="mb-3"
-          />
+          <Button data-bs-toggle="modal" data-bs-target="#modalMineral" text="Nuevo" icon="fa fa-plus"
+            @click="resetModal" :disabled="projectMinerals.length >= 2" class="mb-3" />
         </div>
 
         <div class="table-container">
@@ -29,15 +22,12 @@
             </thead>
             <tbody>
               <tr v-if="projectMinerals.length == 0">
-                <td colspan="6" class="text-center">
+                <td colspan="7" class="text-center">
                   No hay minerales asociados a este proyecto
                 </td>
               </tr>
 
-              <tr
-                v-for="projectMineral in projectMinerals"
-                :key="projectMineral.id"
-              >
+              <tr v-for="projectMineral in projectMinerals" :key="projectMineral.id">
                 <td>{{ projectMineral.mineral.name }}</td>
                 <td>{{ projectMineral.weightOunces }}</td>
                 <td>{{ projectMineral.estimatedPurchasePrice }}</td>
@@ -45,16 +35,10 @@
                 <td>{{ projectMineral.purchasePrice }}</td>
                 <td>{{ projectMineral.salePrice }}</td>
                 <td>
-                  <button
-                    class="btn btn-warning btn-sm m-1"
-                    @click="selectProjectMineral(projectMineral)"
-                  >
+                  <button class="btn btn-warning btn-sm m-1" @click="selectProjectMineral(projectMineral)">
                     <i class="fa fa-edit"></i>
                   </button>
-                  <button
-                    class="btn btn-danger btn-sm m-1"
-                    @click="deleteProjectMineral(projectMineral.id)"
-                  >
+                  <button class="btn btn-danger btn-sm m-1" @click="deleteProjectMineral(projectMineral.id)">
                     <i class="fa fa-trash"></i>
                   </button>
                 </td>
@@ -66,30 +50,14 @@
     </div>
 
     <!-- Modal -->
-    <div
-      class="modal fade"
-      id="modalMineral"
-      tabindex="-1"
-      data-bs-backdrop="static"
-      data-bs-keyboard="false"
-      role="dialog"
-      aria-labelledby="modalTitleId"
-      aria-hidden="true"
-    >
-      <div
-        class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg"
-        role="document"
-      >
+    <div class="modal fade" id="modalMineral" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+      role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="modalTitleId">Minerales</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-              @click="resetModal"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+              @click="resetModal"></button>
           </div>
           <div class="modal-body">
             <div class="row">
@@ -98,72 +66,32 @@
                   <label for="mineral" class="form-label">
                     Selecciona un mineral
                   </label>
-                  <select
-                    class="form-select"
-                    id="mineral"
-                    :disabled="selectedMinerals.length >= 1"
-                    v-model="selectedMineral"
-                    @change="addMineral"
-                  >
+                  <select class="form-select" id="mineral" :disabled="selectedMinerals.length >= 1"
+                    v-model="selectedMineral" @change="addMineral">
                     <option value="">Seleccione un mineral</option>
-                    <option
-                      v-for="mineral in availableMinerals"
-                      :key="mineral.id"
-                      :value="mineral"
-                    >
+                    <option v-for="mineral in availableMinerals" :key="mineral.id" :value="mineral">
                       {{ mineral.name }} = {{ mineral.price }} $
                     </option>
                   </select>
                 </div>
                 <div>
-                  <Input
-                    id="estimatedPurchasePrice"
-                    label="Estimado de Compra"
-                    type="number"
-                    v-model="estimatedPurchasePrice"
-                  />
-                  <Input
-                    id="prePurchase"
-                    label="Precio pre compra"
-                    type="number"
-                    v-model="prePurchase"
-                  />
+                  <Input id="estimatedPurchasePrice" label="Estimado de Compra" type="number"
+                    v-model="estimatedPurchasePrice" />
+                  <Input id="prePurchase" label="Precio pre compra" type="number" v-model="prePurchase" />
                   <br />
-                  <Input
-                    id="purchasePrice"
-                    label="Precio de compra"
-                    type="number"
-                    v-model="purchasePrice"
-                  />
+                  <Input id="purchasePrice" label="Precio de compra" type="number" v-model="purchasePrice" />
                   <br />
-                  <Input
-                    id="exitPrice"
-                    label="Precio salida del ingenio"
-                    type="number"
-                    v-model="exitPrice"
-                  />
+                  <Input id="exitPrice" label="Precio salida del ingenio" type="number" v-model="exitPrice" />
                   <br />
-                  <Input
-                    id="salePrice"
-                    label="Ingrese precio de Venta"
-                    type="number"
-                    v-model="salePrice"
-                  />
+                  <Input id="salePrice" label="Ingrese precio de Venta" type="number" v-model="salePrice" />
                 </div>
               </div>
               <div class="col-md-6">
                 <div v-if="selectedMinerals.length > 0">
                   <h6>Mineral seleccionado:</h6>
                   <ul class="list-group">
-                    <li
-                      v-for="mineral in selectedMinerals"
-                      :key="mineral.id"
-                      class="list-group-item"
-                    >
-                      <button
-                        class="btn btn-danger btn-sm"
-                        @click="removeMineral(mineral)"
-                      >
+                    <li v-for="mineral in selectedMinerals" :key="mineral.id" class="list-group-item">
+                      <button class="btn btn-danger btn-sm" @click="removeMineral(mineral)">
                         <i class="fa fa-times"></i>
                       </button>
                       - <i class="fas fa-gem text-center"></i>
@@ -178,19 +106,11 @@
                     </li>
                   </ul>
                 </div>
-                <Input
-                  id="weightOuncesMineral"
-                  label="Peso en Onzas del mineral"
-                  type="number"
-                  v-model="weightOuncesMineral"
-                />
+                <Input id="weightOuncesMineral" label="Peso en Onzas del mineral" type="number"
+                  v-model="weightOuncesMineral" />
                 <div v-if="calculateMineralQuotation > 0">
-                  <Input
-                    id="calculateMineralQuotation"
-                    label="+ 50% Cotizacion por Onza"
-                    type="number"
-                    v-model="calculateMineralQuotation"
-                  />
+                  <Input id="calculateMineralQuotation" label="+ 50% Cotizacion por Onza" type="number"
+                    v-model="calculateMineralQuotation" />
                   <div class="mt-3">
                     <label for="">Estimacion Precio Venta</label>
                     <p>90% Cotiz. 10% Precio actual</p>
@@ -204,13 +124,11 @@
                     </p>
                     <p>
                       Venta Sugerida =
-                      <strong
-                        >{{
-                          selectedMinerals[0].price * 0.1 +
-                          calculateMineralQuotation * 0.9
-                        }}
-                        $</strong
-                      >
+                      <strong>{{
+                        selectedMinerals[0].price * 0.1 +
+                        calculateMineralQuotation * 0.9
+                      }}
+                        $</strong>
                     </p>
                   </div>
                 </div>
@@ -240,20 +158,11 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-              @click="resetModal"
-            >
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetModal">
               Cancelar
             </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              :disabled="selectedMinerals.length === 0"
-              @click="saveProjectMinerals"
-            >
+            <button type="button" class="btn btn-primary" :disabled="selectedMinerals.length === 0"
+              @click="saveProjectMinerals">
               {{ isEditing ? "Actualizar" : "Guardar" }}
             </button>
           </div>
@@ -541,8 +450,11 @@ const calculateMineralQuotation = computed(() => {
 .table-secondary {
   opacity: 0.7;
 }
+
 .table-container {
-  max-height: 400px; /* Ajusta este valor según sea necesario */
-  overflow-y: auto; /* Habilita el scroll vertical */
+  max-height: 400px;
+  /* Ajusta este valor según sea necesario */
+  overflow-y: auto;
+  /* Habilita el scroll vertical */
 }
 </style>

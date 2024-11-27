@@ -2,12 +2,7 @@
   <div class="project-container">
     <div v-if="statusProject === 'open' || statusProject === 'in-transit'">
       <div class="navbar-tabs">
-        <button
-          v-for="tab in tabs"
-          :key="tab"
-          @click="selectedTab = tab"
-          :class="{ active: selectedTab === tab }"
-        >
+        <button v-for="tab in tabs" :key="tab" @click="selectedTab = tab" :class="{ active: selectedTab === tab }">
           {{ tab }}
         </button>
       </div>
@@ -17,10 +12,7 @@
           <div class="project-intro">
             <h3>Proyecto: {{ project.name }}</h3>
             <div class="project-image">
-              <img
-                src="@/assets/iconMineralProject.png"
-                alt="Imagen del Proyecto"
-              />
+              <img src="@/assets/iconMineralProject.png" alt="Imagen del Proyecto" />
             </div>
 
             <div class="project-summary">
@@ -69,7 +61,7 @@
         </div>
 
         <div v-if="selectedTab === 'Linea de Tiempo'">
-          <h3>Linea de Tiempo del Proyecto</h3>
+          <h3>Línea de Tiempo del Proyecto</h3>
           <TimeLine :idProject="idProject" />
         </div>
       </div>
@@ -151,7 +143,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.project-container { 
+.project-container {
   max-height: 850px;
   overflow-y: auto;
 }
@@ -189,6 +181,7 @@ onUnmounted(() => {
   padding: 10px;
   border-radius: 5px;
 }
+
 .project-intro {
   padding: 10px;
   text-align: center;
