@@ -1,7 +1,8 @@
 <template>
   <div>
-    <div class="text-end">
-      <div>
+    <div>
+      <h3 class="mb-3">Inversiones del Proyecto</h3>
+      <!--   <div>
         <Button
           data-bs-toggle="modal"
           data-bs-target="#modalInvestment"
@@ -9,7 +10,7 @@
           icon="fa fa-plus"
           class="mb-3"
         />
-      </div>
+      </div> -->
       <TableInvestments
         :headers="headers"
         :items="investments"
@@ -30,7 +31,7 @@
     >
       <div class="row">
         <div class="col-md-6">
-          <br>
+          <br />
           <div>
             <label class="form-label">Usuario</label>
             <v-select
@@ -42,9 +43,7 @@
               @search="searchUsers"
               placeholder="Buscar usuario..."
             >
-              <template #no-options>
-                Escriba para buscar usuarios...
-              </template>
+              <template #no-options> Escriba para buscar usuarios... </template>
             </v-select>
           </div>
         </div>
@@ -95,7 +94,7 @@ import { standardFormatDate } from "@/router/viewFormat";
 import VSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 
-const headers = ["Usuario", "Cantidad", "Fecha", "Rendimiento", "Acciones"];
+const headers = ["Cliente", "Cantidad", "Fecha", "Rendimiento"];
 
 const props = defineProps({
   idProjectInvestment: {
@@ -144,6 +143,7 @@ const getInvestments = async () => {
       header
     );
     investments.value = data.data;
+    console.log("investments", investments.value);
   } catch (error) {
     console.error(error);
   }
@@ -156,21 +156,24 @@ const selectInvestment = (investment) => {
   investment_date.value = standardFormatDate(investment.investmentDate);
   profit_percentage.value = investment.profitPercentage;
   filters.value = {
-  startDate: "",
-  endDate: "",
-  minAmount: "",
-  maxAmount: "",
-  mineralId: "",
-  projectId: "",
-  name: investment.user.name,
-  userId: investment.userId,
-  status: "",}
-  users.value = [{
+    startDate: "",
+    endDate: "",
+    minAmount: "",
+    maxAmount: "",
+    mineralId: "",
+    projectId: "",
+    name: investment.user.name,
+    userId: investment.userId,
+    status: "",
+  };
+  users.value = [
+    {
       id: investment.userId,
       fullName: `${investment.user.name} ${investment.user.lastName}`,
       name: investment.user.name,
       lastName: investment.user.lastName,
-    }]
+    },
+  ];
   openModal("modalInvestment");
 };
 
@@ -206,14 +209,14 @@ const reset = () => {
   profit_percentage.value = 0;
   selectedInvestment.value = {};
   filters.value = {
-  startDate: "",
-  endDate: "",
-  minAmount: "",
-  maxAmount: "",
-  mineralId: "",
-  projectId: "",
-  userId: "",
-  status: "",
+    startDate: "",
+    endDate: "",
+    minAmount: "",
+    maxAmount: "",
+    mineralId: "",
+    projectId: "",
+    userId: "",
+    status: "",
   };
   users.value = [];
 };
@@ -223,7 +226,9 @@ const searchUsers = async (search, loading) => {
   loading(true);
   try {
     const { data } = await axios.get(
-      `${baseURLStandard}report-admin/users/search?search=${encodeURIComponent(search)}`,
+      `${baseURLStandard}report-admin/users/search?search=${encodeURIComponent(
+        search
+      )}`,
       { headers: header }
     );
     users.value = data.map((user) => ({

@@ -1,7 +1,8 @@
 <template>
   <div>
     <div>
-      <div class="text-end">
+      <div class="d-flex justify-content-between">
+        <h3>Gastos Operativos del Proyecto</h3>
         <Button
           data-bs-toggle="modal"
           data-bs-target="#modalOperatingExpense"
@@ -33,7 +34,13 @@
         v-model="description"
         label="Descripción"
       />
-      <Input id="expenses" type="number" v-model="expenses" label="Gastos" />
+      <Input
+        id="expenses"
+        type="number"
+        v-model="expenses"
+        label="Gastos"
+        min="0"
+      />
     </Modal>
   </div>
 </template>
@@ -49,6 +56,7 @@ import InputTextArea from "@/components/base/InputTextArea.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import { getHeaderRequest } from "@/authService";
 import { eventBus } from "@/eventBus";
+import { validateInputs } from "@/utils/validateInputs";
 
 const headers = ["Nombre", "Descripción", "Gastos", "Acciones"];
 
@@ -102,6 +110,16 @@ const selectOperatingExpense = (operatingExpense) => {
 };
 
 const saveOperatingExpense = async () => {
+  const fieldsToValidate = [
+    { value: name.value, name: "Nombre", type: "text" },
+    { value: description.value, name: "Descripción", type: "text" },
+    { value: expenses.value, name: "Gastos", type: "number" },
+  ];
+
+  if (!validateInputs(fieldsToValidate)) {
+    return;
+  }
+
   const method = selectedOperatingExpense.value.id ? "put" : "post";
   const url = selectedOperatingExpense.value.id
     ? `${baseURL}${selectedOperatingExpense.value.id}`

@@ -2,9 +2,18 @@
   <div>
     <div>
       <div>
-        <div class="text-end">
-          <Button data-bs-toggle="modal" data-bs-target="#modalMineral" text="Nuevo" icon="fa fa-plus"
-            @click="resetModal" :disabled="projectMinerals.length >= 2" class="mb-3" />
+        <div class="d-flex justify-content-between">
+          <h3>Minerales del Proyecto</h3>
+          <Button
+            data-bs-toggle="modal"
+            data-bs-target="#modalMineral"
+            text="Nuevo"
+            icon="fa fa-plus"
+            @click="resetModal"
+            :disabled="projectMinerals.length >= 2"
+            class="mb-3"
+            v-if="projectStatus !== 'closed'"
+          />
         </div>
 
         <div class="table-container">
@@ -17,7 +26,7 @@
                 <th scope="col">Pre Compra</th>
                 <th scope="col">Compra</th>
                 <th scope="col">Venta</th>
-                <th scope="col">Acciones</th>
+                <th v-if="projectStatus !== 'closed'" scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -27,18 +36,27 @@
                 </td>
               </tr>
 
-              <tr v-for="projectMineral in projectMinerals" :key="projectMineral.id">
+              <tr
+                v-for="projectMineral in projectMinerals"
+                :key="projectMineral.id"
+              >
                 <td>{{ projectMineral.mineral.name }}</td>
                 <td>{{ projectMineral.weightOunces }}</td>
                 <td>{{ projectMineral.estimatedPurchasePrice }}</td>
                 <td>{{ projectMineral.prePurchase }}</td>
                 <td>{{ projectMineral.purchasePrice }}</td>
                 <td>{{ projectMineral.salePrice }}</td>
-                <td>
-                  <button class="btn btn-warning btn-sm m-1" @click="selectProjectMineral(projectMineral)">
+                <td v-if="projectMineral.project.status !== 'closed'">
+                  <button
+                    class="btn btn-warning btn-sm m-1"
+                    @click="selectProjectMineral(projectMineral)"
+                  >
                     <i class="fa fa-edit"></i>
                   </button>
-                  <button class="btn btn-danger btn-sm m-1" @click="deleteProjectMineral(projectMineral.id)">
+                  <button
+                    class="btn btn-danger btn-sm m-1"
+                    @click="deleteProjectMineral(projectMineral.id)"
+                  >
                     <i class="fa fa-trash"></i>
                   </button>
                 </td>
@@ -50,14 +68,30 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="modalMineral" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-      role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+    <div
+      class="modal fade"
+      id="modalMineral"
+      tabindex="-1"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      role="dialog"
+      aria-labelledby="modalTitleId"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg"
+        role="document"
+      >
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="modalTitleId">Minerales</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-              @click="resetModal"></button>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              @click="resetModal"
+            ></button>
           </div>
           <div class="modal-body">
             <div class="row">
@@ -66,32 +100,72 @@
                   <label for="mineral" class="form-label">
                     Selecciona un mineral
                   </label>
-                  <select class="form-select" id="mineral" :disabled="selectedMinerals.length >= 1"
-                    v-model="selectedMineral" @change="addMineral">
+                  <select
+                    class="form-select"
+                    id="mineral"
+                    :disabled="selectedMinerals.length >= 1"
+                    v-model="selectedMineral"
+                    @change="addMineral"
+                  >
                     <option value="">Seleccione un mineral</option>
-                    <option v-for="mineral in availableMinerals" :key="mineral.id" :value="mineral">
+                    <option
+                      v-for="mineral in availableMinerals"
+                      :key="mineral.id"
+                      :value="mineral"
+                    >
                       {{ mineral.name }} = {{ mineral.price }} $
                     </option>
                   </select>
                 </div>
                 <div>
-                  <Input id="estimatedPurchasePrice" label="Estimado de Compra" type="number"
-                    v-model="estimatedPurchasePrice" />
-                  <Input id="prePurchase" label="Precio pre compra" type="number" v-model="prePurchase" />
+                  <Input
+                    id="estimatedPurchasePrice"
+                    label="Estimado de Compra"
+                    type="number"
+                    v-model="estimatedPurchasePrice"
+                  />
+                  <Input
+                    id="prePurchase"
+                    label="Precio pre compra"
+                    type="number"
+                    v-model="prePurchase"
+                  />
                   <br />
-                  <Input id="purchasePrice" label="Precio de compra" type="number" v-model="purchasePrice" />
+                  <Input
+                    id="purchasePrice"
+                    label="Precio de compra"
+                    type="number"
+                    v-model="purchasePrice"
+                  />
                   <br />
-                  <Input id="exitPrice" label="Precio salida del ingenio" type="number" v-model="exitPrice" />
+                  <Input
+                    id="exitPrice"
+                    label="Precio salida del ingenio"
+                    type="number"
+                    v-model="exitPrice"
+                  />
                   <br />
-                  <Input id="salePrice" label="Ingrese precio de Venta" type="number" v-model="salePrice" />
+                  <Input
+                    id="salePrice"
+                    label="Ingrese precio de Venta"
+                    type="number"
+                    v-model="salePrice"
+                  />
                 </div>
               </div>
               <div class="col-md-6">
                 <div v-if="selectedMinerals.length > 0">
                   <h6>Mineral seleccionado:</h6>
                   <ul class="list-group">
-                    <li v-for="mineral in selectedMinerals" :key="mineral.id" class="list-group-item">
-                      <button class="btn btn-danger btn-sm" @click="removeMineral(mineral)">
+                    <li
+                      v-for="mineral in selectedMinerals"
+                      :key="mineral.id"
+                      class="list-group-item"
+                    >
+                      <button
+                        class="btn btn-danger btn-sm"
+                        @click="removeMineral(mineral)"
+                      >
                         <i class="fa fa-times"></i>
                       </button>
                       - <i class="fas fa-gem text-center"></i>
@@ -106,11 +180,19 @@
                     </li>
                   </ul>
                 </div>
-                <Input id="weightOuncesMineral" label="Peso en Onzas del mineral" type="number"
-                  v-model="weightOuncesMineral" />
+                <Input
+                  id="weightOuncesMineral"
+                  label="Peso en Onzas del mineral"
+                  type="number"
+                  v-model="weightOuncesMineral"
+                />
                 <div v-if="calculateMineralQuotation > 0">
-                  <Input id="calculateMineralQuotation" label="+ 50% Cotizacion por Onza" type="number"
-                    v-model="calculateMineralQuotation" />
+                  <Input
+                    id="calculateMineralQuotation"
+                    label="+ 50% Cotizacion por Onza"
+                    type="number"
+                    v-model="calculateMineralQuotation"
+                  />
                   <div class="mt-3">
                     <label for="">Estimacion Precio Venta</label>
                     <p>90% Cotiz. 10% Precio actual</p>
@@ -124,11 +206,13 @@
                     </p>
                     <p>
                       Venta Sugerida =
-                      <strong>{{
-                        selectedMinerals[0].price * 0.1 +
-                        calculateMineralQuotation * 0.9
-                      }}
-                        $</strong>
+                      <strong
+                        >{{
+                          selectedMinerals[0].price * 0.1 +
+                          calculateMineralQuotation * 0.9
+                        }}
+                        $</strong
+                      >
                     </p>
                   </div>
                 </div>
@@ -158,11 +242,20 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetModal">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              @click="resetModal"
+            >
               Cancelar
             </button>
-            <button type="button" class="btn btn-primary" :disabled="selectedMinerals.length === 0"
-              @click="saveProjectMinerals">
+            <button
+              type="button"
+              class="btn btn-primary"
+              :disabled="selectedMinerals.length === 0"
+              @click="saveProjectMinerals"
+            >
               {{ isEditing ? "Actualizar" : "Guardar" }}
             </button>
           </div>
@@ -183,6 +276,7 @@ import Select from "./base/Select.vue";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { handleErrorSwal } from "@/errorMixin";
 import Swal from "sweetalert2";
+import { successAlert } from "@/utils/validateInputs";
 
 const props = defineProps({
   idProjectMineral: {
@@ -198,6 +292,8 @@ const baseUrlUsers = `${import.meta.env.VITE_API_URL}/user/`;
 const projectMinerals = ref([]);
 const minerals = ref([]);
 const users = ref([]);
+
+const projectStatus = ref("");
 
 const estimatedPurchasePrice = ref(0);
 const prePurchase = ref(0);
@@ -233,7 +329,10 @@ const getprojectMinerals = async () => {
       header
     );
     projectMinerals.value = data.data;
-    console.log(data.data);
+    if (data.data.length > 0) {
+      projectStatus.value = data.data[0].project.status;
+    }
+    console.log("Projects minerals", data.data);
   } catch (error) {
     console.error(error);
   }
@@ -381,16 +480,32 @@ const saveProjectMinerals = async () => {
 };
 
 const deleteProjectMineral = async (id) => {
-  try {
-    const response = await axios.patch(
-      baseURL + "projectMinerals/" + id,
-      header
-    );
-    getprojectMinerals();
-    Swal.fire("Eliminado", "El mineral se eliminó correctamente.", "success");
-  } catch (e) {
-    handleErrorSwal(e, "Error no se pudo eliminar el mineral del proyecto");
-  }
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¿Deseas eliminar este mineral del proyecto?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const response = await axios.patch(
+          baseURL + "projectMinerals/" + id,
+          header
+        );
+        getprojectMinerals();
+        successAlert("Mineral eliminado correctamente");
+      } catch (error) {
+        handleErrorSwal(
+          error,
+          "Error no se pudo eliminar el mineral del proyecto"
+        );
+      }
+    }
+  });
 };
 
 const selectProjectMineral = (projectMineral) => {

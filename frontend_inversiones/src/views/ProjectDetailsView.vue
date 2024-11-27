@@ -2,7 +2,12 @@
   <div class="project-container">
     <div v-if="statusProject === 'open' || statusProject === 'in-transit'">
       <div class="navbar-tabs">
-        <button v-for="tab in tabs" :key="tab" @click="selectedTab = tab" :class="{ active: selectedTab === tab }">
+        <button
+          v-for="tab in tabs"
+          :key="tab"
+          @click="selectedTab = tab"
+          :class="{ active: selectedTab === tab }"
+        >
           {{ tab }}
         </button>
       </div>
@@ -12,7 +17,10 @@
           <div class="project-intro">
             <h3>Proyecto: {{ project.name }}</h3>
             <div class="project-image">
-              <img src="@/assets/iconMineralProject.png" alt="Imagen del Proyecto" />
+              <img
+                src="@/assets/iconMineralProject.png"
+                alt="Imagen del Proyecto"
+              />
             </div>
 
             <div class="project-summary">
@@ -23,7 +31,8 @@
                   }}
                 </div>
                 <div class="detail-item shadow">
-                  <strong>Estado:</strong> {{ project.status }}
+                  <strong>Estado:</strong>
+                  {{ project.status === "open" ? "Abierto" : project.status }}
                 </div>
                 <div class="detail-item shadow">
                   <strong>Duración:</strong>
@@ -37,31 +46,26 @@
               </div>
               <br />
               <br />
-              <p><strong>Descripcion:</strong> {{ project.description }}</p>
+              <p><strong>Descripción:</strong> {{ project.description }}</p>
             </div>
           </div>
         </div>
 
         <div v-if="selectedTab === 'Inversiones'">
-          <h3>Contratos del Proyecto</h3>
           <Contract :idProject="idProject" :project="project" />
-          <br><br>
-          <h4>Inversiones del Proyecto</h4>
+          <br /><br />
           <Investments :idProjectInvestment="idProject" />
         </div>
 
         <div v-if="selectedTab === 'Minerales'">
-          <h3>Minerales del Proyecto</h3>
           <ProjectMineral :idProjectMineral="idProject" />
         </div>
 
         <div v-if="selectedTab === 'Gastos Operativos'">
-          <h3>Gastos Operativos del Proyecto</h3>
           <OperatingExpenses :idProject="idProject" />
         </div>
 
         <div v-if="selectedTab === 'Linea de Tiempo'">
-          <h3>Línea de Tiempo del Proyecto</h3>
           <TimeLine :idProject="idProject" />
         </div>
       </div>

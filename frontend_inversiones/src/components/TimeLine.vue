@@ -1,155 +1,279 @@
   <template>
+  <div>
     <div>
-      <div>
-        <div class="text-end">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTimeline"
-            :disabled="availablePhases.length === 0">
-            <i class="fa fa-plus mx-1"></i> Nuevo
-          </button>
-        </div>
+      <div class="d-flex justify-content-between mb-3">
+        <h3>Línea de Tiempo del Proyecto</h3>
+        <!--    <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#modalTimeline"
+        
+        >
+          <i class="fa fa-plus mx-1"></i> Nuevo
+        </button> -->
 
-        <div class="timeline-container position-relative mt-2">
-          <div class="timeline-line"></div>
-          <div v-for="(timeline, index) in timeLines" :key="timeline.id" class="timeline-item" :class="{
+        <Button
+          data-bs-toggle="modal"
+          data-bs-target="#modalTimeline"
+          text="Nuevo"
+          icon="fa fa-plus"
+          :disabled="availablePhases.length === 0"
+        />
+      </div>
+
+      <div class="timeline-container position-relative mt-2">
+        <div class="timeline-line"></div>
+        <div
+          v-for="(timeline, index) in timeLines"
+          :key="timeline.id"
+          class="timeline-item"
+          :class="{
             'timeline-left': index % 2 === 0,
             'timeline-right': index % 2 !== 0,
-          }">
-            <div class="timeline-point" :class="getStatusClass(timeline.status)">
-              <i :class="getStatusIcon(timeline.status)"></i>
-            </div>
-            <div class="timeline-content">
-              <div class="card shadow-sm">
-                <div class="card-body">
-                  <span v-if="timeline.phase == 'contrato'" class="phase-badge" :class="getPhaseClass(timeline.phase)">
-                    Contrato
-                  </span>
-                  <span v-if="timeline.phase == 'inversion'" class="phase-badge" :class="getPhaseClass(timeline.phase)">
-                    Inversión
-                  </span>
+          }"
+        >
+          <div class="timeline-point" :class="getStatusClass(timeline.status)">
+            <i :class="getStatusIcon(timeline.status)"></i>
+          </div>
+          <div class="timeline-content">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <span
+                  v-if="timeline.phase == 'contrato'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Contrato
+                </span>
+                <span
+                  v-if="timeline.phase == 'inversion'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Inversión
+                </span>
 
-                  <span v-if="timeline.phase == 'compra_de_mineral'" class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)">
-                    Fecha compra de mineral
-                  </span>
+                <span
+                  v-if="timeline.phase == 'compra_de_mineral'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Fecha compra de mineral
+                </span>
 
-                  <span v-if="timeline.phase == 'envio'" class="phase-badge" :class="getPhaseClass(timeline.phase)">
-                    Fecha de envío
-                  </span>
+                <span
+                  v-if="timeline.phase == 'envio'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Fecha de envío
+                </span>
 
-                  <span v-if="timeline.phase == 'entrega'" class="phase-badge" :class="getPhaseClass(timeline.phase)">
-                    Fecha de entrega
-                  </span>
+                <span
+                  v-if="timeline.phase == 'entrega'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Fecha de entrega
+                </span>
 
-                  <span v-if="timeline.phase == 'ganancia'" class="phase-badge" :class="getPhaseClass(timeline.phase)">
-                    Fecha de Ganancia
-                  </span>
+                <span
+                  v-if="timeline.phase == 'ganancia'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Fecha de Ganancia
+                </span>
 
-                  <span v-if="timeline.phase == 'pago'" class="phase-badge" :class="getPhaseClass(timeline.phase)">
-                    Fecha de Pago
-                  </span>
+                <span
+                  v-if="timeline.phase == 'pago'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Fecha de Pago
+                </span>
 
-                  <div class="dates mt-2">
-                    <small class="text-muted">
-                      <strong>
-                        {{ formatDate(timeline.startDate) }} -
-                        {{ formatDate(timeline.endDate) }}
-                      </strong>
-                    </small>
-                  </div>
+                <div class="dates mt-2">
+                  <small class="text-muted">
+                    <strong>
+                      {{ formatDate(timeline.startDate) }} -
+                      {{ formatDate(timeline.endDate) }}
+                    </strong>
+                  </small>
+                </div>
 
-                  <p class="mt-2">{{ timeline.description }}</p>
+                <p class="mt-2">{{ timeline.description }}</p>
 
-                  <div v-if="
+                <div
+                  v-if="
                     timeline.priceMineral2 > 0 && timeline.priceMineral1 > 0
-                  " class="prices mt-2">
-                    <small class="d-block">
-                      <strong>Mineral 1:</strong> ${{ timeline.priceMineral1 }}
-                    </small>
-                    <small class="d-block">
-                      <strong>Mineral 2:</strong> ${{ timeline.priceMineral2 }}
-                    </small>
-                  </div>
-                  <div v-else>
-                    <p>No hay variaciones en los precios!</p>
-                  </div>
+                  "
+                  class="prices mt-2"
+                >
+                  <small class="d-block">
+                    <strong>Mineral 1:</strong> ${{ timeline.priceMineral1 }}
+                  </small>
+                  <small class="d-block">
+                    <strong>Mineral 2:</strong> ${{ timeline.priceMineral2 }}
+                  </small>
+                </div>
+                <div v-else>
+                  <p>No hay variaciones en los precios!</p>
+                </div>
 
-                  <div class="mt-2">
-                    <button class="btn btn-warning btn-sm" @click="selectTimeLine(timeline)">
-                      <i class="fa fa-edit"></i> Editar
-                    </button>
-                  </div>
+                <div class="mt-2">
+                  <button
+                    class="btn btn-warning btn-sm"
+                    @click="selectTimeLine(timeline)"
+                  >
+                    <i class="fa fa-edit"></i> Editar
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="modal fade" id="modalTimeline" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-        role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalTitleId">Línea de tiempo</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                @click="reset()"></button>
+    <div
+      class="modal fade"
+      id="modalTimeline"
+      tabindex="-1"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      role="dialog"
+      aria-labelledby="modalTitleId"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-dialog modal-dialog-scrollable modal-dialog-centered"
+        role="document"
+      >
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitleId">Línea de tiempo</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              @click="reset()"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="phase" class="form-label">Fases</label>
+              <select
+                class="form-select form-select"
+                v-model="phase"
+                id="phase"
+              >
+                <option value="">Selecciona una fase</option>
+                <option
+                  v-for="phase in availablePhases"
+                  :key="phase"
+                  :value="phase"
+                >
+                  {{ phase }}
+                </option>
+              </select>
             </div>
-            <div class="modal-body">
-              <div class="mb-3">
-                <label for="phase" class="form-label">Fases</label>
-                <select class="form-select form-select" v-model="phase" id="phase">
-                  <option value="">Selecciona una fase</option>
-                  <option v-for="phase in availablePhases" :key="phase" :value="phase">
-                    {{ phase }}
-                  </option>
-                </select>
-              </div>
 
-              <div class="mb-3">
-                <label for="startDate" class="form-label">Fecha de inicio</label>
-                <input type="date" class="form-control" v-model="startDate" id="startDate" />
-              </div>
-
-              <div class="mb-3">
-                <label for="endDate" class="form-label">Fecha de finalización</label>
-                <input type="date" :min="startDate" class="form-control" v-model="endDate" id="endDate" />
-              </div>
-              <div class="mb-3">
-                <label for="status" class="form-label">Estado de actualización</label>
-                <input type="text" class="form-control" v-model="status" id="status" />
-              </div>
-
-              <div class="mb-3">
-                <label for="description" class="form-label">Descripción</label>
-                <textarea class="form-control" v-model="description" id="description"></textarea>
-              </div>
-
-              <div class="mb-3">
-                <label for="mineral_1" class="form-label">Precio mineral 1</label>
-                <input type="number" class="form-control" v-model="mineral_1" id="mineral_1" />
-              </div>
-              <div class="mb-3">
-                <label for="mineral_2" class="form-label">Precio mineral 2</label>
-                <input type="number" class="form-control" v-model="mineral_2" id="mineral_2" />
-              </div>
+            <div class="mb-3">
+              <label for="startDate" class="form-label">Fecha de inicio</label>
+              <input
+                type="date"
+                class="form-control"
+                v-model="startDate"
+                id="startDate"
+              />
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="reset()">
-                Cancelar
-              </button>
-              <button v-if="selectedTimeLine && selectedTimeLine.id == null" type="button" class="btn btn-primary"
-                @click="createTimeLine()">
-                Guardar
-              </button>
-              <button v-else type="button" class="btn btn-primary" @click="updateTimeLine()">
-                Actualizar
-              </button>
+
+            <div class="mb-3">
+              <label for="endDate" class="form-label"
+                >Fecha de finalización</label
+              >
+              <input
+                type="date"
+                :min="startDate"
+                class="form-control"
+                v-model="endDate"
+                id="endDate"
+              />
             </div>
+            <div class="mb-3">
+              <label for="status" class="form-label"
+                >Estado de actualización</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                v-model="status"
+                id="status"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="description" class="form-label">Descripción</label>
+              <textarea
+                class="form-control"
+                v-model="description"
+                id="description"
+              ></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="mineral_1" class="form-label">Precio mineral 1</label>
+              <input
+                type="number"
+                class="form-control"
+                v-model="mineral_1"
+                id="mineral_1"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="mineral_2" class="form-label">Precio mineral 2</label>
+              <input
+                type="number"
+                class="form-control"
+                v-model="mineral_2"
+                id="mineral_2"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              @click="reset()"
+            >
+              Cancelar
+            </button>
+            <button
+              v-if="selectedTimeLine && selectedTimeLine.id == null"
+              type="button"
+              class="btn btn-primary"
+              @click="createTimeLine()"
+            >
+              Guardar
+            </button>
+            <button
+              v-else
+              type="button"
+              class="btn btn-primary"
+              @click="updateTimeLine()"
+            >
+              Actualizar
+            </button>
           </div>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
 
 <script setup>
 import { ref, onMounted, computed, onUnmounted } from "vue";
@@ -157,6 +281,7 @@ import axios from "axios";
 import { getHeaderRequest } from "@/authService";
 import { eventBus } from "@/eventBus";
 import { handleErrorSwal } from "@/errorMixin";
+import Button from "@/components/base/Button.vue";
 
 const props = defineProps({
   idProject: {
@@ -318,7 +443,7 @@ const createTimeLine = async () => {
     getTimeLines();
     reset();
   } catch (e) {
-    handleErrorSwal(e, 'Error al crear Timeline!');
+    handleErrorSwal(e, "Error al crear Timeline!");
     modal.hide();
     reset();
   }
@@ -386,12 +511,14 @@ const reset = () => {
 
 const validateDates = () => {
   if (new Date(startDate.value) > new Date(endDate.value)) {
-    handleErrorSwal("", "La Fecha de inicio no puede ser menor a la fecha de fin!")
+    handleErrorSwal(
+      "",
+      "La Fecha de inicio no puede ser menor a la fecha de fin!"
+    );
     return false;
   }
   return true;
 };
-
 </script>
 
 <style scoped>

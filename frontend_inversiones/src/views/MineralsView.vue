@@ -261,13 +261,35 @@ const createFormData = () => {
   return formData;
 };
 
-const deleteMineral = async (id) => {
-  try {
-    const { data } = await axios.patch(baseURL + id);
-    getMinerals();
-  } catch (error) {
-    console.log(error);
-  }
+const deleteMineral = async (mineral) => {
+  const isDeleted = mineral.deleted === 1;
+
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: isDeleted
+      ? "¿Deseas restaurar este mineral?"
+      : "¿Deseas eliminar este mineral?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: isDeleted ? "Sí, restaurar" : "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const { data } = await axios.patch(baseURL + mineral.id);
+        getMinerals();
+        successAlert(
+          isDeleted
+            ? "Mineral restaurado correctamente"
+            : "Mineral eliminado correctamente"
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  });
 };
 
 const reset = () => {

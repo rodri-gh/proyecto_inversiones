@@ -14,7 +14,7 @@
         </tr>
 
         <tr v-for="item in items" :key="item.id">
-          <td>{{ item.user.name }}</td>
+          <td>{{ item.user.name }} {{ item.user.lastName }}</td>
           <td>{{ item.investmentAmount }}</td>
           <td>{{ item.contractCode }}</td>
           <td>{{ formatDate(item.startDate) }}</td>
@@ -29,10 +29,10 @@
               buttonClass="btn-warning btn-sm m-1"
             />
             <Button
-              @click="() => actions.delete(item.id)"
-              :icon="item.deleted ? 'fa fa-trash' : 'fa fa-check'"
+              @click="() => actions.delete(item)"
+              :icon="item.deleted ? 'fa fa-check' : 'fa fa-trash'"
               :buttonClass="`btn-${
-                item.deleted ? 'danger' : 'success'
+                item.deleted ? 'restore' : 'delete'
               } btn-sm m-1`"
             />
           </td>
