@@ -17,7 +17,7 @@
         </div>
 
         <div class="table-container">
-          <table class="table">
+          <table class="table table-striped table-hover">
             <thead>
               <tr>
                 <th scope="col">Mineral</th>
