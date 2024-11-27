@@ -15,6 +15,12 @@ import { handleErrorSwal } from "@/errorMixin";
 import { formatDate } from "@/router/viewFormat";
 import VSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
+import {
+  validateInputs,
+  existAlert,
+  successAlert,
+} from "@/utils/validateInputs";
+import Swal from "sweetalert2";
 
 const props = defineProps({
   idProject: {
@@ -57,7 +63,7 @@ const filters = ref({
 });
 
 const headers = [
-  "Usuario",
+  "Cliente",
   "Inversión",
   "Cod. Contrato",
   "Inicio",
@@ -125,28 +131,75 @@ const selectContract = (contract) => {
     name: contract.user.name,
     userId: contract.userId,
     status: "",
-  }
-  users.value = [{
-    id: contract.userId,
-    fullName: `${contract.user.name} ${contract.user.lastName}`,
-    name: contract.user.name,
-    lastName: contract.user.lastName,
-  }]
+  };
+  users.value = [
+    {
+      id: contract.userId,
+      fullName: `${contract.user.name} ${contract.user.lastName}`,
+      name: contract.user.name,
+      lastName: contract.user.lastName,
+    },
+  ];
   openModal("modalContract");
 };
 
-const deleteContract = async (id) => {
-  try {
-    const data = await axios.delete(baseURL + id);
-    console.log(data);
-    getOperatingExpenses();
-    updateData();
-  } catch (error) {
-    console.error(error);
-  }
+const deleteContract = async (contrato) => {
+  const isDeleted = contrato.deleted === 1;
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: isDeleted
+      ? "¿Deseas restaurar este contrato?"
+      : "¿Deseas eliminar este contrato?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: isDeleted ? "Sí, restaurar" : "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const data = await axios.patch(baseURL + "contract/" + contrato.id);
+        console.log(data);
+        getContracts();
+        updateData();
+        successAlert(
+          isDeleted
+            ? "Contrato restaurado correctamente"
+            : "Contrato eliminado correctamente"
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  });
 };
 
 const saveContract = async () => {
+  const fieldsToValidate = [
+    { value: filters.value.userId, name: "Usuario", type: "select" },
+    { value: contractCode.value, name: "Codigo para almacén", type: "text" },
+    { value: contractType.value, name: "Tipo de contrato", type: "select" },
+    { value: currency.value, name: "Moneda", type: "select" },
+    {
+      value: investmentAmount.value,
+      name: "Cantidad de inversión",
+      type: "number",
+    },
+  ];
+
+  if (!selectedContract.value.id) {
+    fieldsToValidate.push({
+      value: contractFilePath.value,
+      name: "Contrato",
+      type: "file",
+    });
+  }
+
+  if (!validateInputs(fieldsToValidate)) {
+    return;
+  }
+
   const method = selectedContract.value.id ? "put" : "post";
   const url = selectedContract.value.id
     ? `${baseURL + "contract/"}${selectedContract.value.id}`
@@ -162,7 +215,8 @@ const saveContract = async () => {
     updateData();
     reset();
   } catch (e) {
-    handleErrorSwal(e, "Error al guardar el Contrato");
+    // handleErrorSwal(e, "Error al guardar el Contrato");
+    handleErrorSwal(e, "Ya existe un contrato con ese código");
   }
 };
 
@@ -228,9 +282,14 @@ const searchUsers = async (search, loading) => {
   if (search.length < 2) return;
   loading(true);
   try {
-    console.log("Endpoint URL:", `${baseURL}users/search?search=${encodeURIComponent(search)}`);
+    console.log(
+      "Endpoint URL:",
+      `${baseURL}users/search?search=${encodeURIComponent(search)}`
+    );
     const { data } = await axios.get(
-      `${baseURL}report-admin/users/search?search=${encodeURIComponent(search)}`,
+      `${baseURL}report-admin/users/search?search=${encodeURIComponent(
+        search
+      )}`,
       { headers: header }
     );
     console.log("Users result:", data);
@@ -261,51 +320,89 @@ const searchUsers = async (search, loading) => {
     loading(false);
   }
 };
-
 </script>
 
 <template>
   <div>
     <div>
       <div>
-        <div class="text-end">
-          <Button data-bs-toggle="modal" data-bs-target="#modalContract" text="Nuevo" icon="fa fa-plus" class="mb-3" />
+        <div class="d-flex justify-content-between">
+          <h3>Contratos del Proyecto</h3>
+          <Button
+            data-bs-toggle="modal"
+            data-bs-target="#modalContract"
+            text="Nuevo"
+            icon="fa fa-plus"
+            class="mb-3"
+          />
         </div>
-        <TableContracts :headers="headers" :items="contracts" :actions="{
-          edit: selectContract,
-          delete: deleteContract,
-        }" />
+        <TableContracts
+          :headers="headers"
+          :items="contracts"
+          :actions="{
+            edit: selectContract,
+            delete: deleteContract,
+          }"
+        />
       </div>
-      <Modal modalId="modalContract" title="Datos" modalClass="modal-lg" :showSaveButton="!selectedContract?.id"
-        :showUpdateButton="Boolean(selectedContract?.id)" @onClose="reset()" @onSave="saveContract()">
+      <Modal
+        modalId="modalContract"
+        title="Datos"
+        modalClass="modal-lg"
+        :showSaveButton="!selectedContract?.id"
+        :showUpdateButton="Boolean(selectedContract?.id)"
+        @onClose="reset()"
+        @onSave="saveContract()"
+      >
         <div class="row">
           <div class="col-md-4">
-            <div v-if="
-              amountsInvestmentGoal.investmentGoalOfProject ===
-              amountsInvestmentGoal.totalInvestmentOfProject
-            ">
+            <div
+              v-if="
+                amountsInvestmentGoal.investmentGoalOfProject ===
+                amountsInvestmentGoal.totalInvestmentOfProject
+              "
+            >
               <p>No se puede invertir más!!</p>
               <p>
                 Meta alcanzada:
-                <strong>${{ amountsInvestmentGoal.investmentGoalOfProject }}</strong>
+                <strong
+                  >${{ amountsInvestmentGoal.investmentGoalOfProject }}</strong
+                >
               </p>
             </div>
-            <div v-if="
-              amountsInvestmentGoal.totalInvestmentOfProject <
-              amountsInvestmentGoal.investmentGoalOfProject
-            ">
+            <div
+              v-if="
+                amountsInvestmentGoal.totalInvestmentOfProject <
+                amountsInvestmentGoal.investmentGoalOfProject
+              "
+            >
               <p>Monto disponible para invertir</p>
               <p>
-                <strong>$1 - ${{ amountsInvestmentGoal.amountAvailableForInvestment }}
+                <strong
+                  >$1 - ${{
+                    amountsInvestmentGoal.amountAvailableForInvestment
+                  }}
                 </strong>
               </p>
             </div>
-            <Input id="investmentAmount" label="Cantidad de inversión" type="number" v-model="investmentAmount" />
-            <br>
+            <Input
+              id="investmentAmount"
+              label="Cantidad de inversión"
+              type="number"
+              v-model="investmentAmount"
+            />
+            <br />
             <div>
               <label class="form-label">Usuario</label>
-              <v-select v-model="filters.userId" :options="users" :reduce="(option) => option.id" label="fullName"
-                :filterable="false" @search="searchUsers" placeholder="Buscar usuario...">
+              <v-select
+                v-model="filters.userId"
+                :options="users"
+                :reduce="(option) => option.id"
+                label="fullName"
+                :filterable="false"
+                @search="searchUsers"
+                placeholder="Buscar usuario..."
+              >
                 <template #no-options>
                   Escriba para buscar usuarios...
                 </template>
@@ -327,11 +424,20 @@ const searchUsers = async (search, loading) => {
                 </p>
               </div>
               <div class="col-md-6 mt-3">
-                <Input id="contractCode" label="Código para almacén" type="text" v-model="contractCode" />
+                <Input
+                  id="contractCode"
+                  label="Código para almacén"
+                  type="text"
+                  v-model="contractCode"
+                />
               </div>
               <div class="col-md-6 mt-2">
                 <label for="" class="form-label">Tipo de contrato</label>
-                <select class="form-select form-select" v-model="contractType" id="contractType">
+                <select
+                  class="form-select form-select"
+                  v-model="contractType"
+                  id="contractType"
+                >
                   <option value="">Selecione una tasa</option>
                   <option value="fixed_rate">tasa fija</option>
                   <option value="variable_rate">tasa variable</option>
@@ -339,16 +445,28 @@ const searchUsers = async (search, loading) => {
               </div>
               <div class="col-md-6 mt-3">
                 <label for="" class="form-label">Moneda</label>
-                <select class="form-select form-select" v-model="currency" id="currency">
+                <select
+                  class="form-select form-select"
+                  v-model="currency"
+                  id="currency"
+                >
                   <option value="">Selecione una Moneda</option>
                   <option value="USD">Dólares</option>
                   <option value="BS">Bolivianos</option>
                 </select>
               </div>
               <div class="col-md-12 mt-3">
-                <label for="" class="form-label">PDF Escaneado del contrato</label>
-                <input type="file" id="contractFilePath" name="contract" @change="handleFileChange" accept=".pdf"
-                  required />
+                <label for="" class="form-label"
+                  >PDF Escaneado del contrato</label
+                >
+                <input
+                  type="file"
+                  id="contractFilePath"
+                  name="contract"
+                  @change="handleFileChange"
+                  accept=".pdf"
+                  required
+                />
               </div>
             </div>
           </div>
@@ -356,7 +474,13 @@ const searchUsers = async (search, loading) => {
         <div v-if="contractFilePath" class="row">
           <p>Visualización del archivo PDF:</p>
           <p>Archivo seleccionado: {{ contractFilePath.name }}</p>
-          <iframe v-if="contractFilePath" :src="previewUrl" width="100%" height="500px" frameborder="0"></iframe>
+          <iframe
+            v-if="contractFilePath"
+            :src="previewUrl"
+            width="100%"
+            height="500px"
+            frameborder="0"
+          ></iframe>
         </div>
       </Modal>
     </div>

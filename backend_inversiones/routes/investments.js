@@ -107,7 +107,11 @@ router.get('/project/:id', async (req, res, next) => {
         model: User,
         attributes: ['name', 'lastName'],
         as: 'user'
-      }]
+      },
+      {
+        model: Project,
+
+      }],
     });
     getHandleSuccess(200)(res, investments);
   } catch (error) {

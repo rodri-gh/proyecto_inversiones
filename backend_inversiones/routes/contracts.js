@@ -58,7 +58,7 @@ router.get('/project/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
     const contracts = await Contract.findAll({
-      where: { projectId: id }, 
+      where: { projectId: id },
       include: [
         {
           model: User,
@@ -94,17 +94,17 @@ router.post('/', upload.fields([{ name: 'contractFilePath' }]), async (req, res,
       amount: investmentAmount,
       investmentDate: startDate,
       //profit_percentage,
-      currency: currency, 
+      currency: currency,
       status: status
     })
     getHandleSuccess(201)(res, "Contract and associated investment created successfully")
   } catch (error) {
     console.error(error);
-    if(error.parent?.sqlMessage){
+    if (error.parent?.sqlMessage) {
       return res.status(422).json({
-         error: 'Error',
-         message: error.parent.sqlMessage
-        });
+        error: 'Error',
+        message: error.parent.sqlMessage
+      });
     }
     getHandleError(error, res)
   }
@@ -146,25 +146,30 @@ router.put('/:id', upload.fields([{ name: 'contractFilePath', maxCount: 1 }]), a
       projectId: projectId,
       userId: userId,
       amount: investmentAmount,
-      currency: currency, 
-    }, {where: {contractId: id}})
+      currency: currency,
+    }, { where: { contractId: id } })
     getHandleSuccess(204)(res)
   } catch (error) {
     getHandleError(error, res)
   }
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.patch('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
-    const [updatedCount] = await Contract.update({ deleted: 1 }, {
-      where: { id }
-    });
-    verifyIfIdExists(updatedCount);
-    getHandleSuccess(204)(res)
+    const contract = await Contract.findOne({ where: { id } });
+    if (!contract) {
+      return getHandleError(new Error('Contract not found'), res);
+    }
+
+    const newDeletedStatus = contract.deleted ? 0 : 1;
+    await Contract.update({ deleted: newDeletedStatus }, { where: { id } });
+
+    getHandleSuccess(200)(res, `Contract ${newDeletedStatus ? 'deleted' : 'restored'} successfully`);
   } catch (error) {
-    getHandleError(error, res)
+    getHandleError(error, res);
   }
 });
+
 
 export default router;
