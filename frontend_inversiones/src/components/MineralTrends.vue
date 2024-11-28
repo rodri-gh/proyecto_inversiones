@@ -9,7 +9,9 @@ const baseUrlAnalisys = `${import.meta.env.VITE_ANALISYS_API_URL}/`;
 const header = getHeaderRequest();
 const selectedMineral = ref("");
 const mineralObject = ref({});
-const minerals = ref([]);
+const minerals = ref([]); 
+const mineralMap = ref({});
+const predictions = ref({});
 
 const chartOptions = ref({
   chart: {
@@ -261,29 +263,62 @@ const getMineralPricesHistory = async () => {
   }
 };
 
-const updateMineralPricesGraphic = (selectMineral) => {
-  console.log(mineralObject.value[selectMineral]);
+const getMineralPricesHistory = async () => { 
+    try{ 
+        const response = await axios.get(baseUrl+'apiMineralPrices/historyOfAMonth', header);
+        console.log(response.data);
+        const mineralNames = Array.from(
+            new Set(response.data.map(item => item.mineral.name))
+        );
+        mineralMap.value = response.data.reduce((acc, item) => {
+                acc[item.mineral.name] = item.mineral.id;
+                return acc;
+            }, {});
+        minerals.value = mineralNames; 
+        console.log(mineralNames);
+        const groupedByMineral = response.data.reduce((acc, item) => {
+            if (!acc[item.mineral.name]) {
+                acc[item.mineral.name] = { prices: [], dates: [] };
+            }
+            acc[item.mineral.name].prices.push(parseFloat(item.price));
+            acc[item.mineral.name].dates.push(formatDate(item.datePrice));
+            return acc;
+             }, {});
+         console.log(groupedByMineral);
+         mineralObject.value = groupedByMineral;
+         const initGraphic = minerals.value[0];
+         await updateMineralPricesGraphic(initGraphic);
+        console.log(mineralObject.value);
+    } catch(e) { 
+        console.error(e); 
+    }
+}
 
-  const dates = [...mineralObject.value[selectMineral].dates];
-  const prices = [...mineralObject.value[selectMineral].prices];
-  chartOptions.value.xAxis.categories = dates;
-  chartOptions.value.series = [
-    {
-      name: selectMineral,
-      data: prices,
-    },
-  ];
-};
+const updateMineralPricesGraphic = async (selectMineral) => { 
+    console.log(mineralObject.value[selectMineral]);
+    const dates = [...mineralObject.value[selectMineral].dates];
+    const prices = [...mineralObject.value[selectMineral].prices];
+    chartOptions.value.xAxis.categories = dates;
+    chartOptions.value.series = [
+        {
+            name: selectMineral, 
+            data: prices,
+        },
+    ];
+    await updatePredictableMineralPricesGraphic(selectMineral);
+}
 
-const updatePredictableMineralPricesGraphic = async (selectMineral) => {
-  try {
-    const response = await axios.get(
-      baseUrlAnalisys + "predictMineralPrice/" + 1
-    );
-  } catch (e) {
-    console.error(e);
-  }
-};
+const updatePredictableMineralPricesGraphic = async (selectMineral) => { 
+    try { 
+        console.log(mineralMap.value);
+        const mineralId = mineralMap.value[selectMineral];
+        const response = await axios.get(baseUrlAnalisys+'predictMineralPrice/'+mineralId); 
+        console.log(response.data);
+        predictions.value = response.data;
+    } catch (e) { 
+        console.error(e);
+    }
+}
 
 watch(selectedMineral, (newValue) => {
   updateMineralPricesGraphic(newValue);
@@ -291,20 +326,34 @@ watch(selectedMineral, (newValue) => {
 </script>  
 
 <template>
-  <div>
-    <div class="filter-container">
-      <select
-        id="mineral-select"
-        v-model="selectedMineral"
-        class="mineral-dropdown"
-      >
-        <option value="" disabled selected>Selecciona un Mineral</option>
-        <option v-for="mineral in minerals" :key="mineral" :value="mineral">
-          {{ mineral }}
-        </option>
-      </select>
-    </div>
-    <highcharts :options="chartOptions" :key="selectedMineral" />
+    <div>
+        <div class="filter-container">
+            <select
+                id="mineral-select"
+                v-model="selectedMineral"
+                class="mineral-dropdown"
+            >
+                <option value="" disabled selected>Selecciona un Mineral</option>
+                <option v-for="mineral in minerals" :key="mineral" :value="mineral">
+                {{ mineral }}
+                </option>
+            </select>
+        </div>
+        <div>
+            <highcharts :options="chartOptions" :key="selectedMineral" />
+        </div>
+        <div class="mt-5">
+            <div v-if="!predictions.percentageErrorsPrediction">
+                <p> Calculado Prediccion de precios ...</p>
+            </div>
+            <div v-if="predictions.percentageErrorsPrediction">
+                <p> Porcentage de Error en la prediccion: {{ predictions.percentageErrorsPrediction }}%</p>
+                <p><strong>Prediccion de Precios Futuros:</strong></p>
+                <div v-for="item in predictions.predictionsPrices" :key="item">
+                    <p>{{ formatDate(item.date) }} - {{  item.predicted_price.toFixed(2) }}</p>
+                </div>
+            </div>
+        </div>
   </div>
 </template>
 
