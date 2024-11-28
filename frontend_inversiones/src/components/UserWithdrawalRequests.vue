@@ -2,12 +2,14 @@
 import { getHeaderRequest, getUserIdOfLocalStorage } from "@/authService";
 import { openModal, closeModal } from "@/utils/modal";
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import Button from "@/components/base/Button.vue";
 import InputFile from "@/components/base/InputFile.vue";
 import TableWithdrawalUsers from "./tables/TableWithdrawalUsers.vue";
 import CardsSummary from "@/components/CardsSummary.vue";
 import { validateInputs } from "@/utils/validateInputs";
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 
 const baseUrl = `${import.meta.env.VITE_API_URL}/withdrawal-request/user/`;
 const investmentsUrl = `${import.meta.env.VITE_API_URL}/investment/user/`;
@@ -24,6 +26,12 @@ const newRequest = ref({
   requestAmount: "",
   photoDocument: null,
   selfiePhoto: null,
+});
+const investmentOptions = computed(() => {
+  return closedInvestments.value.map((investment) => ({
+    label: investment.project.name,
+    value: investment.id,
+  }));
 });
 
 const inputFileRef = ref(null);
@@ -135,7 +143,10 @@ const submitRequest = async () => {
   }
 
   const formData = new FormData();
-  formData.append("investmentId", newRequest.value.investmentId);
+  formData.append(
+    "investmentId",
+    newRequest.value.investmentId.value || newRequest.value.investmentId
+  );
   formData.append("userId", newRequest.value.userId);
   formData.append("requestAmount", newRequest.value.requestAmount);
   if (newRequest.value.photoDocument) {
@@ -253,8 +264,6 @@ const resetForm = () => {
         <TableWithdrawalUsers :headers="headers" :items="rejectedRequests" />
       </div>
     </div>
-
-    <!-- Modal -->
     <div
       class="modal fade"
       id="modalRequest"
@@ -276,24 +285,18 @@ const resetForm = () => {
           <div class="modal-body">
             <div class="mb-3">
               <label for="investmentId" class="form-label">Proyecto</label>
-              <select
-                id="investmentId"
-                class="form-select"
+              <v-select
                 v-model="newRequest.investmentId"
-                @change="updateAmount"
-              >
-                <option value="" disabled>Seleccione un proyecto</option>
-                <option
-                  v-for="investment in closedInvestments"
-                  :key="investment.id"
-                  :value="investment.id"
-                >
-                  {{ investment.project.name }}
-                </option>
-                <option v-if="closedInvestments.length === 0" disabled>
-                  No tienes ningún proyecto del cual retirar inversiones
-                </option>
-              </select>
+                :options="investmentOptions"
+                :placeholder="
+                  closedInvestments.length === 0
+                    ? 'No tienes ningún proyecto del cual retirar inversiones'
+                    : 'Seleccione un proyecto'
+                "
+                :disabled="closedInvestments.length === 0"
+                @input="updateAmount"
+                label="label"
+              />
             </div>
             <InputFile
               id="photoDocument"
@@ -336,7 +339,6 @@ const resetForm = () => {
     </div>
   </div>
 </template>
-
 <style scoped>
 .nav-tabs .nav-link {
   color: #495057;
@@ -359,5 +361,29 @@ const resetForm = () => {
 
 .tab-content > .active {
   display: block;
+}
+:deep(.v-select) {
+  background: white;
+  border-radius: 0.375rem;
+}
+
+:deep(.vs__dropdown-toggle) {
+  padding: 5px;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+}
+
+:deep(.vs__selected) {
+  margin: 0 2px;
+}
+
+:deep(.vs__search) {
+  padding: 5px;
+}
+
+:deep(.vs__dropdown-menu) {
+  padding: 5px;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
 }
 </style>

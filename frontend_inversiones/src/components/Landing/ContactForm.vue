@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center mx-auto col-md-5 py-5">
+  <div class="text-center mx-auto col-md-5 py-5 px-3">
     <h1>¡Contáctanos Ya!</h1>
     <div class="row">
       <Input

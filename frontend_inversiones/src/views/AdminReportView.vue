@@ -1,7 +1,7 @@
 <template>
   <div class="container col-md-11 mt-5">
     <div>
-      <h4 class="card-title text-center">Reportes Administrador</h4>
+      <h4 class="card-title text-center mb-2">Reportes Administrador</h4>
 
       <ul class="nav nav-tabs" id="userTabs" role="tablist">
         <li class="nav-item" role="presentation">

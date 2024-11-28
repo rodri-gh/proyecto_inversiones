@@ -1,6 +1,6 @@
   <template>
   <div class="container col-md-10 mt-2">
-    <h4 class="card-title text-center">Categoria Posts</h4>
+    <h4 class="card-title text-center mb-2">Categoria Posts</h4>
     <div class="text-end">
       <Button
         data-bs-toggle="modal"

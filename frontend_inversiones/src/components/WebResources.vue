@@ -1,28 +1,30 @@
 <template>
   <div>
-    <router-link to="/" class="btn btn-primary"><i class="fas fa-globe"></i> Ir a la Web</router-link>
-      <div class="navbar-tabs">
-        <button
-          v-for="tab in tabs"
-          :key="tab"
-          @click="selectedTab = tab"
-          :class="{ active: selectedTab === tab }"
-        >
-          {{ tab }}
-        </button>
-      </div>
+    <router-link to="/" class="btn btn-primary mb-2"
+      ><i class="fas fa-globe"></i> Ir a la Web</router-link
+    >
+    <div class="navbar-tabs">
+      <button
+        v-for="tab in tabs"
+        :key="tab"
+        @click="selectedTab = tab"
+        :class="{ active: selectedTab === tab }"
+      >
+        {{ tab }}
+      </button>
+    </div>
 
-      <div class="tab-content mt-3">
-        <div v-if="selectedTab === 'Categoria Post'">
-          <CategoryPostView />
-        </div>
-        <div v-if="selectedTab === 'Post'">
-          <PostsView />
-        </div>
-        <div v-if="selectedTab === 'FAQs'">
-          <FaqAdmin />
-        </div>
+    <div class="tab-content mt-3">
+      <div v-if="selectedTab === 'Categoria Post'">
+        <CategoryPostView />
       </div>
+      <div v-if="selectedTab === 'Post'">
+        <PostsView />
+      </div>
+      <div v-if="selectedTab === 'FAQs'">
+        <FaqAdmin />
+      </div>
+    </div>
   </div>
 </template>
   
@@ -34,19 +36,17 @@ import FaqAdmin from "./FaqAdmin.vue";
 import { getUserRoleOfLocalStorage } from "@/authService";
 import { useRouter } from "vue-router";
 
-const selectedTab = ref('Categoria Post');
-const tabs = ['Categoria Post',
-    'Post', 'FAQs'];
-const roleUser = getUserRoleOfLocalStorage(); 
+const selectedTab = ref("Categoria Post");
+const tabs = ["Categoria Post", "Post", "FAQs"];
+const roleUser = getUserRoleOfLocalStorage();
 const router = useRouter();
 
 onMounted(() => {
   console.log(roleUser);
-  if(roleUser === 'client') { 
+  if (roleUser === "client") {
     router.push({ path: "/" });
   }
 });
-
 </script>
 
 <style scoped>

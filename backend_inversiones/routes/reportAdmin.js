@@ -27,9 +27,6 @@ const formatDate = (dateString) => {
   }
 };
 
-
-
-
 router.get('/projects', async (req, res) => {
   const { startDate, endDate, minAmount, maxAmount, status, mineralId } = req.query;
 
@@ -115,7 +112,6 @@ router.get('/projects', async (req, res) => {
         minerals: minerals
       };
     });
-
 
     const totals = projects.reduce((acc, project) => {
 
@@ -394,9 +390,9 @@ router.get('/investments', async (req, res) => {
     });
 
 
-    const totals = formattedInvestments.reduce((acc, inv) => ({
-      totalInvestment: acc.totalInvestment + inv.amount,
-      totalEarnings: acc.totalEarnings + (inv.status === 'closed' && typeof inv.earnings === 'number' ? inv.earnings : 0)
+    const totals = investments.reduce((acc, inv) => ({
+      totalInvestment: acc.totalInvestment + Number(inv.amount),
+      totalEarnings: acc.totalEarnings + (inv.status === 'closed' ? Number(inv.earnings || 0) : 0)
     }), {
       totalInvestment: 0,
       totalEarnings: 0
