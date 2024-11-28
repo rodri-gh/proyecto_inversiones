@@ -69,7 +69,7 @@ const getMovementsOfuser = async () => {
     <div class="cards-grid">
       <div class="card">
         <div class="card-header">
-          <i class="bi bi-person-badge"></i>
+          <i class="fa fa-user text-black"></i>
           <h6>Total Invertido</h6>
         </div>
         <div class="card-body">
@@ -82,7 +82,7 @@ const getMovementsOfuser = async () => {
 
       <div class="card">
         <div class="card-header">
-          <i class="bi bi-person-badge"></i>
+          <i class="fa fa-line-chart text-black"></i>
           <h6>Rendimiento de inversiones</h6>
         </div>
         <div class="card-body">
@@ -108,7 +108,7 @@ const getMovementsOfuser = async () => {
 
       <div class="card">
         <div class="card-header">
-          <i class="bi bi-clock-history"></i>
+          <i class="fa fa-history text-black"></i>
           <h6>Historial de Movimientos</h6>
         </div>
         <div class="card-body">
