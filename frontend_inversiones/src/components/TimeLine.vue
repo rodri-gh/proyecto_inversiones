@@ -1,124 +1,125 @@
   <template>
-  <div class="container col-md-10 mt-5">
-    <div class="card shadow border-0">
-      <div class="card-body">
-        <h4 class="card-title text-center">Línea de Tiempo</h4>
-        <div class="text-end">
-          <button
-            type="button"
-            class="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#modalTimeline"
-            :disabled="availablePhases.length === 0"
-          >
-            <i class="fa fa-plus mx-1"></i> Nuevo
-          </button>
-        </div>
+  <div>
+    <div>
+      <div class="text-end">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#modalTimeline"
+          :disabled="availablePhases.length === 0"
+        >
+          <i class="fa fa-plus mx-1"></i> Nuevo
+        </button>
+      </div>
 
-        <div class="timeline-container position-relative mt-4">
-          <div class="timeline-line"></div>
-          <div
-            v-for="(timeline, index) in timeLines"
-            :key="timeline.id"
-            class="timeline-item"
-            :class="{
-              'timeline-left': index % 2 === 0,
-              'timeline-right': index % 2 !== 0,
-            }"
-          >
-            <div
-              class="timeline-point"
-              :class="getStatusClass(timeline.status)"
-            >
-              <i :class="getStatusIcon(timeline.status)"></i>
-            </div>
-            <div class="timeline-content">
-              <div class="card shadow-sm">
-                <div class="card-body">
-                  <!-- <span
-                    class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)"
+      <div class="timeline-container position-relative mt-2">
+        <div class="timeline-line"></div>
+        <div
+          v-for="(timeline, index) in timeLines"
+          :key="timeline.id"
+          class="timeline-item"
+          :class="{
+            'timeline-left': index % 2 === 0,
+            'timeline-right': index % 2 !== 0,
+          }"
+        >
+          <div class="timeline-point" :class="getStatusClass(timeline.status)">
+            <i :class="getStatusIcon(timeline.status)"></i>
+          </div>
+          <div class="timeline-content">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <span
+                  v-if="timeline.phase == 'contrato'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Contrato
+                </span>
+                <span
+                  v-if="timeline.phase == 'inversion'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Inversión
+                </span>
+
+                <span
+                  v-if="timeline.phase == 'compra_de_mineral'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Fecha Compra de mineral
+                </span>
+
+                <span
+                  v-if="timeline.phase == 'envio'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Fecha de envio
+                </span>
+
+                <span
+                  v-if="timeline.phase == 'entrega'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Fecha de entrega
+                </span>
+
+                <span
+                  v-if="timeline.phase == 'ganancia'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Fecha de Ganancia
+                </span>
+
+                <span
+                  v-if="timeline.phase == 'pago'"
+                  class="phase-badge"
+                  :class="getPhaseClass(timeline.phase)"
+                >
+                  Fecha de Pago
+                </span>
+
+                <div class="dates mt-2">
+                  <small class="text-muted">
+                    <strong>
+                      {{ formatDate(timeline.startDate) }} -
+                      {{ formatDate(timeline.endDate) }}
+                    </strong>
+                  </small>
+                </div>
+
+                <p class="mt-2">{{ timeline.description }}</p>
+
+                <div
+                  v-if="
+                    timeline.priceMineral2 > 0 && timeline.priceMineral1 > 0
+                  "
+                  class="prices mt-2"
+                >
+                  <small class="d-block">
+                    <strong>Mineral 1:</strong> ${{ timeline.priceMineral1 }}
+                  </small>
+                  <small class="d-block">
+                    <strong>Mineral 2:</strong> ${{ timeline.priceMineral2 }}
+                  </small>
+                </div>
+                <div v-else>
+                  <p>No hay variaciones en los precios!</p>
+                </div>
+
+                <div class="mt-2">
+                  <button
+                    class="btn btn-warning btn-sm"
+                    @click="selectTimeLine(timeline)"
                   >
-                    {{ timeline.phase }}
-                  </span> -->
-
-                  <span
-                    v-if="timeline.phase == 'contrato'"
-                    class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)"
-                  >
-                    Contrato
-                  </span>
-                  <span
-                    v-if="timeline.phase == 'pre-compra'"
-                    class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)"
-                  >
-                    Pre-compra
-                  </span>
-
-                  <span
-                    v-if="timeline.phase == 'compra'"
-                    class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)"
-                  >
-                    Compra
-                  </span>
-
-                  <span
-                    v-if="timeline.phase == 'entrada-al-ingenio'"
-                    class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)"
-                  >
-                    Entrada al ingenio
-                  </span>
-
-                  <span
-                    v-if="timeline.phase == 'salida-del-ingenio'"
-                    class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)"
-                  >
-                    Salida del ingenio
-                  </span>
-
-                  <span
-                    v-if="timeline.phase == 'certificacion'"
-                    class="phase-badge"
-                    :class="getPhaseClass(timeline.phase)"
-                  >
-                    Certificación
-                  </span>
-
-                  <div class="dates mt-2">
-                    <small class="text-muted">
-                      {{ formatDate(timeline.start_date) }} -
-                      {{ formatDate(timeline.end_date) }}
-                    </small>
-                  </div>
-
-                  <p class="mt-2">{{ timeline.description }}</p>
-
-                  <div class="prices mt-2">
-                    <small class="d-block">
-                      <strong>Mineral 1:</strong> ${{
-                        timeline.price_mineral_1
-                      }}
-                    </small>
-                    <small class="d-block">
-                      <strong>Mineral 2:</strong> ${{
-                        timeline.price_mineral_2
-                      }}
-                    </small>
-                  </div>
-
-                  <div class="mt-3">
-                    <button
-                      class="btn btn-warning btn-sm"
-                      @click="selectTimeLine(timeline)"
-                    >
-                      <i class="fa fa-edit"></i> Editar
-                    </button>
-                  </div>
+                    <i class="fa fa-edit"></i> Editar
+                  </button>
                 </div>
               </div>
             </div>
@@ -172,24 +173,24 @@
             </div>
 
             <div class="mb-3">
-              <label for="start_date" class="form-label">Fecha de inicio</label>
+              <label for="startDate" class="form-label">Fecha de inicio</label>
               <input
                 type="date"
                 class="form-control"
-                v-model="start_date"
-                id="start_date"
+                v-model="startDate"
+                id="startDate"
               />
             </div>
 
             <div class="mb-3">
-              <label for="end_date" class="form-label"
+              <label for="endDate" class="form-label"
                 >Fecha de finalizacion</label
               >
               <input
                 type="date"
                 class="form-control"
-                v-model="end_date"
-                id="end_date"
+                v-model="endDate"
+                id="endDate"
               />
             </div>
             <div class="mb-3">
@@ -264,9 +265,12 @@
   </div>
 </template>
 
-  <script setup>
-import { ref, onMounted, computed } from "vue";
+<script setup>
+import { ref, onMounted, computed, onUnmounted } from "vue";
 import axios from "axios";
+import { getHeaderRequest } from "@/authService";
+import { eventBus } from "@/eventBus";
+import { handleErrorSwal } from "@/errorMixin";
 
 const props = defineProps({
   idProject: {
@@ -275,39 +279,43 @@ const props = defineProps({
   },
 });
 
-const baseURL = "http://localhost:3000/projectTimeLine/";
+const baseURL = `${import.meta.env.VITE_API_URL}/projectTimeline/`;
 
 const timeLines = ref([]);
 
 const phase = ref("");
-const start_date = ref("");
-const end_date = ref("");
+const startDate = ref("");
+const endDate = ref("");
 const status = ref("");
 const description = ref("");
 const mineral_1 = ref(0);
 const mineral_2 = ref(0);
 
+const header = getHeaderRequest();
+
 const selectedTimeLine = ref({});
 
 const phases = [
   "contrato",
-  "pre-compra",
-  "compra",
-  "entrada-al-ingenio",
-  "salida-del-ingenio",
-  "certificacion",
+  "inversion",
+  "compra_de_mineral",
+  "envio",
+  "entrega",
+  "ganancia",
+  "pago",
 ];
 
 const availablePhases = computed(() => {
   // Siempre incluye la fase actual
   const usedPhases = timeLines.value.map((timeline) => timeline.phase);
+  console.log(usedPhases);
   const uniqueUsedPhases = [...new Set(usedPhases)];
-
+  console.log(uniqueUsedPhases);
   // Incluye la fase actual en las fases disponibles
   const remainingPhases = phases.filter(
     (phase) => !uniqueUsedPhases.includes(phase)
   );
-
+  console.log(remainingPhases);
   // Asegúrate de que la fase actual esté siempre disponible
   if (
     selectedTimeLine.value.phase &&
@@ -315,12 +323,17 @@ const availablePhases = computed(() => {
   ) {
     remainingPhases.push(selectedTimeLine.value.phase);
   }
-
+  console.log(remainingPhases);
   return remainingPhases;
 });
 
 onMounted(() => {
   getTimeLines();
+  eventBus.on("data-updated", getTimeLines);
+});
+
+onUnmounted(() => {
+  eventBus.off("data-updated", getTimeLines);
 });
 
 const getStatusClass = (status) => {
@@ -355,11 +368,12 @@ const getPhaseClass = (phase) => {
   const phaseLower = phase.toLowerCase();
   const phaseClasses = {
     contrato: "phase-contract",
-    "pre-compra": "phase-prebuying",
-    compra: "phase-buying",
-    "entrada-al-ingenio": "phase-entry",
-    "salida-del-ingenio": "phase-exit",
-    certificacion: "phase-certification",
+    inversion: "phase-prebuying",
+    compra_de_mineral: "phase-buying",
+    envio: "phase-entry",
+    entrega: "phase-exit",
+    ganancia: "phase-certification",
+    pago: "phase-contract",
   };
   return phaseClasses[phaseLower] || "phase-default";
 };
@@ -380,39 +394,53 @@ const formatInputDate = (date) => {
 
 const getTimeLines = async () => {
   try {
-    const { data } = await axios.get(baseURL + props.idProject);
-    timeLines.value = data.data.sort(
-      (a, b) => new Date(a.start_date) - new Date(b.start_date)
+    console.log(baseURL + "project/" + props.idProject);
+    const data = await axios.get(
+      baseURL + "project/" + props.idProject,
+      header
     );
-
-    console.log(timeLines.value);
+    console.log(data.data);
+    timeLines.value = data.data
+      .filter((item) => phases.includes(item.phase))
+      .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
 const createTimeLine = async () => {
+  var myModalEl = document.getElementById("modalTimeline");
+  var modal = bootstrap.Modal.getInstance(myModalEl);
   const timeLine = {
+    projectId: props.idProject,
     phase: phase.value,
-    start_date: start_date.value,
-    end_date: end_date.value,
+    startDate: startDate.value,
+    endDate: endDate.value,
     status: status.value,
     description: description.value,
-    price_mineral_1: mineral_1.value,
-    price_mineral_2: mineral_2.value,
-    project_id: props.idProject,
+    priceMineral1: mineral_1.value,
+    priceMineral2: mineral_2.value,
   };
-
+  console.log(props.idProject);
+  console.log(phase.value);
+  console.log(startDate.value);
+  console.log(endDate.value);
+  console.log(status.value);
+  console.log(description.value);
+  console.log(mineral_1.value);
+  console.log(mineral_2.value);
+  console.log(timeLine);
   try {
-    const { data } = await axios.post(baseURL, timeLine);
-    console.log(data);
-    var myModalEl = document.getElementById("modalTimeline");
-    var modal = bootstrap.Modal.getInstance(myModalEl);
+    console.log(baseURL);
+    const data = await axios.post(baseURL, timeLine, header);
+    console.log(data.data);
     modal.hide();
     getTimeLines();
     reset();
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    handleErrorSwal(e, 'Error al crear Timeline!');
+    modal.hide();
+    reset();
   }
 };
 
@@ -422,12 +450,12 @@ const selectTimeLine = (timeLine) => {
   console.log(selectedTimeLine.value, timeLine.p);
 
   phase.value = timeLine.phase;
-  start_date.value = formatInputDate(timeLine.start_date);
-  end_date.value = formatInputDate(timeLine.end_date);
+  startDate.value = formatInputDate(timeLine.startDate);
+  endDate.value = formatInputDate(timeLine.endDate);
   status.value = timeLine.status;
   description.value = timeLine.description;
-  mineral_1.value = timeLine.price_mineral_1;
-  mineral_2.value = timeLine.price_mineral_2;
+  mineral_1.value = timeLine.priceMineral1;
+  mineral_2.value = timeLine.priceMineral2;
 
   var myModalEl = document.getElementById("modalTimeline");
   var modal = new bootstrap.Modal(myModalEl);
@@ -437,12 +465,12 @@ const selectTimeLine = (timeLine) => {
 const updateTimeLine = async () => {
   const timeLine = {
     phase: phase.value,
-    start_date: start_date.value,
-    end_date: end_date.value,
+    startDate: startDate.value,
+    endDate: endDate.value,
     status: status.value,
     description: description.value,
-    price_mineral_1: mineral_1.value,
-    price_mineral_2: mineral_2.value,
+    priceMineral1: mineral_1.value,
+    priceMineral2: mineral_2.value,
     project_id: props.idProject,
   };
 
@@ -455,7 +483,6 @@ const updateTimeLine = async () => {
     var myModalEl = document.getElementById("modalTimeline");
     var modal = bootstrap.Modal.getInstance(myModalEl);
     modal.hide();
-
     getTimeLines();
     reset();
   } catch (error) {
@@ -465,8 +492,8 @@ const updateTimeLine = async () => {
 
 const reset = () => {
   phase.value = "";
-  start_date.value = "";
-  end_date.value = "";
+  startDate.value = "";
+  endDate.value = "";
   status.value = "";
   description.value = "";
   mineral_1.value = 0;
@@ -477,7 +504,9 @@ const reset = () => {
 
  <style scoped>
 .timeline-container {
-  padding: 20px 0;
+  max-height: 700px;
+  overflow-y: auto;
+  padding: 5px 0;
   width: 100%;
 }
 
@@ -487,13 +516,13 @@ const reset = () => {
   transform: translateX(-50%);
   width: 2px;
   height: 100%;
-  background-color: #e9ecef;
+  background-color: #a59d9a;
   top: 0;
 }
 
 .timeline-item {
   position: relative;
-  margin-bottom: 30px;
+  margin-bottom: 1px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -503,11 +532,11 @@ const reset = () => {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: white;
-  border: 2px solid #dee2e6;
+  border: 4px solid #1e5363;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -515,7 +544,7 @@ const reset = () => {
 }
 
 .timeline-content {
-  width: 45%;
+  width: 40%;
   position: relative;
 }
 
@@ -528,11 +557,12 @@ const reset = () => {
 }
 
 .phase-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.975rem;
+  font-weight: 700;
   display: inline-block;
+  text-align: center;
 }
 
 /* Estados */
@@ -583,7 +613,7 @@ const reset = () => {
 }
 
 .phase-default {
-  background-color: #6c757d;
+  background-color: #152635;
   color: white;
 }
 

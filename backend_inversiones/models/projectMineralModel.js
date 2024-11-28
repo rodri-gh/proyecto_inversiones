@@ -11,16 +11,49 @@ ProjectMineral.init(
         },
         projectId: {
             type: DataTypes.BIGINT,
-            allowNull: false
+            allowNull: false,
         },
         mineralId: {
             type: DataTypes.BIGINT,
             allowNull: false
         },
+        userId: {
+            type: DataTypes.BIGINT,
+            allowNull: true
+        },
+        operatingExpenseId: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
+        purchasePrice: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: false
+        },
+        weightOunces: {
+            type: DataTypes.DECIMAL(10, 3),
+            allowNull: false, 
+            defaultValue: 0
+        },
+        prePurchase: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: true
+        },
+        estimatedPurchasePrice: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: true
+        },
         deleted: {
             type: DataTypes.TINYINT,
             allowNull: false,
-            defaultValue: 1
+            defaultValue: 0
+        },
+        exitPrice: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: true
+        },
+        salePrice: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: true
         }
     },
     {

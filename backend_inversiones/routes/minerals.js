@@ -2,11 +2,19 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { getHandleSuccess } from '../helpers/handleSuccess.js';
 import { getHandleError } from '../helpers/handleExceptions.js';
 import Mineral from '../models/mineralModel.js';
+import dotenv from 'dotenv';
 import { verifyIfIdExists } from '../helpers/handleId.js';
+import { Op } from 'sequelize';
 
+
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 const uploadDir = 'public/images/minerals';
@@ -27,39 +35,43 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.get('/', async (req, res, next) => {
-  // const query = 'SELECT * FROM minerals;';
-  // connection.query(query, function (error, results, fields) {
-  //   if (error) {
-  //     console.log(error);
-  //     res.status(500).json({
-  //       error: error,
-  //       message: 'Error in the query',
-  //     });
-  //   } else {
-  //     console.log(results);
-  //     // para mostrar imagenes de la base de datos
-  //     results.forEach(element => {
-  //       if (element.image) {
-  //         element.image = `http://localhost:3000/images/minerals/${element.image}`;
-  //       }
-  //     })
-  //     res.status(200).json({
-  //       data: results,
-  //       message: 'Listing minerals',
-  //     });
-  //   }
-  // });
   try {
     const minerals = await Mineral.findAll();
+    minerals.forEach(mineral => {
+      if (mineral.image) {
+        const url = process.env.URL_BASE;
+        const image = mineral.image;
+        mineral.image = url + '/images/minerals/' + image;
+      }
+    });
     getHandleSuccess(200)(res, minerals);
   } catch (error) {
-    getHandleError(error, res)
+    getHandleError(error, res);
+  }
+});
+
+router.get('/:id', async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const minerals = await Mineral.findAll({ where: { id: id } });
+    getHandleSuccess(200)(res, minerals);
+  } catch (error) {
+    getHandleError(error, res);
   }
 });
 
 router.post('/', upload.single('image'), async (req, res, next) => {
+
   const { name, price, description } = req.body;
   const image = req.file ? `${req.file.filename}` : null;
+
+  if (!name || !price || !description || !image) {
+    return res.status(400).json({
+      status: 400,
+      message: 'All fields are required'
+    });
+  }
+
   try {
     await Mineral.create({ name, price, description, image });
     getHandleSuccess(201)(res, "Mineral created successfully");
@@ -68,65 +80,84 @@ router.post('/', upload.single('image'), async (req, res, next) => {
   }
 });
 
-router.put('/:id', upload.single('image'), function (req, res, next) {
-  const mineralId = req.params.id;
+router.put('/:id', upload.single('image'), async (req, res, next) => {
+  const { id } = req.params;
   const { name, description, price } = req.body;
 
-  const query = `SELECT image FROM minerals WHERE id = "${mineralId}";`;
-  connection.query(query, function (error, results, fields) {
-    if (error) {
-      console.error(error);
-      return res.status(500).json({
-        error: error,
-        message: 'Error retrieving minerals information',
+  if (!name || !price || !description) {
+    return res.status(400).json({
+      status: 400,
+      message: 'All fields are required'
+    });
+  }
+
+  try {
+
+    const mineral = await Mineral.findOne({ where: { id } });
+    if (!mineral) {
+      return getHandleError(new Error('Mineral not found'), res);
+    }
+
+    const existingMineral = await Mineral.findOne({
+      where: {
+        name: name,
+        id: { [Op.ne]: id }
+      }
+    });
+
+    if (existingMineral) {
+      return res.status(409).json({
+        status: 409,
+        message: 'Ya existe un mineral con este nombre'
       });
     }
 
-    const currentMineral = results[0];
-
-
-    let image = currentMineral.image;
+    let image = mineral.image;
     if (req.file) {
       // Si se subió una nueva imagen, actualizar la ruta
       image = `${req.file.filename}`;
 
       // Eliminar la imagen antigua si existe
-      if (currentMineral.image) {
-        const oldImagePath = path.join(__dirname, '../public/images/minerals', currentMineral.image);
-        fs.unlink(oldImagePath, (err) => {
-          console.error('Error deleting old image:', err);
+      if (mineral.image) {
+        const oldImagePath = path.join(__dirname, '../public/images/minerals', mineral.image);
+        fs.access(oldImagePath, fs.constants.F_OK, (err) => {
+          if (!err) {
+            fs.unlink(oldImagePath, (err) => {
+              if (err) {
+                console.error('Error deleting old image:', err);
+              }
+            });
+          } else {
+            console.error('Old image not found:', oldImagePath);
+          }
         });
       }
     }
 
-    const query = `
-      UPDATE minerals 
-      SET name = "${name}", description = "${description}", price = "${price}", image = "${image}"
-      WHERE id = "${mineralId}";
-    `;
 
-    connection.query(query, (error, results) => {
-      if (error) {
-        console.error(error);
-        return res.status(500).json({
-          error: error,
-          message: 'Error updating mineral',
-        });
-      }
+    await Mineral.update(
+      { name, description, price, image },
+      { where: { id } }
+    );
 
-      res.status(200).json({
-        message: 'Mineral updated',
-      });
-    });
-  });
+    getHandleSuccess(200)(res, 'Mineral updated successfully');
+  } catch (error) {
+    getHandleError(error, res);
+  }
 });
 
-router.delete('/:id', async (req, res, next) =>{
+router.patch('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
-    const [mineralDeleted] = await Mineral.update({ deleted: true }, { where: { id } });
-    verifyIfIdExists(mineralDeleted);
-    getHandleSuccess(204)(res, "Mineral created successfully");
+    const mineral = await Mineral.findOne({ where: { id } });
+    if (!mineral) {
+      return getHandleError(new Error('Mineral not found'), res);
+    }
+
+    const newDeletedStatus = mineral.deleted ? 0 : 1;
+    await Mineral.update({ deleted: newDeletedStatus }, { where: { id } });
+
+    getHandleSuccess(200)(res, `Mineral ${newDeletedStatus ? 'deleted' : 'restored'} successfully`);
   } catch (error) {
     getHandleError(error, res);
   }

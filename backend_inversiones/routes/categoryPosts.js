@@ -19,6 +19,14 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   const { name } = req.body;
+
+  if (!name) {
+    return res.status(400).json({
+      error: true,
+      message: 'Name is required'
+    });
+  }
+
   try {
     await CategoryPost.create({ name });
     getHandleSuccess(201)(res, created.categoryPost)
@@ -31,6 +39,16 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   const { id } = req.params;
   const { name } = req.body;
+
+  if (!name) {
+    return res.status(400).json({
+      error: true,
+      message: 'Name is required'
+    });
+  }
+
+
+
   try {
     const [updatedCount] = await CategoryPost.update({ name }, {
       where: { id },
@@ -46,12 +64,15 @@ router.put('/:id', async (req, res, next) => {
 router.patch('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
-    const [updatedCount] = await CategoryPost.update({ deleted: 1 }, {
-      where: { id },
-      returning: true
-    });
-    verifyIfIdExists(updatedCount);
-    getHandleSuccess(204)(res)
+    const categoryPost = await CategoryPost.findOne({ where: { id } });
+    if (!categoryPost) {
+      return getHandleError(new Error('CategoryPost not found'), res);
+    }
+
+    const newDeletedStatus = categoryPost.deleted ? 0 : 1;
+    await categoryPost.update({ deleted: newDeletedStatus }, { where: { id } });
+
+    getHandleSuccess(200)(res, `CategoryPost ${newDeletedStatus ? 'deleted' : 'restored'} successfully`);
   } catch (error) {
     getHandleError(error, res)
   }

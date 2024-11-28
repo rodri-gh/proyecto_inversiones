@@ -1,281 +1,224 @@
 <template>
-    <div class="container col-md-8 mt-5">
-        <div class="card shadow border-0">
-            <div class="card-body">
-                <h4 class="card-title text-center">Solicitudes de Retiro</h4>
-                <div class="text-end">
-                </div>
-                <Button
-            data-bs-toggle="modal"
-            data-bs-target="#modalMineral"
-            text="Nueva solicitud de retiro"
-            icon="fa fa-plus"
-            />
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Cantidad</th>
-                                <th scope="col">Estado</th>
-                                <th scope="col">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-if="withdrawals.length == 0">
-                                <td colspan="5" class="text-center">
-                                    No hay solicitudes de retiro registradas
-                                </td>
-                            </tr>
+  <div class="container col-md-12 mt-2">
+    <h4 class="card-title text-center">Solicitudes de Retiro</h4>
+    <br />
+    <CardsSummary :items="summaryWithdrawals" />
 
-                            <tr v-for="withdrawal in withdrawals" :key="withdrawal.withdrawal_requests_id">
-                                <td>{{ withdrawal.receive_amount }} </td>
-                                <td>
-                                    <span v-if="withdrawal.status === 'approved'" class="badge bg-success">Aprovado</span>
-                                    <span v-else class="badge bg-danger">Pendiente</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm m-1" @click="selectWithdrawal(withdrawal)">
-                                        <i class="fa fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-danger btn-sm m-1" @click="deleteWithdrawal(withdrawal.withdrawal_requests_id)">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+    <ul class="nav nav-tabs" id="withdrawalTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link active"
+          id="all-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#all"
+          type="button"
+          role="tab"
+        >
+          Todos
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="pending-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#pending"
+          type="button"
+          role="tab"
+        >
+          Pendientes
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="approved-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#approved"
+          type="button"
+          role="tab"
+        >
+          Aprobados
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="rejected-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#rejected"
+          type="button"
+          role="tab"
+        >
+          Rechazados
+        </button>
+      </li>
+    </ul>
 
-        <Modal
-      modalId="modalMineral"
-      title="Datos del Mineral"
-      :showSaveButton="!selectedMineral?.withdrawal_requests_id"
-      :showUpdateButton="Boolean(selectedMineral?.withdrawal_requests_id)"
-      @onClose="reset()"
-      @onSave="saveMineral()"
-    >
-      <Input
-        id="request_amount"
-        label="Cantidad"
-        v-model="request_amount"
-        type="number"
-        placeholder="Ingrese la cantidad"
-      />
-
-      <InputFile
-        id="photo_document"
-        label="Ingrese foto de identidad"
-        @update:modelValue="handleImageChange"
-        accept="image/*"
-      />
-
-      <InputFile
-        id="selfie_photo"
-        label="Ingrese su selfie"
-        @update:modelValue="handleImageChange"
-        accept="image/*"
-      />
-
-      <div v-if="previewUrl" class="mt-3">
-        <img :src="previewUrl" alt="Vista_previa" class="img-fluid" />
+    <div class="tab-content" id="withdrawalTabsContent">
+      <div class="tab-pane fade show active" id="all" role="tabpanel">
+        <TableWithdrawals
+          :headers="headers"
+          :items="withdrawals"
+          :actions="actions"
+        />
       </div>
-    </Modal>
+      <div class="tab-pane fade" id="pending" role="tabpanel">
+        <TableWithdrawals
+          :headers="headers"
+          :items="pendingWithdrawals"
+          :actions="actions"
+        />
+      </div>
+      <div class="tab-pane fade" id="approved" role="tabpanel">
+        <TableWithdrawals
+          :headers="headers"
+          :items="approvedWithdrawals"
+          :actions="actions"
+        />
+      </div>
+      <div class="tab-pane fade" id="rejected" role="tabpanel">
+        <TableWithdrawals
+          :headers="headers"
+          :items="rejectedWithdrawals"
+          :actions="actions"
+        />
+      </div>
     </div>
+  </div>
 </template>
 
-
 <script setup>
-
-
-
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import axios from "axios";
-import Button from "@/components/base/Button.vue";
-import TableMinerals from "@/components/tables/TableMinerals.vue";
-import Modal from "@/components/base/Modal.vue";
-import Input from "@/components/base/Input.vue";
-import InputTextArea from "@/components/base/InputTextArea.vue";
-import InputFile from "@/components/base/InputFile.vue";
-import { openModal, closeModal } from "@/utils/modal";
+import Swal from "sweetalert2";
+import TableWithdrawals from "@/components/tables/TableWithdrawals.vue";
+import CardsSummary from "@/components/CardsSummary.vue";
 
 const withdrawals = ref([]);
-const request_amount = ref("");
-const selectedWithdrawal = ref(null); //recorda cambiar
-const photo_document = ref(null); 
-const selfie_photo = ref(null);
-const selectedMineral = ref({});
-const previewUrl = ref(null);
-const baseURL = "http://localhost:3000/withdrawal_requests/";
+const summaryWithdrawals = ref([]);
+const baseURL = `${import.meta.env.VITE_API_URL}/withdrawal-request/`;
 
+const headers = [
+  "Proyecto",
+  "Cliente",
+  "Monto",
+  "Fecha Solicitud",
+  "Fecha Aprobación",
+  "Estado",
+  "Acciones",
+];
 
+onMounted(() => {
+  getWithdrawals();
+});
 
-const fetchWithdrawals = async () => {
-    try {
-        const response = await axios.get("http://localhost:3000/withdrawal_requests");
-        withdrawals.value = response.data.data; // Asumiendo que el backend devuelve un array de solicitudes
-        withdrawals.value = withdrawals.value.filter((w) => w.deleted == 1);
-        console.log(withdrawals.value);
-        console.log('datos recibidos exitosamente')
-    } catch (error) {
-        console.error("Error fetching withdrawals:", error);    
-    }
-};
-
-
-
-const updateWithdrawal = async () => {
-    if (!selectedWithdrawal.value || !selectedWithdrawal.value.id) {
-        console.error("No hay una solicitud de retiro seleccionada o el ID es inválido.");
-        return;
-    }
-
-    const requestData = {
-        request_amount: request_amount.value,
-    };
-
-    try {
-        await axios.put(
-            `http://localhost:3000/withdrawals/${selectedWithdrawal.value.id}`,
-            requestData
-        );
-        const index = withdrawals.value.findIndex(
-            (w) => w.id === selectedWithdrawal.value.id
-        );
-        if (index !== -1) {
-            withdrawals.value[index] = {
-                ...selectedWithdrawal.value,
-                ...requestData,
-            };
-        }
-        reset();
-    } catch (error) {
-        console.error("Error updating withdrawal:", error);
-    }
-};
-
-const deleteWithdrawal = async (id) => {
-    try {
-        await axios.patch(`http://localhost:3000/withdrawal_requests/${id}`);
-        withdrawals.value = withdrawals.value.filter((w) => w.deleted == 1); // Eliminar de la lista
-        fetchWithdrawals();
-    } catch (error) {
-        console.error("Error deleting withdrawal:", error);
-    }
-};
-
-const selectWithdrawal = (withdrawal) => {
-    selectedWithdrawal.value = withdrawal;
-    request_amount.value = withdrawal.request_amount;
-};
-
-
-//revisando si funcionan las imagenes 
-const previewImage = (event) => {
-    if (!event || !event.target || !event.target.files || event.target.files.length === 0) {
-        console.error("No se ha seleccionado ningún archivo.");
-        return;
-    }
-    const file = event.target.files[0];
-    console.log("Archivo seleccionado:", file);
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            console.log("Preview de imagen:", e.target.result); // URL de la imagen
-        };
-        reader.readAsDataURL(file);
-    } else {
-        console.error("No se pudo leer el archivo.");
-    }
-};
-
-
-const selectMineral = (mineral) => {
-  selectedMineral.value = mineral;
-  request_amount.value = mineral.name;
-//price.value = mineral.price;
-  //description.value = mineral.description;
- // previewUrl.value = mineral.image;
-openModal("modalMineral");
-};
-
-const saveMineral = async () => {
-  const method = selectedMineral.value.withdrawal_requests_id ? "put" : "post";
-  const url = selectedMineral.value.withdrawal_requests_id
-    ? `${baseURL}${selectedMineral.value.withdrawal_requests_id}`
-    : baseURL;
- 
-  const formData = createFormData();
-  console.log(Array.from(formData));
-    for (let [key, value] of formData.entries()) {
-    console.log(`${key}: ${value instanceof File ? value.name : value}`);
-    }
-
-
+const getWithdrawals = async () => {
   try {
-    await axios[method](url, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
- 
-    closeModal("modalMineral");
-    getMinerals();
-    reset();
+    const { data } = await axios.get(baseURL);
+    withdrawals.value = data;
+    console.log("Withdrawals:", withdrawals.value);
+    updateSummary();
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching withdrawals:", error);
   }
 };
 
-const reset = () => {
-  request_amount.value = "";
-  photo_document.value = null;
-  selfie_photo.value = null;
-  previewUrl.value = null;
-  selectedMineral.value = {};
+const pendingWithdrawals = computed(() =>
+  withdrawals.value.filter((w) => w.status === "pending")
+);
+
+const approvedWithdrawals = computed(() =>
+  withdrawals.value.filter((w) => w.status === "approved")
+);
+
+const rejectedWithdrawals = computed(() =>
+  withdrawals.value.filter((w) => w.status === "rejected")
+);
+
+const updateSummary = () => {
+  summaryWithdrawals.value = [
+    { key: "Total", value: withdrawals.value.length },
+    { key: "Pendientes", value: pendingWithdrawals.value.length },
+    { key: "Aprobados", value: approvedWithdrawals.value.length },
+    { key: "Rechazados", value: rejectedWithdrawals.value.length },
+  ];
 };
+const approveWithdrawal = async (id) => {
+  try {
+    const result = await Swal.fire({
+      title: "¿Está seguro?",
+      text: "¿Desea aprobar esta solicitud de retiro?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, aprobar",
+      cancelButtonText: "Cancelar",
+    });
 
-fetchWithdrawals(); 
-
-const createFormData = () => {
-const formData = new FormData(); 
-    formData.append("investment_id", 1);/////// predeterminado  (enlazar )
-    formData.append("user_id", 1); 
-
-    console.log(parseFloat(request_amount.value));
-
-
-
-    formData.append("request_amount", request_amount.value);
-    formData.append("commission_apply", request_amount.value);
-    formData.append("receive_amount", request_amount.value);
-    
-    if (photo_document.value) {
-        formData.append("photo_document", photo_document.value);
+    if (result.isConfirmed) {
+      await axios.patch(`${baseURL}status/${id}`, {
+        status: "approved",
+      });
+      await getWithdrawals();
+      Swal.fire("¡Aprobado!", "La solicitud ha sido aprobada.", "success");
     }
-    if (selfie_photo.value) {
-        formData.append("selfie_photo", selfie_photo.value);
-    }
-return formData;
-};
-
-
-const handleImageChange = (file) => {
-  photo_document.value = file;
-  selfie_photo.value = file;
-  if (file) {
-    previewUrl.value = URL.createObjectURL(file);
-  } else {
-    previewUrl.value = null;
+  } catch (error) {
+    console.error(error);
+    Swal.fire("Error", "No se pudo aprobar la solicitud", "error");
   }
 };
 
+const rejectWithdrawal = async (id) => {
+  try {
+    const result = await Swal.fire({
+      title: "¿Está seguro?",
+      text: "¿Desea rechazar esta solicitud de retiro?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, rechazar",
+      cancelButtonText: "Cancelar",
+    });
 
+    if (result.isConfirmed) {
+      await axios.patch(`${baseURL}status/${id}`, {
+        status: "rejected",
+      });
+      await getWithdrawals();
+      Swal.fire("¡Rechazado!", "La solicitud ha sido rechazada.", "success");
+    }
+  } catch (error) {
+    console.error(error);
+    Swal.fire("Error", "No se pudo rechazar la solicitud", "error");
+  }
+};
 
-
+const actions = {
+  approve: approveWithdrawal,
+  reject: rejectWithdrawal,
+};
 </script>
 
 <style scoped>
+.nav-tabs .nav-link {
+  color: #495057;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-bottom-color: transparent;
+}
+.nav-link {
+  border-radius: 0;
+}
+.nav-tabs .nav-link.active {
+  color: white;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
 
+.tab-content > .tab-pane {
+  display: none;
+}
+
+.tab-content > .active {
+  display: block;
+}
 </style>

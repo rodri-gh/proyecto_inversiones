@@ -1,14 +1,15 @@
 <template>
-  <div class="mb-3">
-    <label :for="id" class="form-label">{{ label }}</label>
+  <div>
+    <label :for="id" class="form-label m-0">{{ label }}</label>
     <input
       :type="type"
       :id="id"
       :value="modelValue"
       @input="updateValue"
-      class="form-control"
+      class="form-control m-0"
       :placeholder="placeholder"
     />
+    <slot></slot>
   </div>
 </template>
 

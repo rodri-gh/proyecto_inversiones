@@ -1,89 +1,228 @@
 <template>
-  <div class="row">
-    <div class="col-md-6">
-      <h3>Minerales del proyecto</h3>
-      <ProjectMineral :idProjectMineral="idProject" />
+  <div class="project-container">
+    <div v-if="statusProject === 'open' || statusProject === 'in-transit'">
+      <div class="navbar-tabs">
+        <button
+          v-for="tab in tabs"
+          :key="tab"
+          @click="selectedTab = tab"
+          :class="{ active: selectedTab === tab }"
+        >
+          {{ tab }}
+        </button>
+      </div>
+
+      <div class="tab-content mt-3">
+        <div v-if="selectedTab === 'Inicio'">
+          <div class="project-intro">
+            <h3>Proyecto: {{ project.name }}</h3>
+            <div class="project-image">
+              <img
+                src="@/assets/iconMineralProject.png"
+                alt="Imagen del Proyecto"
+              />
+            </div>
+
+            <div class="project-summary">
+              <div class="project-details">
+                <div class="detail-item shadow">
+                  <strong>Objetivo de Inversión:</strong> ${{
+                    project.investmentGoal
+                  }}
+                </div>
+                <div class="detail-item shadow">
+                  <strong>Estado:</strong> {{ project.status }}
+                </div>
+                <div class="detail-item shadow">
+                  <strong>Duración:</strong>
+                  {{ formatDate(project.startDate) }} -
+                  {{ formatDate(project.endDate) }}
+                </div>
+                <div class="detail-item shadow">
+                  <strong>Rentabilidad Esperada:</strong>
+                  {{ project.profitPercentage }}%
+                </div>
+              </div>
+              <br />
+              <br />
+              <p><strong>Descripcion:</strong> {{ project.description }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="selectedTab === 'Inversiones'">
+          <h3>Contratos del Proyecto</h3>
+          <Contract :idProject="idProject" :project="project" />
+          <br><br>
+          <h4>Inversiones del Proyecto</h4>
+          <Investments :idProjectInvestment="idProject" />
+        </div>
+
+        <div v-if="selectedTab === 'Minerales'">
+          <h3>Minerales del Proyecto</h3>
+          <ProjectMineral :idProjectMineral="idProject" />
+        </div>
+
+        <div v-if="selectedTab === 'Gastos Operativos'">
+          <h3>Gastos Operativos del Proyecto</h3>
+          <OperatingExpenses :idProject="idProject" />
+        </div>
+
+        <div v-if="selectedTab === 'Linea de Tiempo'">
+          <h3>Linea de Tiempo del Proyecto</h3>
+          <TimeLine :idProject="idProject" />
+        </div>
+      </div>
     </div>
 
-    <div class="col-md-6">
-      <h3>Contratos</h3>
+    <div v-else-if="statusProject === 'closed'">
+      <ClosedProjectSummary :idProject="props.projectId" />
     </div>
 
-    <div class="col-md-6">
-      <h3>Inversores</h3>
-      <Investments :idProjectInvestment="idProject" />
-    </div>
-
-    <div class="col-md-6">
-      <h3>Gastos Operativos</h3>
-      <OperatingExpenses :idProject="idProject" />
-    </div>
-
-    <div>
-      <h3>Linea de tiempo</h3>
-      <TimeLine :idProject="idProject" />
+    <div v-else>
+      <p>El estado del proyecto no es válido.</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import axios from "axios";
+import { onMounted, onUnmounted, ref } from "vue";
+import { eventBus } from "@/eventBus";
 import TimeLine from "@/components/TimeLine.vue";
 import ProjectMineral from "@/components/ProjectMineral.vue";
 import OperatingExpenses from "@/components/OperatingExpenses.vue";
 import Investments from "@/components/Investments.vue";
+import Contract from "@/components/Contract.vue";
+import axios from "axios";
+import { getHeaderRequest } from "@/authService";
+import { formatDate } from "@/router/viewFormat";
+import ClosedProjectSummary from "@/components/Analysis/ClosedProjectSummary.vue";
 
-const route = useRoute();
-const idProject = ref(route.params.id);
+const header = getHeaderRequest();
 
+const statusProject = ref("");
 const project = ref({});
-const urlProject = "http://localhost:3000/projects/";
+const selectedTab = ref("Inicio");
+const tabs = [
+  "Inicio",
+  "Inversiones",
+  "Minerales",
+  "Gastos Operativos",
+  "Linea de Tiempo",
+];
 
-const operatingExpenses = ref({});
-const urlOperatingExpenses = "http://localhost:3000/operatingexpenses/";
-
-const investments = ref({});
-const urlInvestments = "http://localhost:3000/investments/";
-
-onMounted(() => {
-  getProject();
-  getOperatingExpenses();
-  getInvestments();
-  console.log(idProject);
+const props = defineProps({
+  projectId: {
+    type: Number,
+    required: true,
+  },
 });
 
-const getProject = async () => {
+const idProject = ref(props.projectId);
+
+const reloadData = () => {
+  idProject.value = props.projectId;
+};
+
+const getProjectData = async () => {
   try {
-    const { data } = await axios.get(urlProject + idProject.value);
-    project.value = data.data;
-    console.log(project.value);
-  } catch (error) {
-    console.error(error);
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}/project/` + props.projectId,
+      header
+    );
+    console.log(response.data);
+    statusProject.value = response.data.status;
+    project.value = response.data;
+    console.log(response.data);
+  } catch (e) {
+    console.error(e);
   }
 };
 
-const getOperatingExpenses = async () => {
-  try {
-    const { data } = await axios.get(urlOperatingExpenses + idProject.value);
-    operatingExpenses.value = data.data;
-    console.log(operatingExpenses.value);
-  } catch (error) {
-    console.error(error);
-  }
-};
+onMounted(() => {
+  console.log(props.projectId);
+  eventBus.on("data-updated", reloadData);
+  getProjectData();
+});
 
-const getInvestments = async () => {
-  try{
-    const { data } = await axios.get(urlInvestments + idProject.value);
-    investments.value = data.data;
-    console.log(investments.value);
-  }catch (error) {
-    console.error(error);
-  }
-}
+onUnmounted(() => {
+  eventBus.off("data-updated", reloadData);
+});
 </script>
 
-<style  scoped>
+<style scoped>
+.project-container { 
+  max-height: 850px;
+  overflow-y: auto;
+}
+
+.navbar-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-radius: 30px;
+}
+
+.navbar-tabs button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 30px !important;
+  background-color: #ffffff;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.navbar-tabs button.active {
+  background-color: #204d7c;
+  border-radius: 30px;
+  color: white;
+}
+
+.navbar-tabs button:hover {
+  background-color: #879dda;
+  color: #04090e;
+  border-radius: 10px;
+}
+
+.tab-content {
+  padding: 10px;
+  border-radius: 5px;
+}
+.project-intro {
+  padding: 10px;
+  text-align: center;
+}
+
+.project-title {
+  font-size: 2rem;
+  color: #04090e;
+  margin-bottom: 15px;
+}
+
+.project-summary {
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+.project-details {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+.detail-item {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 50px;
+  width: 200px;
+  text-align: left;
+}
+
+.project-image img {
+  max-width: 100%;
+  border-radius: 10px;
+  margin-top: 20px;
+}
 </style>

@@ -1,47 +1,87 @@
 <template>
-  <div class="table-responsive">
-    <table class="table">
+  <div>
+    <table class="table table-striped">
       <thead>
         <tr>
           <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-if="items.length === 0">
+        <tr v-if="paginatedItems.length === 0">
           <td colspan="6" class="text-center">No hay posts registrados</td>
         </tr>
-        <tr v-for="item in items" :key="item.post_id">
+        <tr v-for="item in paginatedItems" :key="item.post_id">
           <td>{{ item.title }}</td>
           <td>{{ item.summary }}</td>
           <td>
             <span v-if="item.status == 1" class="badge bg-success">Activo</span>
             <span v-else class="badge bg-danger">Inactivo</span>
           </td>
-
           <td>
+            <Button
+              @click="() => actions.view(item)"
+              icon="fa fa-eye"
+              buttonClass="btn-secondary btn-sm m-1"
+            />
             <Button
               @click="() => actions.edit(item)"
               icon="fa fa-edit"
-              buttonClass="btn-warning btn-sm m-1"
+              buttonClass="btn-edit btn-sm m-1"
             />
             <Button
-              @click="() => actions.delete(item.post_id)"
+              @click="() => actions.delete(item.id)"
               :icon="item.status ? 'fa fa-trash' : 'fa fa-check'"
               :buttonClass="`btn-${
-                item.status ? 'danger' : 'success'
+                item.status ? 'delete' : 'restore'
               } btn-sm m-1`"
             />
           </td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Paginación -->
+    <nav
+      aria-label="Page navigation"
+      class="d-flex justify-content-center mt-3"
+    >
+      <ul class="pagination">
+        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+          <a
+            class="page-link"
+            href="#"
+            @click.prevent="changePage(currentPage - 1)"
+            >Anterior</a
+          >
+        </li>
+        <li
+          v-for="page in totalPages"
+          :key="page"
+          class="page-item"
+          :class="{ active: page === currentPage }"
+        >
+          <a class="page-link" href="#" @click.prevent="changePage(page)">{{
+            page
+          }}</a>
+        </li>
+        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+          <a
+            class="page-link"
+            href="#"
+            @click.prevent="changePage(currentPage + 1)"
+            >Siguiente</a
+          >
+        </li>
+      </ul>
+    </nav>
   </div>
 </template>
 
 <script setup>
 import Button from "@/components/base/Button.vue";
+import { ref, computed } from "vue";
 
-defineProps({
+const props = defineProps({
   headers: {
     type: Array,
     required: true,
@@ -55,4 +95,38 @@ defineProps({
     required: true,
   },
 });
+
+const currentPage = ref(1);
+const itemsPerPage = 10;
+
+const paginatedItems = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return props.items.slice(start, end);
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(props.items.length / itemsPerPage);
+});
+
+const changePage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+};
 </script>
+<style scoped>
+.pagination .page-link {
+  color: var(--primary-color);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+}
+</style>

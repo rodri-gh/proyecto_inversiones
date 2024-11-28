@@ -11,10 +11,10 @@
                     <td colspan="5" class="text-center">No hay inversiones registradas</td>
                 </tr>
                 <tr v-for="item in items" :key="item.id">
-                    <td>{{ item.user_id }}</td>
+                    <td>{{ item.user.name }}</td>
                     <td>{{ item.amount }}</td>
-                    <td>{{ item.investment_date }}</td>
-                    <td>{{ item.profit_percentage }}</td>
+                    <td>{{ formatDate(item.investmentDate) }}</td>
+                    <td>{{ item.earnings }}</td>
                     <td>
                         <Button
                             @click="() => actions.edit(item)"
@@ -30,6 +30,7 @@
 
 <script setup>
 import Button from "@/components/base/Button.vue";
+import { formatDate } from "@/router/viewFormat";
 
 defineProps({
     headers: {

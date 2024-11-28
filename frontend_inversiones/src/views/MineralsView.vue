@@ -1,69 +1,88 @@
 <template>
-  <div class="container col-md-8 mt-5">
-    <div class="card shadow border-0">
-      <div class="card-body">
-        <h4 class="card-title text-center">Minerales</h4>
-        <div class="text-end">
-          <Button
-            data-bs-toggle="modal"
-            data-bs-target="#modalMineral"
-            text="Nuevo"
-            icon="fa fa-plus"
+  <div class="minerals-container">
+    <div class="navbar-tabs">
+      <button
+        v-for="tab in tabs"
+        :key="tab"
+        @click="selectedTab = tab"
+        :class="{ active: selectedTab === tab }"
+      >
+        {{ tab }}
+      </button>
+    </div>
+
+    <div class="tab-content mt-3">
+      <div v-if="selectedTab === 'Precios Historicos'">
+        <MineralTrends />
+      </div>
+      <div v-if="selectedTab === 'Minerales'">
+        <div class="container col-md-10 mt-4">
+          <h4 class="card-title text-center">Minerales</h4>
+          <div class="text-end">
+            <Button
+              data-bs-toggle="modal"
+              data-bs-target="#modalMineral"
+              text="Nuevo"
+              icon="fa fa-plus"
+              class="mb-3"
+            />
+          </div>
+          <!--  <CardsSummary :items="summaryMinerals" /> -->
+          <TableMinerals
+            :headers="headers"
+            :items="minerals"
+            :actions="{
+              edit: selectMineral,
+              delete: deleteMineral,
+            }"
           />
+
+          <Modal
+            modalId="modalMineral"
+            title="Datos del Mineral"
+            :showSaveButton="!selectedMineral?.id"
+            :showUpdateButton="Boolean(selectedMineral?.id)"
+            @onClose="reset()"
+            @onSave="saveMineral()"
+          >
+            <Input
+              id="name"
+              label="Nombre"
+              v-model="name"
+              type="text"
+              placeholder="Ingrese el nombre"
+            />
+
+            <Input
+              id="price"
+              label="Precio"
+              v-model="price"
+              type="number"
+              placeholder="Ingrese el precio"
+            />
+
+            <InputTextArea
+              id="description"
+              label="Descripción"
+              v-model="description"
+              placeholder="Ingrese la descripción"
+            />
+
+            <InputFile
+              id="image"
+              label="Imagen"
+              @update:modelValue="handleImageChange"
+              accept="image/*"
+              ref="inputFileRef"
+            />
+
+            <div v-if="previewUrl" class="mt-3">
+              <img :src="previewUrl" alt="Vista_previa" class="img-fluid" />
+            </div>
+          </Modal>
         </div>
-        <TableMinerals
-          :headers="headers"
-          :items="minerals"
-          :actions="{
-            edit: selectMineral,
-            delete: deleteMineral,
-          }"
-        />
       </div>
     </div>
-    <Modal
-      modalId="modalMineral"
-      title="Datos del Mineral"
-      :showSaveButton="!selectedMineral?.id"
-      :showUpdateButton="Boolean(selectedMineral?.id)"
-      @onClose="reset()"
-      @onSave="saveMineral()"
-    >
-      <Input
-        id="name"
-        label="Nombre"
-        v-model="name"
-        type="text"
-        placeholder="Ingrese el nombre"
-      />
-
-      <Input
-        id="price"
-        label="Precio"
-        v-model="price"
-        type="number"
-        placeholder="Ingrese el precio"
-      />
-
-      <InputTextArea
-        id="description"
-        label="Descripción"
-        v-model="description"
-        placeholder="Ingrese la descripción"
-      />
-
-      <InputFile
-        id="image"
-        label="Imagen"
-        @update:modelValue="handleImageChange"
-        accept="image/*"
-        ref="inputFileRef"
-      />
-
-      <div v-if="previewUrl" class="mt-3">
-        <img :src="previewUrl" alt="Vista_previa" class="img-fluid" />
-      </div>
-    </Modal>
   </div>
 </template>
 
@@ -77,17 +96,26 @@ import Input from "@/components/base/Input.vue";
 import InputTextArea from "@/components/base/InputTextArea.vue";
 import InputFile from "@/components/base/InputFile.vue";
 import { openModal, closeModal } from "@/utils/modal";
+import CardsSummary from "@/components/CardsSummary.vue";
+import MineralTrends from "@/components/MineralTrends.vue";
+import {
+  validateInputs,
+  successAlert,
+  existAlert,
+} from "@/utils/validateInputs";
 
+const selectedTab = ref("Precios Historicos");
+const tabs = ["Precios Historicos", "Minerales"];
 const headers = [
   "Nombre",
-  "Precio",
+  "Precio Estimado $",
   "Descripción",
   "Imagen",
   "Estado",
   "Acciones",
 ];
 
-const baseURL = "http://localhost:3000/minerals/";
+const baseURL = `${import.meta.env.VITE_API_URL}/mineral/`;
 
 const minerals = ref([]);
 const name = ref("");
@@ -96,6 +124,7 @@ const description = ref("");
 const image = ref(null);
 const previewUrl = ref(null);
 const selectedMineral = ref({});
+const summaryMinerals = ref([]);
 
 const inputFileRef = ref(null);
 
@@ -106,9 +135,30 @@ onMounted(() => {
 const getMinerals = async () => {
   try {
     const { data } = await axios.get(baseURL);
-    minerals.value = data.data;
+    minerals.value = data;
+    console.log(minerals.value);
+    getsummaryMinerals();
   } catch (error) {
     console.log(error);
+  }
+};
+
+const getsummaryMinerals = () => {
+  if (minerals.value.length > 0) {
+    let userTotals = minerals.value.length;
+    let projectDeleted = 0;
+    for (var item of minerals.value) {
+      if (item.deleted === 1) {
+        projectDeleted++;
+      }
+    }
+    summaryMinerals.value = [
+      { key: "Minerales Totales", value: userTotals },
+      { key: "Eliminados", value: projectDeleted },
+    ];
+    console.log(summaryMinerals.value);
+  } else {
+    console.log("el array de minerals para cards sumary esta vacio");
   }
 };
 
@@ -132,6 +182,20 @@ const selectMineral = (mineral) => {
 };
 
 const saveMineral = async () => {
+  const fieldsToValidate = [
+    { value: name.value, name: "Nombre", type: "text" },
+    { value: price.value, name: "Precio", type: "number" },
+    { value: description.value, name: "Descripción", type: "text" },
+  ];
+
+  if (!selectedMineral.value.id) {
+    fieldsToValidate.push({ value: image.value, name: "Imagen", type: "file" });
+  }
+
+  if (!validateInputs(fieldsToValidate)) {
+    return;
+  }
+
   const method = selectedMineral.value.id ? "put" : "post";
   const url = selectedMineral.value.id
     ? `${baseURL}${selectedMineral.value.id}`
@@ -147,10 +211,15 @@ const saveMineral = async () => {
     });
 
     closeModal("modalMineral");
+    successAlert("Mineral guardado correctamente");
     getMinerals();
     reset();
   } catch (error) {
-    console.log(error);
+    if (error.response.status === 409) {
+      existAlert(error.response.data.message);
+    } else {
+      console.log(error);
+    }
   }
 };
 
@@ -184,3 +253,43 @@ const reset = () => {
   inputFileRef.value?.reset();
 };
 </script>
+
+<style scoped>
+.minerals-container {
+  max-height: 850px;
+  overflow-y: auto;
+}
+.navbar-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-radius: 30px;
+}
+
+.navbar-tabs button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 30px !important;
+  background-color: #ffffff;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.navbar-tabs button.active {
+  background-color: #204d7c;
+  border-radius: 30px;
+  color: white;
+}
+
+.navbar-tabs button:hover {
+  background-color: #879dda;
+  color: #04090e;
+  border-radius: 10px;
+}
+
+.tab-content {
+  padding: 10px;
+  border-radius: 5px;
+}
+</style>

@@ -1,12 +1,47 @@
 <template>
-  <div class="fondo">
-    <h1>Cotiza e invierte Aqui</h1>
-    <p>Ahora puedes invertir hasta en 2 minerales y en diferentes proyectos</p>
-    <button class="button-config">Comienza Aqui!</button>
+  <div class="fondo py-5">
+    <h1>{{ settings.homeTitle }}</h1>
+    <p>{{ settings.homeText }}</p>
+    <button class="button-config" @click="scrollToSection('contact')">
+      Comienza Aqui!
+    </button>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+
+const baseURL = `${import.meta.env.VITE_API_URL}/site-setting`;
+
+const settings = ref([]);
+
+onMounted(() => {
+  getSettings();
+});
+
+const getSettings = async () => {
+  try {
+    const response = await axios.get(baseURL);
+    settings.value = response.data[0];
+    console.log("Setting:", settings.value);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const scrollToSection = (sectionId) => {
+  const section = document.getElementById(sectionId);
+  if (section) {
+    const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+    const offset = window.innerHeight * 0.2;
+    window.scrollTo({
+      top: sectionTop - offset,
+      behavior: "smooth",
+    });
+    isMobileMenuOpen.value = false; // Cerrar menú móvil después de click
+  }
+};
 </script>
 
 <style  scoped>

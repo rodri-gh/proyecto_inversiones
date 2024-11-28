@@ -25,17 +25,23 @@ ProjectTimeline.init(
             type: DataTypes.DATE,
             allowNull: false
         },
+        status: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },  
         description: {
             type: DataTypes.STRING,
             allowNull: false
         },
         priceMineral1: {
             type: DataTypes.DECIMAL(10, 2),
-            allowNull: false
+            allowNull: false,
+            field: 'price_mineral1'
         },
         priceMineral2: {
             type: DataTypes.DECIMAL(10, 2),
-            allowNull: false
+            allowNull: false,
+            field: 'price_mineral2'
         },
         deleted: {
             type: DataTypes.TINYINT,

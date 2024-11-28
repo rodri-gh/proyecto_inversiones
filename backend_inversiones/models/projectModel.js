@@ -9,6 +9,10 @@ Project.init(
             primaryKey: true,
             autoIncrement: true
         },
+        userId: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
         name: {
             type: DataTypes.STRING,
             allowNull: false
@@ -17,7 +21,7 @@ Project.init(
             type: DataTypes.TEXT,
         },
         investmentGoal: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.DECIMAL,
             allowNull: false
         },
         status: {
@@ -25,9 +29,17 @@ Project.init(
             allowNull: false,
             defaultValue: 'open'
         },
-        createdAt: {
+        startDate: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
+        },
+        endDate: {
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW
+        },
+        projectType: {
+            type: DataTypes.STRING(10, 2),
+            allowNull: true
         },
         profitPercentage: {
             type: DataTypes.DECIMAL(10, 2),

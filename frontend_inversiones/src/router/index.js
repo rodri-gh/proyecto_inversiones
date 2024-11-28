@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
-import ProjectMineralsView from '@/views/ProjectMineralsView.vue'
 import UsersView from '@/views/UsersView.vue'
 import MineralsView from '@/views/MineralsView.vue'
 import ProjectsView from '@/views/ProjectsView.vue'
@@ -13,7 +12,6 @@ import WithdrawalRequestsView from '@/views/WithdrawalRequestsView.vue'
 import UserHomeView from '@/views/UserHomeView.vue'
 import MovementsView from '@/views/MovementsView.vue'
 import ControlPanel from '@/components/ControlPanel.vue'
-import InvestmentsOfUser from '@/components/InvestmentsOfUser.vue'
 import AnalysisAndReportsView from '@/views/AnalysisAndReportsView.vue'
 import FinanceView from '@/views/FinanceView.vue'
 
@@ -45,24 +43,15 @@ const router = createRouter({
       name: 'projects',
       component: ProjectsView,
       meta: { requiresAuth: true },
-
     },
     {
       path: '/projects/:id',
       name: 'project-details',
       component: ProjectDetailsView,
       meta: { requiresAuth: true },
+      props: true,
 
     },
-    {
-
-      path: '/projectminerals',
-      name: 'projectminerals',
-      component: ProjectMineralsView,
-      meta: { requiresAuth: true },
-
-    },
-
     {
       path: '/users',
       name: 'users',
@@ -89,8 +78,6 @@ const router = createRouter({
       path: '/post/:id',
       name: 'post-details',
       component: PostView,
-      meta: { requiresAuth: true },
-
     },
     {
       path: '/withdrawalrequests',
@@ -119,11 +106,6 @@ const router = createRouter({
       component: PostsView
     },
     {
-      path: '/posts/:id',
-      name: 'post-details',
-      component: PostView
-    },
-    {
       path: '/movements',
       name: 'movements',
       component: MovementsView,
@@ -136,18 +118,12 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
-      path: "/investmentOfUser",
-      name: "investmentOfUser",
-      component: InvestmentsOfUser,
-      meta: { requiresAuth: true }
-    }, 
-    { 
       path: "/analysisAndReports",
       name: "analysisAndReports",
       component: AnalysisAndReportsView,
       meta: { requiresAuth: true }
     },
-    { 
+    {
       path: "/finance",
       name: "finance",
       component: FinanceView,

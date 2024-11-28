@@ -1,30 +1,28 @@
-  <template>
-  <div class="container col-md-8 mt-5">
-    <div class="card shadow border-0">
-      <div class="card-body">
-        <h4 class="card-title text-center">Posts</h4>
+<template>
+  <div class="container col-md-10 mt-2">
+    <h4 class="card-title text-center">Posts</h4>
 
-        <div class="text-end">
-          <Button
-            data-bs-toggle="modal"
-            data-bs-target="#modalPost"
-            text="Nuevo"
-            icon="fa fa-plus"
-          />
-        </div>
-        <TablePosts
-          :headers="headers"
-          :items="posts"
-          :actions="{ edit: selectPost, delete: deletePost }"
-        />
-      </div>
+    <div class="text-end">
+      <Button
+        data-bs-toggle="modal"
+        data-bs-target="#modalPost"
+        text="Nuevo"
+        icon="fa fa-plus"
+        class="mb-3"
+      />
     </div>
+    <TablePosts
+      :headers="headers"
+      :items="posts"
+      :actions="{ view: viewPost, edit: selectPost, delete: deletePost }"
+    />
+
     <Modal
       modalId="modalPost"
       title="Datos del Post"
       modalClass="modal-fullscreen"
-      :showSaveButton="!selectedPost?.post_id"
-      :showUpdateButton="Boolean(selectedPost?.post_id)"
+      :showSaveButton="!selectedPost?.id"
+      :showUpdateButton="Boolean(selectedPost?.id)"
       @onClose="reset()"
       @onSave="savePost()"
     >
@@ -40,7 +38,7 @@
         <Select
           :options="categoryPosts"
           label="Categoría del post"
-          value-key="category_post_id"
+          value-key="id"
           label-key="name"
           v-model="category_post_id"
           selectClass="col-6"
@@ -65,10 +63,34 @@
         <img :src="previewUrl" alt="Vista_previa" class="img-fluid" />
       </div>
     </Modal>
+
+    <Modal
+      modalId="modalViewPost"
+      title="Vista del Post"
+      modalClass="modal-fullscreen modal-post"
+      :showSaveButton="false"
+      :showUpdateButton="false"
+    >
+      <div class="modal-post-container">
+        <div class="row">
+          <div class="col-12">
+            <h5 class="modal-post-title">{{ selectedPost.title }}</h5>
+            <p class="modal-post-summary">{{ selectedPost.summary }}</p>
+            <div class="modal-post-content" v-html="selectedPost.content"></div>
+            <img
+              v-if="selectedPost.cover_image"
+              :src="selectedPost.cover_image"
+              alt="Portada"
+              class="modal-post-image"
+            />
+          </div>
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
 
-  <script setup>
+<script setup>
 import { ref, onMounted, nextTick } from "vue";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
@@ -82,14 +104,19 @@ import InputFile from "@/components/base/InputFile.vue";
 import Button from "@/components/base/Button.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import TablePosts from "@/components/tables/TablePosts.vue";
+import {
+  validateInputs,
+  successAlert,
+  existAlert,
+} from "@/utils/validateInputs";
 
 const headers = ["Titulo", "Resumen", "Estado", "Acciones"];
 
-const categoryURL = "http://localhost:3000/categoryPosts/";
+const categoryURL = `${import.meta.env.VITE_API_URL}/category-post/`;
 
 const categoryPosts = ref([]);
 
-const baseURL = "http://localhost:3000/posts/";
+const baseURL = `${import.meta.env.VITE_API_URL}/post/`;
 
 const posts = ref([]);
 
@@ -101,7 +128,6 @@ let quillEditor;
 
 const inputFileRef = ref(null);
 
-//obtener de localstorage el user_id del objeto user
 const user = JSON.parse(localStorage.getItem("user"));
 
 const user_id = user.user_id;
@@ -116,7 +142,7 @@ onMounted(() => {
   getCategoryPosts();
 
   quillEditor = new Quill("#editor", {
-    theme: "snow", // Estilo de tema
+    theme: "snow",
     modules: {
       toolbar: [
         [{ header: [1, 2, false] }],
@@ -131,11 +157,33 @@ onMounted(() => {
     quillEditor.root.innerHTML = content.value;
   }
 });
+const style = document.createElement("style");
+style.innerHTML = `
+    .ql-editor h1 {
+      font-size: 2em;
+      color: #2c3e50;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 0.5em;
+      margin-bottom: 0.5em;
+    }
+    .ql-editor h2 {
+      font-size: 1.5em;
+      color: #34495e;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.3em;
+      margin-bottom: 0.3em;
+    }
+  `;
+document.head.appendChild(style);
+
+if (content.value) {
+  quillEditor.root.innerHTML = content.value;
+}
 
 const getPosts = async () => {
   try {
     const { data } = await axios.get(baseURL);
-    posts.value = data.data;
+    posts.value = data;
     console.log("Los posts:", posts.value);
   } catch (error) {
     console.log(error);
@@ -145,7 +193,7 @@ const getPosts = async () => {
 const getCategoryPosts = async () => {
   try {
     const { data } = await axios.get(categoryURL);
-    categoryPosts.value = data.data;
+    categoryPosts.value = data;
     console.log("Las categorias:", categoryPosts.value);
   } catch (error) {
     console.log(error);
@@ -162,11 +210,38 @@ const handleImageChange = (file) => {
 };
 
 const savePost = async () => {
-  content.value = quillEditor.root.innerHTML;
+  const editorContent = quillEditor.root.innerHTML;
 
-  const method = selectedPost.value.post_id ? "put" : "post";
-  const url = selectedPost.value.post_id
-    ? `${baseURL}${selectedPost.value.post_id}`
+  const isContentEmpty = editorContent.replace(/<[^>]*>/g, "").trim() === "";
+
+  content.value = editorContent;
+
+  const fieldsToValidate = [
+    { value: title.value, name: "Titulo", type: "text" },
+    { value: summary.value, name: "Resumen", type: "text" },
+    {
+      value: isContentEmpty ? "" : editorContent,
+      name: "Contenido",
+      type: "text",
+    },
+    { value: category_post_id.value, name: "Categoría", type: "select" },
+  ];
+
+  if (!selectedPost.value.id) {
+    fieldsToValidate.push({
+      value: cover_image.value,
+      name: "Portada",
+      type: "file",
+    });
+  }
+
+  if (!validateInputs(fieldsToValidate)) {
+    return;
+  }
+
+  const method = selectedPost.value.id ? "put" : "post";
+  const url = selectedPost.value.id
+    ? `${baseURL}${selectedPost.value.id}`
     : baseURL;
 
   const formData = createFormData();
@@ -178,11 +253,17 @@ const savePost = async () => {
       },
     });
 
+    console.log("Post guardado");
     closeModal("modalPost");
+    successAlert("Post guardado correctamente");
     getPosts();
     reset();
   } catch (error) {
-    console.log(error);
+    if (error.response.status === 409) {
+      existAlert("El post con ese título ya existe");
+    } else {
+      console.log(error);
+    }
   }
 };
 
@@ -215,6 +296,11 @@ const selectPost = (post) => {
   openModal("modalPost");
 };
 
+const viewPost = (post) => {
+  selectedPost.value = post;
+  openModal("modalViewPost");
+};
+
 const deletePost = async (id) => {
   try {
     const { data } = await axios.patch(baseURL + id);
@@ -237,11 +323,134 @@ const reset = () => {
 };
 </script>
 
-<style  scoped>
+<style scoped>
 @import "quill/dist/quill.snow.css";
 
 #editor {
   height: 300px;
   margin-bottom: 20px;
+}
+
+.modal-post {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.modal-post-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Título del post */
+.modal-post-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #1a1a1a;
+  line-height: 1.2;
+}
+
+/* Resumen del post */
+.modal-post-summary {
+  font-size: 1.25rem;
+  color: #555;
+  margin-bottom: 2rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Contenido principal */
+.modal-post-content {
+  font-size: 1.125rem;
+  color: #444;
+  margin: 2rem 0;
+  letter-spacing: 0.01em;
+}
+
+/* Imagen de portada */
+.modal-post-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 2rem 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el contenido HTML renderizado */
+.modal-post-content h1,
+.modal-post-content h2,
+.modal-post-content h3,
+.modal-post-content h4,
+.modal-post-content h5,
+.modal-post-content h6 {
+  color: #1a1a1a;
+  margin: 1.5rem 0 1rem;
+  line-height: 1.3;
+}
+
+.modal-post-content p {
+  margin-bottom: 1.2rem;
+}
+
+.modal-post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 1.5rem 0;
+}
+
+.modal-post-content a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.modal-post-content a:hover {
+  text-decoration: underline;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .modal-post-container {
+    padding: 1rem;
+  }
+
+  .modal-post-title {
+    font-size: 2rem;
+  }
+
+  .modal-post-summary {
+    font-size: 1.1rem;
+  }
+
+  .modal-post-content {
+    font-size: 1rem;
+  }
+}
+
+/* Personalización del scroll del modal */
+.modal-fullscreen {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+.modal-fullscreen::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-fullscreen::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.modal-fullscreen::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.modal-fullscreen::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 </style>

@@ -1,48 +1,103 @@
 <template>
-  <div class="table-responsive" style="width: 100%; max-height: 700px; overflow-y: auto;">
-    <table class="table table-hover ">
+  <div>
+    <table class="table table-striped">
       <thead>
         <tr>
-          <th v-for="(header, index) in headers" :key="index" class="bg-light">{{ header }}</th>
+          <th v-for="(header, index) in headers" :key="index">
+            {{ header }}
+          </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-if="items.length === 0">
-          <td colspan="9" class="text-center">No existen solicitudes de información</td>
+        <tr v-if="paginatedItems.length === 0">
+          <td colspan="9" class="text-center">
+            No existen solicitudes de información
+          </td>
         </tr>
-        <tr v-for="item in items" :key="item.id" v-show="item.deleted !== 0">
+        <tr v-for="item in paginatedItems" :key="item.id">
           <td>{{ item.name }}</td>
-          <td>{{ item.lastname }}</td>
+          <td>{{ item.lastName }}</td>
           <td>{{ item.email }}</td>
           <td>{{ item.phone }}</td>
-          <td>{{ item.comments }}</td>
-          <td>{{ new Date(item.created_date).toLocaleDateString() }}</td>
+          <td>{{ item.comment }}</td>
+          <td>{{ formatDate(item.createdDate) }}</td>
           <td>
-            <span v-if="item.answer === 'pending'" class="badge bg-dark">Pendiente</span>
-            <span v-if="item.answer === 'answered'" class="badge bg-secondary">Enviado</span>
+            <span v-if="item.answer === 'pending'" class="badge bg-dark"
+              >Pendiente</span
+            >
+            <span v-if="item.answer === 'answered'" class="badge bg-secondary"
+              >Enviado</span
+            >
           </td>
           <td>
-            <span v-if="item.deleted == 1" class="badge bg-success">Activo</span>
+            <span v-if="item.deleted == 0" class="badge bg-success"
+              >Activo</span
+            >
             <span v-else class="badge bg-danger">Inactivo</span>
           </td>
           <td width="10%">
-            <Button @click="() => actions.answer(item.contact_id)" icon="fa fa-envelope"
-              buttonClass="btn btn-outline-dark btn-sm m-1" :disabled="item.answer === 'answered'">
-            </Button>
-            <Button @click="() => actions.delete(item.contact_id)" :icon="item.deleted ? 'fa fa-trash' : 'fa fa-check'"
-              :buttonClass="`btn-${item.deleted ? 'danger' : 'success'} btn-sm m-1`">
-            </Button>
+            <Button
+              @click="() => actions.answer(item.id, item.email)"
+              icon="fa fa-envelope"
+              buttonClass="btn btn-dark btn-sm m-1"
+              :class="{ disabled: item.answer === 'answered' }"
+              :disabled="item.answer === 'answered'"
+            />
+            <Button
+              @click="() => actions.delete(item.id)"
+              :icon="item.deleted ? 'fa fa-check' : 'fa fa-trash'"
+              :buttonClass="`btn-${
+                item.deleted ? 'restore' : 'delete'
+              } btn-sm m-1`"
+            />
           </td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Paginación -->
+    <nav
+      aria-label="Page navigation"
+      class="d-flex justify-content-center mt-3"
+    >
+      <ul class="pagination">
+        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+          <a
+            class="page-link"
+            href="#"
+            @click.prevent="changePage(currentPage - 1)"
+            >Anterior</a
+          >
+        </li>
+        <li
+          v-for="page in totalPages"
+          :key="page"
+          class="page-item"
+          :class="{ active: page === currentPage }"
+        >
+          <a class="page-link" href="#" @click.prevent="changePage(page)">{{
+            page
+          }}</a>
+        </li>
+        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+          <a
+            class="page-link"
+            href="#"
+            @click.prevent="changePage(currentPage + 1)"
+            >Siguiente</a
+          >
+        </li>
+      </ul>
+    </nav>
   </div>
 </template>
 
 <script setup>
+import { computed, ref } from "vue";
 import Button from "@/components/base/Button.vue";
+import { formatDate } from "@/router/viewFormat";
 
-defineProps({
+const props = defineProps({
   headers: {
     type: Array,
     required: true,
@@ -56,4 +111,37 @@ defineProps({
     required: true,
   },
 });
+
+const itemsPerPage = 10;
+const currentPage = ref(1);
+
+const totalPages = computed(() => Math.ceil(props.items.length / itemsPerPage));
+
+const paginatedItems = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return props.items.slice(start, end);
+});
+
+const changePage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+};
 </script>
+
+<style scoped>
+.pagination .page-link {
+  color: var(--primary-color);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+}
+</style>
