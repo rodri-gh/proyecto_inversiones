@@ -1,6 +1,6 @@
 <template>
   <div class="container col-md-10 mt-2">
-    <h4 class="card-title text-center">Posts</h4>
+    <h4 class="card-title text-center mb-2">Posts</h4>
 
     <div class="text-end">
       <Button

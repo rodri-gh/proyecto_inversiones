@@ -1,23 +1,26 @@
 <template>
   <div class="py-5 bg-white">
-    <div class="row">
-      <div class="col-md-1"></div>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-12 col-md-6 text-center text-md-start mb-4 mb-md-0">
+          <h1 class="py-2">
+            {{ settings.aboutTitle || "Titulo de cabecera" }}
+          </h1>
+          <div class="py-2 fs-5">
+            {{ settings.aboutText || "Texto acerca de" }}
+          </div>
+        </div>
 
-      <div class="col-md-5 d-flex flex-column justify-content-center">
-        <h1 class="py-2">{{ settings.aboutTitle || "Titulo de cabecera" }}</h1>
-        <h7 class="py-2">{{ settings.aboutText || "Texto acerca de" }} </h7>
-      </div>
-      <div class="col-md-6 img-about text-center">
-        <img
-          :src="
-            settings.aboutImage ||
-            'https://as1.ftcdn.net/v2/jpg/01/80/37/76/1000_F_180377624_wOuVL0f23adqaXxGdOkOVglYuilE8Bhu.jpg'
-          "
-          alt="minerales"
-          width="auto"
-          height="auto"
-          class="img-fluid img-about rounded-5"
-        />
+        <div class="col-12 col-md-6 text-center">
+          <img
+            :src="
+              settings.aboutImage ||
+              'https://as1.ftcdn.net/v2/jpg/01/80/37/76/1000_F_180377624_wOuVL0f23adqaXxGdOkOVglYuilE8Bhu.jpg'
+            "
+            alt="minerales"
+            class="img-fluid rounded-5 w-75"
+          />
+        </div>
       </div>
     </div>
   </div>

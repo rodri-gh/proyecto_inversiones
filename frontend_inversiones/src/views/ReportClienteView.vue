@@ -1,13 +1,12 @@
 <template>
   <div class="container col-md-10 mt-5">
     <div>
-      <h4 class="card-title text-center">Reporte de Inversiones</h4>
+      <h4 class="card-title text-center mb-2">Reporte de Inversiones</h4>
 
-      <!-- Filtros -->
       <div class="card mb-4">
         <div class="card-body">
           <div class="row g-3">
-            <div class="col-md-3">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3">
               <label class="form-label">Fecha Inicio</label>
               <input
                 type="date"
@@ -15,7 +14,8 @@
                 v-model="filters.startDate"
               />
             </div>
-            <div class="col-md-3">
+
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3">
               <label class="form-label">Fecha Fin</label>
               <input
                 type="date"
@@ -24,7 +24,8 @@
                 :min="filters.startDate"
               />
             </div>
-            <div class="col-md-2">
+
+            <div class="col-12 col-sm-12 col-md-6 col-lg-2">
               <label class="form-label">Monto Mínimo</label>
               <input
                 type="number"
@@ -33,7 +34,8 @@
                 min="0"
               />
             </div>
-            <div class="col-md-2">
+
+            <div class="col-12 col-sm-12 col-md-6 col-lg-2">
               <label class="form-label">Monto Máximo</label>
               <input
                 type="number"
@@ -41,25 +43,32 @@
                 v-model="filters.maxAmount"
               />
             </div>
-            <div class="col-md-2">
+
+            <div class="col-12 col-sm-12 col-md-6 col-lg-2">
               <label class="form-label">Estado</label>
-              <select class="form-select p-2" v-model="filters.status">
+              <select class="form-select" v-model="filters.status">
                 <option value="">Todos</option>
-                <!--   <option value="active">Activo</option> -->
                 <option value="pending">Pendiente</option>
                 <option value="closed">Cerrado</option>
               </select>
             </div>
+
             <div class="col-12 text-end">
-              <button class="btn btn-success me-2" @click="exportToExcel()">
+              <button
+                class="btn btn-success me-2 mb-2"
+                @click="exportToExcel()"
+              >
                 <i class="fa fa-book me-1"></i>
                 Exportar a Excel
               </button>
-              <button class="btn btn-primary me-2" @click="getFilteredReport()">
+              <button
+                class="btn btn-primary me-2 mb-2"
+                @click="getFilteredReport()"
+              >
                 <i class="fa fa-search me-1"></i>
                 Aplicar Filtros
               </button>
-              <button class="btn btn-secondary" @click="resetFilters()">
+              <button class="btn btn-secondary mb-2" @click="resetFilters()">
                 <i class="fa fa-refresh me-1"></i>
                 Limpiar Filtros
               </button>
@@ -68,7 +77,6 @@
         </div>
       </div>
 
-      <!-- Tabla de Resultados -->
       <TableReportClient
         :headers="headers"
         :items="investments"
@@ -77,7 +85,6 @@
       />
     </div>
 
-    <!-- Modal Detalles -->
     <div class="modal fade" id="contractModal" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -265,5 +272,31 @@ const exportToExcel = async () => {
 }
 .btn-secondary:hover {
   opacity: 0.9;
+}
+.form-label {
+  white-space: nowrap;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 991.98px) {
+  .form-label {
+    white-space: normal;
+  }
+
+  .form-control,
+  .form-select {
+    margin-bottom: 1rem;
+  }
+}
+
+.form-control,
+.form-select {
+  height: 45px;
+}
+@media (max-width: 576px) {
+  .btn {
+    width: 100%;
+    margin-right: 0 !important;
+  }
 }
 </style>

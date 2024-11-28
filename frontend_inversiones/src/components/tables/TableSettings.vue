@@ -1,33 +1,35 @@
 <template>
-  <table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(value, key) in filteredItems" :key="key">
-        <td>{{ getFieldLabel(key) }}</td>
-        <td v-if="isImageField(key)">
-          <img
-            :src="value"
-            :alt="getFieldLabel(key)"
-            height="60px"
-            width="60px"
-            class="img-fluid rounded-1"
-          />
-        </td>
-        <td v-else>{{ value }}</td>
-        <td>
-          <Button
-            @click="() => actions.edit(key)"
-            icon="fa fa-edit"
-            buttonClass="btn-edit btn-sm m-1"
-          />
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(value, key) in filteredItems" :key="key">
+          <td>{{ getFieldLabel(key) }}</td>
+          <td v-if="isImageField(key)">
+            <img
+              :src="value"
+              :alt="getFieldLabel(key)"
+              height="60px"
+              width="60px"
+              class="img-fluid rounded-1"
+            />
+          </td>
+          <td v-else>{{ value }}</td>
+          <td>
+            <Button
+              @click="() => actions.edit(key)"
+              icon="fa fa-edit"
+              buttonClass="btn-edit btn-sm m-1"
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script setup>

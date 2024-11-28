@@ -6,7 +6,8 @@
       <div class="card mb-4">
         <div class="card-body">
           <div class="row g-3">
-            <div class="col-md-3">
+            <!-- Fecha Inicio -->
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3">
               <label class="form-label">Fecha Inicio</label>
               <input
                 type="date"
@@ -14,7 +15,9 @@
                 v-model="filters.startDate"
               />
             </div>
-            <div class="col-md-3">
+
+            <!-- Fecha Fin -->
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3">
               <label class="form-label">Fecha Fin</label>
               <input
                 type="date"
@@ -23,7 +26,9 @@
                 :min="filters.startDate"
               />
             </div>
-            <div class="col-md-2">
+
+            <!-- Monto Mínimo -->
+            <div class="col-12 col-sm-12 col-md-6 col-lg-2">
               <label class="form-label">Monto Mínimo</label>
               <input
                 type="number"
@@ -32,7 +37,9 @@
                 min="0"
               />
             </div>
-            <div class="col-md-2">
+
+            <!-- Monto Máximo -->
+            <div class="col-12 col-sm-12 col-md-6 col-lg-2">
               <label class="form-label">Monto Máximo</label>
               <input
                 type="number"
@@ -40,18 +47,22 @@
                 v-model="filters.maxAmount"
               />
             </div>
-            <div class="col-md-2">
+
+            <!-- Estado -->
+            <div class="col-12 col-sm-12 col-md-6 col-lg-2">
               <label class="form-label">Estado</label>
-              <select class="form-select p-2" v-model="filters.status">
+              <select class="form-select" v-model="filters.status">
                 <option value="">Todos</option>
                 <option value="open">Abierto</option>
                 <option value="in_transit">En Tránsito</option>
                 <option value="closed">Cerrado</option>
               </select>
             </div>
-            <div class="col-md-3">
+
+            <!-- Mineral -->
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3">
               <label class="form-label">Mineral</label>
-              <select class="form-select p-2" v-model="filters.mineralId">
+              <select class="form-select" v-model="filters.mineralId">
                 <option value="">Todos</option>
                 <option
                   v-for="mineral in minerals"
@@ -62,16 +73,24 @@
                 </option>
               </select>
             </div>
+
+            <!-- Botones -->
             <div class="col-12 text-end">
-              <button class="btn btn-success me-2" @click="exportToExcel()">
+              <button
+                class="btn btn-success me-2 mb-2"
+                @click="exportToExcel()"
+              >
                 <i class="fa fa-book me-1"></i>
                 Exportar a Excel
               </button>
-              <button class="btn btn-primary me-2" @click="getFilteredReport()">
+              <button
+                class="btn btn-primary me-2 mb-2"
+                @click="getFilteredReport()"
+              >
                 <i class="fa fa-search me-1"></i>
                 Aplicar Filtros
               </button>
-              <button class="btn btn-secondary" @click="resetFilters()">
+              <button class="btn btn-secondary mb-2" @click="resetFilters()">
                 <i class="fa fa-refresh me-1"></i>
                 Limpiar Filtros
               </button>
@@ -255,5 +274,36 @@ const exportToExcel = async () => {
 
 .btn-secondary:hover {
   opacity: 0.9;
+}
+.form-label {
+  white-space: nowrap;
+  margin-bottom: 0.5rem;
+}
+
+.form-control,
+.form-select {
+  height: 45px;
+}
+
+@media (max-width: 991.98px) {
+  .form-label {
+    white-space: normal;
+  }
+
+  .form-control,
+  .form-select {
+    margin-bottom: 0.5rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .btn {
+    width: 100%;
+    margin-right: 0 !important;
+  }
 }
 </style>

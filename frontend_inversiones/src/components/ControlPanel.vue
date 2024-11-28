@@ -51,6 +51,13 @@ const activeLink = ref("Inicio");
 const showComponent = (componentName, linkName) => {
   activeComponent.value = markRaw(componentName);
   activeLink.value = linkName;
+  const navbar = document.querySelector("#mobileSidebar");
+  if (navbar) {
+    const bsCollapse = bootstrap.Collapse.getInstance(navbar);
+    if (bsCollapse) {
+      bsCollapse.hide();
+    }
+  }
 };
 
 const componentslinks = computed(() => {
@@ -145,10 +152,21 @@ const iconMap = {
 <template>
   <div class="content-div">
     <nav
-      class="navbar navbar-expand-lg navbar-light px-3 shadow navbar-gradient"
+      class="navbar navbar-expand-lg navbar-light px-3 pb-0 shadow navbar-gradient"
     >
       <div class="navbar-container">
         <div class="navbar-left">
+          <button
+            class="navbar-toggler d-lg-none"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mobileSidebar"
+            aria-controls="mobileSidebar"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
           <a class="navbar-brand" href="#">
             <img
               :src="
@@ -168,17 +186,7 @@ const iconMap = {
             <Banner />
           </div>
         </div>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+
         <div class="navbar-right">
           <div class="dropdown custom-dropdown">
             <button
@@ -207,6 +215,47 @@ const iconMap = {
           </div>
         </div>
       </div>
+      <div
+        class="collapse navbar-collapse d-lg-none mobile-sidebar"
+        id="mobileSidebar"
+      >
+        <ul class="navbar-nav pb-0">
+          <li
+            v-for="(link, index) in componentslinks"
+            :key="index"
+            class="nav-item"
+          >
+            <div v-if="link.isDividerWithTitle" class="dropdown-divider"></div>
+            <a
+              v-else-if="link.component"
+              class="nav-link mobile-link"
+              href="#"
+              @click="showComponent(link.component, link.name)"
+              :class="{ active: activeLink === link.name }"
+            >
+              <i :class="iconMap[link.name]" class="me-2"></i>
+              {{ link.name }}
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a
+              class="nav-link mobile-link"
+              href="#"
+              @click="showComponent(MyProfile, 'Mi perfil')"
+            >
+              <i class="fas fa-user-circle me-2"></i>
+              Mi Perfil
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link mobile-link" href="#" @click="logOut">
+              <i class="fas fa-sign-out-alt me-2"></i>
+              Cerrar Sesión
+            </a>
+          </li>
+        </ul>
+      </div>
     </nav>
 
     <div class="container-fluid">
@@ -229,7 +278,7 @@ const iconMap = {
           </div>
         </div>
 
-        <div class="col-md-10">
+        <div class="col-md-10 panel-content">
           <div class="container">
             <div class="mt-4">
               <component :is="activeComponent" />
@@ -389,6 +438,65 @@ li a:hover {
   .navbar-logo {
     width: 80px;
     height: 40px;
+  }
+}
+@media (width <= 991px) {
+  .panel-content {
+    padding: 0;
+    width: 100%;
+  }
+  .navbar-content,
+  .sidebar,
+  .navbar-right {
+    display: none;
+  }
+
+  .navbar-left {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+  }
+
+  .navbar-brand {
+    margin-right: 0;
+    order: 2;
+  }
+
+  .navbar-toggler {
+    order: 1;
+  }
+
+  li a:hover {
+    background-color: transparent;
+    color: inherit;
+  }
+
+  .mobile-link {
+    font-size: 1.3rem !important;
+    padding: 1rem !important;
+  }
+
+  .mobile-sidebar .navbar-nav {
+    padding: 1rem 0;
+  }
+
+  .mobile-sidebar .nav-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-sidebar .nav-link {
+    padding: 1rem 1.5rem !important;
+  }
+
+  .mobile-sidebar .nav-link i {
+    font-size: 1.3rem;
+  }
+}
+@media (width >= 991px) {
+  .mobile-sidebar {
+    display: none !important;
   }
 }
 </style>

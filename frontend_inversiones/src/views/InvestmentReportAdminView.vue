@@ -7,7 +7,8 @@
       <div class="card mb-4">
         <div class="card-body">
           <div class="row g-3">
-            <div class="col-md-3">
+            <!-- Fecha Inicio -->
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3">
               <label class="form-label">Fecha Inicio</label>
               <input
                 type="date"
@@ -15,7 +16,9 @@
                 v-model="filters.startDate"
               />
             </div>
-            <div class="col-md-3">
+
+            <!-- Fecha Fin -->
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3">
               <label class="form-label">Fecha Fin</label>
               <input
                 type="date"
@@ -24,7 +27,9 @@
                 :min="filters.startDate"
               />
             </div>
-            <div class="col-md-3">
+
+            <!-- Monto Mínimo -->
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3">
               <label class="form-label">Monto Mínimo</label>
               <input
                 type="number"
@@ -33,7 +38,9 @@
                 min="0"
               />
             </div>
-            <div class="col-md-3">
+
+            <!-- Monto Máximo -->
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3">
               <label class="form-label">Monto Máximo</label>
               <input
                 type="number"
@@ -42,7 +49,8 @@
               />
             </div>
 
-            <div class="col-md-4">
+            <!-- Usuario -->
+            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
               <label class="form-label">Usuario</label>
               <v-select
                 v-model="filters.userId"
@@ -53,13 +61,12 @@
                 @search="searchUsers"
                 placeholder="Buscar usuario..."
               >
-                <template #no-options>
-                  Escriba para buscar usuarios...
-                </template>
+                <template #no-options>Escriba para buscar usuarios...</template>
               </v-select>
             </div>
 
-            <div class="col-md-4">
+            <!-- Proyecto -->
+            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
               <label class="form-label">Proyecto</label>
               <v-select
                 v-model="filters.projectId"
@@ -70,9 +77,9 @@
                 @search="searchProjects"
                 placeholder="Buscar proyecto..."
               >
-                <template #no-options>
-                  Escriba para buscar proyectos...
-                </template>
+                <template #no-options
+                  >Escriba para buscar proyectos...</template
+                >
               </v-select>
             </div>
             <div class="col-md-2">
@@ -97,15 +104,18 @@
               </select>
             </div>
             <div class="col-12 text-end">
-              <button class="btn btn-success me-2" @click="exportToExcel">
+              <button class="btn btn-success me-2 mb-2" @click="exportToExcel">
                 <i class="fa fa-book me-1"></i>
                 Exportar a Excel
               </button>
-              <button class="btn btn-primary me-2" @click="getFilteredReport">
+              <button
+                class="btn btn-primary me-2 mb-2"
+                @click="getFilteredReport"
+              >
                 <i class="fa fa-search me-1"></i>
                 Aplicar Filtros
               </button>
-              <button class="btn btn-secondary" @click="resetFilters">
+              <button class="btn btn-secondary mb-2" @click="resetFilters">
                 <i class="fa fa-refresh me-1"></i>
                 Limpiar Filtros
               </button>
@@ -423,5 +433,63 @@ const exportToExcel = async () => {
 
 .v-select .vs__selected {
   padding-left: 20px;
+}
+
+.form-label {
+  white-space: nowrap;
+  margin-bottom: 0.5rem;
+}
+
+.form-control,
+.form-select,
+.v-select .vs__dropdown-toggle {
+  height: 45px;
+}
+
+.v-select {
+  border-radius: 25px;
+  --vs-border-color: #ced4da;
+}
+
+.v-select .vs__dropdown-toggle {
+  border-radius: 25px;
+  padding: 4px 8px;
+}
+
+.v-select .vs__search {
+  padding: 0 8px;
+}
+
+.v-select .vs__selected {
+  padding: 0 8px;
+}
+
+@media (max-width: 991.98px) {
+  .form-label {
+    white-space: normal;
+  }
+
+  .form-control,
+  .form-select,
+  .v-select .vs__dropdown-toggle {
+    margin-bottom: 0.5rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .btn {
+    width: 100%;
+    margin-right: 0 !important;
+  }
+
+  .v-select,
+  .form-control,
+  .form-select {
+    font-size: 14px;
+  }
 }
 </style>

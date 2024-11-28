@@ -1,12 +1,15 @@
 <template>
-  <div class="text-center py-5">
-    <h1 class="mb-4">Preguntas Frecuentes</h1>
-    <div class="accordion w-50 mx-auto" id="faqAccordion">
+  <div class="text-center py-4 py-md-5">
+    <h1 class="mb-3 mb-md-4">Preguntas Frecuentes</h1>
+    <div
+      class="accordion container-fluid container-md w-md-75 w-lg-50"
+      id="faqAccordion"
+    >
       <div v-for="(faq, index) in faqs" :key="index" class="accordion-item">
         <h2 class="accordion-header" :id="'heading' + index">
           <button
             v-if="faq.deleted == 0"
-            class="accordion-button collapsed py-4"
+            class="accordion-button collapsed py-3 py-md-4"
             type="button"
             data-bs-toggle="collapse"
             :data-bs-target="'#collapse' + index"
@@ -14,7 +17,7 @@
             :aria-controls="'collapse' + index"
             :class="{ collapsed: index !== 0 }"
           >
-            {{ faq.ask }}
+            <span class="fs-6 fs-md-5">{{ faq.ask }}</span>
           </button>
         </h2>
         <div
@@ -23,7 +26,7 @@
           :aria-labelledby="'heading' + index"
           data-bs-parent="#faqAccordion"
         >
-          <div class="accordion-body text-start">
+          <div class="accordion-body text-start px-3 px-md-4">
             {{ faq.answer }}
           </div>
         </div>
