@@ -87,10 +87,10 @@ const navLinks = computed(() => {
   let links = [{ name: "Panel de control", path: "/dashboard" }];
 
   if (userRole === "super_user" || userRole === "admin") {
-    links.push(
+    /*  links.push(
       { name: "Análisis", path: "/analysisAndReports" },
       { name: "Finanzas", path: "/finance" }
-    );
+    ); */
   }
 
   return links;

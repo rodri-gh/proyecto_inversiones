@@ -54,7 +54,6 @@
               <select class="form-select" v-model="filters.status">
                 <option value="">Todos</option>
                 <option value="open">Abierto</option>
-                <option value="in_transit">En Tránsito</option>
                 <option value="closed">Cerrado</option>
               </select>
             </div>
