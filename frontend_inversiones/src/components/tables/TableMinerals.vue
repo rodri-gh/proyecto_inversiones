@@ -11,10 +11,10 @@
           <td colspan="7" class="text-center">No hay minerales registrados</td>
         </tr>
         <tr v-for="item in items" :key="item.id">
-          <td>{{ item.name }}</td>
-          <td>{{ formatCurrency(item.price) }}</td>
-          <td>{{ item.description }}</td>
-          <td>
+          <td width="10%">{{ item.name }}</td>
+          <td width="20%">{{ formatCurrency(item.price) }}</td>
+          <td width="30%">{{ item.description }}</td>
+          <td width="10%">
             <img
               :src="item.image"
               alt="Imagen"
@@ -23,13 +23,13 @@
               class="img-fluid rounded-1"
             />
           </td>
-          <td>
+          <td width="10%">
             <span v-if="item.deleted == 0" class="badge bg-success"
               >Activo</span
             >
             <span v-else class="badge bg-danger">Inactivo</span>
           </td>
-          <td>
+          <td width="10%">
             <Button
               @click="() => actions.edit(item)"
               icon="fa fa-edit"
