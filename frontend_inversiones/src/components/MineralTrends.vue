@@ -1,308 +1,311 @@
 <script setup>
-import { getHeaderRequest } from '@/authService';
-import axios from 'axios';
-import { onMounted, ref, watch } from 'vue';
-import { formatDate } from '@/router/viewFormat';
+import { getHeaderRequest } from "@/authService";
+import axios from "axios";
+import { onMounted, ref, watch } from "vue";
+import { formatDate } from "@/router/viewFormat";
 
 const baseUrl = `${import.meta.env.VITE_API_URL}/`;
 const baseUrlAnalisys = `${import.meta.env.VITE_ANALISYS_API_URL}/`;
 const header = getHeaderRequest();
-const selectedMineral = ref('');
+const selectedMineral = ref("");
 const mineralObject = ref({});
-const minerals = ref([]); 
+const minerals = ref([]);
 
 const chartOptions = ref({
-    chart: {
-        type: 'line',
-        backgroundColor: '#1b1b1b',
-        borderColor: '#333',
-        borderWidth: 1,
-        plotBackgroundColor: '#1b1b1b',
-        plotBorderWidth: 1,
-        plotBorderColor: '#333',
+  chart: {
+    type: "line",
+    backgroundColor: "#1b1b1b",
+    borderColor: "#333",
+    borderWidth: 1,
+    plotBackgroundColor: "#1b1b1b",
+    plotBorderWidth: 1,
+    plotBorderColor: "#333",
+  },
+  title: {
+    text: "Precios Historicos",
+    style: {
+      color: "#fff",
+      fontSize: "20px",
+      fontWeight: "bold",
     },
+  },
+  xAxis: {
+    categories: [],
+    labels: {
+      style: {
+        color: "#ccc",
+        fontSize: "12px",
+      },
+    },
+    gridLineColor: "#333",
+    gridLineWidth: 1,
+  },
+  yAxis: {
     title: {
-        text: 'Precios Historicos',
+      text: "Precio en USD",
+      style: {
+        color: "#ccc",
+      },
+    },
+    labels: {
+      style: {
+        color: "#ccc",
+      },
+    },
+    gridLineColor: "#333",
+    gridLineWidth: 1,
+  },
+  series: [
+    {
+      name: "",
+      data: [],
+      color: "#42a5f5",
+      lineWidth: 3,
+      marker: {
+        enabled: false,
+      },
+      tooltip: {
+        backgroundColor: "#333",
         style: {
-            color: '#fff',
-            fontSize: '20px',
-            fontWeight: 'bold',
+          color: "#fff",
         },
+      },
     },
-    xAxis: {
-        categories: [],
-        labels: {
-            style: {
-                color: '#ccc',
-                fontSize: '12px',
-            },
-        },
-        gridLineColor: '#333', 
-        gridLineWidth: 1,
+  ],
+  tooltip: {
+    shared: true,
+    crosshairs: true,
+    backgroundColor: "#333",
+    borderWidth: 0,
+    style: {
+      color: "#fff",
     },
-    yAxis: {
-        title: {
-            text: 'Precio en USD',
-            style: {
-                color: '#ccc', 
-            },
-        },
-        labels: {
-            style: {
-                color: '#ccc',
-            },
-        },
-        gridLineColor: '#333', 
-        gridLineWidth: 1,
+  },
+  legend: {
+    itemStyle: {
+      color: "#ccc",
     },
-    series: [
-        {
-            name: '',
-            data: [],
-            color: '#42a5f5',
-            lineWidth: 3, 
-            marker: {
-                enabled: false, 
-            },
-            tooltip: {
-                backgroundColor: '#333', 
-                style: {
-                    color: '#fff',
-                },
-            },
+    itemHoverStyle: {
+      color: "#fff",
+    },
+  },
+  responsive: {
+    rules: [
+      {
+        condition: {
+          maxWidth: 600,
         },
+        chartOptions: {
+          chart: {
+            height: "auto",
+          },
+          xAxis: {
+            labels: {
+              style: {
+                fontSize: "10px",
+              },
+            },
+          },
+          yAxis: {
+            labels: {
+              style: {
+                fontSize: "10px",
+              },
+            },
+          },
+        },
+      },
     ],
-    tooltip: {
-        shared: true,
-        crosshairs: true,
-        backgroundColor: '#333', 
-        borderWidth: 0,
-        style: {
-            color: '#fff', 
-        },
-    },
-    legend: {
-        itemStyle: {
-            color: '#ccc', 
-        },
-        itemHoverStyle: {
-            color: '#fff',
-        },
-    },
-    responsive: {
-        rules: [
-            {
-                condition: {
-                    maxWidth: 600,
-                },
-                chartOptions: {
-                    chart: {
-                        height: 'auto',
-                    },
-                    xAxis: {
-                        labels: {
-                            style: {
-                                fontSize: '10px',
-                            },
-                        },
-                    },
-                    yAxis: {
-                        labels: {
-                            style: {
-                                fontSize: '10px',
-                            },
-                        },
-                    },
-                },
-            },
-        ],
-    },
+  },
 });
 
 const chartOptionsPredictable = ref({
-    chart: {
-        type: 'line',
-        backgroundColor: '#1b1b1b',
-        borderColor: '#333',
-        borderWidth: 1,
-        plotBackgroundColor: '#1b1b1b',
-        plotBorderWidth: 1,
-        plotBorderColor: '#333',
+  chart: {
+    type: "line",
+    backgroundColor: "#1b1b1b",
+    borderColor: "#333",
+    borderWidth: 1,
+    plotBackgroundColor: "#1b1b1b",
+    plotBorderWidth: 1,
+    plotBorderColor: "#333",
+  },
+  title: {
+    text: "Precios Historicos",
+    style: {
+      color: "#fff",
+      fontSize: "20px",
+      fontWeight: "bold",
     },
+  },
+  xAxis: {
+    categories: [],
+    labels: {
+      style: {
+        color: "#ccc",
+        fontSize: "12px",
+      },
+    },
+    gridLineColor: "#333",
+    gridLineWidth: 1,
+  },
+  yAxis: {
     title: {
-        text: 'Precios Historicos',
+      text: "Precio en USD",
+      style: {
+        color: "#ccc",
+      },
+    },
+    labels: {
+      style: {
+        color: "#ccc",
+      },
+    },
+    gridLineColor: "#333",
+    gridLineWidth: 1,
+  },
+  series: [
+    {
+      name: "",
+      data: [],
+      color: "#42a5f5",
+      lineWidth: 3,
+      marker: {
+        enabled: false,
+      },
+      tooltip: {
+        backgroundColor: "#333",
         style: {
-            color: '#fff',
-            fontSize: '20px',
-            fontWeight: 'bold',
+          color: "#fff",
         },
+      },
     },
-    xAxis: {
-        categories: [],
-        labels: {
-            style: {
-                color: '#ccc',
-                fontSize: '12px',
-            },
-        },
-        gridLineColor: '#333', 
-        gridLineWidth: 1,
+  ],
+  tooltip: {
+    shared: true,
+    crosshairs: true,
+    backgroundColor: "#333",
+    borderWidth: 0,
+    style: {
+      color: "#fff",
     },
-    yAxis: {
-        title: {
-            text: 'Precio en USD',
-            style: {
-                color: '#ccc', 
-            },
-        },
-        labels: {
-            style: {
-                color: '#ccc',
-            },
-        },
-        gridLineColor: '#333', 
-        gridLineWidth: 1,
+  },
+  legend: {
+    itemStyle: {
+      color: "#ccc",
     },
-    series: [
-        {
-            name: '',
-            data: [],
-            color: '#42a5f5',
-            lineWidth: 3, 
-            marker: {
-                enabled: false, 
-            },
-            tooltip: {
-                backgroundColor: '#333', 
-                style: {
-                    color: '#fff',
-                },
-            },
+    itemHoverStyle: {
+      color: "#fff",
+    },
+  },
+  responsive: {
+    rules: [
+      {
+        condition: {
+          maxWidth: 600,
         },
+        chartOptions: {
+          chart: {
+            height: "auto",
+          },
+          xAxis: {
+            labels: {
+              style: {
+                fontSize: "10px",
+              },
+            },
+          },
+          yAxis: {
+            labels: {
+              style: {
+                fontSize: "10px",
+              },
+            },
+          },
+        },
+      },
     ],
-    tooltip: {
-        shared: true,
-        crosshairs: true,
-        backgroundColor: '#333', 
-        borderWidth: 0,
-        style: {
-            color: '#fff', 
-        },
-    },
-    legend: {
-        itemStyle: {
-            color: '#ccc', 
-        },
-        itemHoverStyle: {
-            color: '#fff',
-        },
-    },
-    responsive: {
-        rules: [
-            {
-                condition: {
-                    maxWidth: 600,
-                },
-                chartOptions: {
-                    chart: {
-                        height: 'auto',
-                    },
-                    xAxis: {
-                        labels: {
-                            style: {
-                                fontSize: '10px',
-                            },
-                        },
-                    },
-                    yAxis: {
-                        labels: {
-                            style: {
-                                fontSize: '10px',
-                            },
-                        },
-                    },
-                },
-            },
-        ],
-    },
+  },
 });
 
+onMounted(() => {
+  getMineralPricesHistory();
+});
 
-onMounted(() => { 
-    getMineralPricesHistory();
-})
+const getMineralPricesHistory = async () => {
+  try {
+    const response = await axios.get(
+      baseUrl + "apiMineralPrices/historyOfAMonth",
+      header
+    );
+    console.log(response.data);
+    const mineralNames = Array.from(
+      new Set(response.data.map((item) => item.mineral.name))
+    );
+    minerals.value = mineralNames;
+    console.log(mineralNames);
+    const groupedByMineral = response.data.reduce((acc, item) => {
+      if (!acc[item.mineral.name]) {
+        acc[item.mineral.name] = { prices: [], dates: [] };
+      }
+      acc[item.mineral.name].prices.push(parseFloat(item.price));
+      acc[item.mineral.name].dates.push(formatDate(item.datePrice));
+      return acc;
+    }, {});
+    console.log(groupedByMineral);
+    mineralObject.value = groupedByMineral;
+    const initGraphic = minerals.value[0];
+    updateMineralPricesGraphic(initGraphic);
+    console.log(mineralObject.value);
+  } catch (e) {
+    console.error(e);
+  }
+};
 
-const getMineralPricesHistory = async () => { 
-    try{ 
-        const response = await axios.get(baseUrl+'apiMineralPrices/historyOfAMonth', header);
-        console.log(response.data);
-        const mineralNames = Array.from(
-            new Set(response.data.map(item => item.mineral.name))
-        );
-        minerals.value = mineralNames; 
-        console.log(mineralNames);
-        const groupedByMineral = response.data.reduce((acc, item) => {
-            if (!acc[item.mineral.name]) {
-                acc[item.mineral.name] = { prices: [], dates: [] };
-            }
-            acc[item.mineral.name].prices.push(parseFloat(item.price));
-            acc[item.mineral.name].dates.push(formatDate(item.datePrice));
-            return acc;
-             }, {});
-         console.log(groupedByMineral);
-         mineralObject.value = groupedByMineral;
-         const initGraphic = minerals.value[0];
-         updateMineralPricesGraphic(initGraphic);
-        console.log(mineralObject.value);
-    } catch(e) { 
-        console.error(e); 
-    }
-}
+const updateMineralPricesGraphic = (selectMineral) => {
+  console.log(mineralObject.value[selectMineral]);
 
-const updateMineralPricesGraphic = (selectMineral) => { 
-    console.log(mineralObject.value[selectMineral]);
-    
-    const dates = [...mineralObject.value[selectMineral].dates];
-    const prices = [...mineralObject.value[selectMineral].prices];
-    chartOptions.value.xAxis.categories = dates;
-    chartOptions.value.series = [
-        {
-            name: selectMineral, 
-            data: prices,
-        },
-    ];
-}
+  const dates = [...mineralObject.value[selectMineral].dates];
+  const prices = [...mineralObject.value[selectMineral].prices];
+  chartOptions.value.xAxis.categories = dates;
+  chartOptions.value.series = [
+    {
+      name: selectMineral,
+      data: prices,
+    },
+  ];
+};
 
-const updatePredictableMineralPricesGraphic = async (selectMineral) => { 
-    try { 
-        const response = await axios.get(baseUrlAnalisys+'predictMineralPrice/'+1 )
-    } catch (e) { 
-        console.error(e);
-    }
-}
+const updatePredictableMineralPricesGraphic = async (selectMineral) => {
+  try {
+    const response = await axios.get(
+      baseUrlAnalisys + "predictMineralPrice/" + 1
+    );
+  } catch (e) {
+    console.error(e);
+  }
+};
 
 watch(selectedMineral, (newValue) => {
-    updateMineralPricesGraphic(newValue);
+  updateMineralPricesGraphic(newValue);
 });
-
 </script>  
 
 <template>
-    <div>
-        <div class="filter-container">
-            <select
-                id="mineral-select"
-                v-model="selectedMineral"
-                class="mineral-dropdown"
-            >
-                <option value="" disabled selected>Selecciona un Mineral</option>
-                <option v-for="mineral in minerals" :key="mineral" :value="mineral">
-                {{ mineral }}
-                </option>
-            </select>
-        </div>
-        <highcharts :options="chartOptions" :key="selectedMineral" />
+  <div>
+    <div class="filter-container">
+      <select
+        id="mineral-select"
+        v-model="selectedMineral"
+        class="mineral-dropdown"
+      >
+        <option value="" disabled selected>Selecciona un Mineral</option>
+        <option v-for="mineral in minerals" :key="mineral" :value="mineral">
+          {{ mineral }}
+        </option>
+      </select>
     </div>
+    <highcharts :options="chartOptions" :key="selectedMineral" />
+  </div>
 </template>
 
 <style scoped>
@@ -317,7 +320,7 @@ watch(selectedMineral, (newValue) => {
   border-radius: 15px;
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  width: 20%;
+  width: 220px;
 }
 
 .mineral-dropdown:focus {
