@@ -204,24 +204,31 @@ const getsummaryContacts = () => {
   }
 };
 
-const deleteContact = async (contact_id) => {
+const deleteContact = async (contact) => {
+  const isDeleted = contact.deleted === 1;
   try {
     const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: isDeleted
+        ? "¿Deseas restaurar este contacto?"
+        : "¿Deseas eliminar este contacto?",
       icon: "warning",
-      title: "¿Está seguro?",
-      text: "Se eliminará el contacto. Esta acción no se puede deshacer.",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
+      confirmButtonText: isDeleted ? "Sí, restaurar" : "Sí, eliminar",
       cancelButtonText: "Cancelar",
     });
     if (result.isConfirmed) {
-      const { data } = await axios.delete(baseURL + contact_id);
+      const { data } = await axios.delete(baseURL + contact.id);
       Swal.fire({
         icon: "success",
-        title: "Eliminado",
-        text: "El contacto ha sido eliminado.",
+        title: isDeleted ? "Restaurado" : "Eliminado",
+        text: isDeleted
+          ? "El contacto ha sido restaurado"
+          : "El contacto ha sido eliminado",
+        showConfirmButton: false,
+        timer: 1500,
       });
       await getContacts();
     }

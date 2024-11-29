@@ -44,7 +44,7 @@
               :disabled="item.answer === 'answered'"
             />
             <Button
-              @click="() => actions.delete(item.id)"
+              @click="() => actions.delete(item)"
               :icon="item.deleted ? 'fa fa-check' : 'fa fa-trash'"
               :buttonClass="`btn-${
                 item.deleted ? 'restore' : 'delete'
