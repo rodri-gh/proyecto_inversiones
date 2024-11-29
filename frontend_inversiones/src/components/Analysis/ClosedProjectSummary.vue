@@ -120,7 +120,7 @@ const addDetailsProjectObject = () => {
   }
   if (Array.isArray(project.value.projectMinerals)) {
     const totalSale = project.value.projectMinerals.reduce((acc, item) => {
-      const amount = parseFloat(item.salePrice);
+      const amount = parseFloat(item.salePrice) * (parseFloat(item.weightOunces));
       return acc + (isNaN(amount) ? 0 : amount);
     }, 0);
 
@@ -148,12 +148,12 @@ const addDetailsProjectObject = () => {
   project.value.reuturnInvestment = reuturnInvestment;
 
   cumplimientoMetaData.value = {
-    labels: ["Cumplido %", "No Cumplido %"],
+    labels: ["Cumplido", "No Cumplido"],
     datasets: [
       {
         data: [
-          project.value.reuturnInvestment,
-          parseFloat(project.value.investmentGoal),
+          project.value.netProfit,
+          calculatePerformance(parseFloat(project.value.investmentGoal) * (parseFloat(project.value.profitPercentage / 100)) - project.value.netProfit),
         ],
         backgroundColor: ["#4CAF50", "#F44336"],
         hoverOffset: 4,
@@ -184,6 +184,13 @@ const addDetailsProjectObject = () => {
     ],
   };
 };
+
+const calculatePerformance = (number) => { 
+  if (number <= 0) { 
+    return 0;
+  }
+  return number;
+}
 </script>
 
 <template>
@@ -235,6 +242,10 @@ const addDetailsProjectObject = () => {
             <li>
               <strong>Estado:</strong>
               {{ project.status === "closed" ? "Cerrado" : project.status }}
+            </li>
+            <li>
+              <strong>Porcentage de Rendimiento Estimado:</strong>
+              {{ project.profitPercentage }}%
             </li>
           </ul>
         </div>

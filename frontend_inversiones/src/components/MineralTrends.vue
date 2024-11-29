@@ -132,7 +132,7 @@ const chartOptionsPredictable = ref({
     plotBorderColor: "#333",
   },
   title: {
-    text: "Precios Historicos",
+    text: "Analisis Prediccion de Precios Futuros",
     style: {
       color: "#fff",
       fontSize: "20px",
@@ -233,36 +233,6 @@ onMounted(() => {
   getMineralPricesHistory();
 });
 
-const getMineralPricesHistory = async () => {
-  try {
-    const response = await axios.get(
-      baseUrl + "apiMineralPrices/historyOfAMonth",
-      header
-    );
-    console.log(response.data);
-    const mineralNames = Array.from(
-      new Set(response.data.map((item) => item.mineral.name))
-    );
-    minerals.value = mineralNames;
-    console.log(mineralNames);
-    const groupedByMineral = response.data.reduce((acc, item) => {
-      if (!acc[item.mineral.name]) {
-        acc[item.mineral.name] = { prices: [], dates: [] };
-      }
-      acc[item.mineral.name].prices.push(parseFloat(item.price));
-      acc[item.mineral.name].dates.push(formatDate(item.datePrice));
-      return acc;
-    }, {});
-    console.log(groupedByMineral);
-    mineralObject.value = groupedByMineral;
-    const initGraphic = minerals.value[0];
-    updateMineralPricesGraphic(initGraphic);
-    console.log(mineralObject.value);
-  } catch (e) {
-    console.error(e);
-  }
-};
-
 const getMineralPricesHistory = async () => { 
     try{ 
         const response = await axios.get(baseUrl+'apiMineralPrices/historyOfAMonth', header);
@@ -315,6 +285,15 @@ const updatePredictableMineralPricesGraphic = async (selectMineral) => {
         const response = await axios.get(baseUrlAnalisys+'predictMineralPrice/'+mineralId); 
         console.log(response.data);
         predictions.value = response.data;
+        const dates = predictions.value.predictionsPrices.map(item => formatDate(item.date));
+        const prices = predictions.value.predictionsPrices.map(item => parseFloat(item.predicted_price.toFixed(2)));
+        chartOptionsPredictable.value.xAxis.categories = dates;
+        chartOptionsPredictable.value.series = [
+            {
+                name: selectMineral, 
+                data: prices,
+            },
+        ];
     } catch (e) { 
         console.error(e);
     }
@@ -342,17 +321,19 @@ watch(selectedMineral, (newValue) => {
         <div>
             <highcharts :options="chartOptions" :key="selectedMineral" />
         </div>
-        <div class="mt-5">
-            <div v-if="!predictions.percentageErrorsPrediction">
-                <p> Calculado Prediccion de precios ...</p>
-            </div>
-            <div v-if="predictions.percentageErrorsPrediction">
-                <p> Porcentage de Error en la prediccion: {{ predictions.percentageErrorsPrediction }}%</p>
-                <p><strong>Prediccion de Precios Futuros:</strong></p>
-                <div v-for="item in predictions.predictionsPrices" :key="item">
-                    <p>{{ formatDate(item.date) }} - {{  item.predicted_price.toFixed(2) }}</p>
-                </div>
-            </div>
+        <div class="prediction-container">
+          <div v-if="!predictions.percentageErrorsPrediction" class="text-center">
+              <p class="text-sm">Calculando predicción de precios...</p>
+          </div>
+          <div v-if="predictions.percentageErrorsPrediction">
+              <p class="text-sm mb-2">
+                  <span class="font-semibold">Porcentaje de Error en la Prediccion:</span>
+                  <span class="text-red-400"><strong>{{ predictions.percentageErrorsPrediction.toFixed(2) }}%</strong></span>
+              </p>
+              <div>
+                  <highcharts :options="chartOptionsPredictable" :key="selectedMineral" />
+              </div>
+          </div>
         </div>
   </div>
 </template>
@@ -383,5 +364,47 @@ label {
   margin-bottom: 10px;
   color: #333;
   text-align: left;
+}
+
+.prediction-container {
+  margin-top: 2rem; /* mt-8 equivalente */
+  background-color: #2d3748; /* bg-gray-800 */
+  color: #ffffff; /* text-white */
+  padding: 1.5rem; /* p-6 */
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-small {
+  font-size: 0.875rem; /* text-sm */
+}
+
+.header {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: bold; /* font-bold */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.bold {
+  font-weight: bold; /* font-semibold */
+}
+
+.error-percentage {
+  color: #f56565; /* text-red-400 */
+}
+
+.prediction-list {
+  list-style-type: disc; /* list-disc */
+  padding-left: 1.25rem; /* list-inside */
+  margin-top: 0.5rem; /* mt-2 */
+}
+
+.price {
+  font-family: monospace; /* font-mono */
+  color: #48bb78; /* text-green-400 */
 }
 </style>

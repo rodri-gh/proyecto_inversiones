@@ -123,7 +123,7 @@ router.put('/:id', async (req, res, next) => {
 });
 
 async function calculateReturnOnInvestment(idProject, projecMinerals) {
-  const opertingExpense = await OperatingExpense.findAll({ where: { projectId: idProject}});
+  const opertingExpense = await OperatingExpense.findAll({ where: { projectId: idProject, deleted: 0}});
   const siteSetings = await SiteSetting.findOne({ where: { id: 1 }});
   const appCommission = (siteSetings.appCommission) / 100;
   const investments = await Investment.findAll({ where: { projectId: idProject}});
@@ -131,7 +131,8 @@ async function calculateReturnOnInvestment(idProject, projecMinerals) {
   console.log("inversiones totales"+totalInvestment);
   const totalOperatingExpense = opertingExpense.reduce((acc, item) => acc + (parseFloat(item.expenses) || 0), 0);
   console.log("gastos opera total "+totalOperatingExpense);
-  const totalSalePrice = projecMinerals.reduce((acc, item) => acc + (parseFloat(item.salePrice) || 0), 0);
+  const totalSalePrice = projecMinerals.reduce((acc, item) => acc + (parseFloat(item.salePrice) * parseFloat(item.weightOunces) || 0), 0);
+  // arreglar multiplicar po
   console.log("venta total "+totalSalePrice);
   var netProfit = totalSalePrice - totalOperatingExpense;
   netProfit = netProfit - (netProfit*appCommission);
