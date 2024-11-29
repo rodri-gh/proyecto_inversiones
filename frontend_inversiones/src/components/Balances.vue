@@ -74,7 +74,7 @@ const getMovementsOfuser = async () => {
         </div>
         <div class="card-body">
           <div v-if="totallyInvested != null && totallyInvested > 0">
-            <div class="card-amount">${{ totallyInvested }}</div>
+            <div class="card-amount text-black">${{ totallyInvested }}</div>
           </div>
           <div v-else class="empty-state">No hay Inversiones.</div>
         </div>
@@ -124,7 +124,9 @@ const getMovementsOfuser = async () => {
                   <span class="movement-date">{{
                     formatDate(item.fecha)
                   }}</span>
-                  <span class="movement-amount">${{ item.amount }}</span>
+                  <span class="movement-amount text-black"
+                    >${{ item.amount }}</span
+                  >
                 </div>
               </li>
             </ul>
