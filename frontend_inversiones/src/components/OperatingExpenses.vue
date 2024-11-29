@@ -56,7 +56,12 @@ import InputTextArea from "@/components/base/InputTextArea.vue";
 import { openModal, closeModal } from "@/utils/modal";
 import { getHeaderRequest } from "@/authService";
 import { eventBus } from "@/eventBus";
-import { validateInputs } from "@/utils/validateInputs";
+import {
+  validateInputs,
+  successAlert,
+  existAlert,
+} from "@/utils/validateInputs";
+import Swal from "sweetalert2";
 
 const headers = ["Nombre", "Descripción", "Gastos", "Acciones"];
 
@@ -146,13 +151,34 @@ const createFormData = () => {
 };
 
 const deleteOperatingExpense = async (id) => {
-  try {
+  /*  try {
     const { data } = await axios.patch(baseURL + id);
     console.log(data);
     getOperatingExpenses();
   } catch (error) {
     console.error(error);
-  }
+  } */
+
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: " ¿Estas seguro de eliminar este gasto operativo?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const { data } = await axios.patch(baseURL + id);
+        getOperatingExpenses();
+        successAlert("Gasto operativo eliminado correctamente");
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  });
 };
 const reset = () => {
   name.value = "";

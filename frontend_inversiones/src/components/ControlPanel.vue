@@ -278,7 +278,7 @@ const iconMap = {
           </div>
         </div>
 
-        <div class="col-md-10 panel-content">
+        <div class="col-md-10 container-fluid panel-content">
           <div class="container">
             <div class="mt-4">
               <component :is="activeComponent" />

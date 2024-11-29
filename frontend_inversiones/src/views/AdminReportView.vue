@@ -1,5 +1,5 @@
 <template>
-  <div class="container col-md-11 mt-5">
+  <div class="container col-md-12 mx-0 px-0 mt-5">
     <div>
       <h4 class="card-title text-center mb-2">Reportes Administrador</h4>
 

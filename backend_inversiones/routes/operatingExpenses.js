@@ -29,7 +29,7 @@ router.get("/:id", async (req, res) => {
 });
 
 router.get("/project/:id", async (req, res) => {
-  const { id } = req.params; 
+  const { id } = req.params;
   try {
     const operatingExpenses = await OperatingExpense.findAll({
       where: { projectId: id },
@@ -63,16 +63,20 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.patch('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
-    const [operatingExpenseDeleted] = await OperatingExpense.update({ deleted: true }, {
-      where: { id },
-    });
-    verifyIfIdExists(operatingExpenseDeleted);
-    getHandleSuccess(204)(res);
+    const operatingExpense = await OperatingExpense.findOne({ where: { id } });
+    if (!operatingExpense) {
+      return getHandleError(new Error('OperatingExpense not found'), res);
+    }
+
+    const newDeletedStatus = operatingExpense.deleted ? 0 : 1;
+    await OperatingExpense.update({ deleted: newDeletedStatus }, { where: { id } });
+
+    getHandleSuccess(200)(res, `OperatingExpense ${newDeletedStatus ? 'deleted' : 'restored'} successfully`);
   } catch (error) {
-    getHandleError(error, res)
+    getHandleError(error, res);
   }
 });
 
