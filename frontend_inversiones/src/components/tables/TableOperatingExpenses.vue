@@ -25,9 +25,9 @@
             />
             <Button
               @click="() => actions.delete(item.id)"
-              :icon="item.deleted ? 'fa fa-trash' : 'fa fa-check'"
+              :icon="item.deleted ? 'fa fa-check' : 'fa fa-trash'"
               :buttonClass="`btn-${
-                item.deleted ? 'danger' : 'success'
+                item.deleted ? 'success' : 'danger'
               } btn-sm m-1`"
             />
           </td>

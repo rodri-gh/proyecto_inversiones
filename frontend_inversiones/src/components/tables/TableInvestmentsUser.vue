@@ -15,7 +15,7 @@
         <tr v-for="item in paginatedItems" :key="item.id">
           <td>{{ item.investmentDate }}</td>
           <td>{{ formatCurrency(item.amount) }}</td>
-          <td>{{ item.profitPercentage }}%</td>
+
           <td v-if="item.status === 'active'">Activa</td>
           <td v-else-if="item.status === 'pending'">Pendiente</td>
           <td v-else>Cerrada</td>
@@ -37,7 +37,7 @@
 
         <tr v-if="showTotal" class="table-info">
           <td colspan="1"><strong>Total Inversiones</strong></td>
-          <td colspan="2">
+          <td colspan="1">
             <strong>{{ formatCurrency(calculateTotal) }}</strong>
           </td>
           <td colspan="1"><strong>Total Ganancias</strong></td>
