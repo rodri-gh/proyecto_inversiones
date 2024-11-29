@@ -83,12 +83,15 @@ router.patch('/:id', async function (req, res, next) {
 router.delete('/:id', async function (req, res, next) {
   const { id } = req.params;
   try {
-    const [updatedContact] = await Contact.update({ deleted: 1 }, {
-      where: { id },
-      returning: true
-    });
-    verifyIfIdExists(updatedContact);
-    getHandleSuccess(204)(res);
+    const contact = await Contact.findOne({ where: { id } });
+    if (!contact) {
+      return getHandleError(new Error('Contact not found'), res);
+    }
+
+    const newDeletedStatus = contact.deleted ? 0 : 1;
+    await Contact.update({ deleted: newDeletedStatus }, { where: { id } });
+
+    getHandleSuccess(200)(res, `Contact ${newDeletedStatus ? 'deleted' : 'restored'} successfully`);
   } catch (error) {
     getHandleError(error, res);
   }
