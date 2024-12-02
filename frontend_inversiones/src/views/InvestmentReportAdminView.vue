@@ -84,7 +84,7 @@
             </div>
             <div class="col-md-2">
               <label class="form-label">Mineral</label>
-              <select class="form-select" v-model="filters.mineralId">
+              <select class="form-select p-2" v-model="filters.mineralId">
                 <option value="">Todos</option>
                 <option
                   v-for="mineral in minerals"
@@ -97,7 +97,7 @@
             </div>
             <div class="col-md-2">
               <label class="form-label">Estado</label>
-              <select class="form-select" v-model="filters.status">
+              <select class="form-select p-2" v-model="filters.status">
                 <option value="">Todos</option>
                 <option value="closed">Cerrado</option>
                 <option value="pending">Pendiente</option>
@@ -413,55 +413,30 @@ const exportToExcel = async () => {
 .chosen-container {
   width: 100% !important;
 }
-.v-select {
-  border-radius: 25px;
-  --vs-border-color: #ced4da;
-  --vs-dropdown-bg: #fff;
-  --vs-dropdown-color: #333;
-  --vs-selected-bg: var(--primary-color);
-  --vs-selected-color: black;
+
+:deep(.v-select) {
+  background: white;
+  border-radius: 0.375rem;
 }
 
-.v-select .vs__dropdown-toggle {
-  border-radius: 25px;
-  padding: 4px 0;
+:deep(.vs__dropdown-toggle) {
+  padding: 5px;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
 }
 
-.v-select .vs__search {
-  padding-left: 20px;
+:deep(.vs__selected) {
+  margin: 0 2px;
 }
 
-.v-select .vs__selected {
-  padding-left: 20px;
+:deep(.vs__search) {
+  padding: 0.5px;
 }
 
-.form-label {
-  white-space: nowrap;
-  margin-bottom: 0.5rem;
-}
-
-.form-control,
-.form-select,
-.v-select .vs__dropdown-toggle {
-  height: 45px;
-}
-
-.v-select {
-  border-radius: 25px;
-  --vs-border-color: #ced4da;
-}
-
-.v-select .vs__dropdown-toggle {
-  border-radius: 25px;
-  padding: 4px 8px;
-}
-
-.v-select .vs__search {
-  padding: 0 8px;
-}
-
-.v-select .vs__selected {
-  padding: 0 8px;
+:deep(.vs__dropdown-menu) {
+  padding: 5px;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
 }
 
 @media (max-width: 991.98px) {

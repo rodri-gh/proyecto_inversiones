@@ -86,14 +86,14 @@ const getDetailsProject = async () => {
       header
     );
     project.value = response.data;
-    addDetailsProjectObject();
+    addDetailsProyectobject();
     console.log(project.value);
   } catch (e) {
     console.log(e);
   }
 };
 
-const addDetailsProjectObject = () => {
+const addDetailsProyectobject = () => {
   if (Array.isArray(project.value.investments)) {
     const totalInvestment = project.value.investments.reduce((acc, item) => {
       const amount = parseFloat(item.amount);
@@ -120,7 +120,7 @@ const addDetailsProjectObject = () => {
   }
   if (Array.isArray(project.value.projectMinerals)) {
     const totalSale = project.value.projectMinerals.reduce((acc, item) => {
-      const amount = parseFloat(item.salePrice) * (parseFloat(item.weightOunces));
+      const amount = parseFloat(item.salePrice) * parseFloat(item.weightOunces);
       return acc + (isNaN(amount) ? 0 : amount);
     }, 0);
 
@@ -153,7 +153,11 @@ const addDetailsProjectObject = () => {
       {
         data: [
           project.value.netProfit,
-          calculatePerformance(parseFloat(project.value.investmentGoal) * (parseFloat(project.value.profitPercentage / 100)) - project.value.netProfit),
+          calculatePerformance(
+            parseFloat(project.value.investmentGoal) *
+              parseFloat(project.value.profitPercentage / 100) -
+              project.value.netProfit
+          ),
         ],
         backgroundColor: ["#4CAF50", "#F44336"],
         hoverOffset: 4,
@@ -185,12 +189,12 @@ const addDetailsProjectObject = () => {
   };
 };
 
-const calculatePerformance = (number) => { 
-  if (number <= 0) { 
+const calculatePerformance = (number) => {
+  if (number <= 0) {
     return 0;
   }
   return number;
-}
+};
 </script>
 
 <template>

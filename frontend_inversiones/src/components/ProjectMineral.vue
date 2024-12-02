@@ -474,7 +474,7 @@ const saveProjectMinerals = async () => {
       "success"
     );
   } catch (e) {
-    handleErrorSwal(e, "Error al Guardar Mineral del Projecto");
+    handleErrorSwal(e, "Error al Guardar Mineral del Proyecto");
     closeModal();
   }
 };
