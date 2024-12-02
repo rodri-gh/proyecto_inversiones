@@ -42,6 +42,7 @@
               :filterable="false"
               @search="searchUsers"
               placeholder="Buscar usuario..."
+              class="custom-v-select"
             >
               <template #no-options> Escriba para buscar usuarios... </template>
             </v-select>
@@ -259,3 +260,17 @@ const searchUsers = async (search, loading) => {
   }
 };
 </script>
+<style>
+.custom-v-select {
+  border-radius: 20px !important;
+  border: 1px solid #ccc !important; 
+}
+.v-select .vs__dropdown-toggle {
+  border-radius: 20px !important; 
+  border: 1px solid #ccc !important; 
+}
+
+.v-select .vs__selected {
+  border-radius: 20px !important; 
+}
+</style>
