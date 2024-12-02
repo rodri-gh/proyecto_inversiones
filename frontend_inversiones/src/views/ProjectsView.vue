@@ -234,6 +234,7 @@
                   label="Fecha estimada de fin"
                   type="date"
                   v-model="endDate"
+                  :min="startDate"
                 />
               </div>
               <div class="col-md-6 mt-3">
