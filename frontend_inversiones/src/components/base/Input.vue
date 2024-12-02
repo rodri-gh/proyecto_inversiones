@@ -8,6 +8,7 @@
       @input="updateValue"
       class="form-control m-0"
       :placeholder="placeholder"
+      :min="min"
     />
     <slot></slot>
   </div>
@@ -20,6 +21,7 @@ defineProps({
   id: { type: String, required: true },
   placeholder: { type: String, default: "" },
   type: { type: String, default: "text" },
+  min: { type: String, default: "" },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -37,7 +39,3 @@ input {
   outline: none;
 }
 </style>
-
- 
-
-
