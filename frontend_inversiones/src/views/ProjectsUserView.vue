@@ -207,10 +207,10 @@ const getsummaryProjects = () => {
       }
     }
     summaryProjects.value = [
-      { key: "Projectos Totales", value: userTotals },
-      { key: "Projectos Activos", value: userActives },
-      { key: "Projectos Finalizados", value: projectFinish },
-      { key: "Projectos Eliminados", value: projectDeleted },
+      { key: "Proyectos Totales", value: userTotals },
+      { key: "Proyectos Activos", value: userActives },
+      { key: "Proyectos Finalizados", value: projectFinish },
+      { key: "Proyectos Eliminados", value: projectDeleted },
     ];
     console.log(summaryProjects.value);
   } else {

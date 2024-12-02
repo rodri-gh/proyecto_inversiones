@@ -119,7 +119,9 @@ const getMovementsOfuser = async () => {
                 :key="item"
                 class="movement-item"
               >
-                <div class="movement-type">{{ item.tipo }}</div>
+                <div class="movement-type">
+                  {{ item.tipo === "Investments" ? "Inversiones" : item.tipo }}
+                </div>
                 <div class="movement-details">
                   <span class="movement-date">{{
                     formatDate(item.fecha)

@@ -141,7 +141,7 @@
       <!-- Modal -->
       <Modal
         modalId="modalProject"
-        title="Datos del projecto"
+        title="Datos del Proyecto"
         modalClass="modal-lg"
         :showSaveButton="!selectedProject?.id"
         :showUpdateButton="Boolean(selectedProject?.id)"
@@ -272,7 +272,7 @@
                 <p><strong>Minero</strong></p>
                 <!--<Input
                               id="projectType"
-                              label="Tipo de projecto"
+                              label="Tipo de Proyecto"
                               type="text"
                               v-model="projectType"
                           /> -->
@@ -416,7 +416,7 @@ const removeMineral = async (mineral) => {
         baseURL + "projectMinerals/" + mineral.idProjectMineral,
         header
       );
-      console.log("mineral eliminado para el projecto!");
+      console.log("mineral eliminado para el Proyecto!");
     } catch (e) {
       console.error(e);
     }
@@ -599,10 +599,12 @@ const createDataProject = () => {
   return data;
 };
 
-
 const validateDates = () => {
   if (new Date(startDate.value) > new Date(endDate.value)) {
-    handleErrorSwal("", "La Fecha de inicio no puede ser menor a la fecha de fin!")
+    handleErrorSwal(
+      "",
+      "La Fecha de inicio no puede ser menor a la fecha de fin!"
+    );
     return false;
   }
   return true;

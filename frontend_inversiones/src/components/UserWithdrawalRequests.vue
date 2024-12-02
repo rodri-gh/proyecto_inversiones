@@ -33,6 +33,7 @@ const investmentOptions = computed(() => {
     value: investment.id,
   }));
 });
+const filteredInvestmentOptions = ref(investmentOptions.value);
 
 const inputFileRef = ref(null);
 
@@ -91,6 +92,15 @@ const getInvestments = async () => {
   }
 };
 
+const filterOptions = (search) => {
+  if (search) {
+    filteredInvestmentOptions.value = investmentOptions.value.filter((option) =>
+      option.label.toLowerCase().includes(search.toLowerCase())
+    );
+  } else {
+    filteredInvestmentOptions.value = [];
+  }
+};
 const updateSummaryRequests = () => {
   const totalRequests = withdrawalRequests.value.length;
   const pendingCount = pendingRequests.value.length;
@@ -287,16 +297,19 @@ const resetForm = () => {
               <label for="investmentId" class="form-label">Proyecto</label>
               <v-select
                 v-model="newRequest.investmentId"
-                :options="investmentOptions"
+                :options="filteredInvestmentOptions"
                 :placeholder="
                   closedInvestments.length === 0
                     ? 'No tienes ningún proyecto del cual retirar inversiones'
                     : 'Seleccione un proyecto'
                 "
                 :disabled="closedInvestments.length === 0"
-                @input="updateAmount"
+                @search="filterOptions"
                 label="label"
-              />
+                filterable
+              >
+                <template #no-options>Escriba para buscar usuarios...</template>
+              </v-select>
             </div>
             <InputFile
               id="photoDocument"

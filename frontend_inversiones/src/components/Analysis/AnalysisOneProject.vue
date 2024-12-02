@@ -96,7 +96,7 @@ const getOperatingExpenses = async () => {
   <div class="m-5">
     <h3>Análisis de Proyectos</h3>
     <div class="m-5">
-      <h6>Estado de avance del projecto</h6>
+      <h6>Estado de avance del Proyecto</h6>
       <p>{{ phaseOfProject }}</p>
       <p>{{ percentageOfProject }} %</p>
       <p>los hitos alcanzados pueden ser los phases cumplidos</p>

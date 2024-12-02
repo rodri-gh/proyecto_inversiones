@@ -23,22 +23,32 @@ const baseURL = `${import.meta.env.VITE_API_URL}/`;
 onMounted(() => {
   getNotifications();
   getFinancialSummary();
-  if(userRole === 'admin'){
+  if (userRole === "admin") {
     filterSummaryOnlyAdmin();
   }
 });
 
 const getNotifications = async () => {
   try {
-    const responseContacts = await axios.get(baseURL+'contact/pending', header);
-    const responseWithdrawal = await axios.get(baseURL+'withdrawal-request/pending', header);
-    const lastMovements7days = await axios.get(baseURL+'analysisReport/getMovementsFromLast7Days', header);
+    const responseContacts = await axios.get(
+      baseURL + "contact/pending",
+      header
+    );
+    const responseWithdrawal = await axios.get(
+      baseURL + "withdrawal-request/pending",
+      header
+    );
+    const lastMovements7days = await axios.get(
+      baseURL + "analysisReport/getMovementsFromLast7Days",
+      header
+    );
     console.log(responseContacts.data);
     console.log(responseWithdrawal.data);
     console.log(lastMovements7days.data);
     contacsPending.value = responseContacts.data;
     withdrawalRequestsPending.value = responseWithdrawal.data;
     movements7days.value = lastMovements7days.data;
+    console.log("movimientos 7 dias", movements7days.value);
     createChart();
   } catch (e) {
     console.error(e);
@@ -47,23 +57,33 @@ const getNotifications = async () => {
 
 const getFinancialSummary = async () => {
   try {
-    const response = await axios.get(baseURL+'analysisReport/GetUserClientSummary/'+userId, header);
+    const response = await axios.get(
+      baseURL + "analysisReport/GetUserClientSummary/" + userId,
+      header
+    );
     console.log(response.data);
   } catch (e) {
     console.error(e);
   }
 };
 
-
-const filterSummaryOnlyAdmin = () => { 
+const filterSummaryOnlyAdmin = () => {
   //filtrar los arrays de resumenes solo de los proyectos que le
   //corresponden al rol admin
-}
+};
 
 const createChart = () => {
   const ctx = document.getElementById("activityChart").getContext("2d");
-  const labels = movements7days.value.map((item) => item.tipo); 
-  const data = movements7days.value.map((item) => parseFloat(item.amount)); 
+  const translateType = (type) => {
+    const translations = {
+      Projects: "Proyectos",
+      Investments: "Inversiones",
+    };
+    return translations[type] || type;
+  };
+
+  const labels = movements7days.value.map((item) => translateType(item.tipo));
+  const data = movements7days.value.map((item) => parseFloat(item.amount));
   new Chart(ctx, {
     type: "bar",
     data: {
@@ -71,7 +91,7 @@ const createChart = () => {
       datasets: [
         {
           label: "Actividad por Tipo",
-          data: data, 
+          data: data,
           backgroundColor: [
             "rgba(75, 192, 192, 0.2)",
             "rgba(153, 102, 255, 0.2)",
@@ -101,7 +121,6 @@ const createChart = () => {
     },
   });
 };
-
 </script>
 
 <template>
@@ -195,10 +214,19 @@ const createChart = () => {
                     class="list-group-item"
                   >
                     <div>
-                      <strong>{{ item.tipo }}</strong> - {{ item.descripcion }}
+                      <strong>{{
+                        item.tipo === "Projects"
+                          ? "Proyectos"
+                          : item.tipo === "Investments"
+                          ? "Inversiones"
+                          : item.tipo
+                      }}</strong>
+                      - {{ item.descripcion }}
                     </div>
                     <div class="d-flex justify-content-between">
-                      <span class="text-muted">{{ formatDate(item.fecha) }}</span>
+                      <span class="text-muted">{{
+                        formatDate(item.fecha)
+                      }}</span>
                       <span class="text-success"
                         ><strong>{{ item.amount }}</strong></span
                       >
@@ -295,7 +323,14 @@ const createChart = () => {
                     class="list-group-item"
                   >
                     <div>
-                      <strong>{{ item.tipo }}</strong> - {{ item.descripcion }}
+                      <strong>{{
+                        item.tipo === "Projects"
+                          ? "Proyectos"
+                          : item.tipo === "Investments"
+                          ? "Inversiones"
+                          : item.tipo
+                      }}</strong>
+                      - {{ item.descripcion }}
                     </div>
                     <div class="d-flex justify-content-between">
                       <span class="text-muted">{{ item.fecha }}</span>
@@ -312,7 +347,7 @@ const createChart = () => {
         </div>
       </div>
     </div>
-    
+
     <div v-if="userRole === 'client'">
       <ClientSummary />
     </div>
@@ -320,7 +355,7 @@ const createChart = () => {
 </template>
 
 <style scoped>
-.summary-container { 
+.summary-container {
   max-height: 850px;
   overflow-y: auto;
 }
