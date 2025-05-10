@@ -1,0 +1,15 @@
+export const created = {
+    user: 'User and Account created successfully',
+    project: 'Project created successfully',
+    investment: 'Investment created successfully',
+    withdrawalRequest: 'Withdrawal request created successfully',
+    contract: 'Contract created successfully',
+    mineral: 'Mineral created successfully',
+    operatingExpense: 'Operating expense created successfully',
+    projectMineral: 'Project mineral created successfully',
+    projectTimeline: 'Project timeline created successfully',
+    faq: 'Faq created successfully',
+    categoryPost: 'Category post created successfully',
+    contact: 'Contact created successfully',
+    movement: 'Movement created successfully',
+}
