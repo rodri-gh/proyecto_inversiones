@@ -1,0 +1,67 @@
+import { Model, DataTypes } from "sequelize";
+import sequelize from "../database/connection.js";
+
+class ProjectMineral extends Model {}
+ProjectMineral.init(
+    {
+        id: {
+            type: DataTypes.BIGINT,
+            primaryKey: true,
+            autoIncrement: true
+        },
+        projectId: {
+            type: DataTypes.BIGINT,
+            allowNull: false,
+        },
+        mineralId: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
+        userId: {
+            type: DataTypes.BIGINT,
+            allowNull: true
+        },
+        operatingExpenseId: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
+        purchasePrice: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: false
+        },
+        weightOunces: {
+            type: DataTypes.DECIMAL(10, 3),
+            allowNull: false, 
+            defaultValue: 0
+        },
+        prePurchase: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: true
+        },
+        estimatedPurchasePrice: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: true
+        },
+        deleted: {
+            type: DataTypes.TINYINT,
+            allowNull: false,
+            defaultValue: 0
+        },
+        exitPrice: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: true
+        },
+        salePrice: {
+            type: DataTypes.DECIMAL(20, 2),
+            allowNull: true
+        }
+    },
+    {
+        sequelize,
+        modelName: 'projectMineral',
+        tableName: 'project_minerals',
+        timestamps: false
+    }
+);
+
+export default ProjectMineral;
